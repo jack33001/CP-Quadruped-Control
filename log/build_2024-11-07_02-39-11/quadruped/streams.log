@@ -1,0 +1,37 @@
+[0.017s] Invoking command in '/home/ws/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20
+[0.073s] [33mCMake Warning (dev) in CMakeLists.txt:
+[0.073s]   No project() command is present.  The top-level CMakeLists.txt file must
+[0.073s]   contain a literal, direct call to the project() command.  Add a line of
+[0.074s]   code such as
+[0.074s] 
+[0.074s]     project(ProjectName)
+[0.074s] 
+[0.074s]   near the top of the file, but after cmake_minimum_required().
+[0.074s] 
+[0.074s]   CMake is pretending there is a "project(Project)" command on the first
+[0.075s]   line.
+[0.075s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.075s] [0m
+[0.075s] [33mCMake Warning (dev) in CMakeLists.txt:
+[0.075s]   cmake_minimum_required() should be called prior to this top-level project()
+[0.075s]   call.  Please see the cmake-commands(7) manual for usage documentation of
+[0.075s]   both commands.
+[0.075s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.075s] [0m
+[0.086s] [31mCMake Error at CMakeLists.txt:13 (ament_target_dependencies):
+[0.086s]   Unknown CMake command "ament_target_dependencies".
+[0.087s] 
+[0.087s] [0m
+[0.087s] [33mCMake Warning (dev) in CMakeLists.txt:
+[0.088s]   No cmake_minimum_required command is present.  A line of code such as
+[0.088s] 
+[0.088s]     cmake_minimum_required(VERSION 3.28)
+[0.089s] 
+[0.089s]   should be added at the top of the file.  The version specified may be lower
+[0.089s]   if you wish to support older CMake versions for this project.  For more
+[0.089s]   information run "cmake --help-policy CMP0000".
+[0.090s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.090s] [0m
+[0.090s] -- Configuring incomplete, errors occurred!
+[0.092s] gmake: *** [Makefile:937: cmake_check_build_system] Error 1
+[0.101s] Invoked command in '/home/ws/build/quadruped' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20

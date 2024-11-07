@@ -1,0 +1,19 @@
+[31mCMake Error at /opt/ros/jazzy/share/ros_gz_sim/cmake/export_gzserver_componentExport.cmake:61 (set_target_properties):
+  The link interface of target "ros_gz_sim::gzserver_component" contains:
+
+    rclcpp_components::component
+
+  but the target was not found.  Possible reasons include:
+
+    * There is a typo in the target name.
+    * A find_package call is missing for an IMPORTED target.
+    * An ALIAS target is missing.
+
+Call Stack (most recent call first):
+  /opt/ros/jazzy/share/ros_gz_sim/cmake/ament_cmake_export_targets-extras.cmake:9 (include)
+  /opt/ros/jazzy/share/ros_gz_sim/cmake/ros_gz_simConfig.cmake:41 (include)
+  CMakeLists.txt:16 (find_package)
+
+[0m
+[0mCMake Generate step failed.  Build files cannot be regenerated correctly.[0m
+gmake: *** [Makefile:815: cmake_check_build_system] Error 1

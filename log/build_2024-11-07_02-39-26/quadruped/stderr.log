@@ -1,0 +1,24 @@
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kfoot_trajectory_generator.hpp: No such file or directory
+    1 | #include [01;31m[K"foot_trajectory_generator.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kleg_controller.hpp: No such file or directory
+    1 | #include [01;31m[K"leg_controller.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:104: CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:90: CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o] Error 1
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kstate_estimator.hpp: No such file or directory
+    1 | #include [01;31m[K"state_estimator.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+[01m[K/home/ws/src/quadruped/src/balance_controller.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kbalance_controller.hpp: No such file or directory
+    1 | #include [01;31m[K"balance_controller.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:118: CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:76: CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+gmake: *** [Makefile:146: all] Error 2

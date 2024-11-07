@@ -16,6 +16,7 @@
 /home/ws/build/quadruped/CMakeFiles/quadruped_s__rosidl_typesupport_fastrtps_c.dir
 /home/ws/build/quadruped/CMakeFiles/quadruped_s__rosidl_typesupport_introspection_c.dir
 /home/ws/build/quadruped/CMakeFiles/quadruped_s__rosidl_typesupport_c.dir
+/home/ws/build/quadruped/CMakeFiles/quadruped_lib.dir
 /home/ws/build/quadruped/CMakeFiles/test.dir
 /home/ws/build/quadruped/CMakeFiles/edit_cache.dir
 /home/ws/build/quadruped/CMakeFiles/rebuild_cache.dir

@@ -406,6 +406,19 @@ quadruped_s__rosidl_typesupport_c/fast:
 .PHONY : quadruped_s__rosidl_typesupport_c/fast
 
 #=============================================================================
+# Target rules for targets named quadruped_lib
+
+# Build rule for target.
+quadruped_lib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quadruped_lib
+.PHONY : quadruped_lib
+
+# fast build rule for target.
+quadruped_lib/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/build
+.PHONY : quadruped_lib/fast
+
+#=============================================================================
 # Target rules for targets named quadruped__py
 
 # Build rule for target.
@@ -730,6 +743,102 @@ rosidl_typesupport_introspection_cpp/quadruped/msg/detail/leg_command__type_supp
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped__rosidl_typesupport_introspection_cpp.dir/build.make CMakeFiles/quadruped__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/quadruped/msg/detail/leg_command__type_support.cpp.s
 .PHONY : rosidl_typesupport_introspection_cpp/quadruped/msg/detail/leg_command__type_support.cpp.s
 
+src/balance_controller.o: src/balance_controller.cpp.o
+.PHONY : src/balance_controller.o
+
+# target to build an object file
+src/balance_controller.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o
+.PHONY : src/balance_controller.cpp.o
+
+src/balance_controller.i: src/balance_controller.cpp.i
+.PHONY : src/balance_controller.i
+
+# target to preprocess a source file
+src/balance_controller.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.i
+.PHONY : src/balance_controller.cpp.i
+
+src/balance_controller.s: src/balance_controller.cpp.s
+.PHONY : src/balance_controller.s
+
+# target to generate assembly for a file
+src/balance_controller.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.s
+.PHONY : src/balance_controller.cpp.s
+
+src/foot_trajectory_generator.o: src/foot_trajectory_generator.cpp.o
+.PHONY : src/foot_trajectory_generator.o
+
+# target to build an object file
+src/foot_trajectory_generator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o
+.PHONY : src/foot_trajectory_generator.cpp.o
+
+src/foot_trajectory_generator.i: src/foot_trajectory_generator.cpp.i
+.PHONY : src/foot_trajectory_generator.i
+
+# target to preprocess a source file
+src/foot_trajectory_generator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.i
+.PHONY : src/foot_trajectory_generator.cpp.i
+
+src/foot_trajectory_generator.s: src/foot_trajectory_generator.cpp.s
+.PHONY : src/foot_trajectory_generator.s
+
+# target to generate assembly for a file
+src/foot_trajectory_generator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.s
+.PHONY : src/foot_trajectory_generator.cpp.s
+
+src/leg_controller.o: src/leg_controller.cpp.o
+.PHONY : src/leg_controller.o
+
+# target to build an object file
+src/leg_controller.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o
+.PHONY : src/leg_controller.cpp.o
+
+src/leg_controller.i: src/leg_controller.cpp.i
+.PHONY : src/leg_controller.i
+
+# target to preprocess a source file
+src/leg_controller.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.i
+.PHONY : src/leg_controller.cpp.i
+
+src/leg_controller.s: src/leg_controller.cpp.s
+.PHONY : src/leg_controller.s
+
+# target to generate assembly for a file
+src/leg_controller.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.s
+.PHONY : src/leg_controller.cpp.s
+
+src/state_estimator.o: src/state_estimator.cpp.o
+.PHONY : src/state_estimator.o
+
+# target to build an object file
+src/state_estimator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o
+.PHONY : src/state_estimator.cpp.o
+
+src/state_estimator.i: src/state_estimator.cpp.i
+.PHONY : src/state_estimator.i
+
+# target to preprocess a source file
+src/state_estimator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.i
+.PHONY : src/state_estimator.cpp.i
+
+src/state_estimator.s: src/state_estimator.cpp.s
+.PHONY : src/state_estimator.s
+
+# target to generate assembly for a file
+src/state_estimator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_lib.dir/build.make CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.s
+.PHONY : src/state_estimator.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -759,6 +868,7 @@ help:
 	@echo "... quadruped__rosidl_typesupport_fastrtps_cpp"
 	@echo "... quadruped__rosidl_typesupport_introspection_c"
 	@echo "... quadruped__rosidl_typesupport_introspection_cpp"
+	@echo "... quadruped_lib"
 	@echo "... quadruped_s__rosidl_typesupport_c"
 	@echo "... quadruped_s__rosidl_typesupport_fastrtps_c"
 	@echo "... quadruped_s__rosidl_typesupport_introspection_c"
@@ -801,6 +911,18 @@ help:
 	@echo "... rosidl_typesupport_introspection_cpp/quadruped/msg/detail/leg_command__type_support.o"
 	@echo "... rosidl_typesupport_introspection_cpp/quadruped/msg/detail/leg_command__type_support.i"
 	@echo "... rosidl_typesupport_introspection_cpp/quadruped/msg/detail/leg_command__type_support.s"
+	@echo "... src/balance_controller.o"
+	@echo "... src/balance_controller.i"
+	@echo "... src/balance_controller.s"
+	@echo "... src/foot_trajectory_generator.o"
+	@echo "... src/foot_trajectory_generator.i"
+	@echo "... src/foot_trajectory_generator.s"
+	@echo "... src/leg_controller.o"
+	@echo "... src/leg_controller.i"
+	@echo "... src/leg_controller.s"
+	@echo "... src/state_estimator.o"
+	@echo "... src/state_estimator.i"
+	@echo "... src/state_estimator.s"
 .PHONY : help
 
 

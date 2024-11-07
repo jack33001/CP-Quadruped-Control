@@ -367,6 +367,9 @@ ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build
 # install(FILES "/home/ws/src/quadruped/messages/LegCommand.msg" "DESTINATION" "share/quadruped/messages")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/src/quadruped/messages/LegCommand.msg" "DESTINATION" "share/quadruped/messages")
 
+# install(DIRECTORY "include/" "DESTINATION" "include")
+ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "include/" "DESTINATION" "include")
+
 # install(PROGRAMS "scripts/LegController.py" "scripts/GaitPatternGenerator.py" "scripts/leg_class.py" "scripts/gait_pattern_class.py" "DESTINATION" "lib/quadruped")
 ament_cmake_symlink_install_programs("/home/ws/src/quadruped" PROGRAMS "scripts/LegController.py" "scripts/GaitPatternGenerator.py" "scripts/leg_class.py" "scripts/gait_pattern_class.py" "DESTINATION" "lib/quadruped")
 
@@ -381,6 +384,9 @@ ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "urdf/"
 
 # install(DIRECTORY "messages/" "DESTINATION" "share/quadruped/messages")
 ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "messages/" "DESTINATION" "share/quadruped/messages")
+
+# install(DIRECTORY "install/" "DESTINATION" "share/quadruped/install")
+ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "install/" "DESTINATION" "share/quadruped/install")
 
 # install(FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/quadruped" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/quadruped" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
