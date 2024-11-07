@@ -1,0 +1,1 @@
+/home/ws/build/quadruped/rosidl_typesupport_fastrtps_cpp/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_cpp.hpp

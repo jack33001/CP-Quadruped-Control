@@ -1,0 +1,2 @@
+Invoking command in '/home/ws/src/quadruped/build/quadruped': /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20
+Invoked command in '/home/ws/src/quadruped/build/quadruped' returned '2': /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20

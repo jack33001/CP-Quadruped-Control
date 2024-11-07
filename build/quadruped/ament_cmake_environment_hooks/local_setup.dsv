@@ -1,0 +1,4 @@
+source;share/quadruped/environment/ament_prefix_path.sh
+source;share/quadruped/environment/library_path.sh
+source;share/quadruped/environment/path.sh
+source;share/quadruped/environment/pythonpath.sh

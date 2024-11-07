@@ -1,0 +1,43 @@
+[100%] Built target quadruped
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/lib//template_node.py
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/launch/gazebo_sim.launch.py
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/launch/mujoco_sim.launch.py
+-- Symlinking: /home/ws/src/quadruped/install/quadruped/share/quadruped/config/bridge.yaml
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/config/quadruped.rviz
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/config/quadruped_controllers.yaml
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/Quadruped MJB.mjb
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/QuadrupedURDF.urdf.xacro
+-- Symlinking: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/QuadrupedURDF_rviz.urdf.xacro
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/QuadrupedURDFmujoco.urdf.xacro
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Body.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Body_bin.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Front Left Shin.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Front Left Thigh.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Front Right Shin.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Front Right Thigh.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Rear Left Shin.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Rear Left Thigh.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Rear Right Shin.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/meshes/Rear Right Thigh.STL
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/urdf/mjb_maker.py
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/lib/libquadruped.so
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/include//quadruped/MujocoHardwareInterface.hpp
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped//MujocoHardwareInterface.xml
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/ament_index/resource_index/package_run_dependencies/quadruped
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/ament_index/resource_index/parent_prefix_path/quadruped
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/environment/path.sh
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/environment/path.dsv
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/local_setup.bash
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/local_setup.sh
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/local_setup.zsh
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/local_setup.dsv
+-- Symlinking: /home/ws/src/quadruped/install/quadruped/share/quadruped/package.dsv
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/ament_index/resource_index/packages/quadruped
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/ament_index/resource_index/hardware_interface__pluginlib__plugin/quadruped
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/cmake/quadrupedConfig.cmake
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/cmake/quadrupedConfig-version.cmake
+-- Up-to-date symlink: /home/ws/src/quadruped/install/quadruped/share/quadruped/package.xml

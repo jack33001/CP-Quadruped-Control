@@ -1,0 +1,29 @@
+[0.017s] Invoking command in '/home/ws/src/quadruped/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20
+[0.088s] -- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.689s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.697s] -- Found rclpy: 7.1.2 (/opt/ros/jazzy/share/rclpy/cmake)
+[0.698s] -- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.732s] -- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.743s] -- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.757s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.774s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.865s] -- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.867s] -- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.964s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.051s] -- Found hardware_interface: 4.17.0 (/opt/ros/jazzy/share/hardware_interface/cmake)
+[1.325s] -- Found controller_manager: 4.17.0 (/opt/ros/jazzy/share/controller_manager/cmake)
+[1.407s] -- Found ros2_control: 4.17.0 (/opt/ros/jazzy/share/ros2_control/cmake)
+[1.408s] -- Found rviz2: 14.1.5 (/opt/ros/jazzy/share/rviz2/cmake)
+[1.414s] -- Found ros_gz: 1.0.4 (/opt/ros/jazzy/share/ros_gz/cmake)
+[1.578s] -- Configuring done (1.5s)
+[1.726s] -- Generating done (0.1s)
+[1.728s] -- Build files have been written to: /home/ws/src/quadruped/build/quadruped
+[1.845s] [ 33%] [32mBuilding CXX object CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o[0m
+[2.215s] [01m[K/home/ws/src/quadruped/src/QuadrupedHardwareInterface.cpp:3:10:[m[K [01;31m[Kfatal error: [m[Kgazebo/gazebo.hh: No such file or directory
+[2.215s]     3 | #include [01;31m[K<gazebo/gazebo.hh>[m[K
+[2.215s]       |          [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+[2.215s] compilation terminated.
+[2.218s] gmake[2]: *** [CMakeFiles/quadruped.dir/build.make:90: CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o] Error 1
+[2.219s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped.dir/all] Error 2
+[2.219s] gmake: *** [Makefile:146: all] Error 2
+[2.224s] Invoked command in '/home/ws/src/quadruped/build/quadruped' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20

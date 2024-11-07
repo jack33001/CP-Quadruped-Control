@@ -1,0 +1,1 @@
+/home/ws/src/quadruped/src/template_node.py

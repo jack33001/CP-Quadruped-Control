@@ -1,0 +1,4 @@
+Invoking command in '/home/ws/src/quadruped/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20
+Invoked command in '/home/ws/src/quadruped/build/quadruped' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20
+Invoking command in '/home/ws/src/quadruped/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/src/quadruped/build/quadruped
+Invoked command in '/home/ws/src/quadruped/build/quadruped' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/src/quadruped/build/quadruped

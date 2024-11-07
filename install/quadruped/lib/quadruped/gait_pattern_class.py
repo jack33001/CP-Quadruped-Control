@@ -1,0 +1,1 @@
+/home/ws/src/quadruped/scripts/gait_pattern_class.py

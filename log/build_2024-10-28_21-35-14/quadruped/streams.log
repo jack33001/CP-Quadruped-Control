@@ -1,0 +1,146 @@
+[0.015s] Invoking command in '/home/ws/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20
+[0.196s] [  2%] Built target quadruped__rosidl_generator_type_description
+[0.201s] [  2%] Built target ament_cmake_python_symlink_quadruped
+[0.222s] [  5%] Built target quadruped__cpp
+[0.230s] [ 20%] Built target quadruped__rosidl_generator_c
+[0.301s] [ 29%] Built target quadruped__rosidl_typesupport_c
+[0.302s] [ 38%] Built target quadruped__rosidl_typesupport_introspection_c
+[0.307s] [ 52%] Built target quadruped__rosidl_typesupport_cpp
+[0.307s] [ 58%] Built target quadruped__rosidl_typesupport_fastrtps_cpp
+[0.307s] [ 64%] Built target quadruped__rosidl_typesupport_introspection_cpp
+[0.312s] [ 73%] Built target quadruped__rosidl_typesupport_fastrtps_c
+[0.342s] [ 73%] Built target quadruped
+[0.368s] [ 76%] Built target quadruped__py
+[0.391s] [ 82%] Built target quadruped__rosidl_generator_py
+[0.417s] [ 88%] Built target quadruped_s__rosidl_typesupport_fastrtps_c
+[0.420s] [ 97%] Built target quadruped_s__rosidl_typesupport_introspection_c
+[0.420s] [100%] Built target quadruped_s__rosidl_typesupport_c
+[0.424s] running egg_info
+[0.435s] writing quadruped.egg-info/PKG-INFO
+[0.435s] writing dependency_links to quadruped.egg-info/dependency_links.txt
+[0.435s] writing top-level names to quadruped.egg-info/top_level.txt
+[0.485s] reading manifest file 'quadruped.egg-info/SOURCES.txt'
+[0.486s] writing manifest file 'quadruped.egg-info/SOURCES.txt'
+[0.536s] [100%] Built target ament_cmake_python_build_quadruped_egg
+[0.558s] Invoked command in '/home/ws/build/quadruped' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20
+[0.751s] Invoking command in '/home/ws/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped
+[0.767s] -- Install configuration: ""
+[0.768s] -- Execute custom install script
+[0.768s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/rosidl_interfaces/quadruped
+[0.768s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/msg/LegCommand.json
+[0.769s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__functions.h
+[0.769s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.h
+[0.770s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.h
+[0.770s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.h
+[0.770s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_c__visibility_control.h
+[0.770s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/library_path.sh
+[0.770s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/library_path.dsv
+[0.770s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_c.h
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__builder.hpp
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.hpp
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__traits.hpp
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.hpp
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.hpp
+[0.771s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_cpp__visibility_control.hpp
+[0.772s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_cpp.hpp
+[0.772s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[0.772s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_c.h
+[0.772s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_cpp.hpp
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/pythonpath.sh
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/pythonpath.dsv
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/PKG-INFO
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/SOURCES.txt
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/dependency_links.txt
+[0.773s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/top_level.txt
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/__init__.py
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_c.c
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_fastrtps_c.c
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_introspection_c.c
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/__init__.py
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command.py
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command_s.c
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so
+[0.774s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so
+[0.775s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so
+[0.775s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so
+[0.775s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
+[0.775s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/msg/LegCommand.idl
+[0.775s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/LegController.py
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/GaitPatternGenerator.py
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/leg_class.py
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/gait_pattern_class.py
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/launch/controllers.launch.py
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/launch/gazebo_sim.launch.py
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/bridge.yaml
+[0.776s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/initial_joint_positions.yaml
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/quadruped.rviz
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/quadruped_controllers.yaml
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/Quadruped MJB.mjb
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/QuadrupedURDF.urdf.xacro
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Body.STL
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Body_bin.STL
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Shin.STL
+[0.777s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Thigh.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Shin.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Thigh.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Shin.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Thigh.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Shin.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Thigh.STL
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/mjb_maker.py
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+[0.778s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/RobotState.msg
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/package_run_dependencies/quadruped
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/parent_prefix_path/quadruped
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.sh
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.dsv
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/path.sh
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/path.dsv
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.bash
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.sh
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.zsh
+[0.779s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.dsv
+[0.780s] -- Symlinking: /home/ws/install/quadruped/share/quadruped/package.dsv
+[0.790s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/packages/quadruped
+[0.790s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_libraries-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_targets-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig-version.cmake
+[0.791s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/package.xml
+[0.792s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_c.so
+[0.792s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_fastrtps_c.so
+[0.792s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_fastrtps_cpp.so
+[0.793s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_c.so
+[0.793s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_c.so
+[0.794s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_cpp.so
+[0.794s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_cpp.so
+[0.838s] Listing '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped'...
+[0.838s] Listing '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg'...
+[0.845s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_py.so
+[0.845s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport.cmake
+[0.845s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport-noconfig.cmake
+[0.846s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport.cmake
+[0.846s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[0.846s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cppExport.cmake
+[0.846s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cppExport.cmake
+[0.846s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[0.847s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cExport.cmake
+[0.847s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[0.847s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cExport.cmake
+[0.847s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cExport-noconfig.cmake
+[0.848s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cppExport.cmake
+[0.848s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[0.848s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport.cmake
+[0.848s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport-noconfig.cmake
+[0.848s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport.cmake
+[0.848s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport-noconfig.cmake
+[0.851s] Invoked command in '/home/ws/build/quadruped' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped

@@ -1,0 +1,90 @@
+/home/ws/install/quadruped/share/ament_index/resource_index/rosidl_interfaces/quadruped
+/home/ws/install/quadruped/share/quadruped/msg/LegCommand.json
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__functions.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_c__visibility_control.h
+/home/ws/install/quadruped/share/quadruped/environment/library_path.sh
+/home/ws/install/quadruped/share/quadruped/environment/library_path.dsv
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_c.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__builder.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__traits.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_cpp__visibility_control.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_cpp.hpp
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_c.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_introspection_c__visibility_control.h
+/home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_cpp.hpp
+/home/ws/install/quadruped/share/quadruped/environment/pythonpath.sh
+/home/ws/install/quadruped/share/quadruped/environment/pythonpath.dsv
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/PKG-INFO
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/SOURCES.txt
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/dependency_links.txt
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/top_level.txt
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/__init__.py
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_c.c
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_fastrtps_c.c
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_introspection_c.c
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/__init__.py
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command.py
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command_s.c
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so
+/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
+/home/ws/install/quadruped/share/quadruped/msg/LegCommand.idl
+/home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+/home/ws/install/quadruped/lib/quadruped/LegController.py
+/home/ws/install/quadruped/lib/quadruped/GaitPatternGenerator.py
+/home/ws/install/quadruped/lib/quadruped/leg_class.py
+/home/ws/install/quadruped/lib/quadruped/gait_pattern_class.py
+/home/ws/install/quadruped/share/quadruped/launch/controllers.launch.py
+/home/ws/install/quadruped/share/quadruped/launch/gazebo_sim.launch.py
+/home/ws/install/quadruped/share/quadruped/config/bridge.yaml
+/home/ws/install/quadruped/share/quadruped/config/initial_joint_positions.yaml
+/home/ws/install/quadruped/share/quadruped/config/quadruped.rviz
+/home/ws/install/quadruped/share/quadruped/config/quadruped_controllers.yaml
+/home/ws/install/quadruped/share/quadruped/urdf/Quadruped MJB.mjb
+/home/ws/install/quadruped/share/quadruped/urdf/QuadrupedURDF.urdf.xacro
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Body.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Body_bin.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Shin.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Thigh.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Shin.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Thigh.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Shin.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Thigh.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Shin.STL
+/home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Thigh.STL
+/home/ws/install/quadruped/share/quadruped/urdf/mjb_maker.py
+/home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+/home/ws/install/quadruped/share/quadruped/messages/RobotState.msg
+/home/ws/install/quadruped/share/ament_index/resource_index/package_run_dependencies/quadruped
+/home/ws/install/quadruped/share/ament_index/resource_index/parent_prefix_path/quadruped
+/home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.sh
+/home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.dsv
+/home/ws/install/quadruped/share/quadruped/environment/path.sh
+/home/ws/install/quadruped/share/quadruped/environment/path.dsv
+/home/ws/install/quadruped/share/quadruped/local_setup.bash
+/home/ws/install/quadruped/share/quadruped/local_setup.sh
+/home/ws/install/quadruped/share/quadruped/local_setup.zsh
+/home/ws/install/quadruped/share/quadruped/local_setup.dsv
+/home/ws/install/quadruped/share/quadruped/package.dsv
+/home/ws/install/quadruped/share/ament_index/resource_index/packages/quadruped
+/home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_include_directories-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_libraries-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_targets-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_dependencies-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig-version.cmake
+/home/ws/install/quadruped/share/quadruped/package.xml

@@ -1,0 +1,1 @@
+/home/ws/build/quadruped/rosidl_generator_cpp/quadruped/msg/rosidl_generator_cpp__visibility_control.hpp

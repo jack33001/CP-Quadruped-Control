@@ -1,0 +1,1 @@
+/home/ws/build/quadruped/rosidl_typesupport_introspection_c/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_c.h

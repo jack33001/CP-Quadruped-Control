@@ -1,0 +1,8 @@
+[ 33%] [32mBuilding CXX object CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o[0m
+[01m[K/home/ws/src/quadruped/src/QuadrupedHardwareInterface.cpp:2:10:[m[K [01;31m[Kfatal error: [m[Kgz/sim/System.hh: No such file or directory
+    2 | #include [01;31m[K<gz/sim/System.hh>[m[K  // For Gazebo simulation systems
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped.dir/build.make:90: CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

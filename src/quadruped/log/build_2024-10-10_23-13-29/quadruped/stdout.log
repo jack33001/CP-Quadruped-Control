@@ -1,0 +1,21 @@
+-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclpy: 7.1.2 (/opt/ros/jazzy/share/rclpy/cmake)
+-- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found hardware_interface: 4.17.0 (/opt/ros/jazzy/share/hardware_interface/cmake)
+-- Found controller_manager: 4.17.0 (/opt/ros/jazzy/share/controller_manager/cmake)
+-- Found ros2_control: 4.17.0 (/opt/ros/jazzy/share/ros2_control/cmake)
+-- Found ros_gz_sim: 1.0.4 (/opt/ros/jazzy/share/ros_gz_sim/cmake)
+-- Found ros_gz: 1.0.4 (/opt/ros/jazzy/share/ros_gz/cmake)
+-- Configuring done (1.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/ws/src/quadruped/build/quadruped
+[ 33%] [32mBuilding CXX object CMakeFiles/quadruped.dir/src/MujocoHardwareInterface.cpp.o[0m
+[ 66%] [32mBuilding CXX object CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o[0m

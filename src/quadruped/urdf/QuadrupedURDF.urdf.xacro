@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="urdf" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <xacro:property name="yaml_file" value="$(find quadruped)/config/initial_joint_positions.yaml"/>
+  <xacro:property name="init_pos_yaml" value="${xacro.load_yaml(yaml_file)}"/>
+
+  <material name="Green">
+   <color rgba="${93/255} ${255/255} ${0/255} 1.0"/>
+   </material>
+  <material name="Magenta">
+   <color rgba="${148/255} ${100/255} ${182/255} 1.0"/>
+   </material>
+  <material name="Orange">
+   <color rgba="${189/255} ${136/255} ${104/255} 1.0"/>
+   </material>
+
+  <!-- Dummy link and joint so the base link is massless -->
+  <link name="dummy_link" />
+  <joint name="dummy_joint" type="fixed">
+    <parent link="dummy_link" />
+    <child link="Body" />
+  </joint>
+
+  <!-- IMU sensor site -->
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.001"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="imu_to_body" type="fixed">
+      <parent link="Body"/>
+      <child link="imu_link"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+
+  <!-- The actual robot -->
+  <link
+    name="Body">
+    <inertial>
+      <origin
+        xyz="0.000496651842729657 -0.00191436675848661 -0.00656282405798344"
+        rpy="0 0 0" />
+      <mass
+        value="2.72713096530588" />
+      <inertia
+        ixx="0.0372164866888024"
+        ixy="1.14328115404344E-11"
+        ixz="-1.84385166067456E-08"
+        iyy="0.00367331488542633"
+        iyz="1.05547030991378E-11"
+        izz="0.0370798690687598" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Body.STL" />
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Body.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Front Right Thigh">
+    <inertial>
+      <origin
+        xyz="2.43741414216458E-05 -0.0142051404026353 -0.00547111407205264"
+        rpy="0 0 0" />
+      <mass
+        value="0.513489297249649" />
+      <inertia
+        ixx="0.000703443703532357"
+        ixy="5.05069776934335E-07"
+        ixz="-1.25476848652197E-07"
+        iyy="0.000379089863098612"
+        iyz="-1.02974442751939E-06"
+        izz="0.00102411507237723" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Right Thigh.STL" />
+      </geometry>
+      <material name="Magenta"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Right Thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_hip"
+    type="continuous">
+    <origin
+      xyz="-0.15605 -0.1796 0"
+      rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['fr_hip']} -1.5708" />
+    <parent
+      link="Body" />
+    <child
+      link="Front Right Thigh" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Front Right Shin">
+    <inertial>
+      <origin
+        xyz="0.1248780823163 -0.00732497518642935 0.00017505649013605"
+        rpy="0 0 0" />
+      <mass
+        value="0.129610127102807" />
+      <inertia
+        ixx="3.51684106957956E-05"
+        ixy="8.64609723784186E-07"
+        ixz="7.49065225470579E-10"
+        iyy="4.9857666056172E-05"
+        iyz="-4.6532876481813E-11"
+        izz="5.09700357908981E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Right Shin.STL" />
+      </geometry>
+      <material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Right Shin.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_knee"
+    type="continuous">
+    <origin
+      xyz="0 -0.13625 0.014875"
+      rpy="0 0 ${init_pos_yaml['initial_joint_positions']['fr_knee']}" />
+    <parent
+      link="Front Right Thigh" />
+    <child
+      link="Front Right Shin" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Front Left Thigh">
+    <inertial>
+      <origin
+        xyz="-2.69567127114678E-06 -0.0142673340488066 0.00542295719977118"
+        rpy="0 0 0" />
+      <mass
+        value="0.513479185634994" />
+      <inertia
+        ixx="0.000703377558606604"
+        ixy="-5.92700407826434E-08"
+        ixz="-6.4102146703666E-09"
+        iyy="0.000379154000610083"
+        iyz="1.03700632804851E-06"
+        izz="0.00102411493476719" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Left Thigh.STL" />
+      </geometry>
+      <material name="Magenta"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Left Thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_hip"
+    type="continuous">
+    <origin
+      xyz="0.15605 -0.1796 0"
+      rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['fl_hip']} -1.5708" />
+    <parent
+      link="Body" />
+    <child
+      link="Front Left Thigh" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Front Left Shin">
+    <inertial>
+      <origin
+        xyz="0.124878082316303 -0.00732497518642785 0.000177556490133124"
+        rpy="0 0 0" />
+      <mass
+        value="0.129610127102807" />
+      <inertia
+        ixx="3.51684106957956E-05"
+        ixy="8.64609723784203E-07"
+        ixz="7.49065225476954E-10"
+        iyy="4.98576660561721E-05"
+        iyz="-4.653287647839E-11"
+        izz="5.09700357908982E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Left Shin.STL" />
+      </geometry>
+      <material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Front Left Shin.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_knee"
+    type="continuous">
+    <origin
+      xyz="0 -0.136249999870001 -0.015125"
+      rpy="0 0 ${init_pos_yaml['initial_joint_positions']['fl_knee']}" />
+    <parent
+      link="Front Left Thigh" />
+    <child
+      link="Front Left Shin" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Rear Right Thigh">
+    <inertial>
+      <origin
+        xyz="2.43741414215626E-05 -0.0142051404026354 -0.00547111407205259"
+        rpy="0 0 0" />
+      <mass
+        value="0.513489297249649" />
+      <inertia
+        ixx="0.000703443703532356"
+        ixy="5.05069776933996E-07"
+        ixz="-1.25476848652012E-07"
+        iyy="0.000379089863098611"
+        iyz="-1.02974442751944E-06"
+        izz="0.00102411507237722" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Right Thigh.STL" />
+      </geometry>
+      <material name="Magenta"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Right Thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_hip"
+    type="continuous">
+    <origin
+      xyz="-0.15605 0.1796 0"
+      rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['rr_hip']} -1.5708" />
+    <parent
+      link="Body" />
+    <child
+      link="Rear Right Thigh" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Rear Right Shin">
+    <inertial>
+      <origin
+        xyz="0.124878082316302 -0.00732497518642894 0.000177556490132569"
+        rpy="0 0 0" />
+      <mass
+        value="0.129610127102807" />
+      <inertia
+        ixx="3.51684106957956E-05"
+        ixy="8.64609723784208E-07"
+        ixz="7.49065225475337E-10"
+        iyy="4.9857666056172E-05"
+        iyz="-4.65328764813094E-11"
+        izz="5.09700357908981E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Right Shin.STL" />
+      </geometry>
+      <material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Right Shin.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_knee"
+    type="continuous">
+    <origin
+      xyz="0 -0.13624999987 0.0151249999999999"
+      rpy="0 0 ${init_pos_yaml['initial_joint_positions']['rr_knee']}" />
+    <parent
+      link="Rear Right Thigh" />
+    <child
+      link="Rear Right Shin" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Rear Left Thigh">
+    <inertial>
+      <origin
+        xyz="-2.69567127120229E-06 -0.0142673340488067 0.00542295719977112"
+        rpy="0 0 0" />
+      <mass
+        value="0.513479185634994" />
+      <inertia
+        ixx="0.000703377558606604"
+        ixy="-5.92700407825756E-08"
+        ixz="-6.41021467034991E-09"
+        iyy="0.000379154000610084"
+        iyz="1.03700632804845E-06"
+        izz="0.00102411493476719" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Left Thigh.STL" />
+      </geometry>
+      <material name="Magenta"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Left Thigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_hip"
+    type="continuous">
+    <origin
+      xyz="0.15605 0.179600000000001 0"
+      rpy="1.5707963267949 ${init_pos_yaml['initial_joint_positions']['rl_hip']} -1.5707963267949" />
+    <parent
+      link="Body" />
+    <child
+      link="Rear Left Thigh" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Rear Left Shin">
+    <inertial>
+      <origin
+        xyz="0.124878082316303 -0.00732497518643049 0.000175056490132913"
+        rpy="0 0 0" />
+      <mass
+        value="0.129610127102807" />
+      <inertia
+        ixx="3.51684106957956E-05"
+        ixy="8.64609723784319E-07"
+        ixz="7.49065225478314E-10"
+        iyy="4.9857666056172E-05"
+        iyz="-4.65328764774071E-11"
+        izz="5.09700357908981E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Left Shin.STL" />
+      </geometry>
+      <material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find quadruped)/urdf/meshes/Rear Left Shin.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_knee"
+    type="continuous">
+    <origin
+      xyz="0 -0.136249999870001 -0.015125"
+      rpy="0 0 ${init_pos_yaml['initial_joint_positions']['rl_knee']}" />
+    <parent
+      link="Rear Left Thigh" />
+    <child
+      link="Rear Left Shin" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+
+  <gazebo>
+    <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system.so">
+      <parameters>$(find quadruped)/config/quadruped_controllers.yaml</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+    <!--self_collide>true</self_collide-->
+  </gazebo>
+
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>imu</topic>
+      <plugin filename="libgz-sim-imu-system.so"
+              name="gz::sim::systems::Imu">
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+<!-- ros2_control configuration -->
+  <ros2_control name="GazeboSystem" type="system">
+
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <!-- fr_hip Joint -->
+  <joint name="fr_hip">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- fr_knee Joint -->
+  <joint name="fr_knee">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- fl_hip Joint -->
+  <joint name="fl_hip">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- fl_knee Joint -->
+  <joint name="fl_knee">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- rr_hip Joint -->
+  <joint name="rr_hip">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- rr_knee Joint -->
+  <joint name="rr_knee">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- rl_hip Joint -->
+  <joint name="rl_hip">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- rl_knee Joint -->
+  <joint name="rl_knee">
+    <command_interface name="position"/>
+    <command_interface name="velocity"/>
+    <command_interface name="effort"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+    <state_interface name="effort"/>
+  </joint>
+
+  <!-- IMU sensor -->
+  <sensor name="imu_sensor">
+    <state_interface name="orientation.x"/>
+    <state_interface name="orientation.y"/>
+    <state_interface name="orientation.z"/>
+    <state_interface name="orientation.w"/>
+    <state_interface name="angular_velocity.x"/>
+    <state_interface name="angular_velocity.y"/>
+    <state_interface name="angular_velocity.z"/>
+    <state_interface name="linear_acceleration.x"/>
+    <state_interface name="linear_acceleration.y"/>
+    <state_interface name="linear_acceleration.z"/>
+    <param name="frame_id">imu_link</param>
+  </sensor>
+</ros2_control>
+
+</robot>

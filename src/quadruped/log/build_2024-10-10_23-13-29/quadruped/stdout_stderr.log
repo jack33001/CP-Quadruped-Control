@@ -1,0 +1,40 @@
+-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclpy: 7.1.2 (/opt/ros/jazzy/share/rclpy/cmake)
+-- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found hardware_interface: 4.17.0 (/opt/ros/jazzy/share/hardware_interface/cmake)
+-- Found controller_manager: 4.17.0 (/opt/ros/jazzy/share/controller_manager/cmake)
+-- Found ros2_control: 4.17.0 (/opt/ros/jazzy/share/ros2_control/cmake)
+-- Found ros_gz_sim: 1.0.4 (/opt/ros/jazzy/share/ros_gz_sim/cmake)
+-- Found ros_gz: 1.0.4 (/opt/ros/jazzy/share/ros_gz/cmake)
+-- Configuring done (1.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/ws/src/quadruped/build/quadruped
+[ 33%] [32mBuilding CXX object CMakeFiles/quadruped.dir/src/MujocoHardwareInterface.cpp.o[0m
+[ 66%] [32mBuilding CXX object CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o[0m
+[01m[K/home/ws/src/quadruped/src/QuadrupedHardwareInterface.cpp:3:10:[m[K [01;31m[Kfatal error: [m[Kgazebo/gazebo.hh: No such file or directory
+    3 | #include [01;31m[K<gazebo/gazebo.hh>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped.dir/build.make:90: CMakeFiles/quadruped.dir/src/QuadrupedHardwareInterface.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+In file included from [01m[K/home/ws/src/quadruped/src/MujocoHardwareInterface.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/MujocoHardwareInterface.hpp:[m[K In constructor ‘[01m[Kquadruped::MujocoHardwareInterface::[01;32m[KMujocoHardwareInterface[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/include/quadruped/MujocoHardwareInterface.hpp:52:15:[m[K [01;35m[Kwarning: [m[K‘[01m[Kquadruped::MujocoHardwareInterface::window[m[K’ will be initialized after [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wreorder-Wreorder]8;;[m[K]
+   52 |   GLFWwindow* [01;35m[Kwindow[m[K;
+      |               [01;35m[K^~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/MujocoHardwareInterface.hpp:44:12:[m[K [01;35m[Kwarning: [m[K  ‘[01m[KmjModel* quadruped::MujocoHardwareInterface::mj_model[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wreorder-Wreorder]8;;[m[K]
+   44 |   mjModel* [01;35m[Kmj_model[m[K;
+      |            [01;35m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/MujocoHardwareInterface.cpp:12:1:[m[K [01;35m[Kwarning: [m[K  when initialized here [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wreorder-Wreorder]8;;[m[K]
+   12 | [01;35m[KMujocoHardwareInterface[m[K::MujocoHardwareInterface() : window(nullptr), mj_model(nullptr), mj_data(nullptr) {
+      | [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

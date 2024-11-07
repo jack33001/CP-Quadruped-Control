@@ -1,0 +1,8 @@
+setup.py
+quadruped/__init__.py
+quadruped.egg-info/PKG-INFO
+quadruped.egg-info/SOURCES.txt
+quadruped.egg-info/dependency_links.txt
+quadruped.egg-info/top_level.txt
+quadruped/msg/__init__.py
+quadruped/msg/_leg_command.py

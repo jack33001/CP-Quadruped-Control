@@ -1,0 +1,46 @@
+{
+    "name": "ROS 2 Development Container",
+    "privileged": true,
+    "remoteUser": "jack",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "USERNAME": "jack"
+        }
+    },
+    "workspaceFolder": "/home/ws",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/ws,type=bind",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-themes",
+                "twxs.cmake",
+                "donjayamanne.python-extension-pack",
+                "eamodio.gitlens",
+                "ms-iot.vscode-ros"
+            ]
+        }
+    },
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "LIBGL_ALWAYS_SOFTWARE": "0",
+        "ROS_AUTOMATIC_DISCOVERY_RANGE": "LOCALHOST",
+        "ROS_DOMAIN_ID": "42"
+    },
+    "runArgs": [
+        "--net=host",
+        "--pid=host",
+        "--ipc=host",
+        "--env",
+        "DISPLAY=${localEnv:DISPLAY}",
+        "--volume",
+        "/tmp/.X11-unix:/tmp/.X11-unix",  // X11 socket for GUI rendering
+        "--device",
+        "/dev/dri:/dev/dri"  // Device for GPU access
+    ],
+    "mounts": [
+        "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+    ],
+    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3"
+}

@@ -1,0 +1,7 @@
+<library path="lib/libQuadrupedHardware.so">
+  <class name="quadruped/QuadrupedHardware" type="hardware_interface::SystemInterface" base_class_type="hardware_interface::SystemInterface">
+    <description>
+      A hardware interface for a quadruped robot.
+    </description>
+  </class>
+</library>

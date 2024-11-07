@@ -1,0 +1,36 @@
+[0.017s] Invoking command in '/home/ws/src/quadruped/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20
+[0.095s] -- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.699s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.717s] -- Found rclpy: 7.1.2 (/opt/ros/jazzy/share/rclpy/cmake)
+[0.717s] -- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.783s] -- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.806s] -- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.825s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.842s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.924s] -- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.925s] -- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[1.034s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.166s] -- Found hardware_interface: 4.17.0 (/opt/ros/jazzy/share/hardware_interface/cmake)
+[1.445s] -- Found controller_manager: 4.17.0 (/opt/ros/jazzy/share/controller_manager/cmake)
+[1.527s] -- Found ros2_control: 4.17.0 (/opt/ros/jazzy/share/ros2_control/cmake)
+[1.529s] -- Found rviz2: 14.1.5 (/opt/ros/jazzy/share/rviz2/cmake)
+[1.577s] [31mCMake Error at CMakeLists.txt:19 (find_package):
+[1.577s]   By not providing "Findgazebo_ros.cmake" in CMAKE_MODULE_PATH this project
+[1.577s]   has asked CMake to find a package configuration file provided by
+[1.578s]   "gazebo_ros", but CMake did not find one.
+[1.578s] 
+[1.578s]   Could not find a package configuration file provided by "gazebo_ros" with
+[1.578s]   any of the following names:
+[1.578s] 
+[1.578s]     gazebo_rosConfig.cmake
+[1.578s]     gazebo_ros-config.cmake
+[1.578s] 
+[1.579s]   Add the installation prefix of "gazebo_ros" to CMAKE_PREFIX_PATH or set
+[1.579s]   "gazebo_ros_DIR" to a directory containing one of the above files.  If
+[1.579s]   "gazebo_ros" provides a separate development package or SDK, be sure it has
+[1.579s]   been installed.
+[1.579s] 
+[1.580s] [0m
+[1.580s] -- Configuring incomplete, errors occurred!
+[1.598s] gmake: *** [Makefile:294: cmake_check_build_system] Error 1
+[1.602s] Invoked command in '/home/ws/src/quadruped/build/quadruped' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/src/quadruped/build/quadruped -- -j20 -l20

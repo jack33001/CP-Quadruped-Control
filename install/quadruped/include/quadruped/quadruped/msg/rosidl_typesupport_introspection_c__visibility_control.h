@@ -1,0 +1,1 @@
+/home/ws/build/quadruped/rosidl_typesupport_introspection_c/quadruped/msg/rosidl_typesupport_introspection_c__visibility_control.h
