@@ -385,8 +385,11 @@ ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "urdf/"
 # install(DIRECTORY "messages/" "DESTINATION" "share/quadruped/messages")
 ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "messages/" "DESTINATION" "share/quadruped/messages")
 
-# install(DIRECTORY "install/" "DESTINATION" "share/quadruped/install")
-ament_cmake_symlink_install_directory("/home/ws/src/quadruped" DIRECTORY "install/" "DESTINATION" "share/quadruped/install")
+# install(FILES "plugin_description.xml" "DESTINATION" "share/quadruped/")
+ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "plugin_description.xml" "DESTINATION" "share/quadruped/")
+
+# install(FILES "plugin_description.xml" "DESTINATION" "share/quadruped/")
+ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "plugin_description.xml" "DESTINATION" "share/quadruped/")
 
 # install(FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/quadruped" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/quadruped" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
@@ -423,6 +426,9 @@ ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build
 
 # install(FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/packages/quadruped" "DESTINATION" "share/ament_index/resource_index/packages")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/packages/quadruped" "DESTINATION" "share/ament_index/resource_index/packages")
+
+# install(FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/controller_interface__pluginlib__plugin/quadruped" "DESTINATION" "share/ament_index/resource_index/controller_interface__pluginlib__plugin")
+ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build/quadruped/ament_cmake_index/share/ament_index/resource_index/controller_interface__pluginlib__plugin/quadruped" "DESTINATION" "share/ament_index/resource_index/controller_interface__pluginlib__plugin")
 
 # install(FILES "/home/ws/build/quadruped/rosidl_cmake/rosidl_cmake-extras.cmake" "DESTINATION" "share/quadruped/cmake")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped" FILES "/home/ws/build/quadruped/rosidl_cmake/rosidl_cmake-extras.cmake" "DESTINATION" "share/quadruped/cmake")

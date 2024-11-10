@@ -60,7 +60,8 @@ RUN apt-get update \
     ros-jazzy-velocity-controllers \
     ros-jazzy-effort-controllers \
     ros-jazzy-joint-trajectory-controller \
-    ros-jazzy-imu-sensor-broadcaster
+    ros-jazzy-imu-sensor-broadcaster \
+    ros-jazzy-pinocchio
 
 # Install Mujoco Python package
 RUN pip install mujoco --break-system-packages

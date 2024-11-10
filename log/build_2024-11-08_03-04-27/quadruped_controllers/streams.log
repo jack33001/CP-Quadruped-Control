@@ -1,0 +1,28 @@
+[1.385s] Invoking command in '/home/ws/build/quadruped_controllers': PYTHONPATH=/home/ws/build/quadruped_controllers/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/build/quadruped_controllers/build --no-deps symlink_data
+[1.746s] running develop
+[1.750s] /usr/lib/python3/dist-packages/setuptools/command/develop.py:40: EasyInstallDeprecationWarning: easy_install command is deprecated.
+[1.750s] !!
+[1.750s] 
+[1.750s]         ********************************************************************************
+[1.750s]         Please avoid running ``setup.py`` and ``easy_install``.
+[1.751s]         Instead, use pypa/build, pypa/installer or other
+[1.751s]         standards-based tools.
+[1.751s] 
+[1.751s]         See https://github.com/pypa/setuptools/issues/917 for details.
+[1.751s]         ********************************************************************************
+[1.752s] 
+[1.752s] !!
+[1.752s]   easy_install.initialize_options(self)
+[1.954s] running egg_info
+[1.974s] writing quadruped_controllers.egg-info/PKG-INFO
+[1.974s] writing dependency_links to quadruped_controllers.egg-info/dependency_links.txt
+[1.975s] writing requirements to quadruped_controllers.egg-info/requires.txt
+[1.975s] writing top-level names to quadruped_controllers.egg-info/top_level.txt
+[2.009s] reading manifest file 'quadruped_controllers.egg-info/SOURCES.txt'
+[2.010s] writing manifest file 'quadruped_controllers.egg-info/SOURCES.txt'
+[2.028s] running build_ext
+[2.028s] Creating /home/ws/install/quadruped_controllers/lib/python3.12/site-packages/quadruped-controllers.egg-link (link to .)
+[2.029s] 
+[2.029s] Installed /home/ws/build/quadruped_controllers
+[2.029s] running symlink_data
+[2.088s] Invoked command in '/home/ws/build/quadruped_controllers' returned '0': PYTHONPATH=/home/ws/build/quadruped_controllers/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/build/quadruped_controllers/build --no-deps symlink_data

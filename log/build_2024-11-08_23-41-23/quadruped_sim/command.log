@@ -1,0 +1,6 @@
+Invoking command in '/home/ws/build/quadruped_sim': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ws/src/quadruped_sim -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped_sim
+Invoked command in '/home/ws/build/quadruped_sim' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ws/src/quadruped_sim -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped_sim
+Invoking command in '/home/ws/build/quadruped_sim': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_sim -- -j20 -l20
+Invoked command in '/home/ws/build/quadruped_sim' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_sim -- -j20 -l20
+Invoking command in '/home/ws/build/quadruped_sim': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_sim
+Invoked command in '/home/ws/build/quadruped_sim' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_sim

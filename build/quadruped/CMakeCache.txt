@@ -54,15 +54,44 @@ BUILD_SHARED_LIBS:BOOL=ON
 //Build the testing tree.
 BUILD_TESTING:BOOL=ON
 
+//Boost filesystem library (debug)
+Boost_FILESYSTEM_LIBRARY_DEBUG:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_filesystem.so
+
+//Boost filesystem library (release)
+Boost_FILESYSTEM_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_filesystem.so
+
+//Path to a file.
+Boost_INCLUDE_DIR:PATH=/usr/include
+
+//Boost library directory DEBUG
+Boost_LIBRARY_DIR_DEBUG:PATH=/usr/lib/x86_64-linux-gnu
+
+//Boost library directory RELEASE
+Boost_LIBRARY_DIR_RELEASE:PATH=/usr/lib/x86_64-linux-gnu
+
+//Boost python312 library (debug)
+Boost_PYTHON312_LIBRARY_DEBUG:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_python312.so
+
+//Boost python312 library (release)
+Boost_PYTHON312_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_python312.so
+
+//Boost serialization library (debug)
+Boost_SERIALIZATION_LIBRARY_DEBUG:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_serialization.so
+
+//Boost serialization library (release)
+Boost_SERIALIZATION_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_serialization.so
+
+//Boost system library (debug)
+Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_system.so
+
+//Boost system library (release)
+Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_system.so
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
-
-//For backwards compatibility, what version of CMake commands and
-// syntax should this version of CMake try to support.
-CMAKE_BACKWARDS_COMPATIBILITY:STRING=2.4
 
 //Choose the type of build, options are: None Debug Release RelWithDebInfo
 // MinSizeRel ...
@@ -280,8 +309,8 @@ DL_INCLUDE_DIRS:PATH=/usr/include
 //Path to a library.
 DL_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libdl.a
 
-//Single output directory for building all executables.
-EXECUTABLE_OUTPUT_PATH:PATH=
+//Set CMAKE_CXX_STANDARD if a dependency require it
+ENFORCE_MINIMAL_CXX_STANDARD:BOOL=OFF
 
 //The directory containing a CMake configuration file for Eigen3.
 Eigen3_DIR:PATH=/usr/share/eigen3/cmake
@@ -312,9 +341,6 @@ IGN_SANITIZER:STRING=
 
 //Path to a library.
 JSONCPP_LIBRARY_jsoncpp:FILEPATH=/usr/lib/x86_64-linux-gnu/libjsoncpp.so
-
-//Single output directory for building all libraries.
-LIBRARY_OUTPUT_PATH:PATH=
 
 //Path to a file.
 OPENGL_EGL_INCLUDE_DIR:PATH=/usr/include
@@ -367,14 +393,11 @@ PKG_CONFIG_ARGN:STRING=
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
-//Value Computed by CMake
-Project_BINARY_DIR:STATIC=/home/ws/build/quadruped
+//Enable Debian-style Python package layout
+PYTHON_DEB_LAYOUT:BOOL=OFF
 
-//Value Computed by CMake
-Project_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Project_SOURCE_DIR:STATIC=/home/ws/src/quadruped
+//Enable standard Python package layout
+PYTHON_STANDARD_LAYOUT:BOOL=OFF
 
 //The directory containing a CMake configuration file for Protobuf.
 Protobuf_DIR:PATH=Protobuf_DIR-NOTFOUND
@@ -559,6 +582,9 @@ diagnostic_msgs_DIR:PATH=/opt/ros/jazzy/share/diagnostic_msgs/cmake
 //The directory containing a CMake configuration file for diagnostic_updater.
 diagnostic_updater_DIR:PATH=/opt/ros/jazzy/share/diagnostic_updater/cmake
 
+//The directory containing a CMake configuration file for eigenpy.
+eigenpy_DIR:PATH=/opt/ros/jazzy/lib/x86_64-linux-gnu/cmake/eigenpy
+
 //The directory containing a CMake configuration file for fastcdr.
 fastcdr_DIR:PATH=/opt/ros/jazzy/lib/cmake/fastcdr
 
@@ -742,6 +768,9 @@ onelib:FILEPATH=/opt/ros/jazzy/lib/x86_64-linux-gnu/liburdfdom_world.so
 //Path to a library.
 onelibd:FILEPATH=onelibd-NOTFOUND
 
+//The directory containing a CMake configuration file for pinocchio.
+pinocchio_DIR:PATH=/opt/ros/jazzy/lib/x86_64-linux-gnu/cmake/pinocchio
+
 //Path to a library.
 pkgcfg_lib_AVCODEC_avcodec:FILEPATH=/usr/lib/x86_64-linux-gnu/libavcodec.so
 
@@ -803,7 +832,7 @@ quadruped_SOURCE_DIR:STATIC=/home/ws/src/quadruped
 quadruped__rosidl_generator_py_LIB_DEPENDS:STATIC=general;quadruped__rosidl_generator_c;general;Python3::Python;general;quadruped__rosidl_typesupport_c;
 
 //Dependencies for the target
-quadruped_lib_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;hardware_interface::mock_components;general;hardware_interface::hardware_interface;general;controller_manager::controller_manager;general;rclcpp_lifecycle::rclcpp_lifecycle;general;ros_gz_sim::gzserver_component;general;ros_gz_sim::ros_gz_sim;
+quadruped_lib_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;hardware_interface::mock_components;general;hardware_interface::hardware_interface;general;controller_interface::controller_interface;general;controller_manager::controller_manager;general;rclcpp_lifecycle::rclcpp_lifecycle;general;ros_gz_sim::gzserver_component;general;ros_gz_sim::ros_gz_sim;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;
 
 //Dependencies for the target
 quadruped_s__rosidl_typesupport_c_LIB_DEPENDS:STATIC=general;quadruped__rosidl_generator_py;general;quadruped__rosidl_typesupport_c;general;quadruped__rosidl_typesupport_c;general;rosidl_runtime_c::rosidl_runtime_c;general;rosidl_typesupport_c::rosidl_typesupport_c;general;/opt/ros/jazzy/lib/librmw.so;general;rcutils::rcutils;general;rosidl_dynamic_typesupport::rosidl_dynamic_typesupport;general;rosidl_runtime_c::rosidl_runtime_c;
@@ -1137,6 +1166,28 @@ AVUTIL_libavutil_INCLUDEDIR:INTERNAL=
 AVUTIL_libavutil_LIBDIR:INTERNAL=
 AVUTIL_libavutil_PREFIX:INTERNAL=
 AVUTIL_libavutil_VERSION:INTERNAL=
+//ADVANCED property for variable: Boost_FILESYSTEM_LIBRARY_DEBUG
+Boost_FILESYSTEM_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_FILESYSTEM_LIBRARY_RELEASE
+Boost_FILESYSTEM_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_INCLUDE_DIR
+Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_LIBRARY_DIR_DEBUG
+Boost_LIBRARY_DIR_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_LIBRARY_DIR_RELEASE
+Boost_LIBRARY_DIR_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_PYTHON312_LIBRARY_DEBUG
+Boost_PYTHON312_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_PYTHON312_LIBRARY_RELEASE
+Boost_PYTHON312_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_SERIALIZATION_LIBRARY_DEBUG
+Boost_SERIALIZATION_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_SERIALIZATION_LIBRARY_RELEASE
+Boost_SERIALIZATION_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_SYSTEM_LIBRARY_DEBUG
+Boost_SYSTEM_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_SYSTEM_LIBRARY_RELEASE
+Boost_SYSTEM_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_ADDR2LINE
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
@@ -1306,6 +1357,8 @@ FIND_PACKAGE_MESSAGE_DETAILS_AVDEVICE:INTERNAL=[TRUE][v(56.4.100)]
 FIND_PACKAGE_MESSAGE_DETAILS_AVFORMAT:INTERNAL=[TRUE][v()]
 //Details about finding AVUTIL
 FIND_PACKAGE_MESSAGE_DETAILS_AVUTIL:INTERNAL=[TRUE][v()]
+//Details about finding Boost
+FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/include][cfound components: python312 ][v1.83.0()]
 //Details about finding CURL
 FIND_PACKAGE_MESSAGE_DETAILS_CURL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcurl.so][/usr/include/x86_64-linux-gnu][c ][v8.5.0()]
 //Details about finding DL
@@ -1676,8 +1729,23 @@ ZeroMQ_libzmq_INCLUDEDIR:INTERNAL=
 ZeroMQ_libzmq_LIBDIR:INTERNAL=
 ZeroMQ_libzmq_PREFIX:INTERNAL=
 ZeroMQ_libzmq_VERSION:INTERNAL=
+//Components requested for this build tree.
+_Boost_COMPONENTS_SEARCHED:INTERNAL=filesystem;python312;serialization;system
+//Last used Boost_INCLUDE_DIR value.
+_Boost_INCLUDE_DIR_LAST:INTERNAL=/usr/include
+//Last used Boost_LIBRARY_DIR_DEBUG value.
+_Boost_LIBRARY_DIR_DEBUG_LAST:INTERNAL=/usr/lib/x86_64-linux-gnu
+//Last used Boost_LIBRARY_DIR_RELEASE value.
+_Boost_LIBRARY_DIR_RELEASE_LAST:INTERNAL=/usr/lib/x86_64-linux-gnu
+//Last used Boost_NAMESPACE value.
+_Boost_NAMESPACE_LAST:INTERNAL=boost
+//Last used Boost_USE_MULTITHREADED value.
+_Boost_USE_MULTITHREADED_LAST:INTERNAL=ON
+//Last used Boost_USE_STATIC_LIBS value.
+_Boost_USE_STATIC_LIBS_LAST:INTERNAL=OFF
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
+_MINIMAL_CXX_STANDARD:INTERNAL=14
 _OPENSSL_CFLAGS:INTERNAL=-I/usr/include
 _OPENSSL_CFLAGS_I:INTERNAL=
 _OPENSSL_CFLAGS_OTHER:INTERNAL=
@@ -1720,7 +1788,6 @@ _Python3_DEVELOPMENT_MODULE_SIGNATURE:INTERNAL=95a6b3a905b31a053078ff046e537c6d
 //Development reason failure
 _Python3_Development_REASON_FAILURE:INTERNAL=
 _Python3_EXECUTABLE:INTERNAL=/usr/bin/python3
-//Path to a file.
 _Python3_INCLUDE_DIR:INTERNAL=/usr/include/python3.12
 //Python3 Properties
 _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;3;64;;cpython-312-x86_64-linux-gnu;abi3;/usr/lib/python3.12;/usr/lib/python3.12;/usr/local/lib/python3.12/dist-packages;/usr/local/lib/python3.12/dist-packages
@@ -1760,6 +1827,10 @@ __pkg_config_checked_YAML:INTERNAL=1
 __pkg_config_checked_ZIP:INTERNAL=1
 __pkg_config_checked_ZeroMQ:INTERNAL=1
 __pkg_config_checked__OPENSSL:INTERNAL=1
+//Result of TRY_COMPILE
+_cxx_standard_build_status:INTERNAL=TRUE
+//Result of try_run()
+_cxx_standard_run_status:INTERNAL=0
 //ADVANCED property for variable: pkgcfg_lib_AVCODEC_avcodec
 pkgcfg_lib_AVCODEC_avcodec-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_AVDEVICE_avdevice

@@ -1,0 +1,28 @@
+[1.315s] Invoking command in '/home/ws/build/quadruped_simulation': PYTHONPATH=/home/ws/build/quadruped_simulation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/build/quadruped_simulation/build --no-deps symlink_data
+[1.664s] running develop
+[1.667s] /usr/lib/python3/dist-packages/setuptools/command/develop.py:40: EasyInstallDeprecationWarning: easy_install command is deprecated.
+[1.667s] !!
+[1.667s] 
+[1.668s]         ********************************************************************************
+[1.668s]         Please avoid running ``setup.py`` and ``easy_install``.
+[1.668s]         Instead, use pypa/build, pypa/installer or other
+[1.668s]         standards-based tools.
+[1.668s] 
+[1.668s]         See https://github.com/pypa/setuptools/issues/917 for details.
+[1.669s]         ********************************************************************************
+[1.669s] 
+[1.669s] !!
+[1.669s]   easy_install.initialize_options(self)
+[1.851s] running egg_info
+[1.866s] writing quadruped_simulation.egg-info/PKG-INFO
+[1.866s] writing dependency_links to quadruped_simulation.egg-info/dependency_links.txt
+[1.867s] writing requirements to quadruped_simulation.egg-info/requires.txt
+[1.867s] writing top-level names to quadruped_simulation.egg-info/top_level.txt
+[1.897s] reading manifest file 'quadruped_simulation.egg-info/SOURCES.txt'
+[1.898s] writing manifest file 'quadruped_simulation.egg-info/SOURCES.txt'
+[1.918s] running build_ext
+[1.918s] Creating /home/ws/install/quadruped_simulation/lib/python3.12/site-packages/quadruped-simulation.egg-link (link to .)
+[1.918s] 
+[1.919s] Installed /home/ws/build/quadruped_simulation
+[1.919s] running symlink_data
+[1.963s] Invoked command in '/home/ws/build/quadruped_simulation' returned '0': PYTHONPATH=/home/ws/build/quadruped_simulation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/build/quadruped_simulation/build --no-deps symlink_data

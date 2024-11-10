@@ -1,0 +1,27 @@
+[ 20%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.o[0m
+[ 40%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.o[0m
+[ 60%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.o[0m
+[ 80%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o[0m
+[01m[K/home/ws/src/quadruped_mpc/src/leg_controller.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kquadruped/leg_controller.hpp: No such file or directory
+    1 | #include [01;31m[K"quadruped/leg_controller.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:104: CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+[01m[K/home/ws/src/quadruped_mpc/src/state_estimator.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kquadruped/state_estimator.hpp: No such file or directory
+    1 | #include [01;31m[K"quadruped/state_estimator.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:118: CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.o] Error 1
+[01m[K/home/ws/src/quadruped_mpc/src/foot_trajectory_generator.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kquadruped/foot_trajectory_generator.hpp: No such file or directory
+    1 | #include [01;31m[K"quadruped/foot_trajectory_generator.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:90: CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.o] Error 1
+[01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:1:10:[m[K [01;31m[Kfatal error: [m[Kquadruped/balance_controller.hpp: No such file or directory
+    1 | #include [01;31m[K"quadruped/balance_controller.hpp"[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:76: CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped_mpc_lib.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

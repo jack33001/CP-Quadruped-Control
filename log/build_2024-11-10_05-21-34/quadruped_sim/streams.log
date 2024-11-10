@@ -1,0 +1,22 @@
+[0.032s] Invoking command in '/home/ws/build/quadruped_sim': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_sim -- -j20 -l20
+[0.173s] Invoked command in '/home/ws/build/quadruped_sim' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_sim -- -j20 -l20
+[0.245s] Invoking command in '/home/ws/build/quadruped_sim': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_sim
+[0.268s] -- Install configuration: ""
+[0.270s] -- Execute custom install script
+[0.271s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/launch/gazebo_sim.launch.py
+[0.271s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/ament_index/resource_index/package_run_dependencies/quadruped_sim
+[0.271s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/ament_index/resource_index/parent_prefix_path/quadruped_sim
+[0.273s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/ament_prefix_path.sh
+[0.273s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/ament_prefix_path.dsv
+[0.275s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/path.sh
+[0.276s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/path.dsv
+[0.276s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.bash
+[0.276s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.sh
+[0.276s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.zsh
+[0.277s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.dsv
+[0.277s] -- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/package.dsv
+[0.293s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/ament_index/resource_index/packages/quadruped_sim
+[0.293s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/cmake/quadruped_simConfig.cmake
+[0.293s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/cmake/quadruped_simConfig-version.cmake
+[0.294s] -- Up-to-date symlink: /home/ws/install/quadruped_sim/share/quadruped_sim/package.xml
+[0.332s] Invoked command in '/home/ws/build/quadruped_sim' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_sim

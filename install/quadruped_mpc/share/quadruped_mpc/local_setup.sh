@@ -1,0 +1,1 @@
+/home/ws/build/quadruped_mpc/ament_cmake_environment_hooks/local_setup.sh

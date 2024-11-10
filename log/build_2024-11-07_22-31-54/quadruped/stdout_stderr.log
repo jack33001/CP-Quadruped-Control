@@ -1,0 +1,210 @@
+[  2%] Built target quadruped__rosidl_generator_type_description
+[  2%] Built target ament_cmake_python_symlink_quadruped
+[  5%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o[0m
+[  7%] Built target quadruped__cpp
+[ 10%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o[0m
+[ 15%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o[0m
+[ 15%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o[0m
+[ 28%] Built target quadruped__rosidl_generator_c
+[ 35%] Built target quadruped__rosidl_typesupport_introspection_c
+[ 43%] Built target quadruped__rosidl_typesupport_fastrtps_c
+[ 51%] Built target quadruped__rosidl_typesupport_cpp
+[ 58%] Built target quadruped__rosidl_typesupport_c
+[ 66%] Built target quadruped__rosidl_typesupport_fastrtps_cpp
+[ 74%] Built target quadruped__rosidl_typesupport_introspection_cpp
+[ 74%] Built target quadruped
+[ 76%] Built target quadruped__py
+[ 82%] Built target quadruped__rosidl_generator_py
+[ 87%] Built target quadruped_s__rosidl_typesupport_fastrtps_c
+[ 92%] Built target quadruped_s__rosidl_typesupport_c
+[ 97%] Built target quadruped_s__rosidl_typesupport_introspection_c
+running egg_info
+writing quadruped.egg-info/PKG-INFO
+writing dependency_links to quadruped.egg-info/dependency_links.txt
+writing top-level names to quadruped.egg-info/top_level.txt
+reading manifest file 'quadruped.egg-info/SOURCES.txt'
+writing manifest file 'quadruped.egg-info/SOURCES.txt'
+[ 97%] Built target ament_cmake_python_build_quadruped_egg
+In file included from [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:16:37:[m[K [01;31m[Kerror: [m[K‘[01m[Kcontroller_interface::return_type my_controller_ns::MyController::[01;32m[Kinit[m[K(const std::string&)[m[K’ marked ‘[01m[Koverride[m[K’, but does not override
+   16 |   controller_interface::return_type [01;31m[Kinit[m[K(const std::string & controller_name) override;
+      |                                     [01;31m[K^~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:21:37:[m[K [01;31m[Kerror: [m[K‘[01m[Kcontroller_interface::return_type my_controller_ns::MyController::[01;32m[Kupdate[m[K()[m[K’ marked ‘[01m[Koverride[m[K’, but does not override
+   21 |   controller_interface::return_type [01;31m[Kupdate[m[K() override;
+      |                                     [01;31m[K^~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:5:1:[m[K [01;31m[Kerror: [m[K‘[01m[KStateEstimator[m[K’ does not name a type
+    5 | [01;31m[KStateEstimator[m[K::StateEstimator()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:11:35:[m[K [01;31m[Kerror: [m[K‘[01m[KStateEstimator[m[K’ has not been declared
+   11 | controller_interface::return_type [01;31m[KStateEstimator[m[K::init(const std::string & controller_name)
+      |                                   [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:[m[K In function ‘[01m[Kcontroller_interface::return_type state_estimator_ns::[01;32m[Kinit[m[K(const std::string&)[m[K’:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:13:14:[m[K [01;31m[Kerror: [m[K‘[01m[KControllerInterface[m[K’ has not been declared
+   13 |   auto ret = [01;31m[KControllerInterface[m[K::init(controller_name);
+      |              [01;31m[K^~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:19:3:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_names_[m[K’ was not declared in this scope
+   19 |   [01;31m[Kjoint_names_[m[K = {"joint1", "joint2"};  // Example joint names, set appropriately
+      |   [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:20:3:[m[K [01;31m[Kerror: [m[K‘[01m[Kestimated_states_[m[K’ was not declared in this scope
+   20 |   [01;31m[Kestimated_states_[m[K.resize(joint_names_.size(), 0.0);
+      |   [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:[m[K At global scope:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:25:46:[m[K [01;31m[Kerror: [m[K‘[01m[KStateEstimator[m[K’ has not been declared
+   25 | controller_interface::InterfaceConfiguration [01;31m[KStateEstimator[m[K::command_interface_configuration() const
+      |                                              [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:25:96:[m[K [01;31m[Kerror: [m[Knon-member function ‘[01m[Kcontroller_interface::InterfaceConfiguration state_estimator_ns::[01;32m[Kcommand_interface_configuration[m[K()[m[K’ cannot have cv-qualifier
+   25 | controller_interface::InterfaceConfiguration StateEstimator::command_interface_configuration() [01;31m[Kconst[m[K
+      |                                                                                                [01;31m[K^~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:32:46:[m[K [01;31m[Kerror: [m[K‘[01m[KStateEstimator[m[K’ has not been declared
+   32 | controller_interface::InterfaceConfiguration [01;31m[KStateEstimator[m[K::state_interface_configuration() const
+      |                                              [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:32:94:[m[K [01;31m[Kerror: [m[Knon-member function ‘[01m[Kcontroller_interface::InterfaceConfiguration state_estimator_ns::[01;32m[Kstate_interface_configuration[m[K()[m[K’ cannot have cv-qualifier
+   32 | controller_interface::InterfaceConfiguration StateEstimator::state_interface_configuration() [01;31m[Kconst[m[K
+      |                                                                                              [01;31m[K^~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:40:35:[m[K [01;31m[Kerror: [m[K‘[01m[KStateEstimator[m[K’ has not been declared
+   40 | controller_interface::return_type [01;31m[KStateEstimator[m[K::update()
+      |                                   [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:[m[K In function ‘[01m[Kcontroller_interface::return_type state_estimator_ns::[01;32m[Kupdate[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:43:31:[m[K [01;31m[Kerror: [m[K‘[01m[Knode_[m[K’ was not declared in this scope; did you mean ‘[01m[Kmode_t[m[K’?
+   43 |   rclcpp::Time current_time = [01;31m[Knode_[m[K->get_clock()->now();
+      |                               [01;31m[K^~~~~[m[K
+      |                               [32m[Kmode_t[m[K
+In file included from [01m[K/home/ws/src/quadruped/src/balance_controller.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd_msgs[m[K’ was not declared in this scope
+   35 |   rclcpp::Subscription<[01;31m[Kstd_msgs[m[K::msg::Float64MultiArray>::SharedPtr commands_subscriber_;
+      |                        [01;31m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray[01;31m[K>[m[K::SharedPtr commands_subscriber_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 3 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 5 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::[01;31m[KSharedPtr[m[K commands_subscriber_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommands_subscriber_[m[K’ does not name a type
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr [01;31m[Kcommands_subscriber_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:44:50:[m[K [01;31m[Kerror: [m[K‘[01m[Klast_update_time_[m[K’ was not declared in this scope
+   44 |   rclcpp::Duration elapsed_time = current_time - [01;31m[Klast_update_time_[m[K;
+      |                                                  [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:47:26:[m[K [01;31m[Kerror: [m[K‘[01m[Kestimated_states_[m[K’ was not declared in this scope
+   47 |   for (size_t i = 0; i < [01;31m[Kestimated_states_[m[K.size(); ++i) {
+      |                          [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:16:37:[m[K [01;31m[Kerror: [m[K‘[01m[Kcontroller_interface::return_type leg_controller_ns::LegController::[01;32m[Kinit[m[K(const std::string&)[m[K’ marked ‘[01m[Koverride[m[K’, but does not override
+   16 |   controller_interface::return_type [01;31m[Kinit[m[K(const std::string & controller_name) override;
+      |                                     [01;31m[K^~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:21:37:[m[K [01;31m[Kerror: [m[K‘[01m[Kcontroller_interface::return_type leg_controller_ns::LegController::[01;32m[Kupdate[m[K()[m[K’ marked ‘[01m[Koverride[m[K’, but does not override
+   21 |   controller_interface::return_type [01;31m[Kupdate[m[K() override;
+      |                                     [01;31m[K^~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/balance_controller.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+    7 | [01;31m[KCallbackReturn[m[K BalanceController::on_init()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:[m[K In constructor ‘[01m[Kleg_controller_ns::LegController::[01;32m[KLegController[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:6:23:[m[K [01;31m[Kerror: [m[K‘[01m[Krclcpp::Duration::[01;32m[KDuration[m[K()[m[K’ is private within this context
+    6 | : ControllerInterface([01;31m[K)[m[K
+      |                       [01;31m[K^[m[K
+In file included from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/time.hpp:24[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/clock.hpp:24[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/client.hpp:38[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp_lifecycle/rclcpp_lifecycle/lifecycle_node.hpp:56[m[K,
+                 from [01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface_base.hpp:29[m[K,
+                 from [01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface.hpp:21[m[K,
+                 from [01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:4[m[K:
+[01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/duration.hpp:159:3:[m[K [01;36m[Knote: [m[Kdeclared private here
+  159 |   [01;36m[KDuration[m[K() = default;
+      |   [01;36m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:[m[K In member function ‘[01m[Kcontroller_interface::return_type leg_controller_ns::LegController::[01;32m[Kinit[m[K(const std::string&)[m[K’:
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:13:39:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[Kleg_controller_ns::LegController::init(const std::string&)[m[K’
+   13 |   auto ret = [01;31m[KControllerInterface::init(controller_name)[m[K;
+      |              [01;31m[K~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~[m[K
+[01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface_base.hpp:129:15:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kcontroller_interface::return_type controller_interface::ControllerInterfaceBase::[01;32m[Kinit[m[K(const std::string&, const std::string&, unsigned int, const std::string&, const rclcpp::NodeOptions&)[m[K’
+  129 |   return_type [01;36m[Kinit[m[K(
+      |               [01;36m[K^~~~[m[K
+[01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface_base.hpp:129:15:[m[K [01;36m[Knote: [m[K  candidate expects 5 arguments, 1 provided
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:[m[K In member function ‘[01m[Kcontroller_interface::return_type leg_controller_ns::LegController::[01;32m[Kupdate[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:44:31:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd::shared_ptr<rclcpp_lifecycle::LifecycleNode> controller_interface::ControllerInterfaceBase::node_[m[K’ is private within this context
+   44 |   rclcpp::Time current_time = [01;31m[Knode_[m[K->get_clock()->now();
+      |                               [01;31m[K^~~~~[m[K
+[01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface_base.hpp:277:52:[m[K [01;36m[Knote: [m[Kdeclared private here
+  277 |   std::shared_ptr<rclcpp_lifecycle::LifecycleNode> [01;36m[Knode_[m[K;
+      |                                                    [01;36m[K^~~~~[m[K
+In file included from [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd_msgs[m[K’ was not declared in this scope
+   35 |   rclcpp::Subscription<[01;31m[Kstd_msgs[m[K::msg::Float64MultiArray>::SharedPtr commands_subscriber_;
+      |                        [01;31m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray[01;31m[K>[m[K::SharedPtr commands_subscriber_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 3 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 5 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::[01;31m[KSharedPtr[m[K commands_subscriber_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:35:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommands_subscriber_[m[K’ does not name a type
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr [01;31m[Kcommands_subscriber_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+    7 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_init()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:21:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   21 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:56[m[K,
+                 from [01m[K/opt/ros/jazzy/include/pluginlib/pluginlib/class_list_macros.hpp:40[m[K,
+                 from [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:57[m[K:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:[m[K At global scope:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:58:44:[m[K [01;31m[Kerror: [m[K‘[01m[KStateEstimator[m[K’ in namespace ‘[01m[Kstate_estimator_ns[m[K’ does not name a type
+   58 | PLUGINLIB_EXPORT_CLASS(state_estimator_ns::[01;31m[KStateEstimator[m[K, controller_interface::ControllerInterface)
+      |                                            [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:69:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   69 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:74:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   74 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:[m[K In constructor ‘[01m[K{anonymous}::ProxyExec0::[01;32m[KProxyExec0[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:58:1:[m[K [01;31m[Kerror: [m[K‘[01m[K_derived[m[K’ was not declared in this scope
+   58 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(state_estimator_ns::StateEstimator, controller_interface::ControllerInterface)
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:58:1:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[KregisterPlugin<<expression error>, {anonymous}::ProxyExec0::_base>(const char [35], const char [42])[m[K’
+   58 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(state_estimator_ns::StateEstimator, controller_interface::ControllerInterface)
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:55[m[K:
+[01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:241:1:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class Derived, class Base> class_loader::impl::UniquePtr<class_loader::impl::AbstractMetaObjectBase> class_loader::impl::[01;32m[KregisterPlugin[m[K(const std::string&, const std::string&)[m[K’
+  241 | [01;36m[KregisterPlugin[m[K(const std::string & class_name, const std::string & base_class_name)
+      | [01;36m[K^~~~~~~~~~~~~~[m[K
+[01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:241:1:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:58:1:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   58 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(state_estimator_ns::StateEstimator, controller_interface::ControllerInterface)
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:118: CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:58[m[K,
+                 from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:55[m[K,
+                 from [01m[K/opt/ros/jazzy/include/pluginlib/pluginlib/class_list_macros.hpp:40[m[K,
+                 from [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:58[m[K:
+/opt/ros/jazzy/include/class_loader/class_loader/meta_object.hpp: In instantiation of ‘[01m[KB* class_loader::impl::MetaObject<C, B>::[01;32m[Kcreate[m[K() const [35m[K[with C = leg_controller_ns::LegController; B = controller_interface::ControllerInterface][m[K[m[K’:
+[01m[K/opt/ros/jazzy/include/class_loader/class_loader/meta_object.hpp:216:7:[m[K   required from here
+[01m[K/opt/ros/jazzy/include/class_loader/class_loader/meta_object.hpp:218:12:[m[K [01;31m[Kerror: [m[Kinvalid new-expression of abstract class type ‘[01m[Kleg_controller_ns::LegController[m[K’
+  218 |     return [01;31m[Knew C[m[K;
+      |            [01;31m[K^~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:12:7:[m[K [01;36m[Knote: [m[K  because the following virtual functions are pure within ‘[01m[Kleg_controller_ns::LegController[m[K’:
+   12 | class [01;36m[KLegController[m[K : public controller_interface::ControllerInterface
+      |       [01;36m[K^~~~~~~~~~~~~[m[K
+[01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface_base.hpp:142:26:[m[K [01;36m[Knote: [m[K    ‘[01m[Kvirtual rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn controller_interface::ControllerInterfaceBase::[01;32m[Kon_init[m[K()[m[K’
+  142 |   virtual CallbackReturn [01;36m[Kon_init[m[K() = 0;
+      |                          [01;36m[K^~~~~~~[m[K
+[01m[K/opt/ros/jazzy/include/controller_interface/controller_interface/controller_interface_base.hpp:154:23:[m[K [01;36m[Knote: [m[K    ‘[01m[Kvirtual controller_interface::return_type controller_interface::ControllerInterfaceBase::[01;32m[Kupdate[m[K(const rclcpp::Time&, const rclcpp::Duration&)[m[K’
+  154 |   virtual return_type [01;36m[Kupdate[m[K(const rclcpp::Time & time, const rclcpp::Duration & period) = 0;
+      |                       [01;36m[K^~~~~~[m[K
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:76: CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:90: CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:104: CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

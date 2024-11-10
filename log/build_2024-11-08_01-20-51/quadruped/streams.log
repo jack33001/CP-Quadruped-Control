@@ -1,0 +1,437 @@
+[0.009s] Invoking command in '/home/ws/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20
+[0.058s] -- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.078s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.149s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.155s] -- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.174s] -- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.181s] -- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.188s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.198s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.243s] -- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.244s] -- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.310s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.364s] -- Found hardware_interface: 4.18.0 (/opt/ros/jazzy/share/hardware_interface/cmake)
+[0.524s] -- Found controller_manager: 4.18.0 (/opt/ros/jazzy/share/controller_manager/cmake)
+[0.574s] -- Found ros2_control: 4.18.0 (/opt/ros/jazzy/share/ros2_control/cmake)
+[0.574s] -- Found ros_gz_sim: 1.0.5 (/opt/ros/jazzy/share/ros_gz_sim/cmake)
+[0.576s] -- Looking for gz-sim8 -- found version 8.6.0
+[0.580s] -- Searching for dependencies of gz-sim8
+[0.580s] -- Looking for sdformat14 -- found version 14.5.0
+[0.580s] -- Searching for dependencies of sdformat14
+[0.586s] -- Checking for module 'tinyxml2'
+[0.606s] --   Found tinyxml2, version 10.0.0
+[0.673s] -- Looking for gz-math7 -- found version 7.5.0
+[0.673s] -- Searching for dependencies of gz-math7
+[0.674s] -- Looking for gz-utils2 -- found version 2.2.0
+[0.675s] -- Searching for dependencies of gz-utils2
+[0.679s] -- Looking for gz-utils2 -- found version 2.2.0
+[0.679s] -- Searching for dependencies of gz-utils2
+[0.680s] -- Searching for <gz-utils2> component [cli]
+[0.680s] -- Looking for gz-utils2-cli -- found version 2.2.0
+[0.680s] -- Searching for dependencies of gz-utils2-cli
+[0.683s] -- Looking for gz-plugin2 -- found version 2.0.3
+[0.683s] -- Searching for dependencies of gz-plugin2
+[0.684s] -- Looking for gz-utils2 -- found version 2.2.0
+[0.685s] -- Searching for <gz-plugin2> component [loader]
+[0.686s] -- Looking for gz-plugin2-loader -- found version 2.0.3
+[0.686s] -- Searching for dependencies of gz-plugin2-loader
+[0.686s] -- Searching for <gz-plugin2> component [register]
+[0.687s] -- Looking for gz-plugin2-register -- found version 2.0.3
+[0.687s] -- Searching for dependencies of gz-plugin2-register
+[0.688s] -- Looking for gz-transport13 -- found version 13.4.0
+[0.688s] -- Searching for dependencies of gz-transport13
+[0.721s] -- Config-file not installed for ZeroMQ -- checking for pkg-config
+[0.725s] -- Checking for module 'libzmq >= 4'
+[0.756s] --   Found libzmq, version 4.3.5
+[0.912s] -- Checking for module 'uuid'
+[0.953s] --   Found uuid, version 2.39.3
+[1.048s] -- Looking for gz-utils2 -- found version 2.2.0
+[1.049s] -- Looking for gz-msgs10 -- found version 10.3.0
+[1.049s] -- Searching for dependencies of gz-msgs10
+[1.075s] -- Looking for gz-utils2 -- found version 2.2.0
+[1.076s] -- Looking for gz-math7 -- found version 7.5.0
+[1.115s] -- Searching for <gz-transport13> component [log]
+[1.115s] -- Looking for gz-transport13-log -- found version 13.4.0
+[1.115s] -- Searching for dependencies of gz-transport13-log
+[1.116s] -- Searching for <gz-transport13> component [parameters]
+[1.116s] -- Looking for gz-transport13-parameters -- found version 13.4.0
+[1.116s] -- Searching for dependencies of gz-transport13-parameters
+[1.117s] -- Looking for gz-msgs10 -- found version 10.3.0
+[1.117s] -- Looking for gz-common5 -- found version 5.6.0
+[1.117s] -- Searching for dependencies of gz-common5
+[1.118s] -- Looking for gz-utils2 -- found version 2.2.0
+[1.118s] -- Looking for dlfcn.h - found
+[1.118s] -- Looking for libdl - found
+[1.133s] -- Searching for <gz-common5> component [av]
+[1.133s] -- Looking for gz-common5-av -- found version 5.6.0
+[1.133s] -- Searching for dependencies of gz-common5-av
+[1.142s] -- Checking for module 'libswscale'
+[1.168s] --   Found libswscale, version 7.5.100
+[1.233s] -- Checking for module 'libavdevice >= 56.4.100'
+[1.262s] --   Found libavdevice, version 60.3.100
+[1.327s] -- Checking for module 'libavformat'
+[1.352s] --   Found libavformat, version 60.16.100
+[1.421s] -- Checking for module 'libavcodec'
+[1.457s] --   Found libavcodec, version 60.31.102
+[1.534s] -- Checking for module 'libavutil'
+[1.562s] --   Found libavutil, version 58.29.100
+[1.623s] -- Searching for <gz-common5> component [events]
+[1.623s] -- Looking for gz-common5-events -- found version 5.6.0
+[1.624s] -- Searching for dependencies of gz-common5-events
+[1.625s] -- Looking for gz-math7 -- found version 7.5.0
+[1.626s] -- Searching for <gz-common5> component [graphics]
+[1.627s] -- Looking for gz-common5-graphics -- found version 5.6.0
+[1.627s] -- Searching for dependencies of gz-common5-graphics
+[1.628s] -- Looking for gz-math7 -- found version 7.5.0
+[1.632s] -- Searching for <gz-common5> component [io]
+[1.633s] -- Looking for gz-common5-io -- found version 5.6.0
+[1.633s] -- Searching for dependencies of gz-common5-io
+[1.634s] -- Searching for <gz-common5> component [profiler]
+[1.634s] -- Looking for gz-common5-profiler -- found version 5.6.0
+[1.634s] -- Searching for dependencies of gz-common5-profiler
+[1.636s] -- Looking for gz-fuel_tools9 -- found version 9.1.0
+[1.636s] -- Searching for dependencies of gz-fuel_tools9
+[1.690s] -- Checking for module 'jsoncpp'
+[1.715s] --   Found jsoncpp, version 1.9.5
+[1.803s] -- Checking for module 'yaml-0.1'
+[1.836s] --   Found yaml-0.1, version 0.2.5
+[1.909s] -- Checking for module 'libzip'
+[1.945s] --   Found libzip, version 1.7.3
+[2.003s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.004s] -- Looking for gz-common5 -- found version 5.6.0
+[2.004s] -- Searching for dependencies of gz-common5
+[2.005s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.005s] -- Looking for dlfcn.h - found
+[2.005s] -- Looking for libdl - found
+[2.018s] -- Searching for <gz-common5> component [testing]
+[2.018s] -- Looking for gz-common5-testing -- found version 5.6.0
+[2.019s] -- Searching for dependencies of gz-common5-testing
+[2.020s] -- Looking for gz-math7 -- found version 7.5.0
+[2.021s] -- Looking for gz-msgs10 -- found version 10.3.0
+[2.024s] -- Looking for gz-gui8 -- found version 8.3.0
+[2.024s] -- Searching for dependencies of gz-gui8
+[2.050s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.051s] -- Looking for gz-math7 -- found version 7.5.0
+[2.051s] -- Looking for gz-common5 -- found version 5.6.0
+[2.052s] -- Looking for gz-plugin2 -- found version 2.0.3
+[2.052s] -- Looking for gz-transport13 -- found version 13.4.0
+[2.053s] -- Looking for gz-rendering8 -- found version 8.2.0
+[2.053s] -- Searching for dependencies of gz-rendering8
+[2.053s] -- Looking for gz-math7 -- found version 7.5.0
+[2.054s] -- Searching for dependencies of gz-math7
+[2.054s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.054s] -- Searching for <gz-math7> component [eigen3]
+[2.055s] -- Looking for gz-math7-eigen3 -- found version 7.5.0
+[2.055s] -- Searching for dependencies of gz-math7-eigen3
+[2.058s] -- Looking for gz-common5 -- found version 5.6.0
+[2.058s] -- Searching for dependencies of gz-common5
+[2.059s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.059s] -- Looking for dlfcn.h - found
+[2.060s] -- Looking for libdl - found
+[2.076s] -- Searching for <gz-common5> component [graphics]
+[2.076s] -- Searching for <gz-common5> component [events]
+[2.076s] -- Searching for <gz-common5> component [geospatial]
+[2.077s] -- Looking for gz-common5-geospatial -- found version 5.6.0
+[2.077s] -- Searching for dependencies of gz-common5-geospatial
+[2.078s] -- Looking for gz-math7 -- found version 7.5.0
+[2.079s] -- Looking for gz-common5 -- found version 5.6.0
+[2.080s] -- Looking for gz-plugin2 -- found version 2.0.3
+[2.081s] -- Searching for dependencies of gz-plugin2
+[2.081s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.081s] -- Searching for <gz-plugin2> component [all]
+[2.082s] -- Looking for all libraries of gz-plugin2 -- found version 2.0.3
+[2.083s] -- Looking for gz-plugin2 -- found version 2.0.3
+[2.085s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.090s] -- Looking for gz-msgs10 -- found version 10.3.0
+[2.102s] -- Looking for gz-physics7 -- found version 7.3.0
+[2.102s] -- Searching for dependencies of gz-physics7
+[2.102s] -- Looking for gz-common5 -- found version 5.6.0
+[2.103s] -- Looking for gz-math7 -- found version 7.5.0
+[2.103s] -- Looking for gz-plugin2 -- found version 2.0.3
+[2.103s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.104s] -- Searching for <gz-physics7> component [heightmap]
+[2.104s] -- Looking for gz-physics7-heightmap -- found version 7.3.0
+[2.105s] -- Searching for dependencies of gz-physics7-heightmap
+[2.105s] -- Looking for gz-common5 -- found version 5.6.0
+[2.105s] -- Searching for <gz-physics7> component [mesh]
+[2.105s] -- Looking for gz-physics7-mesh -- found version 7.3.0
+[2.105s] -- Searching for dependencies of gz-physics7-mesh
+[2.106s] -- Looking for gz-common5 -- found version 5.6.0
+[2.106s] -- Searching for <gz-physics7> component [sdf]
+[2.106s] -- Looking for gz-physics7-sdf -- found version 7.3.0
+[2.106s] -- Searching for dependencies of gz-physics7-sdf
+[2.107s] -- Looking for sdformat14 -- found version 14.5.0
+[2.107s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.108s] -- Searching for dependencies of gz-sensors8
+[2.126s] -- Looking for gz-math7 -- found version 7.5.0
+[2.126s] -- Looking for gz-common5 -- found version 5.6.0
+[2.127s] -- Looking for gz-transport13 -- found version 13.4.0
+[2.127s] -- Looking for gz-rendering8 -- found version 8.2.0
+[2.127s] -- Looking for gz-msgs10 -- found version 10.3.0
+[2.128s] -- Looking for sdformat14 -- found version 14.5.0
+[2.128s] -- Searching for <gz-sensors8> component [air_pressure]
+[2.128s] -- Looking for gz-sensors8-air_pressure -- found version 8.2.0
+[2.129s] -- Searching for dependencies of gz-sensors8-air_pressure
+[2.129s] -- Searching for <gz-sensors8> component [air_speed]
+[2.129s] -- Looking for gz-sensors8-air_speed -- found version 8.2.0
+[2.129s] -- Searching for dependencies of gz-sensors8-air_speed
+[2.130s] -- Searching for <gz-sensors8> component [altimeter]
+[2.130s] -- Looking for gz-sensors8-altimeter -- found version 8.2.0
+[2.131s] -- Searching for dependencies of gz-sensors8-altimeter
+[2.131s] -- Searching for <gz-sensors8> component [imu]
+[2.131s] -- Looking for gz-sensors8-imu -- found version 8.2.0
+[2.132s] -- Searching for dependencies of gz-sensors8-imu
+[2.132s] -- Searching for <gz-sensors8> component [force_torque]
+[2.132s] -- Looking for gz-sensors8-force_torque -- found version 8.2.0
+[2.132s] -- Searching for dependencies of gz-sensors8-force_torque
+[2.133s] -- Searching for <gz-sensors8> component [logical_camera]
+[2.133s] -- Looking for gz-sensors8-logical_camera -- found version 8.2.0
+[2.133s] -- Searching for dependencies of gz-sensors8-logical_camera
+[2.134s] -- Searching for <gz-sensors8> component [magnetometer]
+[2.134s] -- Looking for gz-sensors8-magnetometer -- found version 8.2.0
+[2.134s] -- Searching for dependencies of gz-sensors8-magnetometer
+[2.135s] -- Searching for <gz-sensors8> component [navsat]
+[2.135s] -- Looking for gz-sensors8-navsat -- found version 8.2.0
+[2.135s] -- Searching for dependencies of gz-sensors8-navsat
+[2.136s] -- Searching for <gz-sensors8> component [dvl]
+[2.136s] -- Looking for gz-sensors8-dvl -- found version 8.2.0
+[2.136s] -- Searching for dependencies of gz-sensors8-dvl
+[2.137s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.137s] -- Searching for dependencies of gz-sensors8
+[2.157s] -- Looking for gz-math7 -- found version 7.5.0
+[2.157s] -- Looking for gz-common5 -- found version 5.6.0
+[2.157s] -- Looking for gz-transport13 -- found version 13.4.0
+[2.158s] -- Looking for gz-rendering8 -- found version 8.2.0
+[2.158s] -- Looking for gz-msgs10 -- found version 10.3.0
+[2.158s] -- Looking for sdformat14 -- found version 14.5.0
+[2.158s] -- Searching for <gz-sensors8> component [rendering]
+[2.159s] -- Looking for gz-sensors8-rendering -- found version 8.2.0
+[2.159s] -- Searching for dependencies of gz-sensors8-rendering
+[2.160s] -- Searching for <gz-sensors8> component [rendering]
+[2.160s] -- Searching for <gz-sensors8> component [lidar]
+[2.161s] -- Looking for gz-sensors8-lidar -- found version 8.2.0
+[2.161s] -- Searching for dependencies of gz-sensors8-lidar
+[2.161s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.162s] -- Searching for <gz-sensors8> component [gpu_lidar]
+[2.162s] -- Looking for gz-sensors8-gpu_lidar -- found version 8.2.0
+[2.162s] -- Searching for dependencies of gz-sensors8-gpu_lidar
+[2.162s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.163s] -- Searching for <gz-sensors8> component [camera]
+[2.163s] -- Looking for gz-sensors8-camera -- found version 8.2.0
+[2.163s] -- Searching for dependencies of gz-sensors8-camera
+[2.164s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.164s] -- Searching for <gz-sensors8> component [boundingbox_camera]
+[2.164s] -- Looking for gz-sensors8-boundingbox_camera -- found version 8.2.0
+[2.164s] -- Searching for dependencies of gz-sensors8-boundingbox_camera
+[2.165s] -- Searching for <gz-sensors8> component [segmentation_camera]
+[2.165s] -- Looking for gz-sensors8-segmentation_camera -- found version 8.2.0
+[2.165s] -- Searching for dependencies of gz-sensors8-segmentation_camera
+[2.166s] -- Searching for <gz-sensors8> component [depth_camera]
+[2.166s] -- Looking for gz-sensors8-depth_camera -- found version 8.2.0
+[2.166s] -- Searching for dependencies of gz-sensors8-depth_camera
+[2.167s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.167s] -- Searching for <gz-sensors8> component [rgbd_camera]
+[2.167s] -- Looking for gz-sensors8-rgbd_camera -- found version 8.2.0
+[2.168s] -- Searching for dependencies of gz-sensors8-rgbd_camera
+[2.168s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.168s] -- Searching for <gz-sensors8> component [thermal_camera]
+[2.169s] -- Looking for gz-sensors8-thermal_camera -- found version 8.2.0
+[2.169s] -- Searching for dependencies of gz-sensors8-thermal_camera
+[2.169s] -- Looking for gz-sensors8 -- found version 8.2.0
+[2.170s] -- Searching for <gz-sensors8> component [wide_angle_camera]
+[2.170s] -- Looking for gz-sensors8-wide_angle_camera -- found version 8.2.0
+[2.170s] -- Searching for dependencies of gz-sensors8-wide_angle_camera
+[2.171s] -- Looking for gz-rendering8 -- found version 8.2.0
+[2.171s] -- Looking for gz-math7 -- found version 7.5.0
+[2.172s] -- Looking for gz-utils2 -- found version 2.2.0
+[2.191s] -- Looking for gz-plugin2 -- found version 2.0.3
+[2.191s] -- Found rosidl_default_generators: 1.6.0 (/opt/ros/jazzy/share/rosidl_default_generators/cmake)
+[2.199s] -- Found rosidl_adapter: 4.6.4 (/opt/ros/jazzy/share/rosidl_adapter/cmake)
+[2.201s] -- Found rclcpp_components: 28.1.5 (/opt/ros/jazzy/share/rclcpp_components/cmake)
+[2.223s] -- pinocchio FOUND. pinocchio at /opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so
+[2.223s] -- boost_filesystem FOUND. boost_filesystem at /lib/x86_64-linux-gnu/libboost_filesystem.so
+[2.224s] -- boost_serialization FOUND. boost_serialization at /lib/x86_64-linux-gnu/libboost_serialization.so
+[2.224s] -- boost_system FOUND. boost_system at /lib/x86_64-linux-gnu/libboost_system.so
+[2.231s] -- Found Boost: /usr/include (found version "1.83.0") found components: filesystem serialization system 
+[2.232s] -- eigenpy FOUND. eigenpy at /opt/ros/jazzy/lib/x86_64-linux-gnu/libeigenpy.so
+[2.268s] -- Checking for NumPy
+[2.437s] --   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include
+[2.514s] --   NUMPY_VERSION=1.26.4
+[2.713s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development.Module NumPy 
+[2.714s] -- PythonLibraryDirs: 
+[2.714s] -- PythonLibVersionString: 3.12.3
+[2.743s] -- Python site lib: lib/python3.12/dist-packages
+[2.743s] -- Python include dirs: /usr/include/python3.12
+[2.786s] -- Checking for NumPy
+[2.863s] --   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include
+[2.944s] --   NUMPY_VERSION=1.26.4
+[2.944s] -- NumPy include dir: /usr/lib/python3/dist-packages/numpy/core/include
+[2.949s] -- Found Boost: /usr/include (found version "1.83.0") found components: python312 
+[2.949s] -- Boost_PYTHON_LIBRARY: /usr/lib/x86_64-linux-gnu/libboost_python312.so
+[3.245s] -- Default C++ standard: 201703
+[3.245s] -- C++ standard sufficient: Minimal required 14, currently defined: 17
+[3.245s] -- CMAKE_CXX_STANDARD was not set: automatically set to currently defined standard 17
+[3.246s] -- C++ standard sufficient: Minimal required 14, currently defined: 17
+[3.268s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[3.442s] -- Found ament_cmake_ros: 0.12.0 (/opt/ros/jazzy/share/ament_cmake_ros/cmake)
+[3.592s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[3.677s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[3.678s] -- Found python_cmake_module: 0.11.1 (/opt/ros/jazzy/share/python_cmake_module/cmake)
+[3.982s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development NumPy Development.Module Development.Embed 
+[4.001s] -- Configuring done (4.0s)
+[4.045s] -- Generating done (0.0s)
+[4.048s] -- Build files have been written to: /home/ws/build/quadruped
+[4.095s] [  2%] Built target quadruped__rosidl_generator_type_description
+[4.106s] [  2%] Built target ament_cmake_python_symlink_quadruped
+[4.116s] [  5%] Built target quadruped__cpp
+[4.118s] [ 17%] Built target quadruped__rosidl_generator_c
+[4.155s] [ 30%] Built target quadruped_lib
+[4.168s] [ 38%] Built target quadruped__rosidl_typesupport_introspection_c
+[4.174s] [ 46%] Built target quadruped__rosidl_typesupport_cpp
+[4.175s] [ 53%] Built target quadruped__rosidl_typesupport_introspection_cpp
+[4.179s] [ 61%] Built target quadruped__rosidl_typesupport_c
+[4.179s] [ 69%] Built target quadruped__rosidl_typesupport_fastrtps_c
+[4.180s] [ 76%] Built target quadruped__rosidl_typesupport_fastrtps_cpp
+[4.202s] [ 76%] Built target quadruped
+[4.225s] [ 79%] Built target quadruped__py
+[4.253s] [ 84%] Built target quadruped__rosidl_generator_py
+[4.278s] [ 89%] Built target quadruped_s__rosidl_typesupport_fastrtps_c
+[4.281s] running egg_info
+[4.283s] [100%] Built target quadruped_s__rosidl_typesupport_introspection_c
+[4.283s] [100%] Built target quadruped_s__rosidl_typesupport_c
+[4.291s] writing quadruped.egg-info/PKG-INFO
+[4.291s] writing dependency_links to quadruped.egg-info/dependency_links.txt
+[4.291s] writing top-level names to quadruped.egg-info/top_level.txt
+[4.317s] reading manifest file 'quadruped.egg-info/SOURCES.txt'
+[4.317s] writing manifest file 'quadruped.egg-info/SOURCES.txt'
+[4.343s] [100%] Built target ament_cmake_python_build_quadruped_egg
+[4.356s] Invoked command in '/home/ws/build/quadruped' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20
+[4.559s] Invoking command in '/home/ws/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped
+[4.574s] -- Install configuration: ""
+[4.575s] -- Execute custom install script
+[4.575s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/rosidl_interfaces/quadruped
+[4.576s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/msg/LegCommand.json
+[4.576s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__functions.h
+[4.576s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.h
+[4.576s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.h
+[4.576s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.h
+[4.577s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_c__visibility_control.h
+[4.577s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/library_path.sh
+[4.577s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/library_path.dsv
+[4.577s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_c.h
+[4.577s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[4.578s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__builder.hpp
+[4.578s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.hpp
+[4.578s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__traits.hpp
+[4.578s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.hpp
+[4.578s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.hpp
+[4.578s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_cpp__visibility_control.hpp
+[4.579s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_cpp.hpp
+[4.579s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[4.579s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_c.h
+[4.580s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[4.580s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_cpp.hpp
+[4.580s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/pythonpath.sh
+[4.580s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/pythonpath.dsv
+[4.581s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/PKG-INFO
+[4.581s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/SOURCES.txt
+[4.581s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/dependency_links.txt
+[4.581s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/top_level.txt
+[4.582s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/__init__.py
+[4.582s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_c.c
+[4.582s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_fastrtps_c.c
+[4.582s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_introspection_c.c
+[4.582s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/__init__.py
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command.py
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command_s.c
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so
+[4.583s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/msg/LegCommand.idl
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/balance_controller.hpp
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/foot_trajectory_generator.hpp
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/leg_controller.hpp
+[4.584s] -- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/state_estimator.hpp
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/LegController.py
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/GaitPatternGenerator.py
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/leg_class.py
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/gait_pattern_class.py
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/launch/controllers.launch.py
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/launch/gazebo_sim.launch.py
+[4.585s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/initial_joint_positions.yaml
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/quadruped.rviz
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/quadruped_controllers.yaml
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/Quadruped MJB.mjb
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/QuadrupedURDF.urdf.xacro
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Body.STL
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Body_bin.STL
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Shin.STL
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Thigh.STL
+[4.586s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Shin.STL
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Thigh.STL
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Shin.STL
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Thigh.STL
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Shin.STL
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Thigh.STL
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/mjb_maker.py
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/RobotState.msg
+[4.587s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped//plugin_description.xml
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/package_run_dependencies/quadruped
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/parent_prefix_path/quadruped
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.sh
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.dsv
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/path.sh
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/path.dsv
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.bash
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.sh
+[4.588s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.zsh
+[4.589s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.dsv
+[4.589s] -- Symlinking: /home/ws/install/quadruped/share/quadruped/package.dsv
+[4.594s] -- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/packages/quadruped
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_include_directories-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_libraries-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_targets-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_dependencies-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig.cmake
+[4.595s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig-version.cmake
+[4.596s] -- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/package.xml
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_c.so
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_fastrtps_c.so
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_fastrtps_cpp.so
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_c.so
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_c.so
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_cpp.so
+[4.596s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_cpp.so
+[4.625s] Listing '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped'...
+[4.625s] Compiling '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/__init__.py'...
+[4.625s] Listing '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg'...
+[4.630s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_py.so
+[4.630s] -- Up-to-date: /home/ws/install/quadruped/lib/libquadruped_lib.so
+[4.630s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport.cmake
+[4.630s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport-noconfig.cmake
+[4.630s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport.cmake
+[4.630s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cppExport.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cppExport.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cExport.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cExport.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cExport-noconfig.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cppExport.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport.cmake
+[4.631s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport-noconfig.cmake
+[4.632s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport.cmake
+[4.632s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport-noconfig.cmake
+[4.632s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped_targetsExport.cmake
+[4.632s] -- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped_targetsExport-noconfig.cmake
+[4.633s] Invoked command in '/home/ws/build/quadruped' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped

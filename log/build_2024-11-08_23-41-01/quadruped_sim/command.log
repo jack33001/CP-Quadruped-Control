@@ -1,0 +1,2 @@
+Invoking command in '/home/ws/build/quadruped_sim': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ws/src/quadruped_sim -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped_sim
+Invoked command in '/home/ws/build/quadruped_sim' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ws/src/quadruped_sim -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped_sim

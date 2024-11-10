@@ -41,13 +41,16 @@
 /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so
 /home/ws/install/quadruped/share/quadruped/msg/LegCommand.idl
 /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
+/home/ws/install/quadruped/include/quadruped/balance_controller.hpp
+/home/ws/install/quadruped/include/quadruped/foot_trajectory_generator.hpp
+/home/ws/install/quadruped/include/quadruped/leg_controller.hpp
+/home/ws/install/quadruped/include/quadruped/state_estimator.hpp
 /home/ws/install/quadruped/lib/quadruped/LegController.py
 /home/ws/install/quadruped/lib/quadruped/GaitPatternGenerator.py
 /home/ws/install/quadruped/lib/quadruped/leg_class.py
 /home/ws/install/quadruped/lib/quadruped/gait_pattern_class.py
 /home/ws/install/quadruped/share/quadruped/launch/controllers.launch.py
 /home/ws/install/quadruped/share/quadruped/launch/gazebo_sim.launch.py
-/home/ws/install/quadruped/share/quadruped/config/bridge.yaml
 /home/ws/install/quadruped/share/quadruped/config/initial_joint_positions.yaml
 /home/ws/install/quadruped/share/quadruped/config/quadruped.rviz
 /home/ws/install/quadruped/share/quadruped/config/quadruped_controllers.yaml
@@ -66,6 +69,8 @@
 /home/ws/install/quadruped/share/quadruped/urdf/mjb_maker.py
 /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg
 /home/ws/install/quadruped/share/quadruped/messages/RobotState.msg
+/home/ws/install/quadruped/share/quadruped//plugin_description.xml
+/home/ws/install/quadruped/share/quadruped//plugin_description.xml
 /home/ws/install/quadruped/share/ament_index/resource_index/package_run_dependencies/quadruped
 /home/ws/install/quadruped/share/ament_index/resource_index/parent_prefix_path/quadruped
 /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.sh
@@ -78,6 +83,7 @@
 /home/ws/install/quadruped/share/quadruped/local_setup.dsv
 /home/ws/install/quadruped/share/quadruped/package.dsv
 /home/ws/install/quadruped/share/ament_index/resource_index/packages/quadruped
+/home/ws/install/quadruped/share/ament_index/resource_index/controller_interface__pluginlib__plugin/quadruped
 /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake-extras.cmake
 /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_include_directories-extras.cmake
 /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_libraries-extras.cmake

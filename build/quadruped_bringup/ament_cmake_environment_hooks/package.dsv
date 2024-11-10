@@ -1,0 +1,4 @@
+source;share/quadruped_bringup/local_setup.bash
+source;share/quadruped_bringup/local_setup.dsv
+source;share/quadruped_bringup/local_setup.sh
+source;share/quadruped_bringup/local_setup.zsh

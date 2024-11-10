@@ -41,7 +41,6 @@ CMakeFiles/quadruped__rosidl_generator_c.dir/rosidl_generator_c/quadruped/msg/de
  /opt/ros/jazzy/include/rcutils/rcutils/visibility_control_macros.h \
  /opt/ros/jazzy/include/rcutils/rcutils/sha256.h \
  /opt/ros/jazzy/include/rosidl_runtime_c/rosidl_runtime_c/visibility_control.h \
- /home/ws/build/quadruped/rosidl_generator_c/quadruped/msg/detail/leg_command__struct.h \
  /home/ws/build/quadruped/rosidl_generator_c/quadruped/msg/detail/leg_command__functions.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -70,4 +69,5 @@ CMakeFiles/quadruped__rosidl_generator_c.dir/rosidl_generator_c/quadruped/msg/de
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /opt/ros/jazzy/include/rosidl_runtime_c/rosidl_runtime_c/action_type_support_struct.h \
- /opt/ros/jazzy/include/rosidl_runtime_c/rosidl_runtime_c/service_type_support_struct.h
+ /opt/ros/jazzy/include/rosidl_runtime_c/rosidl_runtime_c/service_type_support_struct.h \
+ /home/ws/build/quadruped/rosidl_generator_c/quadruped/msg/detail/leg_command__struct.h

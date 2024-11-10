@@ -1,0 +1,29 @@
+-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found ament_lint_auto: 0.17.1 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Configured 'flake8' exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done (0.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/ws/build/quadruped_sim
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/launch/gazebo_sim.launch.py
+-- Symlinking: /home/ws/install/quadruped_sim/share/ament_index/resource_index/package_run_dependencies/quadruped_sim
+-- Symlinking: /home/ws/install/quadruped_sim/share/ament_index/resource_index/parent_prefix_path/quadruped_sim
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/ament_prefix_path.sh
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/ament_prefix_path.dsv
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/path.sh
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/environment/path.dsv
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.bash
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.sh
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.zsh
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.dsv
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/package.dsv
+-- Symlinking: /home/ws/install/quadruped_sim/share/ament_index/resource_index/packages/quadruped_sim
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/cmake/quadruped_simConfig.cmake
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/cmake/quadruped_simConfig-version.cmake
+-- Symlinking: /home/ws/install/quadruped_sim/share/quadruped_sim/package.xml

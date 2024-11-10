@@ -1,0 +1,2 @@
+/usr/bin/ar qc libquadruped_mpc_lib.a CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.o CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.o CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.o
+/usr/bin/ranlib libquadruped_mpc_lib.a

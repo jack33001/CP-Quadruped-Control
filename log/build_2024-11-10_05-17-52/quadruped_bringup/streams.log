@@ -1,0 +1,48 @@
+[0.052s] Invoking command in '/home/ws/build/quadruped_bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake /home/ws/src/quadruped_bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped_bringup
+[0.223s] -- The C compiler identification is GNU 13.2.0
+[0.358s] -- The CXX compiler identification is GNU 13.2.0
+[0.390s] -- Detecting C compiler ABI info
+[0.687s] -- Detecting C compiler ABI info - done
+[0.724s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.724s] -- Detecting C compile features
+[0.726s] -- Detecting C compile features - done
+[0.757s] -- Detecting CXX compiler ABI info
+[1.016s] -- Detecting CXX compiler ABI info - done
+[1.051s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.052s] -- Detecting CXX compile features
+[1.054s] -- Detecting CXX compile features - done
+[1.072s] -- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[1.472s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.614s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.704s] -- Found ament_lint_auto: 0.17.1 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[1.903s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.903s] -- Configured 'flake8' exclude dirs and/or files: 
+[1.904s] -- Added test 'lint_cmake' to check CMake code style
+[1.905s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.906s] -- Added test 'xmllint' to check XML markup files
+[1.909s] -- Configuring done (1.8s)
+[1.912s] -- Generating done (0.0s)
+[1.913s] -- Build files have been written to: /home/ws/build/quadruped_bringup
+[1.921s] Invoked command in '/home/ws/build/quadruped_bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake /home/ws/src/quadruped_bringup -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped_bringup
+[1.922s] Invoking command in '/home/ws/build/quadruped_bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_bringup -- -j20 -l20
+[2.004s] Invoked command in '/home/ws/build/quadruped_bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_bringup -- -j20 -l20
+[2.050s] Invoking command in '/home/ws/build/quadruped_bringup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_bringup
+[2.072s] -- Install configuration: ""
+[2.073s] -- Execute custom install script
+[2.074s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/launch/sim.launch.py
+[2.098s] -- Symlinking: /home/ws/install/quadruped_bringup/share/ament_index/resource_index/package_run_dependencies/quadruped_bringup
+[2.118s] -- Symlinking: /home/ws/install/quadruped_bringup/share/ament_index/resource_index/parent_prefix_path/quadruped_bringup
+[2.144s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/environment/ament_prefix_path.sh
+[2.160s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/environment/ament_prefix_path.dsv
+[2.178s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/environment/path.sh
+[2.199s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/environment/path.dsv
+[2.217s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/local_setup.bash
+[2.254s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/local_setup.sh
+[2.277s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/local_setup.zsh
+[2.299s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/local_setup.dsv
+[2.318s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/package.dsv
+[2.347s] -- Symlinking: /home/ws/install/quadruped_bringup/share/ament_index/resource_index/packages/quadruped_bringup
+[2.374s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/cmake/quadruped_bringupConfig.cmake
+[2.393s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/cmake/quadruped_bringupConfig-version.cmake
+[2.414s] -- Symlinking: /home/ws/install/quadruped_bringup/share/quadruped_bringup/package.xml
+[2.442s] Invoked command in '/home/ws/build/quadruped_bringup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_bringup

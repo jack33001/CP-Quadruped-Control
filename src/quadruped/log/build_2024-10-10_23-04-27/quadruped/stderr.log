@@ -1,8 +1,0 @@
-[31mCMake Error at /opt/ros/jazzy/share/pluginlib/cmake/pluginlib_export_plugin_description_file.cmake:84 (message):
-  Given plugin description file
-  '/home/ws/src/quadruped/QuadrupedHardwareInterface.xml' does not exist
-Call Stack (most recent call first):
-  CMakeLists.txt:98 (pluginlib_export_plugin_description_file)
-
-[0m
-gmake: *** [Makefile:267: cmake_check_build_system] Error 1

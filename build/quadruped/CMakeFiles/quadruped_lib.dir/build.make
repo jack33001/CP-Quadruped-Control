@@ -143,6 +143,10 @@ libquadruped_lib.so: CMakeFiles/quadruped_lib.dir/build.make
 libquadruped_lib.so: /opt/ros/jazzy/lib/libcontroller_manager.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libgzserver_component.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libros_gz_sim.so
+libquadruped_lib.so: /opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so
+libquadruped_lib.so: /lib/x86_64-linux-gnu/libboost_filesystem.so
+libquadruped_lib.so: /lib/x86_64-linux-gnu/libboost_serialization.so
+libquadruped_lib.so: /lib/x86_64-linux-gnu/libboost_system.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libcontroller_interface.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libmock_components.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libhardware_interface.so
@@ -180,9 +184,9 @@ libquadruped_lib.so: /opt/ros/jazzy/lib/libgeometry_msgs__rosidl_typesupport_c.s
 libquadruped_lib.so: /opt/ros/jazzy/lib/libgeometry_msgs__rosidl_generator_c.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/liburdf.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/x86_64-linux-gnu/liburdfdom_model.so.4.0
-libquadruped_lib.so: /usr/lib/x86_64-linux-gnu/libtinyxml2.so.10.0.0
 libquadruped_lib.so: /opt/ros/jazzy/lib/librclcpp_lifecycle.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/librcl_lifecycle.so
+libquadruped_lib.so: /usr/lib/x86_64-linux-gnu/libtinyxml2.so.10.0.0
 libquadruped_lib.so: /opt/ros/jazzy/lib/libcontroller_manager_msgs__rosidl_typesupport_fastrtps_c.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libcontroller_manager_msgs__rosidl_typesupport_fastrtps_cpp.so
 libquadruped_lib.so: /opt/ros/jazzy/lib/libcontroller_manager_msgs__rosidl_typesupport_introspection_c.so

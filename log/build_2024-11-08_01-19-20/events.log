@@ -1,0 +1,346 @@
+[0.000000] (-) TimerEvent: {}
+[0.000364] (quadruped) JobQueued: {'identifier': 'quadruped', 'dependencies': OrderedDict()}
+[0.000608] (quadruped) JobStarted: {'identifier': 'quadruped'}
+[0.007672] (quadruped) JobProgress: {'identifier': 'quadruped', 'progress': 'cmake'}
+[0.008455] (quadruped) Command: {'cmd': ['/usr/bin/cmake', '/home/ws/src/quadruped', '-DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped'], 'cwd': '/home/ws/build/quadruped', 'env': OrderedDict({'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/home/ws/install/quadruped/lib:/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'OLDPWD': '/home/ws/src/quadruped', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-f1f8692f-b90c-45d8-a959-b58dc0e3f1c8.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'COLCON_PREFIX_PATH': '/home/ws/install', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/home/ws/install/quadruped:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/home/ws/install/quadruped/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ws/install/quadruped:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}), 'shell': False}
+[0.028836] (quadruped) StdoutLine: {'line': b'-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)\n'}
+[0.068324] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[0.100001] (-) TimerEvent: {}
+[0.139029] (quadruped) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.144137] (quadruped) StdoutLine: {'line': b'-- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)\n'}
+[0.164014] (quadruped) StdoutLine: {'line': b'-- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)\n'}
+[0.170388] (quadruped) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)\n'}
+[0.178586] (quadruped) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.188147] (quadruped) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.200112] (-) TimerEvent: {}
+[0.234098] (quadruped) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)\n'}
+[0.235093] (quadruped) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.294978] (quadruped) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.300252] (-) TimerEvent: {}
+[0.351050] (quadruped) StdoutLine: {'line': b'-- Found hardware_interface: 4.18.0 (/opt/ros/jazzy/share/hardware_interface/cmake)\n'}
+[0.400497] (-) TimerEvent: {}
+[0.500786] (-) TimerEvent: {}
+[0.507288] (quadruped) StdoutLine: {'line': b'-- Found controller_manager: 4.18.0 (/opt/ros/jazzy/share/controller_manager/cmake)\n'}
+[0.555729] (quadruped) StdoutLine: {'line': b'-- Found ros2_control: 4.18.0 (/opt/ros/jazzy/share/ros2_control/cmake)\n'}
+[0.555969] (quadruped) StdoutLine: {'line': b'-- Found ros_gz_sim: 1.0.5 (/opt/ros/jazzy/share/ros_gz_sim/cmake)\n'}
+[0.557685] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sim8 -- found version 8.6.0\n'}
+[0.561904] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sim8\n'}
+[0.562289] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[0.562428] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of sdformat14\n'}
+[0.567122] (quadruped) StdoutLine: {'line': b"-- Checking for module 'tinyxml2'\n"}
+[0.584981] (quadruped) StdoutLine: {'line': b'--   Found tinyxml2, version 10.0.0\n'}
+[0.600965] (-) TimerEvent: {}
+[0.676203] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[0.677001] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-math7\n'}
+[0.678256] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[0.678730] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-utils2\n'}
+[0.683342] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[0.683883] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-utils2\n'}
+[0.684248] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-utils2> component [cli]\n'}
+[0.685490] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2-cli -- found version 2.2.0\n'}
+[0.686387] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-utils2-cli\n'}
+[0.688636] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[0.688976] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2\n'}
+[0.689427] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[0.690209] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-plugin2> component [loader]\n'}
+[0.690906] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2-loader -- found version 2.0.3\n'}
+[0.691136] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2-loader\n'}
+[0.691741] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-plugin2> component [register]\n'}
+[0.692320] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2-register -- found version 2.0.3\n'}
+[0.692542] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2-register\n'}
+[0.693815] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[0.694064] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-transport13\n'}
+[0.701090] (-) TimerEvent: {}
+[0.735239] (quadruped) StdoutLine: {'line': b'-- Config-file not installed for ZeroMQ -- checking for pkg-config\n'}
+[0.739357] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libzmq >= 4'\n"}
+[0.762311] (quadruped) StdoutLine: {'line': b'--   Found libzmq, version 4.3.5\n'}
+[0.801215] (-) TimerEvent: {}
+[0.845540] (quadruped) StdoutLine: {'line': b"-- Checking for module 'uuid'\n"}
+[0.873442] (quadruped) StdoutLine: {'line': b'--   Found uuid, version 2.39.3\n'}
+[0.901347] (-) TimerEvent: {}
+[0.932065] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[0.932883] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[0.933219] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-msgs10\n'}
+[0.957666] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[0.957936] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[0.997191] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-transport13> component [log]\n'}
+[0.997840] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13-log -- found version 13.4.0\n'}
+[0.998038] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-transport13-log\n'}
+[0.999000] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-transport13> component [parameters]\n'}
+[0.999559] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13-parameters -- found version 13.4.0\n'}
+[0.999768] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-transport13-parameters\n'}
+[1.001172] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[1.001404] (-) TimerEvent: {}
+[1.001743] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.001926] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5\n'}
+[1.002382] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.002571] (quadruped) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[1.002721] (quadruped) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[1.013975] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [av]\n'}
+[1.014694] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-av -- found version 5.6.0\n'}
+[1.015057] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-av\n'}
+[1.022150] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libswscale'\n"}
+[1.051591] (quadruped) StdoutLine: {'line': b'--   Found libswscale, version 7.5.100\n'}
+[1.101642] (-) TimerEvent: {}
+[1.114363] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavdevice >= 56.4.100'\n"}
+[1.146171] (quadruped) StdoutLine: {'line': b'--   Found libavdevice, version 60.3.100\n'}
+[1.201806] (-) TimerEvent: {}
+[1.227739] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavformat'\n"}
+[1.254091] (quadruped) StdoutLine: {'line': b'--   Found libavformat, version 60.16.100\n'}
+[1.302018] (-) TimerEvent: {}
+[1.323702] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavcodec'\n"}
+[1.355191] (quadruped) StdoutLine: {'line': b'--   Found libavcodec, version 60.31.102\n'}
+[1.402203] (-) TimerEvent: {}
+[1.420304] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavutil'\n"}
+[1.449230] (quadruped) StdoutLine: {'line': b'--   Found libavutil, version 58.29.100\n'}
+[1.502354] (-) TimerEvent: {}
+[1.503429] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [events]\n'}
+[1.504239] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-events -- found version 5.6.0\n'}
+[1.504558] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-events\n'}
+[1.505223] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.506160] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [graphics]\n'}
+[1.506664] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-graphics -- found version 5.6.0\n'}
+[1.506822] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-graphics\n'}
+[1.507332] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.510042] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [io]\n'}
+[1.510400] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-io -- found version 5.6.0\n'}
+[1.510677] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-io\n'}
+[1.511273] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [profiler]\n'}
+[1.511807] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-profiler -- found version 5.6.0\n'}
+[1.512081] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-profiler\n'}
+[1.513427] (quadruped) StdoutLine: {'line': b'-- Looking for gz-fuel_tools9 -- found version 9.1.0\n'}
+[1.513731] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-fuel_tools9\n'}
+[1.575356] (quadruped) StdoutLine: {'line': b"-- Checking for module 'jsoncpp'\n"}
+[1.598636] (quadruped) StdoutLine: {'line': b'--   Found jsoncpp, version 1.9.5\n'}
+[1.602498] (-) TimerEvent: {}
+[1.684031] (quadruped) StdoutLine: {'line': b"-- Checking for module 'yaml-0.1'\n"}
+[1.702598] (-) TimerEvent: {}
+[1.706269] (quadruped) StdoutLine: {'line': b'--   Found yaml-0.1, version 0.2.5\n'}
+[1.779662] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libzip'\n"}
+[1.801326] (quadruped) StdoutLine: {'line': b'--   Found libzip, version 1.7.3\n'}
+[1.802712] (-) TimerEvent: {}
+[1.863179] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.863755] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.864044] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5\n'}
+[1.864625] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.864916] (quadruped) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[1.865090] (quadruped) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[1.876842] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [testing]\n'}
+[1.877644] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-testing -- found version 5.6.0\n'}
+[1.877944] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-testing\n'}
+[1.879452] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.880092] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[1.881974] (quadruped) StdoutLine: {'line': b'-- Looking for gz-gui8 -- found version 8.3.0\n'}
+[1.882158] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-gui8\n'}
+[1.902777] (-) TimerEvent: {}
+[1.910037] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.910388] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.910798] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.911146] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[1.911501] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[1.911964] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[1.912112] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-rendering8\n'}
+[1.912433] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.912647] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-math7\n'}
+[1.912993] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.913290] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-math7> component [eigen3]\n'}
+[1.913617] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7-eigen3 -- found version 7.5.0\n'}
+[1.913863] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-math7-eigen3\n'}
+[1.915630] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.915888] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5\n'}
+[1.916227] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.916406] (quadruped) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[1.916584] (quadruped) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[1.930459] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [graphics]\n'}
+[1.930875] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [events]\n'}
+[1.931112] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [geospatial]\n'}
+[1.931428] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-geospatial -- found version 5.6.0\n'}
+[1.931774] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-geospatial\n'}
+[1.932529] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.933194] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.935120] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[1.935416] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2\n'}
+[1.936159] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.936524] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-plugin2> component [all]\n'}
+[1.937331] (quadruped) StdoutLine: {'line': b'-- Looking for all libraries of gz-plugin2 -- found version 2.0.3\n'}
+[1.938273] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[1.940065] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.947433] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[1.961432] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7 -- found version 7.3.0\n'}
+[1.961673] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7\n'}
+[1.961878] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.962174] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.962404] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[1.962716] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.963597] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-physics7> component [heightmap]\n'}
+[1.963938] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7-heightmap -- found version 7.3.0\n'}
+[1.964044] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7-heightmap\n'}
+[1.964350] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.964664] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-physics7> component [mesh]\n'}
+[1.964970] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7-mesh -- found version 7.3.0\n'}
+[1.965088] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7-mesh\n'}
+[1.965345] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.965672] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-physics7> component [sdf]\n'}
+[1.965967] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7-sdf -- found version 7.3.0\n'}
+[1.966084] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7-sdf\n'}
+[1.966350] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[1.967152] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[1.967220] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8\n'}
+[1.986414] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.986727] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.986937] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[1.987196] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[1.987488] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[1.987733] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[1.988147] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [air_pressure]\n'}
+[1.988505] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-air_pressure -- found version 8.2.0\n'}
+[1.988645] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-air_pressure\n'}
+[1.988990] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [air_speed]\n'}
+[1.989283] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-air_speed -- found version 8.2.0\n'}
+[1.989396] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-air_speed\n'}
+[1.989728] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [altimeter]\n'}
+[1.990036] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-altimeter -- found version 8.2.0\n'}
+[1.990149] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-altimeter\n'}
+[1.990470] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [imu]\n'}
+[1.990830] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-imu -- found version 8.2.0\n'}
+[1.990956] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-imu\n'}
+[1.991269] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [force_torque]\n'}
+[1.991525] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-force_torque -- found version 8.2.0\n'}
+[1.991699] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-force_torque\n'}
+[1.992007] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [logical_camera]\n'}
+[1.992319] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-logical_camera -- found version 8.2.0\n'}
+[1.992388] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-logical_camera\n'}
+[1.992775] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [magnetometer]\n'}
+[1.993078] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-magnetometer -- found version 8.2.0\n'}
+[1.993156] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-magnetometer\n'}
+[1.993520] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [navsat]\n'}
+[1.993841] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-navsat -- found version 8.2.0\n'}
+[1.994161] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-navsat\n'}
+[1.994364] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [dvl]\n'}
+[1.994700] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-dvl -- found version 8.2.0\n'}
+[1.994833] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-dvl\n'}
+[1.995205] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[1.995305] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8\n'}
+[2.002869] (-) TimerEvent: {}
+[2.013222] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.013471] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[2.013798] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[2.014091] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[2.014397] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[2.014738] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[2.014900] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [rendering]\n'}
+[2.015317] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-rendering -- found version 8.2.0\n'}
+[2.015414] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-rendering\n'}
+[2.016452] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [rendering]\n'}
+[2.016539] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [lidar]\n'}
+[2.017904] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-lidar -- found version 8.2.0\n'}
+[2.017994] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-lidar\n'}
+[2.018283] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[2.018732] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [gpu_lidar]\n'}
+[2.019059] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-gpu_lidar -- found version 8.2.0\n'}
+[2.019192] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-gpu_lidar\n'}
+[2.019502] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[2.020026] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [camera]\n'}
+[2.020331] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-camera -- found version 8.2.0\n'}
+[2.020480] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-camera\n'}
+[2.020844] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[2.021461] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [boundingbox_camera]\n'}
+[2.021949] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-boundingbox_camera -- found version 8.2.0\n'}
+[2.022072] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-boundingbox_camera\n'}
+[2.022561] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [segmentation_camera]\n'}
+[2.022990] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-segmentation_camera -- found version 8.2.0\n'}
+[2.023070] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-segmentation_camera\n'}
+[2.023464] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [depth_camera]\n'}
+[2.023818] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-depth_camera -- found version 8.2.0\n'}
+[2.023917] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-depth_camera\n'}
+[2.024185] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[2.024606] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [rgbd_camera]\n'}
+[2.024895] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-rgbd_camera -- found version 8.2.0\n'}
+[2.025008] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-rgbd_camera\n'}
+[2.025268] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[2.025691] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [thermal_camera]\n'}
+[2.025979] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-thermal_camera -- found version 8.2.0\n'}
+[2.026089] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-thermal_camera\n'}
+[2.026332] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[2.026740] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [wide_angle_camera]\n'}
+[2.027037] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-wide_angle_camera -- found version 8.2.0\n'}
+[2.027153] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-wide_angle_camera\n'}
+[2.027906] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[2.028183] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.028466] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[2.046703] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[2.046844] (quadruped) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.6.0 (/opt/ros/jazzy/share/rosidl_default_generators/cmake)\n'}
+[2.052709] (quadruped) StdoutLine: {'line': b'-- Found rosidl_adapter: 4.6.4 (/opt/ros/jazzy/share/rosidl_adapter/cmake)\n'}
+[2.054046] (quadruped) StdoutLine: {'line': b'-- Found rclcpp_components: 28.1.5 (/opt/ros/jazzy/share/rclcpp_components/cmake)\n'}
+[2.073828] (quadruped) StdoutLine: {'line': b'-- pinocchio not FOUND.\n'}
+[2.074169] (quadruped) StdoutLine: {'line': b'-- boost_filesystem FOUND. boost_filesystem at /lib/x86_64-linux-gnu/libboost_filesystem.so\n'}
+[2.074569] (quadruped) StdoutLine: {'line': b'-- boost_serialization FOUND. boost_serialization at /lib/x86_64-linux-gnu/libboost_serialization.so\n'}
+[2.074972] (quadruped) StdoutLine: {'line': b'-- boost_system FOUND. boost_system at /lib/x86_64-linux-gnu/libboost_system.so\n'}
+[2.080386] (quadruped) StdoutLine: {'line': b'-- Found Boost: /usr/include (found version "1.83.0") found components: filesystem serialization system \n'}
+[2.082069] (quadruped) StdoutLine: {'line': b'-- eigenpy not FOUND.\n'}
+[2.102055] (quadruped) StdoutLine: {'line': b'-- Checking for NumPy\n'}
+[2.102957] (-) TimerEvent: {}
+[2.203267] (-) TimerEvent: {}
+[2.303646] (-) TimerEvent: {}
+[2.320653] (quadruped) StdoutLine: {'line': b'--   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include\n'}
+[2.403797] (-) TimerEvent: {}
+[2.423115] (quadruped) StdoutLine: {'line': b'--   NUMPY_VERSION=1.26.4\n'}
+[2.503937] (-) TimerEvent: {}
+[2.604216] (-) TimerEvent: {}
+[2.693627] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development.Module NumPy \n'}
+[2.694755] (quadruped) StdoutLine: {'line': b'-- PythonLibraryDirs: \n'}
+[2.694831] (quadruped) StdoutLine: {'line': b'-- PythonLibVersionString: 3.12.3\n'}
+[2.704305] (-) TimerEvent: {}
+[2.741250] (quadruped) StdoutLine: {'line': b'-- Python site lib: lib/python3.12/dist-packages\n'}
+[2.741434] (quadruped) StdoutLine: {'line': b'-- Python include dirs: /usr/include/python3.12\n'}
+[2.790772] (quadruped) StdoutLine: {'line': b'-- Checking for NumPy\n'}
+[2.804459] (-) TimerEvent: {}
+[2.899820] (quadruped) StdoutLine: {'line': b'--   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include\n'}
+[2.904620] (-) TimerEvent: {}
+[2.995878] (quadruped) StdoutLine: {'line': b'--   NUMPY_VERSION=1.26.4\n'}
+[2.996021] (quadruped) StdoutLine: {'line': b'-- NumPy include dir: /usr/lib/python3/dist-packages/numpy/core/include\n'}
+[3.000488] (quadruped) StdoutLine: {'line': b'-- Found Boost: /usr/include (found version "1.83.0") found components: python312 \n'}
+[3.000824] (quadruped) StdoutLine: {'line': b'-- Boost_PYTHON_LIBRARY: /usr/lib/x86_64-linux-gnu/libboost_python312.so\n'}
+[3.004669] (-) TimerEvent: {}
+[3.104867] (-) TimerEvent: {}
+[3.205179] (-) TimerEvent: {}
+[3.305452] (-) TimerEvent: {}
+[3.337822] (quadruped) StdoutLine: {'line': b'-- Default C++ standard: 201703\n'}
+[3.338041] (quadruped) StdoutLine: {'line': b'-- C++ standard sufficient: Minimal required 14, currently defined: 17\n'}
+[3.338093] (quadruped) StdoutLine: {'line': b'-- CMAKE_CXX_STANDARD was not set: automatically set to currently defined standard 17\n'}
+[3.338818] (quadruped) StdoutLine: {'line': b'-- C++ standard sufficient: Minimal required 14, currently defined: 17\n'}
+[3.361751] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[3.405590] (-) TimerEvent: {}
+[3.481431] (quadruped) StderrLine: {'line': b"Error parsing '/home/ws/src/quadruped/package.xml':\n"}
+[3.481613] (quadruped) StderrLine: {'line': b'Traceback (most recent call last):\n'}
+[3.481668] (quadruped) StderrLine: {'line': b'  File "/opt/ros/jazzy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 150, in <module>\n'}
+[3.481707] (quadruped) StderrLine: {'line': b'    main()\n'}
+[3.481743] (quadruped) StderrLine: {'line': b'  File "/opt/ros/jazzy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 53, in main\n'}
+[3.481779] (quadruped) StderrLine: {'line': b'    raise e\n'}
+[3.481814] (quadruped) StderrLine: {'line': b'  File "/opt/ros/jazzy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 49, in main\n'}
+[3.481848] (quadruped) StderrLine: {'line': b'    package = parse_package_string(\n'}
+[3.481880] (quadruped) StderrLine: {'line': b'              ^^^^^^^^^^^^^^^^^^^^^\n'}
+[3.481914] (quadruped) StderrLine: {'line': b'  File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 719, in parse_package_string\n'}
+[3.482560] (quadruped) StderrLine: {'line': b"    export_node = _get_optional_node(root, 'export', filename)\n"}
+[3.482687] (quadruped) StderrLine: {'line': b'                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n'}
+[3.482778] (quadruped) StderrLine: {'line': b'  File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 807, in _get_optional_node\n'}
+[3.482837] (quadruped) StderrLine: {'line': b'    raise InvalidPackage(\'The manifest must not contain more than one "%s" tags\' % tagname, filename)\n'}
+[3.482893] (quadruped) StderrLine: {'line': b"catkin_pkg.package.InvalidPackage: Error(s) in package '/home/ws/src/quadruped/package.xml':\n"}
+[3.482947] (quadruped) StderrLine: {'line': b'The manifest must not contain more than one "export" tags\n'}
+[3.492763] (quadruped) StderrLine: {'line': b'\x1b[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:95 (message):\n'}
+[3.493070] (quadruped) StderrLine: {'line': b'  execute_process(/usr/bin/python3\n'}
+[3.493146] (quadruped) StderrLine: {'line': b'  /opt/ros/jazzy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py\n'}
+[3.493209] (quadruped) StderrLine: {'line': b'  /home/ws/src/quadruped/package.xml\n'}
+[3.493270] (quadruped) StderrLine: {'line': b'  /home/ws/build/quadruped/ament_cmake_core/package.cmake) returned error\n'}
+[3.493329] (quadruped) StderrLine: {'line': b'  code 1\n'}
+[3.493386] (quadruped) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[3.493441] (quadruped) StderrLine: {'line': b'  /opt/ros/jazzy/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)\n'}
+[3.493500] (quadruped) StderrLine: {'line': b'  /opt/ros/jazzy/share/rosidl_cmake/cmake/rosidl_generate_interfaces.cmake:220 (ament_package_xml)\n'}
+[3.493562] (quadruped) StderrLine: {'line': b'  CMakeLists.txt:24 (rosidl_generate_interfaces)\n'}
+[3.493621] (quadruped) StderrLine: {'line': b'\n'}
+[3.493680] (quadruped) StderrLine: {'line': b'\x1b[0m\n'}
+[3.493774] (quadruped) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[3.505685] (-) TimerEvent: {}
+[3.510003] (quadruped) CommandEnded: {'returncode': 1}
+[3.510937] (quadruped) JobEnded: {'identifier': 'quadruped', 'rc': 1}
+[3.522046] (-) EventReactorShutdown: {}

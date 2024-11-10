@@ -6,6 +6,7 @@
 /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_cpp.so
 /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_cpp.so
 /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_py.so
+/home/ws/install/quadruped/lib/libquadruped_lib.so
 /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport.cmake
 /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport-noconfig.cmake
 /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport.cmake
@@ -23,3 +24,5 @@
 /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport-noconfig.cmake
 /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport.cmake
 /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport-noconfig.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/quadruped_targetsExport.cmake
+/home/ws/install/quadruped/share/quadruped/cmake/quadruped_targetsExport-noconfig.cmake

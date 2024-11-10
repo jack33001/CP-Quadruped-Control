@@ -1,0 +1,1 @@
+/home/ws/src/quadruped_mpc/include/quadruped_mpc/foot_trajectory_generator.hpp

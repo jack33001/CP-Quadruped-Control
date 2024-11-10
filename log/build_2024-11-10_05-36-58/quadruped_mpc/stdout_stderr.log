@@ -1,0 +1,18 @@
+[ 20%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o[0m
+In file included from [01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:46:3:[m[K [01;31m[Kerror: [m[KISO C++ forbids declaration of ‘[01m[Kread_state_interfaces[m[K’ with no type [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
+   46 |   [01;31m[KBalanceController[m[K::read_state_interfaces();
+      |   [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:46:3:[m[K [01;31m[Kerror: [m[Kextra qualification ‘[01m[Kbalance_controller::BalanceController::[m[K’ on member ‘[01m[Kread_state_interfaces[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
+[01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:133:6:[m[K [01;31m[Kerror: [m[Kno declaration matches ‘[01m[Kvoid balance_controller::BalanceController::[01;32m[Kread_state_interfaces[m[K()[m[K’
+  133 | void [01;31m[KBalanceController[m[K::read_state_interfaces()
+      |      [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:46:3:[m[K [01;36m[Knote: [m[Kcandidate is: ‘[01m[Kint balance_controller::BalanceController::[01;32m[Kread_state_interfaces[m[K()[m[K’
+   46 |   [01;36m[KBalanceController[m[K::read_state_interfaces();
+      |   [01;36m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:24:7:[m[K [01;36m[Knote: [m[K‘[01m[Kclass balance_controller::BalanceController[m[K’ defined here
+   24 | class [01;36m[KBalanceController[m[K : public controller_interface::ControllerInterface
+      |       [01;36m[K^~~~~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:76: CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped_mpc_lib.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

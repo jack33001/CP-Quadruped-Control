@@ -1,0 +1,57 @@
+[31mCMake Error at CMakeLists.txt:38 (add_library):
+  add_library cannot create target "quadruped" because another target with
+  the same name already exists.  The existing target is a custom target
+  created in source directory "/home/ws/src/quadruped".  See documentation
+  for policy CMP0002 for more details.
+
+[0m
+[31mCMake Error at CMakeLists.txt:46 (target_include_directories):
+  target_include_directories called with non-compilable target type
+
+[0m
+[31mCMake Error at CMakeLists.txt:52 (target_link_libraries):
+  Utility target "quadruped" must not be used as the target of a
+  target_link_libraries call.
+
+[0m
+[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:129 (target_compile_definitions):
+  target_compile_definitions called with non-compilable target type
+Call Stack (most recent call first):
+  CMakeLists.txt:59 (ament_target_dependencies)
+
+[0m
+[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:142 (target_include_directories):
+  target_include_directories called with non-compilable target type
+Call Stack (most recent call first):
+  CMakeLists.txt:59 (ament_target_dependencies)
+
+[0m
+[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:146 (target_link_libraries):
+  Utility target "quadruped" must not be used as the target of a
+  target_link_libraries call.
+Call Stack (most recent call first):
+  CMakeLists.txt:59 (ament_target_dependencies)
+
+[0m
+[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:148 (target_include_directories):
+  target_include_directories called with non-compilable target type
+Call Stack (most recent call first):
+  CMakeLists.txt:59 (ament_target_dependencies)
+
+[0m
+[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:152 (target_link_libraries):
+  Utility target "quadruped" must not be used as the target of a
+  target_link_libraries call.
+Call Stack (most recent call first):
+  CMakeLists.txt:59 (ament_target_dependencies)
+
+[0m
+[31mCMake Error at /opt/ros/jazzy/share/ament_cmake_core/cmake/symlink_install/ament_cmake_symlink_install_targets.cmake:50 (_install):
+  _install TARGETS given target "quadruped" which is not an executable,
+  library, or module.
+Call Stack (most recent call first):
+  /opt/ros/jazzy/share/ament_cmake_core/cmake/symlink_install/install.cmake:37 (ament_cmake_symlink_install_targets)
+  CMakeLists.txt:80 (install)
+
+[0m
+gmake: *** [Makefile:937: cmake_check_build_system] Error 1

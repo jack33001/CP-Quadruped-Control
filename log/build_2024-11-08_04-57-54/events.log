@@ -1,0 +1,383 @@
+[0.000000] (-) TimerEvent: {}
+[0.000632] (quadruped) JobQueued: {'identifier': 'quadruped', 'dependencies': OrderedDict()}
+[0.000714] (quadruped_controllers) JobQueued: {'identifier': 'quadruped_controllers', 'dependencies': OrderedDict()}
+[0.000748] (quadruped_simulation) JobQueued: {'identifier': 'quadruped_simulation', 'dependencies': OrderedDict()}
+[0.001921] (quadruped) JobStarted: {'identifier': 'quadruped'}
+[0.023866] (quadruped_controllers) JobStarted: {'identifier': 'quadruped_controllers'}
+[0.039736] (quadruped_simulation) JobStarted: {'identifier': 'quadruped_simulation'}
+[0.057424] (quadruped) JobProgress: {'identifier': 'quadruped', 'progress': 'cmake'}
+[0.061136] (quadruped) JobProgress: {'identifier': 'quadruped', 'progress': 'build'}
+[0.063985] (quadruped) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/build/quadruped', '--', '-j20', '-l20'], 'cwd': '/home/ws/build/quadruped', 'env': OrderedDict({'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/home/ws/install/quadruped/lib:/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'COLCON_PREFIX_PATH': '/home/ws/install', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/home/ws/install/quadruped:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/home/ws/build/quadruped_simulation:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:/home/ws/build/quadruped_controllers:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:/home/ws/install/quadruped/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ws/install/quadruped:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy'}), 'shell': False}
+[0.100055] (-) TimerEvent: {}
+[0.200818] (-) TimerEvent: {}
+[0.301206] (-) TimerEvent: {}
+[0.375829] (quadruped) StdoutLine: {'line': b'[  2%] Built target quadruped__rosidl_generator_type_description\n'}
+[0.376959] (quadruped) StdoutLine: {'line': b'[  2%] Built target ament_cmake_python_symlink_quadruped\n'}
+[0.377222] (quadruped) StdoutLine: {'line': b'[  5%] Built target quadruped__cpp\n'}
+[0.377340] (quadruped) StdoutLine: {'line': b'[ 17%] Built target quadruped__rosidl_generator_c\n'}
+[0.377452] (quadruped) StdoutLine: {'line': b'[ 20%] \x1b[32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o\x1b[0m\n'}
+[0.377567] (quadruped) StdoutLine: {'line': b'[ 30%] Built target quadruped__rosidl_typesupport_c\n'}
+[0.377690] (quadruped) StdoutLine: {'line': b'[ 35%] Built target quadruped__rosidl_typesupport_introspection_cpp\n'}
+[0.377803] (quadruped) StdoutLine: {'line': b'[ 43%] Built target quadruped__rosidl_typesupport_cpp\n'}
+[0.377909] (quadruped) StdoutLine: {'line': b'[ 51%] Built target quadruped__rosidl_typesupport_introspection_c\n'}
+[0.378043] (quadruped) StdoutLine: {'line': b'[ 58%] Built target quadruped__rosidl_typesupport_fastrtps_c\n'}
+[0.378233] (quadruped) StdoutLine: {'line': b'[ 66%] Built target quadruped__rosidl_typesupport_fastrtps_cpp\n'}
+[0.401426] (-) TimerEvent: {}
+[0.403364] (quadruped) StdoutLine: {'line': b'[ 66%] Built target quadruped\n'}
+[0.454089] (quadruped) StdoutLine: {'line': b'[ 69%] Built target quadruped__py\n'}
+[0.501666] (-) TimerEvent: {}
+[0.509576] (quadruped) StdoutLine: {'line': b'[ 74%] Built target quadruped__rosidl_generator_py\n'}
+[0.525048] (quadruped) StdoutLine: {'line': b'running egg_info\n'}
+[0.543576] (quadruped) StdoutLine: {'line': b'writing quadruped.egg-info/PKG-INFO\n'}
+[0.544066] (quadruped) StdoutLine: {'line': b'writing dependency_links to quadruped.egg-info/dependency_links.txt\n'}
+[0.544452] (quadruped) StdoutLine: {'line': b'writing top-level names to quadruped.egg-info/top_level.txt\n'}
+[0.550686] (quadruped) StdoutLine: {'line': b'[ 79%] Built target quadruped_s__rosidl_typesupport_fastrtps_c\n'}
+[0.553720] (quadruped) StdoutLine: {'line': b'[ 84%] Built target quadruped_s__rosidl_typesupport_introspection_c\n'}
+[0.560590] (quadruped) StdoutLine: {'line': b'[ 89%] Built target quadruped_s__rosidl_typesupport_c\n'}
+[0.594279] (quadruped) StdoutLine: {'line': b"reading manifest file 'quadruped.egg-info/SOURCES.txt'\n"}
+[0.595021] (quadruped) StdoutLine: {'line': b"writing manifest file 'quadruped.egg-info/SOURCES.txt'\n"}
+[0.601764] (-) TimerEvent: {}
+[0.640650] (quadruped) StdoutLine: {'line': b'[ 89%] Built target ament_cmake_python_build_quadruped_egg\n'}
+[0.701980] (-) TimerEvent: {}
+[0.802348] (-) TimerEvent: {}
+[0.902708] (-) TimerEvent: {}
+[1.003169] (-) TimerEvent: {}
+[1.103669] (-) TimerEvent: {}
+[1.204258] (-) TimerEvent: {}
+[1.304919] (-) TimerEvent: {}
+[1.405310] (-) TimerEvent: {}
+[1.505836] (-) TimerEvent: {}
+[1.565306] (quadruped_controllers) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/ws/build/quadruped_controllers/build', '--no-deps', 'symlink_data'], 'cwd': '/home/ws/build/quadruped_controllers', 'env': {'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/home/ws/install/quadruped/lib:/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'COLCON_PREFIX_PATH': '/home/ws/install', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/home/ws/install/quadruped:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped_controllers', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/home/ws/build/quadruped_controllers/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:/home/ws/build/quadruped_simulation:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:/home/ws/build/quadruped_controllers:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:/home/ws/install/quadruped/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ws/install/quadruped:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[1.570226] (quadruped_simulation) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/ws/build/quadruped_simulation/build', '--no-deps', 'symlink_data'], 'cwd': '/home/ws/build/quadruped_simulation', 'env': {'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/home/ws/install/quadruped/lib:/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'COLCON_PREFIX_PATH': '/home/ws/install', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/home/ws/install/quadruped:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped_simulation', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/home/ws/build/quadruped_simulation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:/home/ws/build/quadruped_simulation:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:/home/ws/build/quadruped_controllers:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:/home/ws/install/quadruped/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ws/install/quadruped:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[1.605958] (-) TimerEvent: {}
+[1.706361] (-) TimerEvent: {}
+[1.806784] (-) TimerEvent: {}
+[1.907196] (-) TimerEvent: {}
+[1.947691] (quadruped_controllers) StdoutLine: {'line': b'running develop\n'}
+[1.948278] (quadruped_simulation) StdoutLine: {'line': b'running develop\n'}
+[1.948464] (quadruped_controllers) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/develop.py:40: EasyInstallDeprecationWarning: easy_install command is deprecated.\n'}
+[1.948678] (quadruped_controllers) StderrLine: {'line': b'!!\n'}
+[1.949104] (quadruped_controllers) StderrLine: {'line': b'\n'}
+[1.949321] (quadruped_controllers) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.949542] (quadruped_controllers) StderrLine: {'line': b'        Please avoid running ``setup.py`` and ``easy_install``.\n'}
+[1.949751] (quadruped_controllers) StderrLine: {'line': b'        Instead, use pypa/build, pypa/installer or other\n'}
+[1.949956] (quadruped_controllers) StderrLine: {'line': b'        standards-based tools.\n'}
+[1.950152] (quadruped_controllers) StderrLine: {'line': b'\n'}
+[1.950329] (quadruped_controllers) StderrLine: {'line': b'        See https://github.com/pypa/setuptools/issues/917 for details.\n'}
+[1.950539] (quadruped_controllers) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.950739] (quadruped_controllers) StderrLine: {'line': b'\n'}
+[1.950920] (quadruped_controllers) StderrLine: {'line': b'!!\n'}
+[1.951097] (quadruped_controllers) StderrLine: {'line': b'  easy_install.initialize_options(self)\n'}
+[1.951290] (quadruped_simulation) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/develop.py:40: EasyInstallDeprecationWarning: easy_install command is deprecated.\n'}
+[1.951504] (quadruped_simulation) StderrLine: {'line': b'!!\n'}
+[1.951701] (quadruped_simulation) StderrLine: {'line': b'\n'}
+[1.951904] (quadruped_simulation) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.952092] (quadruped_simulation) StderrLine: {'line': b'        Please avoid running ``setup.py`` and ``easy_install``.\n'}
+[1.952278] (quadruped_simulation) StderrLine: {'line': b'        Instead, use pypa/build, pypa/installer or other\n'}
+[1.952462] (quadruped_simulation) StderrLine: {'line': b'        standards-based tools.\n'}
+[1.952724] (quadruped_simulation) StderrLine: {'line': b'\n'}
+[1.952864] (quadruped_simulation) StderrLine: {'line': b'        See https://github.com/pypa/setuptools/issues/917 for details.\n'}
+[1.952939] (quadruped_simulation) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.953002] (quadruped_simulation) StderrLine: {'line': b'\n'}
+[1.953063] (quadruped_simulation) StderrLine: {'line': b'!!\n'}
+[1.953126] (quadruped_simulation) StderrLine: {'line': b'  easy_install.initialize_options(self)\n'}
+[2.007405] (-) TimerEvent: {}
+[2.107780] (-) TimerEvent: {}
+[2.118101] (quadruped_controllers) StdoutLine: {'line': b'running egg_info\n'}
+[2.129831] (quadruped_simulation) StdoutLine: {'line': b'running egg_info\n'}
+[2.133936] (quadruped_controllers) StdoutLine: {'line': b'writing quadruped_controllers.egg-info/PKG-INFO\n'}
+[2.134458] (quadruped_controllers) StdoutLine: {'line': b'writing dependency_links to quadruped_controllers.egg-info/dependency_links.txt\n'}
+[2.134743] (quadruped_controllers) StdoutLine: {'line': b'writing requirements to quadruped_controllers.egg-info/requires.txt\n'}
+[2.134985] (quadruped_controllers) StdoutLine: {'line': b'writing top-level names to quadruped_controllers.egg-info/top_level.txt\n'}
+[2.145583] (quadruped_simulation) StdoutLine: {'line': b'writing quadruped_simulation.egg-info/PKG-INFO\n'}
+[2.146196] (quadruped_simulation) StdoutLine: {'line': b'writing dependency_links to quadruped_simulation.egg-info/dependency_links.txt\n'}
+[2.146484] (quadruped_simulation) StdoutLine: {'line': b'writing requirements to quadruped_simulation.egg-info/requires.txt\n'}
+[2.146729] (quadruped_simulation) StdoutLine: {'line': b'writing top-level names to quadruped_simulation.egg-info/top_level.txt\n'}
+[2.168818] (quadruped_controllers) StdoutLine: {'line': b"reading manifest file 'quadruped_controllers.egg-info/SOURCES.txt'\n"}
+[2.169623] (quadruped_controllers) StdoutLine: {'line': b"writing manifest file 'quadruped_controllers.egg-info/SOURCES.txt'\n"}
+[2.179911] (quadruped_simulation) StdoutLine: {'line': b"reading manifest file 'quadruped_simulation.egg-info/SOURCES.txt'\n"}
+[2.180700] (quadruped_simulation) StdoutLine: {'line': b"writing manifest file 'quadruped_simulation.egg-info/SOURCES.txt'\n"}
+[2.186862] (quadruped_controllers) StdoutLine: {'line': b'running build_ext\n'}
+[2.187400] (quadruped_controllers) StdoutLine: {'line': b'Creating /home/ws/install/quadruped_controllers/lib/python3.12/site-packages/quadruped-controllers.egg-link (link to .)\n'}
+[2.187748] (quadruped_controllers) StdoutLine: {'line': b'\n'}
+[2.188011] (quadruped_controllers) StdoutLine: {'line': b'Installed /home/ws/build/quadruped_controllers\n'}
+[2.188210] (quadruped_controllers) StdoutLine: {'line': b'running symlink_data\n'}
+[2.198739] (quadruped_simulation) StdoutLine: {'line': b'running build_ext\n'}
+[2.199176] (quadruped_simulation) StdoutLine: {'line': b'Creating /home/ws/install/quadruped_simulation/lib/python3.12/site-packages/quadruped-simulation.egg-link (link to .)\n'}
+[2.199570] (quadruped_simulation) StdoutLine: {'line': b'\n'}
+[2.199821] (quadruped_simulation) StdoutLine: {'line': b'Installed /home/ws/build/quadruped_simulation\n'}
+[2.200018] (quadruped_simulation) StdoutLine: {'line': b'running symlink_data\n'}
+[2.207929] (-) TimerEvent: {}
+[2.247232] (quadruped_controllers) CommandEnded: {'returncode': 0}
+[2.270490] (quadruped_controllers) JobEnded: {'identifier': 'quadruped_controllers', 'rc': 0}
+[2.281189] (quadruped_simulation) CommandEnded: {'returncode': 0}
+[2.303117] (quadruped_simulation) JobEnded: {'identifier': 'quadruped_simulation', 'rc': 0}
+[2.308114] (-) TimerEvent: {}
+[2.408760] (-) TimerEvent: {}
+[2.509431] (-) TimerEvent: {}
+[2.610047] (-) TimerEvent: {}
+[2.710816] (-) TimerEvent: {}
+[2.811341] (-) TimerEvent: {}
+[2.911843] (-) TimerEvent: {}
+[3.012195] (-) TimerEvent: {}
+[3.112662] (-) TimerEvent: {}
+[3.212983] (-) TimerEvent: {}
+[3.313381] (-) TimerEvent: {}
+[3.413802] (-) TimerEvent: {}
+[3.514117] (-) TimerEvent: {}
+[3.614465] (-) TimerEvent: {}
+[3.715011] (-) TimerEvent: {}
+[3.815514] (-) TimerEvent: {}
+[3.915867] (-) TimerEvent: {}
+[4.016266] (-) TimerEvent: {}
+[4.116637] (-) TimerEvent: {}
+[4.217008] (-) TimerEvent: {}
+[4.317449] (-) TimerEvent: {}
+[4.417816] (-) TimerEvent: {}
+[4.518244] (-) TimerEvent: {}
+[4.618560] (-) TimerEvent: {}
+[4.718979] (-) TimerEvent: {}
+[4.819551] (-) TimerEvent: {}
+[4.920477] (-) TimerEvent: {}
+[5.021497] (-) TimerEvent: {}
+[5.122152] (-) TimerEvent: {}
+[5.222740] (-) TimerEvent: {}
+[5.323166] (-) TimerEvent: {}
+[5.423862] (-) TimerEvent: {}
+[5.524288] (-) TimerEvent: {}
+[5.624937] (-) TimerEvent: {}
+[5.725512] (-) TimerEvent: {}
+[5.826212] (-) TimerEvent: {}
+[5.926953] (-) TimerEvent: {}
+[6.027481] (-) TimerEvent: {}
+[6.128397] (-) TimerEvent: {}
+[6.229034] (-) TimerEvent: {}
+[6.329583] (-) TimerEvent: {}
+[6.429934] (-) TimerEvent: {}
+[6.530485] (-) TimerEvent: {}
+[6.631744] (-) TimerEvent: {}
+[6.732466] (-) TimerEvent: {}
+[6.833102] (-) TimerEvent: {}
+[6.933693] (-) TimerEvent: {}
+[7.033991] (-) TimerEvent: {}
+[7.134368] (-) TimerEvent: {}
+[7.234770] (-) TimerEvent: {}
+[7.335269] (-) TimerEvent: {}
+[7.435682] (-) TimerEvent: {}
+[7.536034] (-) TimerEvent: {}
+[7.636638] (-) TimerEvent: {}
+[7.736983] (-) TimerEvent: {}
+[7.837420] (-) TimerEvent: {}
+[7.937821] (-) TimerEvent: {}
+[8.038369] (-) TimerEvent: {}
+[8.138830] (-) TimerEvent: {}
+[8.239510] (-) TimerEvent: {}
+[8.339869] (-) TimerEvent: {}
+[8.440266] (-) TimerEvent: {}
+[8.540659] (-) TimerEvent: {}
+[8.640948] (-) TimerEvent: {}
+[8.741347] (-) TimerEvent: {}
+[8.841746] (-) TimerEvent: {}
+[8.942043] (-) TimerEvent: {}
+[9.042452] (-) TimerEvent: {}
+[9.142816] (-) TimerEvent: {}
+[9.243146] (-) TimerEvent: {}
+[9.343497] (-) TimerEvent: {}
+[9.443839] (-) TimerEvent: {}
+[9.544200] (-) TimerEvent: {}
+[9.644670] (-) TimerEvent: {}
+[9.744995] (-) TimerEvent: {}
+[9.845426] (-) TimerEvent: {}
+[9.945809] (-) TimerEvent: {}
+[10.046097] (-) TimerEvent: {}
+[10.146493] (-) TimerEvent: {}
+[10.246794] (-) TimerEvent: {}
+[10.347089] (-) TimerEvent: {}
+[10.447476] (-) TimerEvent: {}
+[10.547781] (-) TimerEvent: {}
+[10.648085] (-) TimerEvent: {}
+[10.748538] (-) TimerEvent: {}
+[10.848851] (-) TimerEvent: {}
+[10.949159] (-) TimerEvent: {}
+[11.049488] (-) TimerEvent: {}
+[11.149784] (-) TimerEvent: {}
+[11.250081] (-) TimerEvent: {}
+[11.350487] (-) TimerEvent: {}
+[11.450773] (-) TimerEvent: {}
+[11.551098] (-) TimerEvent: {}
+[11.651509] (-) TimerEvent: {}
+[11.751837] (-) TimerEvent: {}
+[11.852147] (-) TimerEvent: {}
+[11.952526] (-) TimerEvent: {}
+[12.052836] (-) TimerEvent: {}
+[12.153153] (-) TimerEvent: {}
+[12.253537] (-) TimerEvent: {}
+[12.353841] (-) TimerEvent: {}
+[12.454151] (-) TimerEvent: {}
+[12.554474] (-) TimerEvent: {}
+[12.654860] (-) TimerEvent: {}
+[12.755181] (-) TimerEvent: {}
+[12.855953] (-) TimerEvent: {}
+[12.956271] (-) TimerEvent: {}
+[13.056669] (-) TimerEvent: {}
+[13.157067] (-) TimerEvent: {}
+[13.257478] (-) TimerEvent: {}
+[13.357795] (-) TimerEvent: {}
+[13.458122] (-) TimerEvent: {}
+[13.558526] (-) TimerEvent: {}
+[13.658834] (-) TimerEvent: {}
+[13.759120] (-) TimerEvent: {}
+[13.859427] (-) TimerEvent: {}
+[13.959681] (-) TimerEvent: {}
+[14.059966] (-) TimerEvent: {}
+[14.160323] (-) TimerEvent: {}
+[14.260773] (-) TimerEvent: {}
+[14.361308] (-) TimerEvent: {}
+[14.461765] (-) TimerEvent: {}
+[14.562261] (-) TimerEvent: {}
+[14.662757] (-) TimerEvent: {}
+[14.763277] (-) TimerEvent: {}
+[14.863787] (-) TimerEvent: {}
+[14.964193] (-) TimerEvent: {}
+[15.064743] (-) TimerEvent: {}
+[15.165224] (-) TimerEvent: {}
+[15.265686] (-) TimerEvent: {}
+[15.366118] (-) TimerEvent: {}
+[15.466634] (-) TimerEvent: {}
+[15.567240] (-) TimerEvent: {}
+[15.667649] (-) TimerEvent: {}
+[15.768037] (-) TimerEvent: {}
+[15.868484] (-) TimerEvent: {}
+[15.968827] (-) TimerEvent: {}
+[16.069125] (-) TimerEvent: {}
+[16.169532] (-) TimerEvent: {}
+[16.269842] (-) TimerEvent: {}
+[16.370152] (-) TimerEvent: {}
+[16.470580] (-) TimerEvent: {}
+[16.571210] (-) TimerEvent: {}
+[16.671647] (-) TimerEvent: {}
+[16.772097] (-) TimerEvent: {}
+[16.872486] (-) TimerEvent: {}
+[16.972787] (-) TimerEvent: {}
+[17.073179] (-) TimerEvent: {}
+[17.173593] (-) TimerEvent: {}
+[17.273896] (-) TimerEvent: {}
+[17.374284] (-) TimerEvent: {}
+[17.474675] (-) TimerEvent: {}
+[17.575095] (-) TimerEvent: {}
+[17.675495] (-) TimerEvent: {}
+[17.775910] (-) TimerEvent: {}
+[17.876313] (-) TimerEvent: {}
+[17.976699] (-) TimerEvent: {}
+[18.076997] (-) TimerEvent: {}
+[18.177386] (-) TimerEvent: {}
+[18.277808] (-) TimerEvent: {}
+[18.378145] (-) TimerEvent: {}
+[18.478539] (-) TimerEvent: {}
+[18.578866] (-) TimerEvent: {}
+[18.679203] (-) TimerEvent: {}
+[18.779642] (-) TimerEvent: {}
+[18.880037] (-) TimerEvent: {}
+[18.980418] (-) TimerEvent: {}
+[19.080816] (-) TimerEvent: {}
+[19.181234] (-) TimerEvent: {}
+[19.281677] (-) TimerEvent: {}
+[19.381972] (-) TimerEvent: {}
+[19.482370] (-) TimerEvent: {}
+[19.582788] (-) TimerEvent: {}
+[19.683185] (-) TimerEvent: {}
+[19.783587] (-) TimerEvent: {}
+[19.884006] (-) TimerEvent: {}
+[19.984430] (-) TimerEvent: {}
+[20.084815] (-) TimerEvent: {}
+[20.185148] (-) TimerEvent: {}
+[20.285580] (-) TimerEvent: {}
+[20.385998] (-) TimerEvent: {}
+[20.486386] (-) TimerEvent: {}
+[20.586794] (-) TimerEvent: {}
+[20.687182] (-) TimerEvent: {}
+[20.787580] (-) TimerEvent: {}
+[20.887892] (-) TimerEvent: {}
+[20.988281] (-) TimerEvent: {}
+[21.088675] (-) TimerEvent: {}
+[21.188967] (-) TimerEvent: {}
+[21.289284] (-) TimerEvent: {}
+[21.389670] (-) TimerEvent: {}
+[21.489970] (-) TimerEvent: {}
+[21.590280] (-) TimerEvent: {}
+[21.690665] (-) TimerEvent: {}
+[21.790958] (-) TimerEvent: {}
+[21.891345] (-) TimerEvent: {}
+[21.991638] (-) TimerEvent: {}
+[22.091914] (-) TimerEvent: {}
+[22.192193] (-) TimerEvent: {}
+[22.292596] (-) TimerEvent: {}
+[22.392888] (-) TimerEvent: {}
+[22.493209] (-) TimerEvent: {}
+[22.593619] (-) TimerEvent: {}
+[22.693935] (-) TimerEvent: {}
+[22.794256] (-) TimerEvent: {}
+[22.894586] (-) TimerEvent: {}
+[22.994901] (-) TimerEvent: {}
+[23.095285] (-) TimerEvent: {}
+[23.195674] (-) TimerEvent: {}
+[23.296055] (-) TimerEvent: {}
+[23.396446] (-) TimerEvent: {}
+[23.496810] (-) TimerEvent: {}
+[23.597189] (-) TimerEvent: {}
+[23.697589] (-) TimerEvent: {}
+[23.798027] (-) TimerEvent: {}
+[23.898314] (-) TimerEvent: {}
+[23.998729] (-) TimerEvent: {}
+[24.099035] (-) TimerEvent: {}
+[24.199326] (-) TimerEvent: {}
+[24.299726] (-) TimerEvent: {}
+[24.400019] (-) TimerEvent: {}
+[24.500397] (-) TimerEvent: {}
+[24.600781] (-) TimerEvent: {}
+[24.701076] (-) TimerEvent: {}
+[24.801463] (-) TimerEvent: {}
+[24.901805] (-) TimerEvent: {}
+[25.002190] (-) TimerEvent: {}
+[25.102563] (-) TimerEvent: {}
+[25.202992] (-) TimerEvent: {}
+[25.303386] (-) TimerEvent: {}
+[25.403759] (-) TimerEvent: {}
+[25.504136] (-) TimerEvent: {}
+[25.604520] (-) TimerEvent: {}
+[25.704821] (-) TimerEvent: {}
+[25.805218] (-) TimerEvent: {}
+[25.905625] (-) TimerEvent: {}
+[26.005909] (-) TimerEvent: {}
+[26.106246] (-) TimerEvent: {}
+[26.206661] (-) TimerEvent: {}
+[26.306988] (-) TimerEvent: {}
+[26.407387] (-) TimerEvent: {}
+[26.507815] (-) TimerEvent: {}
+[26.608192] (-) TimerEvent: {}
+[26.708587] (-) TimerEvent: {}
+[26.808991] (-) TimerEvent: {}
+[26.909420] (-) TimerEvent: {}
+[27.009775] (-) TimerEvent: {}
+[27.110084] (-) TimerEvent: {}
+[27.210495] (-) TimerEvent: {}
+[27.310903] (-) TimerEvent: {}
+[27.411290] (-) TimerEvent: {}
+[27.511673] (-) TimerEvent: {}
+[27.611984] (-) TimerEvent: {}
+[27.712380] (-) TimerEvent: {}
+[27.812814] (-) TimerEvent: {}
+[27.913174] (-) TimerEvent: {}
+[27.968979] (quadruped) StdoutLine: {'line': b'[ 92%] \x1b[32m\x1b[1mLinking CXX shared library libquadruped_lib.so\x1b[0m\n'}
+[28.013409] (-) TimerEvent: {}
+[28.113791] (-) TimerEvent: {}
+[28.176867] (quadruped) StderrLine: {'line': b"gmake[2]: *** Deleting file 'libquadruped_lib.so'\n"}
+[28.177701] (quadruped) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:366: libquadruped_lib.so] Interrupt\n'}
+[28.178192] (quadruped) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Interrupt\n'}
+[28.178569] (quadruped) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Interrupt\n'}
+[28.180988] (quadruped) CommandEnded: {'returncode': -2}
+[28.213899] (-) TimerEvent: {}
+[28.314281] (-) TimerEvent: {}
+[28.405747] (quadruped) JobEnded: {'identifier': 'quadruped', 'rc': 'SIGINT'}
+[28.414522] (-) TimerEvent: {}
+[28.417318] (-) EventReactorShutdown: {}

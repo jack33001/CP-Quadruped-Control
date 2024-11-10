@@ -1,0 +1,23 @@
+# This yaml file holds important information about the hardware, like a config file with some extra capability. 
+
+my_robot:
+  ros__parameters:
+    hardware_parameters:
+      can_interface: "can0"
+      i2c_interface: "/dev/i2c-1"
+      
+      # Motor CAN IDs
+      motor0_can_id: 1
+      motor1_can_id: 2
+      motor2_can_id: 3
+      motor3_can_id: 4
+      motor4_can_id: 5
+      motor5_can_id: 6
+      motor6_can_id: 7
+      motor7_can_id: 8
+      
+      # IMU I2C address
+      imu_i2c_address: 0x68  # Typical address for MPU6050
+      
+      # Power board CAN ID
+      power_board_can_id: 10

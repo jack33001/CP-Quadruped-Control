@@ -1,0 +1,38 @@
+[0.036s] Invoking command in '/home/ws/build/quadruped_mpc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_mpc -- -j20 -l20
+[0.307s] [100%] Built target quadruped_mpc_lib
+[0.352s] Invoked command in '/home/ws/build/quadruped_mpc' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_mpc -- -j20 -l20
+[0.468s] Invoking command in '/home/ws/build/quadruped_mpc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_mpc
+[0.503s] -- Install configuration: ""
+[0.504s] -- Execute custom install script
+[0.506s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp
+[0.506s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/foot_trajectory_generator.hpp
+[0.506s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/leg_controller.hpp
+[0.507s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/state_estimator.hpp
+[0.507s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc//plugin_description.xml
+[0.507s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/config/quadruped_controllers.yaml
+[0.508s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/launch/mpc.launch.py
+[0.508s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/library_path.sh
+[0.509s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/library_path.dsv
+[0.510s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc//plugin_description.xml
+[0.510s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/package_run_dependencies/quadruped_mpc
+[0.510s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/parent_prefix_path/quadruped_mpc
+[0.511s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/ament_prefix_path.sh
+[0.512s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/ament_prefix_path.dsv
+[0.512s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/path.sh
+[0.512s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/path.dsv
+[0.515s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.bash
+[0.515s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.sh
+[0.515s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.zsh
+[0.515s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.dsv
+[0.516s] -- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/package.dsv
+[0.546s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/packages/quadruped_mpc
+[0.546s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/controller_interface__pluginlib__plugin/quadruped_mpc
+[0.547s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/ament_cmake_export_targets-extras.cmake
+[0.547s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.547s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpcConfig.cmake
+[0.548s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpcConfig-version.cmake
+[0.548s] -- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/package.xml
+[0.548s] -- Up-to-date: /home/ws/install/quadruped_mpc/lib/libquadruped_mpc_lib.a
+[0.548s] -- Up-to-date: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport.cmake
+[0.548s] -- Up-to-date: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport-noconfig.cmake
+[0.556s] Invoked command in '/home/ws/build/quadruped_mpc' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_mpc

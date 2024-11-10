@@ -1,0 +1,19 @@
+[0.040s] Invoking command in '/home/ws/build/quadruped_mpc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_mpc -- -j20 -l20
+[0.155s] [ 20%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o[0m
+[0.155s] [ 60%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.o[0m
+[0.156s] [ 60%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.o[0m
+[0.158s] [ 80%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.o[0m
+[0.927s] In file included from [01m[K/opt/ros/jazzy/include/pinocchio/fwd.hpp:23[m[K,
+[0.927s]                  from [01m[K/opt/ros/jazzy/include/pinocchio/spatial/fwd.hpp:9[m[K,
+[0.928s]                  from [01m[K/opt/ros/jazzy/include/pinocchio/multibody/model.hpp:9[m[K,
+[0.928s]                  from [01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:16[m[K,
+[0.928s]                  from [01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:1[m[K:
+[0.928s] [01m[K/opt/ros/jazzy/include/pinocchio/utils/cast.hpp:8:10:[m[K [01;31m[Kfatal error: [m[KEigen/Core: No such file or directory
+[0.929s]     8 | #include [01;31m[K<Eigen/Core>[m[K
+[0.929s]       |          [01;31m[K^~~~~~~~~~~~[m[K
+[0.929s] compilation terminated.
+[0.931s] gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:76: CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o] Error 1
+[0.932s] gmake[2]: *** Waiting for unfinished jobs....
+[12.610s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped_mpc_lib.dir/all] Error 2
+[12.611s] gmake: *** [Makefile:146: all] Error 2
+[12.627s] Invoked command in '/home/ws/build/quadruped_mpc' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_mpc -- -j20 -l20

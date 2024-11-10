@@ -1,0 +1,54 @@
+-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found controller_interface: 4.18.0 (/opt/ros/jazzy/share/controller_interface/cmake)
+-- pinocchio FOUND. pinocchio at /opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so
+-- boost_filesystem FOUND. boost_filesystem at /lib/x86_64-linux-gnu/libboost_filesystem.so
+-- boost_serialization FOUND. boost_serialization at /lib/x86_64-linux-gnu/libboost_serialization.so
+-- boost_system FOUND. boost_system at /lib/x86_64-linux-gnu/libboost_system.so
+-- Found Boost: /usr/include (found version "1.83.0") found components: filesystem serialization system 
+-- eigenpy FOUND. eigenpy at /opt/ros/jazzy/lib/x86_64-linux-gnu/libeigenpy.so
+-- Checking for NumPy
+--   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include
+--   NUMPY_VERSION=1.26.4
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development.Module NumPy 
+-- PythonLibraryDirs: 
+-- PythonLibVersionString: 3.12.3
+-- Python site lib: lib/python3.12/dist-packages
+-- Python include dirs: /usr/include/python3.12
+-- Checking for NumPy
+--   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include
+--   NUMPY_VERSION=1.26.4
+-- NumPy include dir: /usr/lib/python3/dist-packages/numpy/core/include
+-- Found Boost: /usr/include (found version "1.83.0") found components: python312 
+-- Boost_PYTHON_LIBRARY: /usr/lib/x86_64-linux-gnu/libboost_python312.so
+-- Default C++ standard: 201703
+-- C++ standard sufficient: Minimal required 14, currently defined: 17
+-- CMAKE_CXX_STANDARD was not set: automatically set to currently defined standard 17
+-- C++ standard sufficient: Minimal required 14, currently defined: 17
+-- Configuring done (3.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/ws/build/quadruped_mpc
+[ 20%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o[0m
+[ 40%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.o[0m
+[ 60%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.o[0m
+[ 80%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.o[0m
+[01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:133:6:[m[K [01;31m[Kerror: [m[Kno declaration matches ‘[01m[Kvoid balance_controller::BalanceController::[01;32m[Kread_state_interfaces[m[K()[m[K’
+  133 | void [01;31m[KBalanceController[m[K::read_state_interfaces()
+      |      [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:133:6:[m[K [01;36m[Knote: [m[Kno functions named ‘[01m[Kvoid balance_controller::BalanceController::[01;32m[Kread_state_interfaces[m[K()[m[K’
+In file included from [01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:24:7:[m[K [01;36m[Knote: [m[K‘[01m[Kclass balance_controller::BalanceController[m[K’ defined here
+   24 | class [01;36m[KBalanceController[m[K : public controller_interface::ControllerInterface
+      |       [01;36m[K^~~~~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:76: CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped_mpc_lib.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

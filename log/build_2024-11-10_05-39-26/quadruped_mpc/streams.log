@@ -1,0 +1,23 @@
+[0.036s] Invoking command in '/home/ws/build/quadruped_mpc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_mpc -- -j20 -l20
+[0.374s] [ 20%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o[0m
+[27.843s] [ 40%] [32m[1mLinking CXX static library libquadruped_mpc_lib.a[0m
+[28.733s] [100%] Built target quadruped_mpc_lib
+[28.766s] Invoked command in '/home/ws/build/quadruped_mpc' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_mpc -- -j20 -l20
+[28.892s] Invoking command in '/home/ws/build/quadruped_mpc': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_mpc
+[28.923s] -- Install configuration: ""
+[28.925s] -- Execute custom install script
+[28.926s] -- Symlinking: /home/ws/install/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp
+[28.955s] -- Symlinking: /home/ws/install/quadruped_mpc/include/quadruped_mpc/foot_trajectory_generator.hpp
+[28.983s] -- Symlinking: /home/ws/install/quadruped_mpc/include/quadruped_mpc/leg_controller.hpp
+[29.014s] -- Symlinking: /home/ws/install/quadruped_mpc/include/quadruped_mpc/state_estimator.hpp
+[29.048s] -- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc//plugin_description.xml
+[29.081s] -- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/config/quadruped_controllers.yaml
+[29.113s] [31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:100 (message):
+[29.114s]   ament_cmake_symlink_install_directory() can't find
+[29.114s]   '/home/ws/src/quadruped_mpc/launch/'
+[29.114s] Call Stack (most recent call first):
+[29.115s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:323 (ament_cmake_symlink_install_directory)
+[29.115s]   cmake_install.cmake:46 (include)
+[29.115s] 
+[29.115s] [0m
+[29.118s] Invoked command in '/home/ws/build/quadruped_mpc' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_mpc

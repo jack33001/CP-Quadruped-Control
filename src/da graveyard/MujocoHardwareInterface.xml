@@ -1,9 +1,0 @@
-<library path="quadruped">
-  <class name="quadruped/MujocoHardwareInterface"
-         type="quadruped::MujocoHardwareInterface"
-         base_class_type="hardware_interface::SystemInterface">
-    <description>
-      MuJoCo-based hardware interface for quadruped simulation.
-    </description>
-  </class>
-</library>

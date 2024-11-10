@@ -1,8 +1,0 @@
-[01m[K/home/ws/src/quadruped/src/MujocoHardwareInterface.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::CallbackReturn quadruped::MujocoHardwareInterface::[01;32m[Kon_activate[m[K(const rclcpp_lifecycle::State&)[m[K’:
-[01m[K/home/ws/src/quadruped/src/MujocoHardwareInterface.cpp:51:105:[m[K [01;35m[Kwarning: [m[Kunused parameter ‘[01m[Kprevious_state[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-parameter-Wunused-parameter]8;;[m[K]
-   51 | hardware_interface::CallbackReturn MujocoHardwareInterface::on_activate([01;35m[Kconst rclcpp_lifecycle::State & previous_state[m[K)
-      |                                                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~[m[K
-[01m[K/home/ws/src/quadruped/src/MujocoHardwareInterface.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::CallbackReturn quadruped::MujocoHardwareInterface::[01;32m[Kon_deactivate[m[K(const rclcpp_lifecycle::State&)[m[K’:
-[01m[K/home/ws/src/quadruped/src/MujocoHardwareInterface.cpp:57:107:[m[K [01;35m[Kwarning: [m[Kunused parameter ‘[01m[Kprevious_state[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-parameter-Wunused-parameter]8;;[m[K]
-   57 | hardware_interface::CallbackReturn MujocoHardwareInterface::on_deactivate([01;35m[Kconst rclcpp_lifecycle::State & previous_state[m[K)
-      |                                                                           [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~[m[K

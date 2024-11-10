@@ -1,0 +1,1 @@
+/home/ws/build/quadruped_mpc/ament_cmake_core/quadruped_mpcConfig.cmake

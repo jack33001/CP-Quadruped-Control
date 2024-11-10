@@ -1,0 +1,3 @@
+/home/ws/install/quadruped_mpc/lib/libquadruped_mpc_lib.a
+/home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport.cmake
+/home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport-noconfig.cmake

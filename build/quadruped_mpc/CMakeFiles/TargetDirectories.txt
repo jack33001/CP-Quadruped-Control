@@ -1,0 +1,10 @@
+/home/ws/build/quadruped_mpc/CMakeFiles/uninstall.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/quadruped_mpc_uninstall.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/quadruped_mpc_lib.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/test.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/edit_cache.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/rebuild_cache.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/list_install_components.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/install.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/install/local.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/install/strip.dir

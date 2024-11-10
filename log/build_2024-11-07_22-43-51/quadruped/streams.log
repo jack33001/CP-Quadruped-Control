@@ -1,0 +1,149 @@
+[0.021s] Invoking command in '/home/ws/build/quadruped': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20
+[0.223s] [  2%] Built target quadruped__rosidl_generator_type_description
+[0.254s] [  2%] Built target ament_cmake_python_symlink_quadruped
+[0.293s] [  5%] Built target quadruped__cpp
+[0.295s] [ 17%] Built target quadruped__rosidl_generator_c
+[0.308s] [ 20%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o[0m
+[0.312s] [ 23%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o[0m
+[0.315s] [ 25%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o[0m
+[0.324s] [ 28%] [32mBuilding CXX object CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o[0m
+[0.389s] [ 35%] Built target quadruped__rosidl_typesupport_introspection_cpp
+[0.391s] [ 43%] Built target quadruped__rosidl_typesupport_c
+[0.392s] [ 51%] Built target quadruped__rosidl_typesupport_cpp
+[0.397s] [ 58%] Built target quadruped__rosidl_typesupport_introspection_c
+[0.398s] [ 66%] Built target quadruped__rosidl_typesupport_fastrtps_cpp
+[0.400s] [ 74%] Built target quadruped__rosidl_typesupport_fastrtps_c
+[0.454s] [ 74%] Built target quadruped
+[0.503s] [ 76%] Built target quadruped__py
+[0.570s] [ 82%] Built target quadruped__rosidl_generator_py
+[0.617s] [ 87%] Built target quadruped_s__rosidl_typesupport_c
+[0.624s] [ 92%] Built target quadruped_s__rosidl_typesupport_introspection_c
+[0.624s] [ 97%] Built target quadruped_s__rosidl_typesupport_fastrtps_c
+[0.633s] running egg_info
+[0.652s] writing quadruped.egg-info/PKG-INFO
+[0.652s] writing dependency_links to quadruped.egg-info/dependency_links.txt
+[0.652s] writing top-level names to quadruped.egg-info/top_level.txt
+[0.701s] reading manifest file 'quadruped.egg-info/SOURCES.txt'
+[0.701s] writing manifest file 'quadruped.egg-info/SOURCES.txt'
+[0.747s] [ 97%] Built target ament_cmake_python_build_quadruped_egg
+[3.758s] [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.758s]     7 | [01;31m[KCallbackReturn[m[K LegController::on_init()
+[3.758s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.761s] [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.761s]    23 | [01;31m[KCallbackReturn[m[K LegController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.761s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.766s] [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.766s]    75 | [01;31m[KCallbackReturn[m[K LegController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.766s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.769s] [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.769s]    81 | [01;31m[KCallbackReturn[m[K LegController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.769s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.815s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:5:1:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ does not name a type; did you mean ‘[01m[KFootTrajectoryController[m[K’?
+[3.815s]     5 | [01;31m[KFootTrajectoryGenerator[m[K::FootTrajectoryGenerator() : controller_interface::ControllerInterface() {}
+[3.816s]       | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.816s]       | [32m[KFootTrajectoryController[m[K
+[3.818s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.818s]     7 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_init()
+[3.818s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.821s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.821s]    23 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.821s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.821s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:46:1:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ has not been declared
+[3.821s]    46 | [01;31m[KFootTrajectoryGenerator[m[K::command_interface_configuration() const
+[3.822s]       | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.822s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:46:60:[m[K [01;31m[Kerror: [m[Knon-member function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kcommand_interface_configuration[m[K()[m[K’ cannot have cv-qualifier
+[3.822s]    46 | FootTrajectoryGenerator::command_interface_configuration() [01;31m[Kconst[m[K
+[3.822s]       |                                                            [01;31m[K^~~~~[m[K
+[3.827s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kcommand_interface_configuration[m[K()[m[K’:
+[3.827s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:51:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_names_[m[K’ was not declared in this scope
+[3.827s]    51 |   for (const auto & joint : [01;31m[Kjoint_names_[m[K) {
+[3.828s]       |                             [01;31m[K^~~~~~~~~~~~[m[K
+[3.835s] [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.836s]     7 | [01;31m[KCallbackReturn[m[K StateEstimator::on_init()
+[3.836s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.836s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:52:35:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommand_interfaces_[m[K’ was not declared in this scope
+[3.836s]    52 |     for (const auto & interface : [01;31m[Kcommand_interfaces_[m[K) {
+[3.837s]       |                                   [01;31m[K^~~~~~~~~~~~~~~~~~~[m[K
+[3.837s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K At global scope:
+[3.838s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:61:1:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ has not been declared
+[3.838s]    61 | [01;31m[KFootTrajectoryGenerator[m[K::state_interface_configuration() const
+[3.838s]       | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.839s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:61:58:[m[K [01;31m[Kerror: [m[Knon-member function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kstate_interface_configuration[m[K()[m[K’ cannot have cv-qualifier
+[3.839s]    61 | FootTrajectoryGenerator::state_interface_configuration() [01;31m[Kconst[m[K
+[3.839s]       |                                                          [01;31m[K^~~~~[m[K
+[3.839s] [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.839s]    23 | [01;31m[KCallbackReturn[m[K StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.840s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.843s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kstate_interface_configuration[m[K()[m[K’:
+[3.843s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:66:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_names_[m[K’ was not declared in this scope
+[3.843s]    66 |   for (const auto & joint : [01;31m[Kjoint_names_[m[K) {
+[3.844s]       |                             [01;31m[K^~~~~~~~~~~~[m[K
+[3.844s] [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.844s]    75 | [01;31m[KCallbackReturn[m[K StateEstimator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.845s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.847s] [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.847s]    81 | [01;31m[KCallbackReturn[m[K StateEstimator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.847s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.851s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:67:35:[m[K [01;31m[Kerror: [m[K‘[01m[Kstate_interfaces_[m[K’ was not declared in this scope; did you mean ‘[01m[Krcl_interfaces[m[K’?
+[3.851s]    67 |     for (const auto & interface : [01;31m[Kstate_interfaces_[m[K) {
+[3.852s]       |                                   [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[3.852s]       |                                   [32m[Krcl_interfaces[m[K
+[3.854s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K At global scope:
+[3.855s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.855s]    75 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.855s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.857s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.857s]    81 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.857s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.858s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:87:35:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ has not been declared
+[3.858s]    87 | controller_interface::return_type [01;31m[KFootTrajectoryGenerator[m[K::update(
+[3.858s]       |                                   [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.864s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In function ‘[01m[Kcontroller_interface::return_type foot_trajectory_generator::[01;32m[Kupdate[m[K(const rclcpp::Time&, const rclcpp::Duration&)[m[K’:
+[3.864s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:93:19:[m[K [01;31m[Kerror: [m[K‘[01m[Krt_command_ptr_[m[K’ was not declared in this scope
+[3.865s]    93 |   auto commands = [01;31m[Krt_command_ptr_[m[K.readFromRT();
+[3.865s]       |                   [01;31m[K^~~~~~~~~~~~~~~[m[K
+[3.875s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:100:26:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_command_interfaces_[m[K’ was not declared in this scope
+[3.876s]   100 |   for (size_t i = 0; i < [01;31m[Kjoint_command_interfaces_[m[K.size(); ++i) {
+[3.876s]       |                          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.904s] In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:56[m[K,
+[3.904s]                  from [01m[K/opt/ros/jazzy/include/pluginlib/pluginlib/class_list_macros.hpp:40[m[K,
+[3.904s]                  from [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:109[m[K:
+[3.905s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K At global scope:
+[3.905s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:51:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ in namespace ‘[01m[Kfoot_trajectory_generator[m[K’ does not name a type; did you mean ‘[01m[KFootTrajectoryController[m[K’?
+[3.905s]   110 | PLUGINLIB_EXPORT_CLASS(foot_trajectory_generator::[01;31m[KFootTrajectoryGenerator[m[K, controller_interface::ControllerInterface)
+[3.905s]       |                                                   [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.915s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In constructor ‘[01m[K{anonymous}::ProxyExec0::[01;32m[KProxyExec0[m[K()[m[K’:
+[3.915s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:1:[m[K [01;31m[Kerror: [m[K‘[01m[K_derived[m[K’ was not declared in this scope
+[3.915s]   110 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(foot_trajectory_generator::FootTrajectoryGenerator, controller_interface::ControllerInterface)
+[3.915s]       | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.915s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:1:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[KregisterPlugin<<expression error>, {anonymous}::ProxyExec0::_base>(const char [51], const char [42])[m[K’
+[3.915s]   110 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(foot_trajectory_generator::FootTrajectoryGenerator, controller_interface::ControllerInterface)
+[3.915s]       | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.916s] In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:55[m[K:
+[3.916s] [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:241:1:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class Derived, class Base> class_loader::impl::UniquePtr<class_loader::impl::AbstractMetaObjectBase> class_loader::impl::[01;32m[KregisterPlugin[m[K(const std::string&, const std::string&)[m[K’
+[3.916s]   241 | [01;36m[KregisterPlugin[m[K(const std::string & class_name, const std::string & base_class_name)
+[3.916s]       | [01;36m[K^~~~~~~~~~~~~~[m[K
+[3.916s] [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:241:1:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+[3.916s] [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:1:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+[3.916s]   110 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(foot_trajectory_generator::FootTrajectoryGenerator, controller_interface::ControllerInterface)
+[3.917s]       | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+[3.917s] [01m[K/home/ws/src/quadruped/src/balance_controller.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.917s]     7 | [01;31m[KCallbackReturn[m[K BalanceController::on_init()
+[3.918s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.922s] [01m[K/home/ws/src/quadruped/src/balance_controller.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.922s]    23 | [01;31m[KCallbackReturn[m[K BalanceController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.922s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.928s] [01m[K/home/ws/src/quadruped/src/balance_controller.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.928s]    75 | [01;31m[KCallbackReturn[m[K BalanceController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.928s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[3.932s] [01m[K/home/ws/src/quadruped/src/balance_controller.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+[3.932s]    81 | [01;31m[KCallbackReturn[m[K BalanceController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+[3.932s]       | [01;31m[K^~~~~~~~~~~~~~[m[K
+[4.904s] gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:90: CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o] Error 1
+[4.905s] gmake[2]: *** Waiting for unfinished jobs....
+[4.950s] gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:118: CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o] Error 1
+[4.952s] gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:104: CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o] Error 1
+[5.036s] gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:76: CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o] Error 1
+[5.037s] gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Error 2
+[5.037s] gmake: *** [Makefile:146: all] Error 2
+[5.043s] Invoked command in '/home/ws/build/quadruped' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped -- -j20 -l20

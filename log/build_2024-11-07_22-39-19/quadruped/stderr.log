@@ -1,0 +1,179 @@
+In file included from [01m[K/home/ws/src/quadruped/src/state_estimator.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd_msgs[m[K’ was not declared in this scope
+   38 |   rclcpp::Subscription<[01;31m[Kstd_msgs[m[K::msg::Float64MultiArray>::SharedPtr commands_subscriber_;
+      |                        [01;31m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray[01;31m[K>[m[K::SharedPtr commands_subscriber_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 3 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 5 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::[01;31m[KSharedPtr[m[K commands_subscriber_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+In file included from [01m[K/home/ws/src/quadruped/src/balance_controller.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd_msgs[m[K’ was not declared in this scope
+   35 |   rclcpp::Subscription<[01;31m[Kstd_msgs[m[K::msg::Float64MultiArray>::SharedPtr commands_subscriber_;
+      |                        [01;31m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray[01;31m[K>[m[K::SharedPtr commands_subscriber_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 3 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 5 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::[01;31m[KSharedPtr[m[K commands_subscriber_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/state_estimator.hpp:38:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommands_subscriber_[m[K’ does not name a type
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr [01;31m[Kcommands_subscriber_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/balance_controller.hpp:35:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommands_subscriber_[m[K’ does not name a type
+   35 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr [01;31m[Kcommands_subscriber_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+    7 | [01;31m[KCallbackReturn[m[K StateEstimator::on_init()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   23 | [01;31m[KCallbackReturn[m[K StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/balance_controller.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+    7 | [01;31m[KCallbackReturn[m[K BalanceController::on_init()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   75 | [01;31m[KCallbackReturn[m[K StateEstimator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/state_estimator.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   81 | [01;31m[KCallbackReturn[m[K StateEstimator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd_msgs[m[K’ was not declared in this scope
+   38 |   rclcpp::Subscription<[01;31m[Kstd_msgs[m[K::msg::Float64MultiArray>::SharedPtr commands_subscriber_;
+      |                        [01;31m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray[01;31m[K>[m[K::SharedPtr commands_subscriber_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 3 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 5 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::[01;31m[KSharedPtr[m[K commands_subscriber_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/foot_trajectory_generator.hpp:38:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommands_subscriber_[m[K’ does not name a type
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr [01;31m[Kcommands_subscriber_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:5:1:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ does not name a type; did you mean ‘[01m[KFootTrajectoryController[m[K’?
+    5 | [01;31m[KFootTrajectoryGenerator[m[K::FootTrajectoryGenerator() : controller_interface::ControllerInterface() {}
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+      | [32m[KFootTrajectoryController[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+    7 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_init()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   23 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:46:1:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ has not been declared
+   46 | [01;31m[KFootTrajectoryGenerator[m[K::command_interface_configuration() const
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:46:60:[m[K [01;31m[Kerror: [m[Knon-member function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kcommand_interface_configuration[m[K()[m[K’ cannot have cv-qualifier
+   46 | FootTrajectoryGenerator::command_interface_configuration() [01;31m[Kconst[m[K
+      |                                                            [01;31m[K^~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kcommand_interface_configuration[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:51:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_names_[m[K’ was not declared in this scope
+   51 |   for (const auto & joint : [01;31m[Kjoint_names_[m[K) {
+      |                             [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:52:35:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommand_interfaces_[m[K’ was not declared in this scope
+   52 |     for (const auto & interface : [01;31m[Kcommand_interfaces_[m[K) {
+      |                                   [01;31m[K^~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K At global scope:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:61:1:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ has not been declared
+   61 | [01;31m[KFootTrajectoryGenerator[m[K::state_interface_configuration() const
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:61:58:[m[K [01;31m[Kerror: [m[Knon-member function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kstate_interface_configuration[m[K()[m[K’ cannot have cv-qualifier
+   61 | FootTrajectoryGenerator::state_interface_configuration() [01;31m[Kconst[m[K
+      |                                                          [01;31m[K^~~~~[m[K
+In file included from [01m[K/home/ws/src/quadruped/src/leg_controller.cpp:1[m[K:
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kstd_msgs[m[K’ was not declared in this scope
+   38 |   rclcpp::Subscription<[01;31m[Kstd_msgs[m[K::msg::Float64MultiArray>::SharedPtr commands_subscriber_;
+      |                        [01;31m[K^~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray[01;31m[K>[m[K::SharedPtr commands_subscriber_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 3 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 5 is invalid
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::[01;31m[KSharedPtr[m[K commands_subscriber_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In function ‘[01m[Kcontroller_interface::InterfaceConfiguration foot_trajectory_generator::[01;32m[Kstate_interface_configuration[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:66:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_names_[m[K’ was not declared in this scope
+   66 |   for (const auto & joint : [01;31m[Kjoint_names_[m[K) {
+      |                             [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/include/quadruped/leg_controller.hpp:38:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kcommands_subscriber_[m[K’ does not name a type
+   38 |   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr [01;31m[Kcommands_subscriber_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:67:35:[m[K [01;31m[Kerror: [m[K‘[01m[Kstate_interfaces_[m[K’ was not declared in this scope; did you mean ‘[01m[Krcl_interfaces[m[K’?
+   67 |     for (const auto & interface : [01;31m[Kstate_interfaces_[m[K) {
+      |                                   [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+      |                                   [32m[Krcl_interfaces[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K At global scope:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   75 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:7:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+    7 | [01;31m[KCallbackReturn[m[K LegController::on_init()
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   81 | [01;31m[KCallbackReturn[m[K FootTrajectoryGenerator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:87:35:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ has not been declared
+   87 | controller_interface::return_type [01;31m[KFootTrajectoryGenerator[m[K::update(
+      |                                   [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:23:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   23 | [01;31m[KCallbackReturn[m[K LegController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In function ‘[01m[Kcontroller_interface::return_type foot_trajectory_generator::[01;32m[Kupdate[m[K(const rclcpp::Time&, const rclcpp::Duration&)[m[K’:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:93:19:[m[K [01;31m[Kerror: [m[K‘[01m[Krt_command_ptr_[m[K’ was not declared in this scope
+   93 |   auto commands = [01;31m[Krt_command_ptr_[m[K.readFromRT();
+      |                   [01;31m[K^~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:75:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   75 | [01;31m[KCallbackReturn[m[K LegController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/leg_controller.cpp:81:1:[m[K [01;31m[Kerror: [m[K‘[01m[KCallbackReturn[m[K’ does not name a type
+   81 | [01;31m[KCallbackReturn[m[K LegController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+      | [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:100:26:[m[K [01;31m[Kerror: [m[K‘[01m[Kjoint_command_interfaces_[m[K’ was not declared in this scope
+  100 |   for (size_t i = 0; i < [01;31m[Kjoint_command_interfaces_[m[K.size(); ++i) {
+      |                          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:56[m[K,
+                 from [01m[K/opt/ros/jazzy/include/pluginlib/pluginlib/class_list_macros.hpp:40[m[K,
+                 from [01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:109[m[K:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K At global scope:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:51:[m[K [01;31m[Kerror: [m[K‘[01m[KFootTrajectoryGenerator[m[K’ in namespace ‘[01m[Kfoot_trajectory_generator[m[K’ does not name a type; did you mean ‘[01m[KFootTrajectoryController[m[K’?
+  110 | PLUGINLIB_EXPORT_CLASS(foot_trajectory_generator::[01;31m[KFootTrajectoryGenerator[m[K, controller_interface::ControllerInterface)
+      |                                                   [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:[m[K In constructor ‘[01m[K{anonymous}::ProxyExec0::[01;32m[KProxyExec0[m[K()[m[K’:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:1:[m[K [01;31m[Kerror: [m[K‘[01m[K_derived[m[K’ was not declared in this scope
+  110 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(foot_trajectory_generator::FootTrajectoryGenerator, controller_interface::ControllerInterface)
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:1:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[KregisterPlugin<<expression error>, {anonymous}::ProxyExec0::_base>(const char [51], const char [42])[m[K’
+  110 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(foot_trajectory_generator::FootTrajectoryGenerator, controller_interface::ControllerInterface)
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader.hpp:55[m[K:
+[01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:241:1:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class Derived, class Base> class_loader::impl::UniquePtr<class_loader::impl::AbstractMetaObjectBase> class_loader::impl::[01;32m[KregisterPlugin[m[K(const std::string&, const std::string&)[m[K’
+  241 | [01;36m[KregisterPlugin[m[K(const std::string & class_name, const std::string & base_class_name)
+      | [01;36m[K^~~~~~~~~~~~~~[m[K
+[01m[K/opt/ros/jazzy/include/class_loader/class_loader/class_loader_core.hpp:241:1:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+[01m[K/home/ws/src/quadruped/src/foot_trajectory_generator.cpp:110:1:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  110 | [01;31m[KPLUGINLIB_EXPORT_CLASS[m[K(foot_trajectory_generator::FootTrajectoryGenerator, controller_interface::ControllerInterface)
+      | [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:76: CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:118: CMakeFiles/quadruped_lib.dir/src/state_estimator.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:90: CMakeFiles/quadruped_lib.dir/src/foot_trajectory_generator.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:104: CMakeFiles/quadruped_lib.dir/src/leg_controller.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

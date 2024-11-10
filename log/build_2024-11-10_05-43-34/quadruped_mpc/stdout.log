@@ -1,0 +1,34 @@
+[100%] Built target quadruped_mpc_lib
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/foot_trajectory_generator.hpp
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/leg_controller.hpp
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/include/quadruped_mpc/state_estimator.hpp
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc//plugin_description.xml
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc/config/quadruped_controllers.yaml
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/launch/mpc.launch.py
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/library_path.sh
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/library_path.dsv
+-- Up-to-date symlink: /home/ws/install/quadruped_mpc/share/quadruped_mpc//plugin_description.xml
+-- Symlinking: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/package_run_dependencies/quadruped_mpc
+-- Symlinking: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/parent_prefix_path/quadruped_mpc
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/ament_prefix_path.sh
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/ament_prefix_path.dsv
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/path.sh
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/environment/path.dsv
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.bash
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.sh
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.zsh
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/local_setup.dsv
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/package.dsv
+-- Symlinking: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/packages/quadruped_mpc
+-- Symlinking: /home/ws/install/quadruped_mpc/share/ament_index/resource_index/controller_interface__pluginlib__plugin/quadruped_mpc
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/ament_cmake_export_targets-extras.cmake
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpcConfig.cmake
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpcConfig-version.cmake
+-- Symlinking: /home/ws/install/quadruped_mpc/share/quadruped_mpc/package.xml
+-- Installing: /home/ws/install/quadruped_mpc/lib/libquadruped_mpc_lib.a
+-- Installing: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport.cmake
+-- Installing: /home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport-noconfig.cmake

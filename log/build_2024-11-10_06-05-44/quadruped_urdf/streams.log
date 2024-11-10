@@ -1,0 +1,36 @@
+[0.088s] Invoking command in '/home/ws/build/quadruped_urdf': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_urdf -- -j20 -l20
+[0.217s] Invoked command in '/home/ws/build/quadruped_urdf' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_urdf -- -j20 -l20
+[0.320s] Invoking command in '/home/ws/build/quadruped_urdf': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_urdf
+[0.353s] -- Install configuration: ""
+[0.354s] -- Execute custom install script
+[0.356s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/Quadruped MJB.mjb
+[0.357s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/QuadrupedURDF_sim.urdf.xacro
+[0.358s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Body.STL
+[0.359s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Body_bin.STL
+[0.359s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Left Shin.STL
+[0.359s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Left Thigh.STL
+[0.360s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Right Shin.STL
+[0.361s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Right Thigh.STL
+[0.361s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Left Shin.STL
+[0.362s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Left Thigh.STL
+[0.362s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Right Shin.STL
+[0.362s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Right Thigh.STL
+[0.362s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/mjb_maker.py
+[0.363s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/config/initial_joint_positions.yaml
+[0.363s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/launch/sim_urdf.launch.py
+[0.363s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/ament_index/resource_index/package_run_dependencies/quadruped_urdf
+[0.364s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/ament_index/resource_index/parent_prefix_path/quadruped_urdf
+[0.364s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/ament_prefix_path.sh
+[0.364s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/ament_prefix_path.dsv
+[0.364s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/path.sh
+[0.364s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/path.dsv
+[0.365s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.bash
+[0.365s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.sh
+[0.365s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.zsh
+[0.366s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.dsv
+[0.366s] -- Symlinking: /home/ws/install/quadruped_urdf/share/quadruped_urdf/package.dsv
+[0.398s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/ament_index/resource_index/packages/quadruped_urdf
+[0.399s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/cmake/quadruped_urdfConfig.cmake
+[0.399s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/cmake/quadruped_urdfConfig-version.cmake
+[0.399s] -- Up-to-date symlink: /home/ws/install/quadruped_urdf/share/quadruped_urdf/package.xml
+[0.465s] Invoked command in '/home/ws/build/quadruped_urdf' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_urdf

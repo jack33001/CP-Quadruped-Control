@@ -1,0 +1,589 @@
+[0.000000] (-) TimerEvent: {}
+[0.000964] (quadruped) JobQueued: {'identifier': 'quadruped', 'dependencies': OrderedDict()}
+[0.001071] (quadruped_controllers) JobQueued: {'identifier': 'quadruped_controllers', 'dependencies': OrderedDict()}
+[0.001196] (quadruped_simulation) JobQueued: {'identifier': 'quadruped_simulation', 'dependencies': OrderedDict()}
+[0.001244] (quadruped) JobStarted: {'identifier': 'quadruped'}
+[0.008506] (quadruped_controllers) JobStarted: {'identifier': 'quadruped_controllers'}
+[0.014547] (quadruped_simulation) JobStarted: {'identifier': 'quadruped_simulation'}
+[0.021589] (quadruped) JobProgress: {'identifier': 'quadruped', 'progress': 'cmake'}
+[0.022909] (quadruped) JobProgress: {'identifier': 'quadruped', 'progress': 'build'}
+[0.024048] (quadruped) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/build/quadruped', '--', '-j20', '-l20'], 'cwd': '/home/ws/build/quadruped', 'env': OrderedDict({'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy'}), 'shell': False}
+[0.099691] (-) TimerEvent: {}
+[0.200301] (-) TimerEvent: {}
+[0.272832] (quadruped) StdoutLine: {'line': b'-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)\n'}
+[0.273567] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[0.274488] (quadruped) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.274988] (quadruped) StdoutLine: {'line': b'-- Found rclcpp: 28.1.5 (/opt/ros/jazzy/share/rclcpp/cmake)\n'}
+[0.292162] (quadruped) StdoutLine: {'line': b'-- Found rosidl_generator_c: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)\n'}
+[0.300466] (-) TimerEvent: {}
+[0.303963] (quadruped) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 4.6.4 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)\n'}
+[0.319015] (quadruped) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.339406] (quadruped) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.400706] (-) TimerEvent: {}
+[0.422045] (quadruped) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 7.3.1 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)\n'}
+[0.423856] (quadruped) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 8.4.1 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.500914] (-) TimerEvent: {}
+[0.535569] (quadruped) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.601360] (-) TimerEvent: {}
+[0.687925] (quadruped) StdoutLine: {'line': b'-- Found hardware_interface: 4.18.0 (/opt/ros/jazzy/share/hardware_interface/cmake)\n'}
+[0.701626] (-) TimerEvent: {}
+[0.802494] (-) TimerEvent: {}
+[0.903087] (-) TimerEvent: {}
+[1.003623] (-) TimerEvent: {}
+[1.073799] (quadruped) StdoutLine: {'line': b'-- Found controller_interface: 4.18.0 (/opt/ros/jazzy/share/controller_interface/cmake)\n'}
+[1.076314] (quadruped) StdoutLine: {'line': b'-- Found controller_manager: 4.18.0 (/opt/ros/jazzy/share/controller_manager/cmake)\n'}
+[1.103758] (-) TimerEvent: {}
+[1.160310] (quadruped) StdoutLine: {'line': b'-- Found ros2_control: 4.18.0 (/opt/ros/jazzy/share/ros2_control/cmake)\n'}
+[1.161018] (quadruped) StdoutLine: {'line': b'-- Found ros_gz_sim: 1.0.5 (/opt/ros/jazzy/share/ros_gz_sim/cmake)\n'}
+[1.163804] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sim8 -- found version 8.6.0\n'}
+[1.170861] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sim8\n'}
+[1.171507] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[1.171743] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of sdformat14\n'}
+[1.181033] (quadruped) StdoutLine: {'line': b"-- Checking for module 'tinyxml2'\n"}
+[1.203904] (-) TimerEvent: {}
+[1.212118] (quadruped) StdoutLine: {'line': b'--   Found tinyxml2, version 10.0.0\n'}
+[1.244490] (quadruped_simulation) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/ws/build/quadruped_simulation/build', '--no-deps', 'symlink_data'], 'cwd': '/home/ws/build/quadruped_simulation', 'env': {'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped_simulation', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/home/ws/build/quadruped_simulation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_simulation/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[1.279111] (quadruped_controllers) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/ws/build/quadruped_controllers/build', '--no-deps', 'symlink_data'], 'cwd': '/home/ws/build/quadruped_controllers', 'env': {'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped_controllers', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/home/ws/build/quadruped_controllers/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/install/quadruped_controllers/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[1.281405] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.281582] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-math7\n'}
+[1.282526] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.282883] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-utils2\n'}
+[1.286670] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.286923] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-utils2\n'}
+[1.287059] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-utils2> component [cli]\n'}
+[1.288341] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2-cli -- found version 2.2.0\n'}
+[1.288606] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-utils2-cli\n'}
+[1.292112] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[1.292290] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2\n'}
+[1.292757] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.293624] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-plugin2> component [loader]\n'}
+[1.294195] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2-loader -- found version 2.0.3\n'}
+[1.294572] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2-loader\n'}
+[1.294932] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-plugin2> component [register]\n'}
+[1.295646] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2-register -- found version 2.0.3\n'}
+[1.295943] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2-register\n'}
+[1.296910] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[1.297071] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-transport13\n'}
+[1.304088] (-) TimerEvent: {}
+[1.351633] (quadruped) StdoutLine: {'line': b'-- Config-file not installed for ZeroMQ -- checking for pkg-config\n'}
+[1.362153] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libzmq >= 4'\n"}
+[1.389394] (quadruped) StdoutLine: {'line': b'--   Found libzmq, version 4.3.5\n'}
+[1.404271] (-) TimerEvent: {}
+[1.493172] (quadruped) StdoutLine: {'line': b"-- Checking for module 'uuid'\n"}
+[1.504400] (-) TimerEvent: {}
+[1.526028] (quadruped) StdoutLine: {'line': b'--   Found uuid, version 2.39.3\n'}
+[1.589236] (quadruped_simulation) StdoutLine: {'line': b'running develop\n'}
+[1.589899] (quadruped_simulation) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/develop.py:40: EasyInstallDeprecationWarning: easy_install command is deprecated.\n'}
+[1.590190] (quadruped_simulation) StderrLine: {'line': b'!!\n'}
+[1.590406] (quadruped_simulation) StderrLine: {'line': b'\n'}
+[1.590598] (quadruped_simulation) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.590788] (quadruped_simulation) StderrLine: {'line': b'        Please avoid running ``setup.py`` and ``easy_install``.\n'}
+[1.590978] (quadruped_simulation) StderrLine: {'line': b'        Instead, use pypa/build, pypa/installer or other\n'}
+[1.591184] (quadruped_simulation) StderrLine: {'line': b'        standards-based tools.\n'}
+[1.591378] (quadruped_simulation) StderrLine: {'line': b'\n'}
+[1.591560] (quadruped_simulation) StderrLine: {'line': b'        See https://github.com/pypa/setuptools/issues/917 for details.\n'}
+[1.591742] (quadruped_simulation) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.591923] (quadruped_simulation) StderrLine: {'line': b'\n'}
+[1.592118] (quadruped_simulation) StderrLine: {'line': b'!!\n'}
+[1.592315] (quadruped_simulation) StderrLine: {'line': b'  easy_install.initialize_options(self)\n'}
+[1.595270] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.595773] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[1.596093] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-msgs10\n'}
+[1.604505] (-) TimerEvent: {}
+[1.611708] (quadruped_controllers) StdoutLine: {'line': b'running develop\n'}
+[1.612232] (quadruped_controllers) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/develop.py:40: EasyInstallDeprecationWarning: easy_install command is deprecated.\n'}
+[1.612477] (quadruped_controllers) StderrLine: {'line': b'!!\n'}
+[1.612671] (quadruped_controllers) StderrLine: {'line': b'\n'}
+[1.612856] (quadruped_controllers) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.613038] (quadruped_controllers) StderrLine: {'line': b'        Please avoid running ``setup.py`` and ``easy_install``.\n'}
+[1.613241] (quadruped_controllers) StderrLine: {'line': b'        Instead, use pypa/build, pypa/installer or other\n'}
+[1.613424] (quadruped_controllers) StderrLine: {'line': b'        standards-based tools.\n'}
+[1.613605] (quadruped_controllers) StderrLine: {'line': b'\n'}
+[1.613785] (quadruped_controllers) StderrLine: {'line': b'        See https://github.com/pypa/setuptools/issues/917 for details.\n'}
+[1.613969] (quadruped_controllers) StderrLine: {'line': b'        ********************************************************************************\n'}
+[1.614163] (quadruped_controllers) StderrLine: {'line': b'\n'}
+[1.614352] (quadruped_controllers) StderrLine: {'line': b'!!\n'}
+[1.614533] (quadruped_controllers) StderrLine: {'line': b'  easy_install.initialize_options(self)\n'}
+[1.626272] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.626983] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[1.674127] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-transport13> component [log]\n'}
+[1.674719] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13-log -- found version 13.4.0\n'}
+[1.674967] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-transport13-log\n'}
+[1.675891] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-transport13> component [parameters]\n'}
+[1.676150] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13-parameters -- found version 13.4.0\n'}
+[1.676537] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-transport13-parameters\n'}
+[1.677907] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[1.678361] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[1.678534] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5\n'}
+[1.679031] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[1.679116] (quadruped) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[1.679180] (quadruped) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[1.690823] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [av]\n'}
+[1.691428] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-av -- found version 5.6.0\n'}
+[1.691708] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-av\n'}
+[1.701442] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libswscale'\n"}
+[1.704615] (-) TimerEvent: {}
+[1.738339] (quadruped) StdoutLine: {'line': b'--   Found libswscale, version 7.5.100\n'}
+[1.774552] (quadruped_simulation) StdoutLine: {'line': b'running egg_info\n'}
+[1.789294] (quadruped_controllers) StdoutLine: {'line': b'running egg_info\n'}
+[1.789623] (quadruped_simulation) StdoutLine: {'line': b'writing quadruped_simulation.egg-info/PKG-INFO\n'}
+[1.789785] (quadruped_simulation) StdoutLine: {'line': b'writing dependency_links to quadruped_simulation.egg-info/dependency_links.txt\n'}
+[1.789905] (quadruped_simulation) StdoutLine: {'line': b'writing requirements to quadruped_simulation.egg-info/requires.txt\n'}
+[1.789973] (quadruped_simulation) StdoutLine: {'line': b'writing top-level names to quadruped_simulation.egg-info/top_level.txt\n'}
+[1.803994] (quadruped_controllers) StdoutLine: {'line': b'writing quadruped_controllers.egg-info/PKG-INFO\n'}
+[1.804385] (quadruped_controllers) StdoutLine: {'line': b'writing dependency_links to quadruped_controllers.egg-info/dependency_links.txt\n'}
+[1.804645] (quadruped_controllers) StdoutLine: {'line': b'writing requirements to quadruped_controllers.egg-info/requires.txt\n'}
+[1.804762] (-) TimerEvent: {}
+[1.804914] (quadruped_controllers) StdoutLine: {'line': b'writing top-level names to quadruped_controllers.egg-info/top_level.txt\n'}
+[1.813640] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavdevice >= 56.4.100'\n"}
+[1.822473] (quadruped_simulation) StdoutLine: {'line': b"reading manifest file 'quadruped_simulation.egg-info/SOURCES.txt'\n"}
+[1.823321] (quadruped_simulation) StdoutLine: {'line': b"writing manifest file 'quadruped_simulation.egg-info/SOURCES.txt'\n"}
+[1.839194] (quadruped_controllers) StdoutLine: {'line': b"reading manifest file 'quadruped_controllers.egg-info/SOURCES.txt'\n"}
+[1.840259] (quadruped_controllers) StdoutLine: {'line': b"writing manifest file 'quadruped_controllers.egg-info/SOURCES.txt'\n"}
+[1.841441] (quadruped_simulation) StdoutLine: {'line': b'running build_ext\n'}
+[1.841612] (quadruped_simulation) StdoutLine: {'line': b'Creating /home/ws/install/quadruped_simulation/lib/python3.12/site-packages/quadruped-simulation.egg-link (link to .)\n'}
+[1.842187] (quadruped_simulation) StdoutLine: {'line': b'\n'}
+[1.842268] (quadruped_simulation) StdoutLine: {'line': b'Installed /home/ws/build/quadruped_simulation\n'}
+[1.842335] (quadruped_simulation) StdoutLine: {'line': b'running symlink_data\n'}
+[1.842613] (quadruped) StdoutLine: {'line': b'--   Found libavdevice, version 60.3.100\n'}
+[1.857676] (quadruped_controllers) StdoutLine: {'line': b'running build_ext\n'}
+[1.857932] (quadruped_controllers) StdoutLine: {'line': b'Creating /home/ws/install/quadruped_controllers/lib/python3.12/site-packages/quadruped-controllers.egg-link (link to .)\n'}
+[1.858500] (quadruped_controllers) StdoutLine: {'line': b'\n'}
+[1.858665] (quadruped_controllers) StdoutLine: {'line': b'Installed /home/ws/build/quadruped_controllers\n'}
+[1.858739] (quadruped_controllers) StdoutLine: {'line': b'running symlink_data\n'}
+[1.882848] (quadruped_simulation) CommandEnded: {'returncode': 0}
+[1.896426] (quadruped_simulation) JobEnded: {'identifier': 'quadruped_simulation', 'rc': 0}
+[1.903000] (quadruped_controllers) CommandEnded: {'returncode': 0}
+[1.904936] (-) TimerEvent: {}
+[1.911512] (quadruped_controllers) JobEnded: {'identifier': 'quadruped_controllers', 'rc': 0}
+[1.966659] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavformat'\n"}
+[2.005324] (-) TimerEvent: {}
+[2.017343] (quadruped) StdoutLine: {'line': b'--   Found libavformat, version 60.16.100\n'}
+[2.105447] (-) TimerEvent: {}
+[2.128012] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavcodec'\n"}
+[2.174236] (quadruped) StdoutLine: {'line': b'--   Found libavcodec, version 60.31.102\n'}
+[2.205596] (-) TimerEvent: {}
+[2.272651] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libavutil'\n"}
+[2.303908] (quadruped) StdoutLine: {'line': b'--   Found libavutil, version 58.29.100\n'}
+[2.305732] (-) TimerEvent: {}
+[2.388554] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [events]\n'}
+[2.389677] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-events -- found version 5.6.0\n'}
+[2.390219] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-events\n'}
+[2.390779] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.391776] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [graphics]\n'}
+[2.392418] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-graphics -- found version 5.6.0\n'}
+[2.392922] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-graphics\n'}
+[2.393423] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.398484] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [io]\n'}
+[2.399361] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-io -- found version 5.6.0\n'}
+[2.399644] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-io\n'}
+[2.400675] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [profiler]\n'}
+[2.401364] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-profiler -- found version 5.6.0\n'}
+[2.401703] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-profiler\n'}
+[2.403460] (quadruped) StdoutLine: {'line': b'-- Looking for gz-fuel_tools9 -- found version 9.1.0\n'}
+[2.403978] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-fuel_tools9\n'}
+[2.405930] (-) TimerEvent: {}
+[2.499005] (quadruped) StdoutLine: {'line': b"-- Checking for module 'jsoncpp'\n"}
+[2.506148] (-) TimerEvent: {}
+[2.536203] (quadruped) StdoutLine: {'line': b'--   Found jsoncpp, version 1.9.5\n'}
+[2.606382] (-) TimerEvent: {}
+[2.660578] (quadruped) StdoutLine: {'line': b"-- Checking for module 'yaml-0.1'\n"}
+[2.690856] (quadruped) StdoutLine: {'line': b'--   Found yaml-0.1, version 0.2.5\n'}
+[2.706495] (-) TimerEvent: {}
+[2.785755] (quadruped) StdoutLine: {'line': b"-- Checking for module 'libzip'\n"}
+[2.806750] (-) TimerEvent: {}
+[2.812259] (quadruped) StdoutLine: {'line': b'--   Found libzip, version 1.7.3\n'}
+[2.890443] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[2.890966] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[2.891212] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5\n'}
+[2.891493] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[2.891758] (quadruped) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[2.891954] (quadruped) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[2.907069] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [testing]\n'}
+[2.907454] (-) TimerEvent: {}
+[2.907870] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-testing -- found version 5.6.0\n'}
+[2.908313] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-testing\n'}
+[2.910257] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.910927] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[2.913391] (quadruped) StdoutLine: {'line': b'-- Looking for gz-gui8 -- found version 8.3.0\n'}
+[2.913780] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-gui8\n'}
+[2.976197] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[2.976792] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.977591] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[2.978373] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[2.979045] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[2.979864] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[2.980213] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-rendering8\n'}
+[2.980766] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[2.981073] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-math7\n'}
+[2.981645] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[2.981947] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-math7> component [eigen3]\n'}
+[2.982705] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7-eigen3 -- found version 7.5.0\n'}
+[2.982975] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-math7-eigen3\n'}
+[2.986359] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[2.986804] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5\n'}
+[2.987260] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[2.987666] (quadruped) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[2.987915] (quadruped) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[3.002195] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [graphics]\n'}
+[3.002680] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [events]\n'}
+[3.002937] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-common5> component [geospatial]\n'}
+[3.003110] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5-geospatial -- found version 5.6.0\n'}
+[3.003615] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-common5-geospatial\n'}
+[3.004272] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[3.005000] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[3.007096] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[3.007370] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-plugin2\n'}
+[3.007487] (-) TimerEvent: {}
+[3.007938] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[3.008129] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-plugin2> component [all]\n'}
+[3.009039] (quadruped) StdoutLine: {'line': b'-- Looking for all libraries of gz-plugin2 -- found version 2.0.3\n'}
+[3.009961] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[3.011777] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[3.017825] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[3.041138] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7 -- found version 7.3.0\n'}
+[3.041477] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7\n'}
+[3.041669] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[3.042280] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[3.042799] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[3.043335] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[3.044881] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-physics7> component [heightmap]\n'}
+[3.045479] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7-heightmap -- found version 7.3.0\n'}
+[3.045779] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7-heightmap\n'}
+[3.046012] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[3.046612] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-physics7> component [mesh]\n'}
+[3.047055] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7-mesh -- found version 7.3.0\n'}
+[3.047443] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7-mesh\n'}
+[3.047867] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[3.048459] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-physics7> component [sdf]\n'}
+[3.048848] (quadruped) StdoutLine: {'line': b'-- Looking for gz-physics7-sdf -- found version 7.3.0\n'}
+[3.049124] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-physics7-sdf\n'}
+[3.049617] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[3.050920] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.051243] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8\n'}
+[3.078668] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[3.079070] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[3.079647] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[3.080078] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[3.080617] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[3.081031] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[3.081834] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [air_pressure]\n'}
+[3.082333] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-air_pressure -- found version 8.2.0\n'}
+[3.082667] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-air_pressure\n'}
+[3.083091] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [air_speed]\n'}
+[3.083633] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-air_speed -- found version 8.2.0\n'}
+[3.083851] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-air_speed\n'}
+[3.084503] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [altimeter]\n'}
+[3.084907] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-altimeter -- found version 8.2.0\n'}
+[3.085012] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-altimeter\n'}
+[3.085769] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [imu]\n'}
+[3.086081] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-imu -- found version 8.2.0\n'}
+[3.086417] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-imu\n'}
+[3.086985] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [force_torque]\n'}
+[3.087638] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-force_torque -- found version 8.2.0\n'}
+[3.087883] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-force_torque\n'}
+[3.088617] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [logical_camera]\n'}
+[3.089078] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-logical_camera -- found version 8.2.0\n'}
+[3.089552] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-logical_camera\n'}
+[3.090395] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [magnetometer]\n'}
+[3.090997] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-magnetometer -- found version 8.2.0\n'}
+[3.091180] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-magnetometer\n'}
+[3.092147] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [navsat]\n'}
+[3.092732] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-navsat -- found version 8.2.0\n'}
+[3.093026] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-navsat\n'}
+[3.093937] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [dvl]\n'}
+[3.094470] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-dvl -- found version 8.2.0\n'}
+[3.094906] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-dvl\n'}
+[3.095386] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.095828] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8\n'}
+[3.107700] (-) TimerEvent: {}
+[3.134790] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[3.135688] (quadruped) StdoutLine: {'line': b'-- Looking for gz-common5 -- found version 5.6.0\n'}
+[3.136428] (quadruped) StdoutLine: {'line': b'-- Looking for gz-transport13 -- found version 13.4.0\n'}
+[3.137062] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[3.137963] (quadruped) StdoutLine: {'line': b'-- Looking for gz-msgs10 -- found version 10.3.0\n'}
+[3.138631] (quadruped) StdoutLine: {'line': b'-- Looking for sdformat14 -- found version 14.5.0\n'}
+[3.138987] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [rendering]\n'}
+[3.139798] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-rendering -- found version 8.2.0\n'}
+[3.140109] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-rendering\n'}
+[3.142094] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [rendering]\n'}
+[3.142306] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [lidar]\n'}
+[3.144955] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-lidar -- found version 8.2.0\n'}
+[3.145164] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-lidar\n'}
+[3.145780] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.146599] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [gpu_lidar]\n'}
+[3.147286] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-gpu_lidar -- found version 8.2.0\n'}
+[3.147527] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-gpu_lidar\n'}
+[3.148170] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.148933] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [camera]\n'}
+[3.149382] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-camera -- found version 8.2.0\n'}
+[3.149713] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-camera\n'}
+[3.150039] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.150945] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [boundingbox_camera]\n'}
+[3.151536] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-boundingbox_camera -- found version 8.2.0\n'}
+[3.151862] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-boundingbox_camera\n'}
+[3.152619] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [segmentation_camera]\n'}
+[3.153150] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-segmentation_camera -- found version 8.2.0\n'}
+[3.153538] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-segmentation_camera\n'}
+[3.154113] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [depth_camera]\n'}
+[3.154650] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-depth_camera -- found version 8.2.0\n'}
+[3.155026] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-depth_camera\n'}
+[3.155469] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.156419] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [rgbd_camera]\n'}
+[3.157230] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-rgbd_camera -- found version 8.2.0\n'}
+[3.157649] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-rgbd_camera\n'}
+[3.158252] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.159363] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [thermal_camera]\n'}
+[3.160025] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-thermal_camera -- found version 8.2.0\n'}
+[3.160496] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-thermal_camera\n'}
+[3.161000] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8 -- found version 8.2.0\n'}
+[3.162254] (quadruped) StdoutLine: {'line': b'-- Searching for <gz-sensors8> component [wide_angle_camera]\n'}
+[3.162876] (quadruped) StdoutLine: {'line': b'-- Looking for gz-sensors8-wide_angle_camera -- found version 8.2.0\n'}
+[3.163342] (quadruped) StdoutLine: {'line': b'-- Searching for dependencies of gz-sensors8-wide_angle_camera\n'}
+[3.164994] (quadruped) StdoutLine: {'line': b'-- Looking for gz-rendering8 -- found version 8.2.0\n'}
+[3.165573] (quadruped) StdoutLine: {'line': b'-- Looking for gz-math7 -- found version 7.5.0\n'}
+[3.166392] (quadruped) StdoutLine: {'line': b'-- Looking for gz-utils2 -- found version 2.2.0\n'}
+[3.205481] (quadruped) StdoutLine: {'line': b'-- Looking for gz-plugin2 -- found version 2.0.3\n'}
+[3.205856] (quadruped) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.6.0 (/opt/ros/jazzy/share/rosidl_default_generators/cmake)\n'}
+[3.207908] (-) TimerEvent: {}
+[3.218411] (quadruped) StdoutLine: {'line': b'-- Found rosidl_adapter: 4.6.4 (/opt/ros/jazzy/share/rosidl_adapter/cmake)\n'}
+[3.221319] (quadruped) StdoutLine: {'line': b'-- Found rclcpp_components: 28.1.5 (/opt/ros/jazzy/share/rclcpp_components/cmake)\n'}
+[3.266605] (quadruped) StdoutLine: {'line': b'-- pinocchio FOUND. pinocchio at /opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so\n'}
+[3.267325] (quadruped) StdoutLine: {'line': b'-- boost_filesystem FOUND. boost_filesystem at /lib/x86_64-linux-gnu/libboost_filesystem.so\n'}
+[3.267959] (quadruped) StdoutLine: {'line': b'-- boost_serialization FOUND. boost_serialization at /lib/x86_64-linux-gnu/libboost_serialization.so\n'}
+[3.268522] (quadruped) StdoutLine: {'line': b'-- boost_system FOUND. boost_system at /lib/x86_64-linux-gnu/libboost_system.so\n'}
+[3.277836] (quadruped) StdoutLine: {'line': b'-- Found Boost: /usr/include (found version "1.83.0") found components: filesystem serialization system \n'}
+[3.279707] (quadruped) StdoutLine: {'line': b'-- eigenpy FOUND. eigenpy at /opt/ros/jazzy/lib/x86_64-linux-gnu/libeigenpy.so\n'}
+[3.308125] (-) TimerEvent: {}
+[3.320541] (quadruped) StdoutLine: {'line': b'-- Checking for NumPy\n'}
+[3.408371] (-) TimerEvent: {}
+[3.508809] (-) TimerEvent: {}
+[3.609255] (-) TimerEvent: {}
+[3.651332] (quadruped) StdoutLine: {'line': b'--   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include\n'}
+[3.709365] (-) TimerEvent: {}
+[3.791822] (quadruped) StdoutLine: {'line': b'--   NUMPY_VERSION=1.26.4\n'}
+[3.809467] (-) TimerEvent: {}
+[3.909872] (-) TimerEvent: {}
+[4.010307] (-) TimerEvent: {}
+[4.110733] (-) TimerEvent: {}
+[4.161024] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development.Module NumPy \n'}
+[4.162283] (quadruped) StdoutLine: {'line': b'-- PythonLibraryDirs: \n'}
+[4.162458] (quadruped) StdoutLine: {'line': b'-- PythonLibVersionString: 3.12.3\n'}
+[4.210937] (-) TimerEvent: {}
+[4.212133] (quadruped) StdoutLine: {'line': b'-- Python site lib: lib/python3.12/dist-packages\n'}
+[4.212450] (quadruped) StdoutLine: {'line': b'-- Python include dirs: /usr/include/python3.12\n'}
+[4.295552] (quadruped) StdoutLine: {'line': b'-- Checking for NumPy\n'}
+[4.311165] (-) TimerEvent: {}
+[4.411557] (-) TimerEvent: {}
+[4.482687] (quadruped) StdoutLine: {'line': b'--   NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include\n'}
+[4.511706] (-) TimerEvent: {}
+[4.612122] (-) TimerEvent: {}
+[4.669741] (quadruped) StdoutLine: {'line': b'--   NUMPY_VERSION=1.26.4\n'}
+[4.669961] (quadruped) StdoutLine: {'line': b'-- NumPy include dir: /usr/lib/python3/dist-packages/numpy/core/include\n'}
+[4.676758] (quadruped) StdoutLine: {'line': b'-- Found Boost: /usr/include (found version "1.83.0") found components: python312 \n'}
+[4.677416] (quadruped) StdoutLine: {'line': b'-- Boost_PYTHON_LIBRARY: /usr/lib/x86_64-linux-gnu/libboost_python312.so\n'}
+[4.712293] (-) TimerEvent: {}
+[4.812718] (-) TimerEvent: {}
+[4.913037] (-) TimerEvent: {}
+[5.013421] (-) TimerEvent: {}
+[5.113849] (-) TimerEvent: {}
+[5.196225] (quadruped) StdoutLine: {'line': b'-- Default C++ standard: 201703\n'}
+[5.196716] (quadruped) StdoutLine: {'line': b'-- C++ standard sufficient: Minimal required 14, currently defined: 17\n'}
+[5.196917] (quadruped) StdoutLine: {'line': b'-- CMAKE_CXX_STANDARD was not set: automatically set to currently defined standard 17\n'}
+[5.198085] (quadruped) StdoutLine: {'line': b'-- C++ standard sufficient: Minimal required 14, currently defined: 17\n'}
+[5.214072] (-) TimerEvent: {}
+[5.252905] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[5.314346] (-) TimerEvent: {}
+[5.414803] (-) TimerEvent: {}
+[5.515290] (-) TimerEvent: {}
+[5.615744] (-) TimerEvent: {}
+[5.623438] (quadruped) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.12.0 (/opt/ros/jazzy/share/ament_cmake_ros/cmake)\n'}
+[5.715896] (-) TimerEvent: {}
+[5.816330] (-) TimerEvent: {}
+[5.916710] (-) TimerEvent: {}
+[5.924725] (quadruped) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[6.016943] (-) TimerEvent: {}
+[6.033655] (quadruped) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[6.037193] (quadruped) StdoutLine: {'line': b'-- Found python_cmake_module: 0.11.1 (/opt/ros/jazzy/share/python_cmake_module/cmake)\n'}
+[6.117225] (-) TimerEvent: {}
+[6.217591] (-) TimerEvent: {}
+[6.318007] (-) TimerEvent: {}
+[6.418477] (-) TimerEvent: {}
+[6.518816] (-) TimerEvent: {}
+[6.619282] (-) TimerEvent: {}
+[6.706030] (quadruped) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development NumPy Development.Module Development.Embed \n'}
+[6.719406] (-) TimerEvent: {}
+[6.747420] (quadruped) StdoutLine: {'line': b'-- Configuring done (6.7s)\n'}
+[6.819744] (-) TimerEvent: {}
+[6.827671] (quadruped) StdoutLine: {'line': b'-- Generating done (0.0s)\n'}
+[6.832132] (quadruped) StdoutLine: {'line': b'-- Build files have been written to: /home/ws/build/quadruped\n'}
+[6.920036] (-) TimerEvent: {}
+[6.921934] (quadruped) StdoutLine: {'line': b'[  2%] Built target quadruped__rosidl_generator_type_description\n'}
+[6.949527] (quadruped) StdoutLine: {'line': b'[  2%] Built target ament_cmake_python_symlink_quadruped\n'}
+[6.985770] (quadruped) StdoutLine: {'line': b'[ 15%] Built target quadruped__rosidl_generator_c\n'}
+[6.990970] (quadruped) StdoutLine: {'line': b'[ 17%] Built target quadruped__cpp\n'}
+[7.019366] (quadruped) StdoutLine: {'line': b'[ 30%] Built target quadruped_lib\n'}
+[7.020155] (-) TimerEvent: {}
+[7.062349] (quadruped) StdoutLine: {'line': b'[ 38%] Built target quadruped__rosidl_typesupport_introspection_c\n'}
+[7.066221] (quadruped) StdoutLine: {'line': b'[ 46%] Built target quadruped__rosidl_typesupport_fastrtps_c\n'}
+[7.066992] (quadruped) StdoutLine: {'line': b'[ 53%] Built target quadruped__rosidl_typesupport_introspection_cpp\n'}
+[7.068698] (quadruped) StdoutLine: {'line': b'[ 61%] Built target quadruped__rosidl_typesupport_cpp\n'}
+[7.072462] (quadruped) StdoutLine: {'line': b'[ 69%] Built target quadruped__rosidl_typesupport_c\n'}
+[7.077927] (quadruped) StdoutLine: {'line': b'[ 76%] Built target quadruped__rosidl_typesupport_fastrtps_cpp\n'}
+[7.112250] (quadruped) StdoutLine: {'line': b'[ 76%] Built target quadruped\n'}
+[7.120320] (-) TimerEvent: {}
+[7.152771] (quadruped) StdoutLine: {'line': b'[ 79%] Built target quadruped__py\n'}
+[7.193389] (quadruped) StdoutLine: {'line': b'[ 84%] Built target quadruped__rosidl_generator_py\n'}
+[7.220444] (-) TimerEvent: {}
+[7.232610] (quadruped) StdoutLine: {'line': b'[ 89%] Built target quadruped_s__rosidl_typesupport_c\n'}
+[7.234076] (quadruped) StdoutLine: {'line': b'[ 94%] Built target quadruped_s__rosidl_typesupport_introspection_c\n'}
+[7.239915] (quadruped) StdoutLine: {'line': b'[100%] Built target quadruped_s__rosidl_typesupport_fastrtps_c\n'}
+[7.252930] (quadruped) StdoutLine: {'line': b'running egg_info\n'}
+[7.269504] (quadruped) StdoutLine: {'line': b'writing quadruped.egg-info/PKG-INFO\n'}
+[7.270015] (quadruped) StdoutLine: {'line': b'writing dependency_links to quadruped.egg-info/dependency_links.txt\n'}
+[7.270456] (quadruped) StdoutLine: {'line': b'writing top-level names to quadruped.egg-info/top_level.txt\n'}
+[7.313452] (quadruped) StdoutLine: {'line': b"reading manifest file 'quadruped.egg-info/SOURCES.txt'\n"}
+[7.314047] (quadruped) StdoutLine: {'line': b"writing manifest file 'quadruped.egg-info/SOURCES.txt'\n"}
+[7.320630] (-) TimerEvent: {}
+[7.351165] (quadruped) StdoutLine: {'line': b'[100%] Built target ament_cmake_python_build_quadruped_egg\n'}
+[7.369001] (quadruped) CommandEnded: {'returncode': 0}
+[7.420839] (-) TimerEvent: {}
+[7.521207] (-) TimerEvent: {}
+[7.553486] (quadruped) JobProgress: {'identifier': 'quadruped', 'progress': 'install'}
+[7.577317] (quadruped) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/build/quadruped'], 'cwd': '/home/ws/build/quadruped', 'env': OrderedDict({'GZ_CONFIG_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/share/gz:/opt/ros/jazzy/opt/sdformat_vendor/share/gz:/opt/ros/jazzy/opt/gz_gui_vendor/share/gz:/opt/ros/jazzy/opt/gz_transport_vendor/share/gz:/opt/ros/jazzy/opt/gz_rendering_vendor/share/gz:/opt/ros/jazzy/opt/gz_plugin_vendor/share/gz:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/share/gz:/opt/ros/jazzy/opt/gz_msgs_vendor/share/gz:/opt/ros/jazzy/opt/gz_common_vendor/share/gz', 'HOSTNAME': 'jack-laptop', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LIBGL_ALWAYS_SOFTWARE': '0', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor/lib:/opt/ros/jazzy/opt/gz_sensors_vendor/lib:/opt/ros/jazzy/opt/gz_physics_vendor/lib:/opt/ros/jazzy/opt/sdformat_vendor/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_gui_vendor/lib:/opt/ros/jazzy/opt/gz_transport_vendor/lib:/opt/ros/jazzy/opt/gz_rendering_vendor/lib:/opt/ros/jazzy/opt/gz_plugin_vendor/lib:/opt/ros/jazzy/opt/gz_fuel_tools_vendor/lib:/opt/ros/jazzy/opt/gz_msgs_vendor/lib:/opt/ros/jazzy/opt/gz_common_vendor/lib:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_tools_vendor/lib:/opt/ros/jazzy/opt/gz_ogre_next_vendor/lib:/opt/ros/jazzy/opt/gz_dartsim_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/helpers/browser.sh', 'HOME': '/home/jack', 'TERM_PROGRAM_VERSION': '1.95.1', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-9dae60cc-9b94-4b2b-b466-78f348c66eaf.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/node', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/opt/ros/jazzy/opt/gz_msgs_vendor/bin:/opt/ros/jazzy/opt/gz_tools_vendor/bin:/opt/ros/jazzy/opt/gz_ogre_next_vendor/bin:/opt/ros/jazzy/bin:/vscode/vscode-server/bin/linux-x64/65edc4939843c90c34d61f4ce11704f09d3e5cb6/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock","/home/jack/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-a085ce0e07.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-22c2db62-5390-44cc-8a72-e4376441c4d1.sock', 'ROS_DOMAIN_ID': '42', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'SHELL': '/bin/bash', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'LOCALHOST', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/ws/build/quadruped', 'LC_ALL': 'C.UTF-8', 'PYTHONPATH': '/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy'}), 'shell': False}
+[7.593301] (quadruped) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[7.594407] (quadruped) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[7.594949] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/rosidl_interfaces/quadruped\n'}
+[7.595276] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/msg/LegCommand.json\n'}
+[7.596422] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__functions.h\n'}
+[7.596696] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.h\n'}
+[7.597005] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.h\n'}
+[7.597245] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.h\n'}
+[7.597363] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_c__visibility_control.h\n'}
+[7.597698] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/library_path.sh\n'}
+[7.597928] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/library_path.dsv\n'}
+[7.598591] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_c.h\n'}
+[7.599011] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[7.599615] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__builder.hpp\n'}
+[7.599793] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__struct.hpp\n'}
+[7.600004] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__traits.hpp\n'}
+[7.600274] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__type_support.hpp\n'}
+[7.600674] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/leg_command.hpp\n'}
+[7.600949] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[7.601771] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[7.602011] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[7.602310] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_c.h\n'}
+[7.602769] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[7.603098] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/quadruped/msg/detail/leg_command__rosidl_typesupport_introspection_cpp.hpp\n'}
+[7.603457] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/pythonpath.sh\n'}
+[7.603857] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/pythonpath.dsv\n'}
+[7.604049] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/PKG-INFO\n'}
+[7.604358] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/SOURCES.txt\n'}
+[7.604600] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/dependency_links.txt\n'}
+[7.604725] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped-0.0.0-py3.12.egg-info/top_level.txt\n'}
+[7.605024] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/__init__.py\n'}
+[7.605191] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_c.c\n'}
+[7.605388] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[7.605523] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/_quadruped_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[7.605664] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/__init__.py\n'}
+[7.605766] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command.py\n'}
+[7.605906] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg/_leg_command_s.c\n'}
+[7.606010] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so\n'}
+[7.606152] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so\n'}
+[7.606250] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so\n'}
+[7.606489] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_fastrtps_c.so\n'}
+[7.606915] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_introspection_c.so\n'}
+[7.607077] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/quadruped_s__rosidl_typesupport_c.so\n'}
+[7.607356] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/msg/LegCommand.idl\n'}
+[7.607656] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg\n'}
+[7.608090] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/balance_controller.hpp\n'}
+[7.608225] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/foot_trajectory_generator.hpp\n'}
+[7.608395] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/leg_controller.hpp\n'}
+[7.608528] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/include/quadruped/state_estimator.hpp\n'}
+[7.608685] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/LegController.py\n'}
+[7.608839] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/GaitPatternGenerator.py\n'}
+[7.608977] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/leg_class.py\n'}
+[7.609074] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/lib/quadruped/gait_pattern_class.py\n'}
+[7.609326] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/launch/controllers.launch.py\n'}
+[7.609455] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/launch/gazebo_sim.launch.py\n'}
+[7.609937] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/initial_joint_positions.yaml\n'}
+[7.610074] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/quadruped.rviz\n'}
+[7.610216] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/config/quadruped_controllers.yaml\n'}
+[7.610701] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/Quadruped MJB.mjb\n'}
+[7.610826] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/QuadrupedURDF.urdf.xacro\n'}
+[7.610955] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Body.STL\n'}
+[7.611089] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Body_bin.STL\n'}
+[7.611231] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Shin.STL\n'}
+[7.611365] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Left Thigh.STL\n'}
+[7.611499] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Shin.STL\n'}
+[7.611627] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Front Right Thigh.STL\n'}
+[7.611755] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Shin.STL\n'}
+[7.611899] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Left Thigh.STL\n'}
+[7.611995] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Shin.STL\n'}
+[7.612136] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/meshes/Rear Right Thigh.STL\n'}
+[7.612266] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/urdf/mjb_maker.py\n'}
+[7.612545] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/LegCommand.msg\n'}
+[7.612672] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/messages/RobotState.msg\n'}
+[7.612877] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped//plugin_description.xml\n'}
+[7.613082] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped//plugin_description.xml\n'}
+[7.613299] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/package_run_dependencies/quadruped\n'}
+[7.613499] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/parent_prefix_path/quadruped\n'}
+[7.613706] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.sh\n'}
+[7.613887] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/ament_prefix_path.dsv\n'}
+[7.614080] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/path.sh\n'}
+[7.614269] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/environment/path.dsv\n'}
+[7.614443] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.bash\n'}
+[7.614611] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.sh\n'}
+[7.614778] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.zsh\n'}
+[7.614947] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/local_setup.dsv\n'}
+[7.615077] (quadruped) StdoutLine: {'line': b'-- Symlinking: /home/ws/install/quadruped/share/quadruped/package.dsv\n'}
+[7.621360] (-) TimerEvent: {}
+[7.630770] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/packages/quadruped\n'}
+[7.631170] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/ament_index/resource_index/controller_interface__pluginlib__plugin/quadruped\n'}
+[7.631497] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake-extras.cmake\n'}
+[7.631643] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[7.631829] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[7.632002] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[7.632111] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[7.632238] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[7.632324] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[7.632451] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig.cmake\n'}
+[7.632586] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/cmake/quadrupedConfig-version.cmake\n'}
+[7.632723] (quadruped) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/install/quadruped/share/quadruped/package.xml\n'}
+[7.632969] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_c.so\n'}
+[7.633322] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_fastrtps_c.so\n'}
+[7.633641] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_fastrtps_cpp.so\n'}
+[7.633941] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_c.so\n'}
+[7.634424] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_c.so\n'}
+[7.634707] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_introspection_cpp.so\n'}
+[7.634992] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_typesupport_cpp.so\n'}
+[7.705451] (quadruped) StdoutLine: {'line': b"Listing '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped'...\n"}
+[7.705655] (quadruped) StdoutLine: {'line': b"Compiling '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/__init__.py'...\n"}
+[7.705729] (quadruped) StdoutLine: {'line': b"Listing '/home/ws/install/quadruped/lib/python3.12/site-packages/quadruped/msg'...\n"}
+[7.711854] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped__rosidl_generator_py.so\n'}
+[7.712126] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/lib/libquadruped_lib.so\n'}
+[7.712233] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport.cmake\n'}
+[7.712452] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cExport-noconfig.cmake\n'}
+[7.712656] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[7.712738] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[7.712814] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_cppExport.cmake\n'}
+[7.712924] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[7.713003] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[7.713069] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cExport.cmake\n'}
+[7.713335] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[7.713449] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cExport.cmake\n'}
+[7.713521] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[7.713588] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[7.713662] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[7.713749] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport.cmake\n'}
+[7.713835] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[7.713905] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport.cmake\n'}
+[7.713970] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/export_quadruped__rosidl_generator_pyExport-noconfig.cmake\n'}
+[7.714033] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped_targetsExport.cmake\n'}
+[7.714095] (quadruped) StdoutLine: {'line': b'-- Up-to-date: /home/ws/install/quadruped/share/quadruped/cmake/quadruped_targetsExport-noconfig.cmake\n'}
+[7.715574] (quadruped) CommandEnded: {'returncode': 0}
+[7.721779] (-) TimerEvent: {}
+[7.822183] (-) TimerEvent: {}
+[7.922581] (-) TimerEvent: {}
+[7.935680] (quadruped) JobEnded: {'identifier': 'quadruped', 'rc': 0}
+[7.937456] (-) EventReactorShutdown: {}

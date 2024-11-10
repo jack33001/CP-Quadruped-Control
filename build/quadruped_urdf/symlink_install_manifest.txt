@@ -1,0 +1,30 @@
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/Quadruped MJB.mjb
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/QuadrupedURDF_sim.urdf.xacro
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Body.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Body_bin.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Left Shin.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Left Thigh.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Right Shin.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Front Right Thigh.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Left Shin.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Left Thigh.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Right Shin.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Right Thigh.STL
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/mjb_maker.py
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/config/initial_joint_positions.yaml
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/launch/sim_urdf.launch.py
+/home/ws/install/quadruped_urdf/share/ament_index/resource_index/package_run_dependencies/quadruped_urdf
+/home/ws/install/quadruped_urdf/share/ament_index/resource_index/parent_prefix_path/quadruped_urdf
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/ament_prefix_path.sh
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/ament_prefix_path.dsv
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/path.sh
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/environment/path.dsv
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.bash
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.sh
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.zsh
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/local_setup.dsv
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/package.dsv
+/home/ws/install/quadruped_urdf/share/ament_index/resource_index/packages/quadruped_urdf
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/cmake/quadruped_urdfConfig.cmake
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/cmake/quadruped_urdfConfig-version.cmake
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/package.xml

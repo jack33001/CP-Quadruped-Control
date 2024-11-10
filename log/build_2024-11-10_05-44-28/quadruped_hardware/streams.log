@@ -1,0 +1,21 @@
+[0.027s] Invoking command in '/home/ws/build/quadruped_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_hardware -- -j20 -l20
+[0.155s] Invoked command in '/home/ws/build/quadruped_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --build /home/ws/build/quadruped_hardware -- -j20 -l20
+[0.256s] Invoking command in '/home/ws/build/quadruped_hardware': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_hardware
+[0.286s] -- Install configuration: ""
+[0.289s] -- Execute custom install script
+[0.289s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/ament_index/resource_index/package_run_dependencies/quadruped_hardware
+[0.294s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/ament_index/resource_index/parent_prefix_path/quadruped_hardware
+[0.295s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/environment/ament_prefix_path.sh
+[0.296s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/environment/ament_prefix_path.dsv
+[0.296s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/environment/path.sh
+[0.297s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/environment/path.dsv
+[0.297s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/local_setup.bash
+[0.298s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/local_setup.sh
+[0.298s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/local_setup.zsh
+[0.299s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/local_setup.dsv
+[0.299s] -- Symlinking: /home/ws/install/quadruped_hardware/share/quadruped_hardware/package.dsv
+[0.312s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/ament_index/resource_index/packages/quadruped_hardware
+[0.313s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/cmake/quadruped_hardwareConfig.cmake
+[0.313s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/cmake/quadruped_hardwareConfig-version.cmake
+[0.314s] -- Up-to-date symlink: /home/ws/install/quadruped_hardware/share/quadruped_hardware/package.xml
+[0.378s] Invoked command in '/home/ws/build/quadruped_hardware' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/install/quadruped_simulation:/home/ws/install/quadruped_controllers:/opt/ros/jazzy /usr/bin/cmake --install /home/ws/build/quadruped_hardware
