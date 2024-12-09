@@ -198,6 +198,19 @@ quadruped_mpc_uninstall/fast:
 .PHONY : quadruped_mpc_uninstall/fast
 
 #=============================================================================
+# Target rules for targets named balance_controller_generated
+
+# Build rule for target.
+balance_controller_generated: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 balance_controller_generated
+.PHONY : balance_controller_generated
+
+# fast build rule for target.
+balance_controller_generated/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/build
+.PHONY : balance_controller_generated/fast
+
+#=============================================================================
 # Target rules for targets named quadruped_mpc_controllers
 
 # Build rule for target.
@@ -209,6 +222,126 @@ quadruped_mpc_controllers: cmake_check_build_system
 quadruped_mpc_controllers/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/build
 .PHONY : quadruped_mpc_controllers/fast
+
+acados_generated/acados_sim_solver_quadruped_ode.o: acados_generated/acados_sim_solver_quadruped_ode.c.o
+.PHONY : acados_generated/acados_sim_solver_quadruped_ode.o
+
+# target to build an object file
+acados_generated/acados_sim_solver_quadruped_ode.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/acados_sim_solver_quadruped_ode.c.o
+.PHONY : acados_generated/acados_sim_solver_quadruped_ode.c.o
+
+acados_generated/acados_sim_solver_quadruped_ode.i: acados_generated/acados_sim_solver_quadruped_ode.c.i
+.PHONY : acados_generated/acados_sim_solver_quadruped_ode.i
+
+# target to preprocess a source file
+acados_generated/acados_sim_solver_quadruped_ode.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/acados_sim_solver_quadruped_ode.c.i
+.PHONY : acados_generated/acados_sim_solver_quadruped_ode.c.i
+
+acados_generated/acados_sim_solver_quadruped_ode.s: acados_generated/acados_sim_solver_quadruped_ode.c.s
+.PHONY : acados_generated/acados_sim_solver_quadruped_ode.s
+
+# target to generate assembly for a file
+acados_generated/acados_sim_solver_quadruped_ode.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/acados_sim_solver_quadruped_ode.c.s
+.PHONY : acados_generated/acados_sim_solver_quadruped_ode.c.s
+
+acados_generated/acados_solver_quadruped_ode.o: acados_generated/acados_solver_quadruped_ode.c.o
+.PHONY : acados_generated/acados_solver_quadruped_ode.o
+
+# target to build an object file
+acados_generated/acados_solver_quadruped_ode.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/acados_solver_quadruped_ode.c.o
+.PHONY : acados_generated/acados_solver_quadruped_ode.c.o
+
+acados_generated/acados_solver_quadruped_ode.i: acados_generated/acados_solver_quadruped_ode.c.i
+.PHONY : acados_generated/acados_solver_quadruped_ode.i
+
+# target to preprocess a source file
+acados_generated/acados_solver_quadruped_ode.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/acados_solver_quadruped_ode.c.i
+.PHONY : acados_generated/acados_solver_quadruped_ode.c.i
+
+acados_generated/acados_solver_quadruped_ode.s: acados_generated/acados_solver_quadruped_ode.c.s
+.PHONY : acados_generated/acados_solver_quadruped_ode.s
+
+# target to generate assembly for a file
+acados_generated/acados_solver_quadruped_ode.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/acados_solver_quadruped_ode.c.s
+.PHONY : acados_generated/acados_solver_quadruped_ode.c.s
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.o: acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.o
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.o
+
+# target to build an object file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.o
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.o
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.i: acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.i
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.i
+
+# target to preprocess a source file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.i
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.i
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.s: acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.s
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.s
+
+# target to generate assembly for a file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.s
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.c.s
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.o: acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.o
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.o
+
+# target to build an object file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.o
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.o
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.i: acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.i
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.i
+
+# target to preprocess a source file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.i
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.i
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.s: acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.s
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.s
+
+# target to generate assembly for a file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.s
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.c.s
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.o: acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.o
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.o
+
+# target to build an object file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.o
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.o
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.i: acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.i
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.i
+
+# target to preprocess a source file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.i
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.i
+
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.s: acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.s
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.s
+
+# target to generate assembly for a file
+acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/balance_controller_generated.dir/build.make CMakeFiles/balance_controller_generated.dir/acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.s
+.PHONY : acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.c.s
 
 src/controller_interfaces/balance_controller.o: src/controller_interfaces/balance_controller.cpp.o
 .PHONY : src/controller_interfaces/balance_controller.o
@@ -321,7 +454,23 @@ help:
 	@echo "... test"
 	@echo "... quadruped_mpc_uninstall"
 	@echo "... uninstall"
+	@echo "... balance_controller_generated"
 	@echo "... quadruped_mpc_controllers"
+	@echo "... acados_generated/acados_sim_solver_quadruped_ode.o"
+	@echo "... acados_generated/acados_sim_solver_quadruped_ode.i"
+	@echo "... acados_generated/acados_sim_solver_quadruped_ode.s"
+	@echo "... acados_generated/acados_solver_quadruped_ode.o"
+	@echo "... acados_generated/acados_solver_quadruped_ode.i"
+	@echo "... acados_generated/acados_solver_quadruped_ode.s"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.o"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.i"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_ode_fun.s"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.o"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.i"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_adj.s"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.o"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.i"
+	@echo "... acados_generated/quadruped_ode_model/quadruped_ode_expl_vde_forw.s"
 	@echo "... src/controller_interfaces/balance_controller.o"
 	@echo "... src/controller_interfaces/balance_controller.i"
 	@echo "... src/controller_interfaces/balance_controller.s"

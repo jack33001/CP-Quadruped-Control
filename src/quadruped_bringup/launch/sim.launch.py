@@ -7,8 +7,17 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    controllers_config = PathJoinSubstitution(
-        [FindPackageShare('quadruped_bringup'), 'config', 'controllers.yaml']
+    # Define the RViz2 node   
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', PathJoinSubstitution([
+            FindPackageShare('quadruped_mpc'),
+            'rviz',
+            'mpc.rviz'
+        ])],
+        output='screen'
     )
 
     # Define the package and launch file paths
@@ -53,10 +62,11 @@ def generate_launch_description():
             )
         ]
     )
-
+    
     # Return launch description with timed execution
     return LaunchDescription([
         urdf_launch,
+        rviz_node,
         gazebo_launch,
         mpc_launch,
     ])

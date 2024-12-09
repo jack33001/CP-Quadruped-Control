@@ -45,86 +45,9 @@ StateEstimator::state_interface_configuration() const
 controller_interface::return_type
 StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // Get current joint positions and velocities with proper sizes
-  Eigen::VectorXd q(model_.nq);
-  Eigen::VectorXd v(model_.nv);
-  q.setZero();
-  v.setZero();
-
-  // Set floating base configuration (first 7 DoFs)
-  q.head<7>().setZero();  // [x,y,z, quat_w,quat_x,quat_y,quat_z]
-
-  // Update base orientation from IMU
-  Eigen::Quaterniond base_orientation(
-    state_interfaces_[3].get_value(),  // w
-    state_interfaces_[0].get_value(),  // x
-    state_interfaces_[1].get_value(),  // y
-    state_interfaces_[2].get_value()   // z
-  );
-  
-  // Store quaternion directly in configuration vector
-  q[3] = base_orientation.w();
-  q[4] = base_orientation.x();
-  q[5] = base_orientation.y();
-  q[6] = base_orientation.z();
-  
-  Eigen::Vector3d angular_velocity(
-    state_interfaces_[4].get_value(),
-    state_interfaces_[5].get_value(),
-    state_interfaces_[6].get_value()
-  );
-
-  // Update joint states
-  const size_t num_joints = joint_names_.size();
-  const size_t imu_interfaces = 10;  // Total number of IMU interfaces
-  const size_t interfaces_per_joint = state_interface_types_.size();
-
-  for (size_t i = 0; i < num_joints; ++i) {
-    size_t q_idx = 7 + i;  // Skip floating base (7 DoFs)
-    size_t v_idx = i;      // Velocity starts at 0 for joints
-    
-    if (q_idx < static_cast<size_t>(model_.nq) && v_idx < static_cast<size_t>(model_.nv)) {
-      size_t interface_idx = imu_interfaces + i * interfaces_per_joint;
-      
-      if (interface_idx < state_interfaces_.size()) {
-        q[q_idx] = state_interfaces_[interface_idx].get_value();         // Position
-        if (interface_idx + 1 < state_interfaces_.size()) {
-          v[v_idx] = state_interfaces_[interface_idx + 1].get_value();   // Velocity
-        }
-      }
-    }
-  }
-
-  try {
-    // Update kinematics
-    pinocchio::forwardKinematics(model_, *data_, q, v);
-    pinocchio::updateFramePlacements(model_, *data_);
-
-    // Update shared state with thread safety
-    {
-      auto& info = SharedQuadrupedInfo::getInstance();
-      std::lock_guard<std::mutex> lock(info.mutex_);
-      
-      // Update base state
-      info.state_.th_c_ = base_orientation;
-      info.state_.om_c_ = angular_velocity;
-      
-      // Update foot positions
-      for (size_t i = 0; i < 4; ++i) {
-        if (foot_frame_ids_[i] < model_.frames.size()) {
-          Eigen::Vector3d& foot_pos = (i == 0) ? info.state_.p_1_ :
-                                     (i == 1) ? info.state_.p_2_ :
-                                     (i == 2) ? info.state_.p_3_ : info.state_.p_4_;
-          foot_pos = data_->oMf[foot_frame_ids_[i]].translation();
-        }
-      }
-      info.is_initialized_ = true;
-    }
-  } catch (const std::exception& e) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Exception in kinematics update: %s", e.what());
+  if (!read_state_interfaces() || !update_model() || !inverse_kinematics() || !detect_contact()) {
     return controller_interface::return_type::ERROR;
   }
-
   return controller_interface::return_type::OK;
 }
 
@@ -132,16 +55,15 @@ void StateEstimator::robot_description_callback(const std_msgs::msg::String::Sha
 {
   urdf_string_ = msg->data;
   urdf_received_ = true;
-  RCLCPP_INFO(get_node()->get_logger(), "Received robot description from topic");
 }
 
-StateEstimator::CallbackReturn 
-StateEstimator::on_init()
+auto StateEstimator::on_init() -> CallbackReturn
 {
   try {
     // Get parameters from yaml
     auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
     auto_declare<std::vector<std::string>>("state_interfaces", std::vector<std::string>());
+    // Removed hardware_height parameter
     
     // Setup robot description subscription
     urdf_received_ = false;
@@ -158,8 +80,7 @@ StateEstimator::on_init()
   }
 }
 
-StateEstimator::CallbackReturn 
-StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
+auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) -> CallbackReturn
 {
   joint_names_ = get_node()->get_parameter("joints").as_string_array();
   if (joint_names_.empty()) {
@@ -189,15 +110,44 @@ StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
     return CallbackReturn::ERROR;
   }
 
-  RCLCPP_INFO(get_node()->get_logger(), "Got robot_description, building model...");
-
   try {
     // Create Pinocchio model from URDF
     pinocchio::urdf::buildModelFromXML(urdf_string_, model_);
     data_ = std::make_unique<pinocchio::Data>(model_);
 
+    // Create mapping from state interface index to pinocchio joint index
+    joint_mappings_.clear();
+    for (size_t i = 0; i < joint_names_.size(); ++i) {
+      // Don't append "_joint" - use joint name directly
+      const std::string pin_joint_name = joint_names_[i];
+      
+      // Find exact joint ID match
+      size_t pin_idx = 0;
+      bool found = false;
+      for (size_t j = 0; j < model_.joints.size(); ++j) {
+        if (model_.names[j] == pin_joint_name) {
+          pin_idx = j;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Joint '%s' not found in model", pin_joint_name.c_str());
+        return CallbackReturn::ERROR;
+      }
+
+      joint_mappings_.push_back({joint_names_[i], i, pin_idx});
+    }
+
+    // Pre-allocate vectors to correct sizes
+    current_positions_.resize(model_.nq);
+    current_velocities_.resize(model_.nv);
+    current_positions_.setZero();
+    current_velocities_.setZero();
+
     // Get foot frame IDs
-    const std::array<std::string, 4> foot_frame_names = {
+    const std::array<std::string, 6> foot_frame_names = {
       "fl_foot", "fr_foot", "rl_foot", "rr_foot"
     };
     
@@ -208,24 +158,145 @@ StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
         return CallbackReturn::ERROR;
       }
     }
+
+    // Get body frame ID
+    body_frame_id_ = model_.getFrameId("Body");
+    if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Frame 'Body' not found in model");
+      return CallbackReturn::ERROR;
+    }
+
+    RCLCPP_INFO(get_node()->get_logger(), "State estimator configured successfully");
+
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to build model: %s", e.what());
     return CallbackReturn::ERROR;
   }
-  
+
   return CallbackReturn::SUCCESS;
 }
 
-StateEstimator::CallbackReturn 
-StateEstimator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+auto StateEstimator::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) -> CallbackReturn
 {
   return CallbackReturn::SUCCESS;
 }
 
-StateEstimator::CallbackReturn 
-StateEstimator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+auto StateEstimator::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) -> CallbackReturn
 {
   return CallbackReturn::SUCCESS;
+}
+
+bool StateEstimator::read_state_interfaces()
+{
+  try {
+    // Resize joint states vector if needed
+    if (joint_states_.size() != joint_names_.size()) {
+      joint_states_.resize(joint_names_.size());
+    }
+
+    // Read all interfaces for each joint
+    const size_t interfaces_per_joint = state_interface_types_.size();
+    for (size_t i = 0; i < joint_names_.size(); ++i) {
+      size_t base_idx = i * interfaces_per_joint;
+      
+      // Update local storage
+      joint_states_[i].position = state_interfaces_[base_idx].get_value();      // position
+      joint_states_[i].velocity = state_interfaces_[base_idx + 1].get_value();  // velocity
+      joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
+
+      // Update shared state arrays
+      std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
+      quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
+      quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
+      quadruped_info.state_.joint_eff[i] = joint_states_[i].effort;
+    }
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error reading state interfaces: %s", e.what());
+    return false;
+  }
+}
+
+bool StateEstimator::update_model()
+{
+  try {
+    // Clear position and velocity vectors
+    current_positions_.setZero();
+    current_velocities_.setZero();
+
+    // Map joint states to Pinocchio model states
+    for (size_t i = 0; i < joint_mappings_.size(); ++i) {
+      const auto& mapping = joint_mappings_[i];
+      const auto& joint = model_.joints[mapping.pinocchio_idx];
+      
+      // Get joint state
+      const auto& state = joint_states_[i];
+
+      // Map to Pinocchio state vectors
+      if (joint.nq() == 2) {  // Revolute joints in Pinocchio use sin/cos
+        current_positions_[joint.idx_q()] = std::cos(state.position);
+        current_positions_[joint.idx_q() + 1] = std::sin(state.position);
+      } else {
+        current_positions_[joint.idx_q()] = state.position;
+      }
+      current_velocities_[joint.idx_v()] = state.velocity;
+    }
+
+    // Update Pinocchio model with new state
+    pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
+    pinocchio::updateFramePlacements(model_, *data_);
+    
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error updating model: %s", e.what());
+    return false;
+  }
+}
+
+bool StateEstimator::inverse_kinematics()
+{
+  try {
+    // Lock the shared data structure while updating
+    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
+    
+    // Get body position
+    quadruped_info.state_.pc = data_->oMf[body_frame_id_].translation();
+
+    // Get foot positions in correct order: FL, FR, RL, RR
+    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation();  // FL
+    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation();  // FR
+    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation();  // RL
+    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation();  // RR
+
+    // Copy joint states to shared info
+    for (size_t i = 0; i < joint_states_.size(); ++i) {
+      quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
+      quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
+    }
+
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error in inverse kinematics: %s", e.what());
+    return false;
+  }
+}
+
+bool StateEstimator::detect_contact()
+{
+  try {
+    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
+    
+    // For now, just set all contacts to true
+    quadruped_info.state_.contact_1_ = true;  // FL
+    quadruped_info.state_.contact_2_ = true;  // FR
+    quadruped_info.state_.contact_3_ = true;  // RL
+    quadruped_info.state_.contact_4_ = true;  // RR
+
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error in contact detection: %s", e.what());
+    return false;
+  }
 }
 
 }  // namespace quadruped_mpc

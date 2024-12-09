@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FIXME: Shin and thigh should initially be vertical, I think the meshes have misaligned origins-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="leg" params="prefix parent *origin">
+    <link name="${prefix}_thigh">
+      <inertial>
+        <origin xyz="2.43741414216458E-05 -0.0142051404026353 -0.00547111407205264" rpy="0 0 0"/>
+        <mass value="0.513489297249649"/>
+        <inertia ixx="0.000703443703532357" ixy="5.05069776934335E-07" ixz="-1.25476848652197E-07"
+                iyy="0.000379089863098612" iyz="-1.02974442751939E-06" izz="0.00102411507237723"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Thigh.STL"/>
+        </geometry>
+        <material name="Magenta"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Thigh.STL"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <joint name="${prefix}_hip" type="continuous">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}_thigh"/>
+      <axis xyz="0 0 -1"/>
+    </joint>
+
+    <link name="${prefix}_shin">
+      <inertial>
+        <origin xyz="0.124878082316303 -0.00732497518642785 0.000177556490133124" rpy="0 0 0"/>
+        <mass value="0.129610127102807"/>
+        <inertia ixx="3.51684106957956E-05" ixy="8.64609723784203E-07" ixz="7.49065225476954E-10"
+                iyy="4.98576660561721E-05" iyz="-4.653287647839E-11" izz="5.09700357908982E-05"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Shin.STL"/>
+        </geometry>
+        <material name="Orange"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Shin.STL"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_knee" type="continuous">
+      <origin xyz="0 -${hip_offset} -0.015"
+              rpy="0 0 ${init_pos_yaml['initial_joint_positions'][prefix + '_knee']}"/>
+      <parent link="${prefix}_thigh"/>
+      <child link="${prefix}_shin"/>
+      <axis xyz="0 0 -1"/>
+    </joint>
+
+    <link name="${prefix}_foot">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.01"/>
+        <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <sphere radius="0.03"/>
+        </geometry>
+        <material name="Orange"/>
+      </visual>
+      <collision>
+        <geometry>
+          <sphere radius="0.03"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_foot_joint" type="fixed">
+      <parent link="${prefix}_shin"/>
+      <child link="${prefix}_foot"/>
+      <origin xyz="${knee_offset} -0.0075 0" rpy="0 0 0"/>
+    </joint>
+
+  </xacro:macro>
+</robot>

@@ -58,7 +58,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libquadruped_mpc_controllers.so")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libquadruped_mpc_controllers.so"
-         OLD_RPATH "/home/casadi/casadi-3.6.7/build/lib:/home/acados/acados/lib:/opt/ros/jazzy/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:"
+         OLD_RPATH "/home/casadi/casadi-3.6.7/build/lib:/home/acados/acados/lib:/opt/ros/jazzy/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/home/ws/build/quadruped_mpc:"
          NEW_RPATH "")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libquadruped_mpc_controllers.so")
@@ -70,38 +70,38 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targets.cmake")
-    file(DIFFERENT _cmake_export_file_changed FILES
-         "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targets.cmake"
-         "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpc_targets.cmake")
-    if(_cmake_export_file_changed)
-      file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targets-*.cmake")
-      if(_cmake_old_config_files)
-        string(REPLACE ";" ", " _cmake_old_config_files_text "${_cmake_old_config_files}")
-        message(STATUS "Old export file \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targets.cmake\" will be replaced.  Removing files [${_cmake_old_config_files_text}].")
-        unset(_cmake_old_config_files_text)
-        file(REMOVE ${_cmake_old_config_files})
-      endif()
-      unset(_cmake_old_config_files)
-    endif()
-    unset(_cmake_export_file_changed)
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so"
+         RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpc_targets.cmake")
-  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^()$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpc_targets-noconfig.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/ws/build/quadruped_mpc/libbalance_controller_generated.so")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so"
+         OLD_RPATH "/home/casadi/casadi-3.6.7/build/lib:/home/acados/acados/lib:"
+         NEW_RPATH "")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbalance_controller_generated.so")
+    endif()
   endif()
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport.cmake")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpcTargets.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
-         "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport.cmake"
-         "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpc_targetsExport.cmake")
+         "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpcTargets.cmake"
+         "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpcTargets.cmake")
     if(_cmake_export_file_changed)
-      file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport-*.cmake")
+      file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpcTargets-*.cmake")
       if(_cmake_old_config_files)
         string(REPLACE ";" ", " _cmake_old_config_files_text "${_cmake_old_config_files}")
-        message(STATUS "Old export file \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpc_targetsExport.cmake\" will be replaced.  Removing files [${_cmake_old_config_files_text}].")
+        message(STATUS "Old export file \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/quadruped_mpcTargets.cmake\" will be replaced.  Removing files [${_cmake_old_config_files_text}].")
         unset(_cmake_old_config_files_text)
         file(REMOVE ${_cmake_old_config_files})
       endif()
@@ -109,9 +109,32 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpc_targetsExport.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpcTargets.cmake")
   if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^()$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpc_targetsExport-noconfig.cmake")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/quadruped_mpcTargets-noconfig.cmake")
+  endif()
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/export_quadruped_mpcExport.cmake")
+    file(DIFFERENT _cmake_export_file_changed FILES
+         "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/export_quadruped_mpcExport.cmake"
+         "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/export_quadruped_mpcExport.cmake")
+    if(_cmake_export_file_changed)
+      file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/export_quadruped_mpcExport-*.cmake")
+      if(_cmake_old_config_files)
+        string(REPLACE ";" ", " _cmake_old_config_files_text "${_cmake_old_config_files}")
+        message(STATUS "Old export file \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake/export_quadruped_mpcExport.cmake\" will be replaced.  Removing files [${_cmake_old_config_files_text}].")
+        unset(_cmake_old_config_files_text)
+        file(REMOVE ${_cmake_old_config_files})
+      endif()
+      unset(_cmake_old_config_files)
+    endif()
+    unset(_cmake_export_file_changed)
+  endif()
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/export_quadruped_mpcExport.cmake")
+  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^()$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadruped_mpc/cmake" TYPE FILE FILES "/home/ws/build/quadruped_mpc/CMakeFiles/Export/ecea04f9de94e5c5fb722b95e13caf0a/export_quadruped_mpcExport-noconfig.cmake")
   endif()
 endif()
 

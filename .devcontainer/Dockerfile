@@ -48,7 +48,7 @@ RUN mkdir -p /home/acados \
     && git submodule update --recursive --init \
     && mkdir -p build \
     && cd build \
-    && cmake .. \
+    && cmake -DACADOS_WITH_QPOASES=ON .. \
     && make install -j4
 
 # Install CasADi
@@ -78,7 +78,21 @@ RUN apt-get update \
     ros-jazzy-effort-controllers \
     ros-jazzy-joint-trajectory-controller \
     ros-jazzy-imu-sensor-broadcaster \
-    ros-jazzy-pinocchio
+    ros-jazzy-pinocchio \
+    ros-jazzy-joint-state-publisher-gui
+
+# More ACADOS setup
+RUN pip install --break-system-packages -e /home/acados/acados/interfaces/acados_template
+RUN pip install --break-system-packages \
+    casadi
+RUN echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/acados/acados/lib"' >> /home/$USERNAME/.bashrc \
+    && echo 'export ACADOS_SOURCE_DIR="/home/acados/acados"' >> /home/$USERNAME/.bashrc
+
+# Fix t_renderer installation
+RUN cd /home/acados/acados/bin \
+    && wget https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux \
+    && mv t_renderer-v0.0.34-linux t_renderer \
+    && sudo chown $USERNAME:$USERNAME t_renderer 
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME

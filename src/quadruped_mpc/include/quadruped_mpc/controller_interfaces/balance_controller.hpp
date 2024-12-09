@@ -8,9 +8,12 @@
 #include "controller_interface/controller_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"  // Add this include
+#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
 #include "hardware_interface/handle.hpp"
+#include "quadruped_ode_model/acados_c_types.h"  // Add this before ACADOS headers
+#include "quadruped_ode_model/quadruped_ode_model.h"  // Generated ACADOS model header
+#include "acados_solver_quadruped_ode.h"              // Generated ACADOS solver header
 
 namespace quadruped_mpc
 {
@@ -34,10 +37,13 @@ public:
 
 protected:
   std::vector<std::string> joint_names_;
+  quadruped_ode_solver_capsule* solver_{nullptr};
+  std::array<double,12> current_state_;
+  std::array<double,12> desired_state_;
+  std::array<double,12> optimal_control_;
   
-  // These are the interfaces we get from the controller manager
-  std::vector<hardware_interface::LoanedCommandInterface> command_interfaces_;
-  std::vector<hardware_interface::LoanedStateInterface> state_interfaces_;
+  // Restore foot position storage
+  std::array<double,3> p1_, p2_, p3_, p4_, com_;
 };
 
 }  // namespace quadruped_mpc

@@ -59,8 +59,8 @@ endif()
 add_library(quadruped_mpc::quadruped_mpc_controllers SHARED IMPORTED)
 
 set_target_properties(quadruped_mpc::quadruped_mpc_controllers PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "/opt/ros/jazzy/include;${_IMPORT_PREFIX}/include;/usr/include/eigen3;${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "rclcpp::rclcpp;controller_interface::controller_interface;pluginlib::pluginlib;rclcpp_lifecycle::rclcpp_lifecycle;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;/lib/x86_64-linux-gnu/libboost_filesystem.so;/lib/x86_64-linux-gnu/libboost_serialization.so;/lib/x86_64-linux-gnu/libboost_system.so;/home/casadi/casadi-3.6.7/build/lib/libcasadi.so;acados;blasfeo;hpipm"
+  INTERFACE_INCLUDE_DIRECTORIES "/opt/ros/jazzy/include;${_IMPORT_PREFIX}/include;/usr/include/eigen3;/home/acados/acados/include;${_IMPORT_PREFIX}/include"
+  INTERFACE_LINK_LIBRARIES "rclcpp::rclcpp;controller_interface::controller_interface;pluginlib::pluginlib;rclcpp_lifecycle::rclcpp_lifecycle;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;/lib/x86_64-linux-gnu/libboost_filesystem.so;/lib/x86_64-linux-gnu/libboost_serialization.so;/lib/x86_64-linux-gnu/libboost_system.so;/home/casadi/casadi-3.6.7/build/lib/libcasadi.so;/home/acados/acados/lib/libacados.so;/home/acados/acados/lib/libhpipm.so;/home/acados/acados/lib/libblasfeo.so"
 )
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)

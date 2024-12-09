@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <array>
+#include <map>
 
 // ROS2 headers
 #include "controller_interface/controller_interface.hpp"
@@ -12,6 +13,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 
 // Project headers
 #include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
@@ -32,6 +34,11 @@ public:
 
   StateEstimator();
 
+  ~StateEstimator()
+  {
+    data_.reset();  // Ensure data is destroyed before model
+  }
+
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
   
@@ -50,8 +57,9 @@ protected:
   pinocchio::Model model_;
   std::unique_ptr<pinocchio::Data> data_;
   
-  // Frame IDs for feet
+  // Frame IDs for feet and body
   std::array<pinocchio::FrameIndex, 4> foot_frame_ids_;
+  pinocchio::FrameIndex body_frame_id_;
   
   // Robot description subscription
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_description_sub_;
@@ -60,6 +68,41 @@ protected:
   
   // Callback for robot description
   void robot_description_callback(const std_msgs::msg::String::SharedPtr msg);
+  
+  // Debug vectors
+  Eigen::VectorXd current_positions_;
+  Eigen::VectorXd current_velocities_;
+
+  // Simplify joint mapping struct to only necessary fields
+  struct JointMapping {
+    std::string name;
+    size_t state_interface_idx;
+    size_t pinocchio_idx;
+  };
+  std::vector<JointMapping> joint_mappings_;
+
+  // Joint state storage
+  struct JointState {
+    double position;
+    double velocity;
+    double effort;
+  };
+  std::vector<JointState> joint_states_;
+
+  // Returns true if successful, false if error
+  bool read_state_interfaces();
+  
+  // Returns true if successful, false if error
+  bool update_model();
+  
+  // Returns true if successful, false if error
+  bool inverse_kinematics();
+
+  // Returns true if successful, false if error
+  bool detect_contact();
+
+private:
+  // Removed hardware_height_
 };
 
 }  // namespace quadruped_mpc

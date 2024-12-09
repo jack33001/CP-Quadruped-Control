@@ -14,6 +14,9 @@
 # EXTERNAL cache entries
 ########################
 
+//Path to a library.
+ACADOS_LIB:FILEPATH=/home/acados/acados/lib/libacados.so
+
 //Generate environment files in the CMAKE_INSTALL_PREFIX
 AMENT_CMAKE_ENVIRONMENT_GENERATION:BOOL=OFF
 
@@ -33,6 +36,9 @@ AMENT_CMAKE_UNINSTALL_TARGET:BOOL=ON
 
 //The path where test results are generated
 AMENT_TEST_RESULTS_DIR:PATH=/home/ws/build/quadruped_mpc/test_results
+
+//Path to a library.
+BLASFEO_LIB:FILEPATH=/home/acados/acados/lib/libblasfeo.so
 
 //Build the testing tree.
 BUILD_TESTING:BOOL=ON
@@ -293,6 +299,9 @@ FastRTPS_LIBRARY_DEBUG:FILEPATH=FastRTPS_LIBRARY_DEBUG-NOTFOUND
 FastRTPS_LIBRARY_RELEASE:FILEPATH=/opt/ros/jazzy/lib/libfastrtps.so
 
 //Path to a library.
+HPIPM_LIB:FILEPATH=/home/acados/acados/lib/libhpipm.so
+
+//Path to a library.
 OPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
 
 //Path to a file.
@@ -317,10 +326,16 @@ PYTHON_STANDARD_LAYOUT:BOOL=OFF
 SITE:STRING=jack-laptop
 
 //The directory containing a CMake configuration file for TinyXML2.
-TinyXML2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+TinyXML2_DIR:PATH=/usr/local/lib/cmake/tinyxml2
 
 //Path to a library.
 _lib:FILEPATH=/opt/ros/jazzy/lib/liburdf.so
+
+//The directory containing a CMake configuration file for acados.
+acados_DIR:PATH=acados_DIR-NOTFOUND
+
+//Path to a file.
+acados_INCLUDE_DIR:PATH=acados_INCLUDE_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for action_msgs.
 action_msgs_DIR:PATH=/opt/ros/jazzy/share/action_msgs/cmake
@@ -376,11 +391,14 @@ ament_cmake_version_DIR:PATH=/opt/ros/jazzy/share/ament_cmake_version/cmake
 //The directory containing a CMake configuration file for ament_index_cpp.
 ament_index_cpp_DIR:PATH=/opt/ros/jazzy/share/ament_index_cpp/cmake
 
+//Dependencies for the target
+balance_controller_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;balance_controller_generated;general;/home/acados/acados/lib/libacados.so;general;/home/acados/acados/lib/libhpipm.so;general;/home/acados/acados/lib/libblasfeo.so;
+
+//Dependencies for the target
+balance_controller_generated_LIB_DEPENDS:STATIC=general;acados;general;hpipm;general;blasfeo;
+
 //The directory containing a CMake configuration file for builtin_interfaces.
 builtin_interfaces_DIR:PATH=/opt/ros/jazzy/share/builtin_interfaces/cmake
-
-//The directory containing a CMake configuration file for casadi.
-casadi_DIR:PATH=casadi_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for class_loader.
 class_loader_DIR:PATH=/opt/ros/jazzy/share/class_loader/cmake
@@ -448,11 +466,14 @@ quadruped_mpc_BINARY_DIR:STATIC=/home/ws/build/quadruped_mpc
 //Value Computed by CMake
 quadruped_mpc_IS_TOP_LEVEL:STATIC=ON
 
+//Dependencies for the target
+quadruped_mpc_LIB_DEPENDS:STATIC=general;/home/acados/acados/lib/libacados.so;general;/home/acados/acados/lib/libhpipm.so;general;/home/acados/acados/lib/libblasfeo.so;
+
 //Value Computed by CMake
 quadruped_mpc_SOURCE_DIR:STATIC=/home/ws/src/quadruped_mpc
 
 //Dependencies for the target
-quadruped_mpc_controllers_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;general;/home/casadi/casadi-3.6.7/build/lib/libcasadi.so;general;acados;general;blasfeo;general;hpipm;
+quadruped_mpc_controllers_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;general;balance_controller_generated;general;/home/casadi/casadi-3.6.7/build/lib/libcasadi.so;general;acados;general;hpipm;general;blasfeo;
 
 //The directory containing a CMake configuration file for rcl.
 rcl_DIR:PATH=/opt/ros/jazzy/share/rcl/cmake
@@ -775,8 +796,6 @@ FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/include][cfound components: py
 FIND_PACKAGE_MESSAGE_DETAILS_FastRTPS:INTERNAL=[/opt/ros/jazzy/include][/opt/ros/jazzy/lib/libfastrtps.so;/opt/ros/jazzy/lib/libfastcdr.so][v(2.13)]
 //Details about finding OpenSSL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][c ][v3.0.13()]
-//Details about finding PkgConfig
-FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
 //Details about finding Python3
 FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/bin/python3][/usr/include/python3.12][/usr/lib/python3/dist-packages/numpy/core/include][cfound components: Interpreter Development.Module NumPy ][v3.12.3()]
 //ADVANCED property for variable: OPENSSL_CRYPTO_LIBRARY

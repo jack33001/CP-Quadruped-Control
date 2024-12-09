@@ -4,6 +4,9 @@
 #include <Eigen/Dense>
 #include <mutex>
 #include <memory>  // Include memory for unique_ptr
+#include <pinocchio/fwd.hpp>  // Add Pinocchio headers
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/data.hpp>
 
 namespace quadruped_mpc {
 
@@ -14,21 +17,21 @@ struct HardwareInfo {
 };
 
 struct QuadrupedState {
-    // COM state
-    Eigen::Vector3d p_c_{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d v_c_{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d a_c_{Eigen::Vector3d::Zero()};
-    Eigen::Quaterniond th_c_{Eigen::Quaterniond::Identity()};
-    Eigen::Vector3d om_c_{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d alpha_c_{Eigen::Vector3d::Zero()};
+    // Replace Pinocchio data with cartesian positions and joint states
+    Eigen::Vector3d p1{Eigen::Vector3d::Zero()};  // foot 1 position
+    Eigen::Vector3d p2{Eigen::Vector3d::Zero()};  // foot 2 position
+    Eigen::Vector3d p3{Eigen::Vector3d::Zero()};  // foot 3 position
+    Eigen::Vector3d p4{Eigen::Vector3d::Zero()};  // foot 4 position
+    Eigen::Vector3d pc{Eigen::Vector3d::Zero()};  // body position
 
-    // Foot positions
-    Eigen::Vector3d p_1_{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d p_2_{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d p_3_{Eigen::Vector3d::Zero()};
-    Eigen::Vector3d p_4_{Eigen::Vector3d::Zero()};
+    std::array<double, 8> joint_pos{};  // knee and hip positions
+    std::array<double, 8> joint_vel{};  // knee and hip velocities
+    std::array<double, 8> joint_eff{};  // knee and hip efforts
 
-    // Foot contact states
+    // Default constructor
+    QuadrupedState() = default;
+
+    // Contact states only
     bool contact_1_{false};
     bool contact_2_{false};
     bool contact_3_{false};
@@ -36,7 +39,11 @@ struct QuadrupedState {
 };
 
 // TODO: define these values inside of a controller yaml instead of doing it here
-struct BalanceControlInfo{
+struct BalanceControlInfo {
+    double mass;
+    Eigen::Matrix3d inertia;
+    std::array<Eigen::Vector3d, 4> feet_positions;
+
     // Controller gains
     double Kp_pos{0.0};
     double Kd_pos{0.0};
@@ -63,6 +70,17 @@ struct BalanceControlInfo{
     Eigen::Matrix<double, 3, 3> d{Eigen::Matrix<double, 3, 3>::Zero()};
 };
 
+struct RobotParameters {
+    double mass{0.0};
+    Eigen::Matrix3d inertia{Eigen::Matrix3d::Zero()};
+    std::vector<Eigen::Vector3d> leg_positions{
+        Eigen::Vector3d::Zero(),  // FL
+        Eigen::Vector3d::Zero(),  // FR
+        Eigen::Vector3d::Zero(),  // RL
+        Eigen::Vector3d::Zero()   // RR
+    };  // Initialize with 4 zero vectors
+};
+
 class SharedQuadrupedInfo {
 public:
     static SharedQuadrupedInfo& getInstance();
@@ -72,23 +90,39 @@ public:
     SharedQuadrupedInfo(const SharedQuadrupedInfo&) = delete;
     void operator=(const SharedQuadrupedInfo&) = delete;
 
-    HardwareInfo hardware_;
+    // Public members
+    pinocchio::Model default_model_;
     QuadrupedState state_;
     BalanceControlInfo balance_;
-    bool is_initialized_{false};  // Add initialization flag
-    std::mutex mutex_;           // Add mutex for thread safety
+    RobotParameters robot_params;
+    HardwareInfo hardware_;
+    bool is_initialized_{false};
+    std::mutex mutex_;
 
 private:
-    SharedQuadrupedInfo() {  // Keep only one constructor
-        // Initialize inertia matrix in constructor
-        double width2 = std::pow(hardware_.width, 2);
-        double height2 = std::pow(hardware_.height, 2);
-        double length2 = std::pow(hardware_.length, 2);
+    SharedQuadrupedInfo() 
+        : default_model_()  // Initialize model first
+        , state_()  // Then state with model reference
+    {
+        // Initialize balance control parameters
+        balance_.m = 0.0;
+        balance_.g = 9.81;
+        balance_.alpha = 0.0;
+        balance_.beta = 0.0;
         
-        balance_.Ig << 
-            (1.0/12.0) * balance_.m * (height2 + length2), 0.0, 0.0,
-            0.0, (1.0/12.0) * balance_.m * (width2 + height2), 0.0,
-            0.0, 0.0, (1.0/12.0) * balance_.m * (width2 + length2);
+        // Initialize all fixed-size arrays first
+        balance_.feet_positions.fill(Eigen::Vector3d::Zero());
+        
+        // Initialize all Eigen matrices explicitly
+        balance_.inertia = Eigen::Matrix3d::Zero();
+        balance_.Ig = Eigen::Matrix3d::Zero();
+        balance_.F_star_prev = Eigen::Matrix<double, 4, 4>::Zero();
+        balance_.S = Eigen::Matrix<double, 6, 6>::Zero();
+        balance_.C = Eigen::Matrix<double, 3, 4>::Zero();
+        balance_.d = Eigen::Matrix<double, 3, 3>::Zero();
+        
+        // Initialize dynamic-size vectors last
+        robot_params.leg_positions = std::vector<Eigen::Vector3d>(4, Eigen::Vector3d::Zero());
     }
 
     static std::unique_ptr<SharedQuadrupedInfo> instance_;

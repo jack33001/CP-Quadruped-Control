@@ -310,9 +310,6 @@ message(STATUS "Execute custom install script")
 
 # begin of custom install code
 
-# install(DIRECTORY "include/" "DESTINATION" "include")
-ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "include/" "DESTINATION" "include")
-
 # install(FILES "/opt/ros/jazzy/lib/python3.12/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/quadruped_mpc/environment")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "/opt/ros/jazzy/lib/python3.12/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/quadruped_mpc/environment")
 
@@ -322,11 +319,8 @@ ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "/home/ws/b
 # install(FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")
 
-# install(DIRECTORY "config/" "DESTINATION" "share/quadruped_mpc/config")
-ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "config/" "DESTINATION" "share/quadruped_mpc/config")
-
-# install(DIRECTORY "launch/" "DESTINATION" "share/quadruped_mpc/launch")
-ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "launch/" "DESTINATION" "share/quadruped_mpc/launch")
+# install(DIRECTORY "config/" "launch/" "include/" "DESTINATION" "share/quadruped_mpc")
+ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "config/" "launch/" "include/" "DESTINATION" "share/quadruped_mpc")
 
 # install(FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")

@@ -1,23 +1,41 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 100  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-      ros__parameters:
-        use_local_topics: true
-
+    
     imu_sensor_controller:
       type: imu_sensor_broadcaster/IMUSensorBroadcaster
+      publish_rate: 100
+      sensor_name: "imu_sensor"
 
     quadruped_broadcaster:
       type: quadruped_mpc/quadruped_broadcaster
+      desired_state:
+        position:
+          p_c_des: [0.0, 0.0, 0.15]  # COM position [x, y, z]
+        velocity:
+          v_c_des: [0.0, 0.0, 0.0]   # COM velocity [vx, vy, vz]
+        orientation:
+          th_c_des: [1.0, 0.0, 0.0, 0.0]  # COM orientation quaternion [w, x, y, z]
+        angular_velocity:
+          om_c_des: [0.0, 0.0, 0.0]   # COM angular velocity [wx, wy, wz]
 
     state_estimator:
       type: quadruped_mpc/state_estimator
 
     balance_controller:
       type: quadruped_mpc/balance_controller
+      joints:
+        - fr_hip
+        - fr_knee
+        - fl_hip
+        - fl_knee
+        - rr_hip
+        - rr_knee
+        - rl_hip
+        - rl_knee
 
 # Individual controller configurations
 joint_state_broadcaster:
@@ -54,10 +72,10 @@ quadruped_broadcaster:
       balance_kd_pos: 5.0
       balance_kp_rot: 500.0
       balance_kd_rot: 5.0
-      p_c_des: [0.0, 0.0, 0.2]
-      v_c_des: [0.0, 0.0, 0.0]
-      th_c_des: [1.0, 0.0, 0.0, 0.0]
-      om_c_des: [0.0, 0.0, 0.0, 1.0]
+      p_c_des: [0.0, 0.0, 0.2]  # 3 elements
+      v_c_des: [0.0, 0.0, 0.0]  # 3 elements
+      th_c_des: [1.0, 0.0, 0.0, 0.0]  # 4 elements (w,x,y,z quaternion)
+      om_c_des: [0.0, 0.0, 0.0]  # 3 elements
       S: [1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
           0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
           0.0, 0.0, 1.0, 0.0, 0.0, 0.0,

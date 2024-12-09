@@ -64,10 +64,34 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
       return controller_interface::return_type::OK;
     }
 
-    // Calculate control law
+    // Read current state from state interfaces
+    for (size_t i = 0; i < joint_names_.size(); ++i) {
+      current_state_[i] = state_interfaces_[i * 3].get_value();  // position
+      current_state_[i + joint_names_.size()] = state_interfaces_[i * 3 + 1].get_value();  // velocity
+    }
 
-    // Write to state interfaces
+    // Set current state in solver using the nlp interface
+    ocp_nlp_out_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", current_state_.data());
+    
+    // Solve OCP
+    int solver_status = quadruped_ode_acados_solve(solver_);
+    if (solver_status != 0) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Solver failed with status %d", solver_status);
+      return controller_interface::return_type::ERROR;
+    }
+    
+    // Get optimal control from nlp interface
+    ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
+    
+    // Store command result for hardware interface
+    for (size_t i = 0; i < joint_names_.size(); ++i) {
+      auto result = command_interfaces_[i].set_value(optimal_control_[i]);
+      if (!result) {
+        RCLCPP_WARN(get_node()->get_logger(), "Failed to set command for joint %zu", i);
+      }
+    }
 
+    return controller_interface::return_type::OK;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception in balance control: %s", e.what());
     return controller_interface::return_type::ERROR;
@@ -94,6 +118,24 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   joint_names_ = get_node()->get_parameter("joints").as_string_array();
   if (joint_names_.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
+    return CallbackReturn::ERROR;
+  }
+  
+  // Initialize arrays with zeros
+  std::fill(current_state_.begin(), current_state_.end(), 0.0);
+  std::fill(desired_state_.begin(), desired_state_.end(), 0.0);
+  std::fill(optimal_control_.begin(), optimal_control_.end(), 0.0);
+  
+  // Create and initialize ACADOS solver
+  solver_ = quadruped_ode_acados_create_capsule();
+  if (solver_ == nullptr) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to create ACADOS solver capsule");
+    return CallbackReturn::ERROR;
+  }
+
+  int status = quadruped_ode_acados_create(solver_);
+  if (status != 0) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize ACADOS solver");
     return CallbackReturn::ERROR;
   }
   
