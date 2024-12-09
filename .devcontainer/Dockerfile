@@ -31,11 +31,6 @@ RUN apt-get install -y \
     libglfw3-dev \
     libglew-dev
     
-RUN mkdir -p /home/mujoco \
-    && cd /home/mujoco \
-    && wget https://github.com/google-deepmind/mujoco/releases/download/3.2.3/mujoco-3.2.3-linux-x86_64.tar.gz \
-    && tar xvf mujoco-3.2.3-linux-x86_64.tar.gz
-
 RUN addgroup realtime \
     && usermod -a -G realtime $USERNAME \
     && echo "@realtime soft rtprio 99" >> /etc/security/limits.conf \
@@ -45,6 +40,28 @@ RUN addgroup realtime \
     && echo "@realtime hard priority 99" >> /etc/security/limits.conf \
     && echo "@realtime hard memlock 102400" >> /etc/security/limits.conf
 
+# Install acados
+RUN mkdir -p /home/acados \
+    && cd /home/acados \
+    && git clone https://github.com/acados/acados.git \
+    && cd acados \
+    && git submodule update --recursive --init \
+    && mkdir -p build \
+    && cd build \
+    && cmake .. \
+    && make install -j4
+
+# Install CasADi
+RUN mkdir -p /home/casadi \
+    && cd /home/casadi \
+    && wget https://github.com/casadi/casadi/archive/refs/tags/3.6.7.tar.gz \
+    && tar -xf 3.6.7.tar.gz \
+    && cd casadi-3.6.7 \
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make -j4 \ 
+    && make install
 
 # Install ROS2 dependencies
 RUN apt-get update \
@@ -62,9 +79,6 @@ RUN apt-get update \
     ros-jazzy-joint-trajectory-controller \
     ros-jazzy-imu-sensor-broadcaster \
     ros-jazzy-pinocchio
-
-# Install Mujoco Python package
-RUN pip install mujoco --break-system-packages
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME

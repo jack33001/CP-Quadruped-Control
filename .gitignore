@@ -1,0 +1,10 @@
+# ignore colcon-build files
+build/
+install/
+log/
+
+# ignore vscode files
+.vscode/
+
+# ignore github copilot instructions
+.github/

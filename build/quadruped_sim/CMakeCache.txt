@@ -326,15 +326,6 @@ ament_pep257_BIN:FILEPATH=/opt/ros/jazzy/bin/ament_pep257
 ament_xmllint_BIN:FILEPATH=/opt/ros/jazzy/bin/ament_xmllint
 
 //Value Computed by CMake
-quadruped_master_BINARY_DIR:STATIC=/home/ws/build/quadruped_sim
-
-//Value Computed by CMake
-quadruped_master_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-quadruped_master_SOURCE_DIR:STATIC=/home/ws/src/quadruped_sim
-
-//Value Computed by CMake
 quadruped_sim_BINARY_DIR:STATIC=/home/ws/build/quadruped_sim
 
 //Value Computed by CMake

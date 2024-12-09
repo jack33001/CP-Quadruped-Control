@@ -198,113 +198,113 @@ quadruped_mpc_uninstall/fast:
 .PHONY : quadruped_mpc_uninstall/fast
 
 #=============================================================================
-# Target rules for targets named quadruped_mpc_lib
+# Target rules for targets named quadruped_mpc_controllers
 
 # Build rule for target.
-quadruped_mpc_lib: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quadruped_mpc_lib
-.PHONY : quadruped_mpc_lib
+quadruped_mpc_controllers: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quadruped_mpc_controllers
+.PHONY : quadruped_mpc_controllers
 
 # fast build rule for target.
-quadruped_mpc_lib/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/build
-.PHONY : quadruped_mpc_lib/fast
+quadruped_mpc_controllers/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/build
+.PHONY : quadruped_mpc_controllers/fast
 
-src/balance_controller.o: src/balance_controller.cpp.o
-.PHONY : src/balance_controller.o
-
-# target to build an object file
-src/balance_controller.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o
-.PHONY : src/balance_controller.cpp.o
-
-src/balance_controller.i: src/balance_controller.cpp.i
-.PHONY : src/balance_controller.i
-
-# target to preprocess a source file
-src/balance_controller.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.i
-.PHONY : src/balance_controller.cpp.i
-
-src/balance_controller.s: src/balance_controller.cpp.s
-.PHONY : src/balance_controller.s
-
-# target to generate assembly for a file
-src/balance_controller.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.s
-.PHONY : src/balance_controller.cpp.s
-
-src/foot_trajectory_generator.o: src/foot_trajectory_generator.cpp.o
-.PHONY : src/foot_trajectory_generator.o
+src/controller_interfaces/balance_controller.o: src/controller_interfaces/balance_controller.cpp.o
+.PHONY : src/controller_interfaces/balance_controller.o
 
 # target to build an object file
-src/foot_trajectory_generator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.o
-.PHONY : src/foot_trajectory_generator.cpp.o
+src/controller_interfaces/balance_controller.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/balance_controller.cpp.o
+.PHONY : src/controller_interfaces/balance_controller.cpp.o
 
-src/foot_trajectory_generator.i: src/foot_trajectory_generator.cpp.i
-.PHONY : src/foot_trajectory_generator.i
+src/controller_interfaces/balance_controller.i: src/controller_interfaces/balance_controller.cpp.i
+.PHONY : src/controller_interfaces/balance_controller.i
 
 # target to preprocess a source file
-src/foot_trajectory_generator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.i
-.PHONY : src/foot_trajectory_generator.cpp.i
+src/controller_interfaces/balance_controller.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/balance_controller.cpp.i
+.PHONY : src/controller_interfaces/balance_controller.cpp.i
 
-src/foot_trajectory_generator.s: src/foot_trajectory_generator.cpp.s
-.PHONY : src/foot_trajectory_generator.s
+src/controller_interfaces/balance_controller.s: src/controller_interfaces/balance_controller.cpp.s
+.PHONY : src/controller_interfaces/balance_controller.s
 
 # target to generate assembly for a file
-src/foot_trajectory_generator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/foot_trajectory_generator.cpp.s
-.PHONY : src/foot_trajectory_generator.cpp.s
+src/controller_interfaces/balance_controller.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/balance_controller.cpp.s
+.PHONY : src/controller_interfaces/balance_controller.cpp.s
 
-src/leg_controller.o: src/leg_controller.cpp.o
-.PHONY : src/leg_controller.o
+src/controller_interfaces/quadruped_broadcaster.o: src/controller_interfaces/quadruped_broadcaster.cpp.o
+.PHONY : src/controller_interfaces/quadruped_broadcaster.o
 
 # target to build an object file
-src/leg_controller.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.o
-.PHONY : src/leg_controller.cpp.o
+src/controller_interfaces/quadruped_broadcaster.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/quadruped_broadcaster.cpp.o
+.PHONY : src/controller_interfaces/quadruped_broadcaster.cpp.o
 
-src/leg_controller.i: src/leg_controller.cpp.i
-.PHONY : src/leg_controller.i
+src/controller_interfaces/quadruped_broadcaster.i: src/controller_interfaces/quadruped_broadcaster.cpp.i
+.PHONY : src/controller_interfaces/quadruped_broadcaster.i
 
 # target to preprocess a source file
-src/leg_controller.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.i
-.PHONY : src/leg_controller.cpp.i
+src/controller_interfaces/quadruped_broadcaster.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/quadruped_broadcaster.cpp.i
+.PHONY : src/controller_interfaces/quadruped_broadcaster.cpp.i
 
-src/leg_controller.s: src/leg_controller.cpp.s
-.PHONY : src/leg_controller.s
+src/controller_interfaces/quadruped_broadcaster.s: src/controller_interfaces/quadruped_broadcaster.cpp.s
+.PHONY : src/controller_interfaces/quadruped_broadcaster.s
 
 # target to generate assembly for a file
-src/leg_controller.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/leg_controller.cpp.s
-.PHONY : src/leg_controller.cpp.s
+src/controller_interfaces/quadruped_broadcaster.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/quadruped_broadcaster.cpp.s
+.PHONY : src/controller_interfaces/quadruped_broadcaster.cpp.s
 
-src/state_estimator.o: src/state_estimator.cpp.o
-.PHONY : src/state_estimator.o
+src/controller_interfaces/state_estimator.o: src/controller_interfaces/state_estimator.cpp.o
+.PHONY : src/controller_interfaces/state_estimator.o
 
 # target to build an object file
-src/state_estimator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.o
-.PHONY : src/state_estimator.cpp.o
+src/controller_interfaces/state_estimator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/state_estimator.cpp.o
+.PHONY : src/controller_interfaces/state_estimator.cpp.o
 
-src/state_estimator.i: src/state_estimator.cpp.i
-.PHONY : src/state_estimator.i
+src/controller_interfaces/state_estimator.i: src/controller_interfaces/state_estimator.cpp.i
+.PHONY : src/controller_interfaces/state_estimator.i
 
 # target to preprocess a source file
-src/state_estimator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.i
-.PHONY : src/state_estimator.cpp.i
+src/controller_interfaces/state_estimator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/state_estimator.cpp.i
+.PHONY : src/controller_interfaces/state_estimator.cpp.i
 
-src/state_estimator.s: src/state_estimator.cpp.s
-.PHONY : src/state_estimator.s
+src/controller_interfaces/state_estimator.s: src/controller_interfaces/state_estimator.cpp.s
+.PHONY : src/controller_interfaces/state_estimator.s
 
 # target to generate assembly for a file
-src/state_estimator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_lib.dir/build.make CMakeFiles/quadruped_mpc_lib.dir/src/state_estimator.cpp.s
-.PHONY : src/state_estimator.cpp.s
+src/controller_interfaces/state_estimator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/controller_interfaces/state_estimator.cpp.s
+.PHONY : src/controller_interfaces/state_estimator.cpp.s
+
+src/utilities/shared_quadruped_info.o: src/utilities/shared_quadruped_info.cpp.o
+.PHONY : src/utilities/shared_quadruped_info.o
+
+# target to build an object file
+src/utilities/shared_quadruped_info.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/utilities/shared_quadruped_info.cpp.o
+.PHONY : src/utilities/shared_quadruped_info.cpp.o
+
+src/utilities/shared_quadruped_info.i: src/utilities/shared_quadruped_info.cpp.i
+.PHONY : src/utilities/shared_quadruped_info.i
+
+# target to preprocess a source file
+src/utilities/shared_quadruped_info.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/utilities/shared_quadruped_info.cpp.i
+.PHONY : src/utilities/shared_quadruped_info.cpp.i
+
+src/utilities/shared_quadruped_info.s: src/utilities/shared_quadruped_info.cpp.s
+.PHONY : src/utilities/shared_quadruped_info.s
+
+# target to generate assembly for a file
+src/utilities/shared_quadruped_info.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_mpc_controllers.dir/build.make CMakeFiles/quadruped_mpc_controllers.dir/src/utilities/shared_quadruped_info.cpp.s
+.PHONY : src/utilities/shared_quadruped_info.cpp.s
 
 # Help Target
 help:
@@ -321,19 +321,19 @@ help:
 	@echo "... test"
 	@echo "... quadruped_mpc_uninstall"
 	@echo "... uninstall"
-	@echo "... quadruped_mpc_lib"
-	@echo "... src/balance_controller.o"
-	@echo "... src/balance_controller.i"
-	@echo "... src/balance_controller.s"
-	@echo "... src/foot_trajectory_generator.o"
-	@echo "... src/foot_trajectory_generator.i"
-	@echo "... src/foot_trajectory_generator.s"
-	@echo "... src/leg_controller.o"
-	@echo "... src/leg_controller.i"
-	@echo "... src/leg_controller.s"
-	@echo "... src/state_estimator.o"
-	@echo "... src/state_estimator.i"
-	@echo "... src/state_estimator.s"
+	@echo "... quadruped_mpc_controllers"
+	@echo "... src/controller_interfaces/balance_controller.o"
+	@echo "... src/controller_interfaces/balance_controller.i"
+	@echo "... src/controller_interfaces/balance_controller.s"
+	@echo "... src/controller_interfaces/quadruped_broadcaster.o"
+	@echo "... src/controller_interfaces/quadruped_broadcaster.i"
+	@echo "... src/controller_interfaces/quadruped_broadcaster.s"
+	@echo "... src/controller_interfaces/state_estimator.o"
+	@echo "... src/controller_interfaces/state_estimator.i"
+	@echo "... src/controller_interfaces/state_estimator.s"
+	@echo "... src/utilities/shared_quadruped_info.o"
+	@echo "... src/utilities/shared_quadruped_info.i"
+	@echo "... src/utilities/shared_quadruped_info.s"
 .PHONY : help
 
 

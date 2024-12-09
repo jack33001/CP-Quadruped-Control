@@ -1,7 +1,0 @@
-[01m[K/home/ws/src/quadruped/src/balance_controller.cpp:4:10:[m[K [01;31m[Kfatal error: [m[Kpinocchio/algorithm/jacobian.hpp>: No such file or directory
-    4 | #include [01;31m[K"pinocchio/algorithm/jacobian.hpp>"[m[K
-      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
-compilation terminated.
-gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:76: CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Error 2
-gmake: *** [Makefile:146: all] Error 2

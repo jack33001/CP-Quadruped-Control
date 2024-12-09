@@ -1,6 +1,6 @@
 /home/ws/build/quadruped_mpc/CMakeFiles/uninstall.dir
 /home/ws/build/quadruped_mpc/CMakeFiles/quadruped_mpc_uninstall.dir
-/home/ws/build/quadruped_mpc/CMakeFiles/quadruped_mpc_lib.dir
+/home/ws/build/quadruped_mpc/CMakeFiles/quadruped_mpc_controllers.dir
 /home/ws/build/quadruped_mpc/CMakeFiles/test.dir
 /home/ws/build/quadruped_mpc/CMakeFiles/edit_cache.dir
 /home/ws/build/quadruped_mpc/CMakeFiles/rebuild_cache.dir

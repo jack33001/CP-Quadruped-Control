@@ -1,4 +1,4 @@
-/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/Quadruped MJB.mjb
+/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/QuadrupedURDF_real.urdf.xacro
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/QuadrupedURDF_sim.urdf.xacro
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Body.STL
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Body_bin.STL
@@ -10,7 +10,6 @@
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Left Thigh.STL
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Right Shin.STL
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/meshes/Rear Right Thigh.STL
-/home/ws/install/quadruped_urdf/share/quadruped_urdf/urdf/mjb_maker.py
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/config/initial_joint_positions.yaml
 /home/ws/install/quadruped_urdf/share/quadruped_urdf/launch/sim_urdf.launch.py
 /home/ws/install/quadruped_urdf/share/ament_index/resource_index/package_run_dependencies/quadruped_urdf

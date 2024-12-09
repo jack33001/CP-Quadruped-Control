@@ -313,6 +313,12 @@ message(STATUS "Execute custom install script")
 # install(DIRECTORY "include/" "DESTINATION" "include")
 ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "include/" "DESTINATION" "include")
 
+# install(FILES "/opt/ros/jazzy/lib/python3.12/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/quadruped_mpc/environment")
+ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "/opt/ros/jazzy/lib/python3.12/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/quadruped_mpc/environment")
+
+# install(FILES "/home/ws/build/quadruped_mpc/ament_cmake_environment_hooks/library_path.dsv" "DESTINATION" "share/quadruped_mpc/environment")
+ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "/home/ws/build/quadruped_mpc/ament_cmake_environment_hooks/library_path.dsv" "DESTINATION" "share/quadruped_mpc/environment")
+
 # install(FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")
 
@@ -321,12 +327,6 @@ ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "co
 
 # install(DIRECTORY "launch/" "DESTINATION" "share/quadruped_mpc/launch")
 ament_cmake_symlink_install_directory("/home/ws/src/quadruped_mpc" DIRECTORY "launch/" "DESTINATION" "share/quadruped_mpc/launch")
-
-# install(FILES "/opt/ros/jazzy/lib/python3.12/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/quadruped_mpc/environment")
-ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "/opt/ros/jazzy/lib/python3.12/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/quadruped_mpc/environment")
-
-# install(FILES "/home/ws/build/quadruped_mpc/ament_cmake_environment_hooks/library_path.dsv" "DESTINATION" "share/quadruped_mpc/environment")
-ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "/home/ws/build/quadruped_mpc/ament_cmake_environment_hooks/library_path.dsv" "DESTINATION" "share/quadruped_mpc/environment")
 
 # install(FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")
 ament_cmake_symlink_install_files("/home/ws/src/quadruped_mpc" FILES "plugin_description.xml" "DESTINATION" "share/quadruped_mpc/")

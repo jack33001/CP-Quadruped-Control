@@ -1,11 +1,18 @@
-<library path="quadruped_lib">
-  <class name="quadruped/balance_controller" 
-         type="balance_controller::BalanceController" 
+<?xml version="1.0"?>
+<library path="quadruped_mpc_controllers">
+  <class name="quadruped_mpc/quadruped_broadcaster"
+         type="quadruped_mpc::QuadrupedBroadcaster"
          base_class_type="controller_interface::ControllerInterface">
-    <description>
-      A controller for maintaining balance in a quadruped robot. 
-      The controller subscribes to external commands and uses Pinocchio 
-      to manage kinematics and dynamics for stable control of the joints.
-    </description>
+    <description>Manages the shared info for the robot</description>
+  </class>
+  <class name="quadruped_mpc/balance_controller"
+         type="quadruped_mpc::BalanceController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Balance controller for quadruped robot</description>
+  </class>
+  <class name="quadruped_mpc/state_estimator"
+         type="quadruped_mpc::StateEstimator"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>State estimator for quadruped robot</description>
   </class>
 </library>

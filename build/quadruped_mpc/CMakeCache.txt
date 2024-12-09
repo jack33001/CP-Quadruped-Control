@@ -379,6 +379,9 @@ ament_index_cpp_DIR:PATH=/opt/ros/jazzy/share/ament_index_cpp/cmake
 //The directory containing a CMake configuration file for builtin_interfaces.
 builtin_interfaces_DIR:PATH=/opt/ros/jazzy/share/builtin_interfaces/cmake
 
+//The directory containing a CMake configuration file for casadi.
+casadi_DIR:PATH=casadi_DIR-NOTFOUND
+
 //The directory containing a CMake configuration file for class_loader.
 class_loader_DIR:PATH=/opt/ros/jazzy/share/class_loader/cmake
 
@@ -440,18 +443,6 @@ pkgcfg_lib__OPENSSL_ssl:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
 pluginlib_DIR:PATH=/opt/ros/jazzy/share/pluginlib/cmake
 
 //Value Computed by CMake
-quadruped_BINARY_DIR:STATIC=/home/ws/build/quadruped_mpc
-
-//Value Computed by CMake
-quadruped_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-quadruped_SOURCE_DIR:STATIC=/home/ws/src/quadruped_mpc
-
-//Dependencies for the target
-quadruped_lib_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;
-
-//Value Computed by CMake
 quadruped_mpc_BINARY_DIR:STATIC=/home/ws/build/quadruped_mpc
 
 //Value Computed by CMake
@@ -461,7 +452,7 @@ quadruped_mpc_IS_TOP_LEVEL:STATIC=ON
 quadruped_mpc_SOURCE_DIR:STATIC=/home/ws/src/quadruped_mpc
 
 //Dependencies for the target
-quadruped_mpc_lib_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;
+quadruped_mpc_controllers_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;general;/home/casadi/casadi-3.6.7/build/lib/libcasadi.so;general;acados;general;blasfeo;general;hpipm;
 
 //The directory containing a CMake configuration file for rcl.
 rcl_DIR:PATH=/opt/ros/jazzy/share/rcl/cmake
@@ -784,6 +775,8 @@ FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/usr/include][cfound components: py
 FIND_PACKAGE_MESSAGE_DETAILS_FastRTPS:INTERNAL=[/opt/ros/jazzy/include][/opt/ros/jazzy/lib/libfastrtps.so;/opt/ros/jazzy/lib/libfastcdr.so][v(2.13)]
 //Details about finding OpenSSL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][c ][v3.0.13()]
+//Details about finding PkgConfig
+FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
 //Details about finding Python3
 FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/bin/python3][/usr/include/python3.12][/usr/lib/python3/dist-packages/numpy/core/include][cfound components: Interpreter Development.Module NumPy ][v3.12.3()]
 //ADVANCED property for variable: OPENSSL_CRYPTO_LIBRARY

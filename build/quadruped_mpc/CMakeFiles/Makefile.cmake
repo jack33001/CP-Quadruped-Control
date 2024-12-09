@@ -959,5 +959,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/uninstall.dir/DependInfo.cmake"
   "CMakeFiles/quadruped_mpc_uninstall.dir/DependInfo.cmake"
-  "CMakeFiles/quadruped_mpc_lib.dir/DependInfo.cmake"
+  "CMakeFiles/quadruped_mpc_controllers.dir/DependInfo.cmake"
   )

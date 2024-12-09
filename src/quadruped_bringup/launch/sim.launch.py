@@ -1,10 +1,16 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import IncludeLaunchDescription, TimerAction, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
+from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
+    controllers_config = PathJoinSubstitution(
+        [FindPackageShare('quadruped_bringup'), 'config', 'controllers.yaml']
+    )
+
     # Define the package and launch file paths
     urdf_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -18,7 +24,7 @@ def generate_launch_description():
 
     # Wrap gazebo launch in TimerAction for delayed start
     gazebo_launch = TimerAction(
-        period=5.0,  # Wait for 5 seconds after URDF launch
+        period=2.0,  # Wait for 5 seconds after URDF launch
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([
@@ -34,7 +40,7 @@ def generate_launch_description():
 
     # Wrap MPC launch in TimerAction for delayed start
     mpc_launch = TimerAction(
-        period=10.0,  # Wait for 10 seconds after launch start
+        period = 7.0,  # Wait for 10 seconds after launch start
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([
@@ -52,5 +58,5 @@ def generate_launch_description():
     return LaunchDescription([
         urdf_launch,
         gazebo_launch,
-        mpc_launch
+        mpc_launch,
     ])

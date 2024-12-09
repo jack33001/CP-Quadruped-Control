@@ -1,1 +1,0 @@
-/home/ws/src/quadruped_mpc/include/quadruped_mpc/state_estimator.hpp

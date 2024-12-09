@@ -1,6 +1,0 @@
-{
-  "package_name": "quadruped",
-  "non_idl_tuples": [
-    "/home/ws/src/quadruped:messages/LegCommand.msg"
-  ]
-}

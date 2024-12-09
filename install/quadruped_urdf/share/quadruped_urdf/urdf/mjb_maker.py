@@ -1,1 +1,0 @@
-/home/ws/src/quadruped_urdf/urdf/mjb_maker.py

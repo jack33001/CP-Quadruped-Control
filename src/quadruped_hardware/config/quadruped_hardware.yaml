@@ -1,6 +1,6 @@
 # This yaml file holds important information about the hardware, like a config file with some extra capability. 
 
-my_robot:
+quadruped_hardware:
   ros__parameters:
     hardware_parameters:
       can_interface: "can0"

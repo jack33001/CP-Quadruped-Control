@@ -1,4 +1,0 @@
-source;share/quadruped/local_setup.bash
-source;share/quadruped/local_setup.dsv
-source;share/quadruped/local_setup.sh
-source;share/quadruped/local_setup.zsh

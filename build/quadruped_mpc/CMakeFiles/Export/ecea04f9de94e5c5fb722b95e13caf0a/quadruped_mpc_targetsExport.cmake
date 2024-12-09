@@ -19,7 +19,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_cmake_targets_defined "")
 set(_cmake_targets_not_defined "")
 set(_cmake_expected_targets "")
-foreach(_cmake_expected_target IN ITEMS quadruped_mpc::quadruped_mpc_lib)
+foreach(_cmake_expected_target IN ITEMS quadruped_mpc::quadruped_mpc_controllers)
   list(APPEND _cmake_expected_targets "${_cmake_expected_target}")
   if(TARGET "${_cmake_expected_target}")
     list(APPEND _cmake_targets_defined "${_cmake_expected_target}")
@@ -55,12 +55,12 @@ if(_IMPORT_PREFIX STREQUAL "/")
   set(_IMPORT_PREFIX "")
 endif()
 
-# Create imported target quadruped_mpc::quadruped_mpc_lib
-add_library(quadruped_mpc::quadruped_mpc_lib STATIC IMPORTED)
+# Create imported target quadruped_mpc::quadruped_mpc_controllers
+add_library(quadruped_mpc::quadruped_mpc_controllers SHARED IMPORTED)
 
-set_target_properties(quadruped_mpc::quadruped_mpc_lib PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;/opt/ros/jazzy/include;${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "rclcpp::rclcpp;controller_interface::controller_interface;rclcpp_lifecycle::rclcpp_lifecycle;pluginlib::pluginlib;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;/lib/x86_64-linux-gnu/libboost_filesystem.so;/lib/x86_64-linux-gnu/libboost_serialization.so;/lib/x86_64-linux-gnu/libboost_system.so"
+set_target_properties(quadruped_mpc::quadruped_mpc_controllers PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "/opt/ros/jazzy/include;${_IMPORT_PREFIX}/include;/usr/include/eigen3;${_IMPORT_PREFIX}/include"
+  INTERFACE_LINK_LIBRARIES "rclcpp::rclcpp;controller_interface::controller_interface;pluginlib::pluginlib;rclcpp_lifecycle::rclcpp_lifecycle;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;/lib/x86_64-linux-gnu/libboost_filesystem.so;/lib/x86_64-linux-gnu/libboost_serialization.so;/lib/x86_64-linux-gnu/libboost_system.so;/home/casadi/casadi-3.6.7/build/lib/libcasadi.so;acados;blasfeo;hpipm"
 )
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)
