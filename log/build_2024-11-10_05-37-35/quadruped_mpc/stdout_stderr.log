@@ -1,8 +1,0 @@
-[ 20%] [32mBuilding CXX object CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o[0m
-In file included from [01m[K/home/ws/src/quadruped_mpc/src/balance_controller.cpp:1[m[K:
-[01m[K/home/ws/src/quadruped_mpc/include/quadruped_mpc/balance_controller.hpp:46:8:[m[K [01;31m[Kerror: [m[Kextra qualification ‘[01m[Kbalance_controller::BalanceController::[m[K’ on member ‘[01m[Kread_state_interfaces[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
-   46 |   void [01;31m[KBalanceController[m[K::read_state_interfaces();
-      |        [01;31m[K^~~~~~~~~~~~~~~~~[m[K
-gmake[2]: *** [CMakeFiles/quadruped_mpc_lib.dir/build.make:76: CMakeFiles/quadruped_mpc_lib.dir/src/balance_controller.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/quadruped_mpc_lib.dir/all] Error 2
-gmake: *** [Makefile:146: all] Error 2

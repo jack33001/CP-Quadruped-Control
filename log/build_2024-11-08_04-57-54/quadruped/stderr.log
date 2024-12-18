@@ -1,4 +1,0 @@
-gmake[2]: *** Deleting file 'libquadruped_lib.so'
-gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:366: libquadruped_lib.so] Interrupt
-gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Interrupt
-gmake: *** [Makefile:146: all] Interrupt

@@ -1,1 +1,0 @@
-rclpy;rclcpp;hardware_interface;controller_manager;rclcpp_lifecycle;pluginlib;ros2_control;ros_gz_sim;ros_gz_bridge;position_controllers;rosidl_default_runtime;ament_lint_auto;ament_lint_common

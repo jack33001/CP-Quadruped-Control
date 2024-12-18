@@ -1,1 +1,0 @@
-/home/ws/build/quadruped/rosidl_typesupport_fastrtps_c/quadruped/msg/rosidl_typesupport_fastrtps_c__visibility_control.h

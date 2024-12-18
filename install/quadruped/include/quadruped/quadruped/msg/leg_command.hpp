@@ -1,1 +1,0 @@
-/home/ws/build/quadruped/rosidl_generator_cpp/quadruped/msg/leg_command.hpp

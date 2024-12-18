@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_targets("TARGET_FILES" "/home/ws/build/quadruped/rosidl_generator_py/quadruped/quadruped_s__rosidl_typesupport_c.so" "TARGETS" "quadruped_s__rosidl_typesupport_c" "DESTINATION" "lib/python3.12/site-packages/quadruped")

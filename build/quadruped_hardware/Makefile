@@ -197,6 +197,104 @@ quadruped_hardware_uninstall/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware_uninstall.dir/build.make CMakeFiles/quadruped_hardware_uninstall.dir/build
 .PHONY : quadruped_hardware_uninstall/fast
 
+#=============================================================================
+# Target rules for targets named quadruped_hardware
+
+# Build rule for target.
+quadruped_hardware: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quadruped_hardware
+.PHONY : quadruped_hardware
+
+# fast build rule for target.
+quadruped_hardware/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/build
+.PHONY : quadruped_hardware/fast
+
+#=============================================================================
+# Target rules for targets named ros2_can_interface
+
+# Build rule for target.
+ros2_can_interface: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ros2_can_interface
+.PHONY : ros2_can_interface
+
+# fast build rule for target.
+ros2_can_interface/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_can_interface.dir/build.make CMakeFiles/ros2_can_interface.dir/build
+.PHONY : ros2_can_interface/fast
+
+src/CANInterface.o: src/CANInterface.cpp.o
+.PHONY : src/CANInterface.o
+
+# target to build an object file
+src/CANInterface.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/src/CANInterface.cpp.o
+.PHONY : src/CANInterface.cpp.o
+
+src/CANInterface.i: src/CANInterface.cpp.i
+.PHONY : src/CANInterface.i
+
+# target to preprocess a source file
+src/CANInterface.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/src/CANInterface.cpp.i
+.PHONY : src/CANInterface.cpp.i
+
+src/CANInterface.s: src/CANInterface.cpp.s
+.PHONY : src/CANInterface.s
+
+# target to generate assembly for a file
+src/CANInterface.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/src/CANInterface.cpp.s
+.PHONY : src/CANInterface.cpp.s
+
+src/MotorDriver.o: src/MotorDriver.cpp.o
+.PHONY : src/MotorDriver.o
+
+# target to build an object file
+src/MotorDriver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/src/MotorDriver.cpp.o
+.PHONY : src/MotorDriver.cpp.o
+
+src/MotorDriver.i: src/MotorDriver.cpp.i
+.PHONY : src/MotorDriver.i
+
+# target to preprocess a source file
+src/MotorDriver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/src/MotorDriver.cpp.i
+.PHONY : src/MotorDriver.cpp.i
+
+src/MotorDriver.s: src/MotorDriver.cpp.s
+.PHONY : src/MotorDriver.s
+
+# target to generate assembly for a file
+src/MotorDriver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quadruped_hardware.dir/build.make CMakeFiles/quadruped_hardware.dir/src/MotorDriver.cpp.s
+.PHONY : src/MotorDriver.cpp.s
+
+src/ROS2_CAN_Interface.o: src/ROS2_CAN_Interface.cpp.o
+.PHONY : src/ROS2_CAN_Interface.o
+
+# target to build an object file
+src/ROS2_CAN_Interface.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_can_interface.dir/build.make CMakeFiles/ros2_can_interface.dir/src/ROS2_CAN_Interface.cpp.o
+.PHONY : src/ROS2_CAN_Interface.cpp.o
+
+src/ROS2_CAN_Interface.i: src/ROS2_CAN_Interface.cpp.i
+.PHONY : src/ROS2_CAN_Interface.i
+
+# target to preprocess a source file
+src/ROS2_CAN_Interface.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_can_interface.dir/build.make CMakeFiles/ros2_can_interface.dir/src/ROS2_CAN_Interface.cpp.i
+.PHONY : src/ROS2_CAN_Interface.cpp.i
+
+src/ROS2_CAN_Interface.s: src/ROS2_CAN_Interface.cpp.s
+.PHONY : src/ROS2_CAN_Interface.s
+
+# target to generate assembly for a file
+src/ROS2_CAN_Interface.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_can_interface.dir/build.make CMakeFiles/ros2_can_interface.dir/src/ROS2_CAN_Interface.cpp.s
+.PHONY : src/ROS2_CAN_Interface.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -212,6 +310,17 @@ help:
 	@echo "... test"
 	@echo "... quadruped_hardware_uninstall"
 	@echo "... uninstall"
+	@echo "... quadruped_hardware"
+	@echo "... ros2_can_interface"
+	@echo "... src/CANInterface.o"
+	@echo "... src/CANInterface.i"
+	@echo "... src/CANInterface.s"
+	@echo "... src/MotorDriver.o"
+	@echo "... src/MotorDriver.i"
+	@echo "... src/MotorDriver.s"
+	@echo "... src/ROS2_CAN_Interface.o"
+	@echo "... src/ROS2_CAN_Interface.i"
+	@echo "... src/ROS2_CAN_Interface.s"
 .PHONY : help
 
 

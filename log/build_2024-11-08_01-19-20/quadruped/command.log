@@ -1,2 +1,0 @@
-Invoking command in '/home/ws/build/quadruped': /usr/bin/cmake /home/ws/src/quadruped -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped
-Invoked command in '/home/ws/build/quadruped' returned '1': /usr/bin/cmake /home/ws/src/quadruped -DCMAKE_INSTALL_PREFIX=/home/ws/install/quadruped

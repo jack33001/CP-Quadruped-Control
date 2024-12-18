@@ -1,1 +1,46 @@
-/home/ws/src/quadruped_mpc/config/quadruped_controllers.yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Hz
+
+    # -------------------------------------------------- Instantiate the controllers  -------------------------------------------------- 
+    # Joint state broadcaster publishes the joint states of the robot
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # IMU sensor publishes the IMU data for the robot
+    imu_sensor_controller:
+      type: imu_sensor_broadcaster/IMUSensorBroadcaster
+
+    # Balance controller makes the robot stand in place
+    balance_controller:
+     type: quadruped/balance_controller
+
+  # -------------------------------------------------- Configure the controllers  --------------------------------------------------
+# Configure the joint state broadcaster
+joint_state_broadcaster:
+  ros__parameters:
+    publish_rate: 1000
+
+# Configure the IMU sensor controller
+imu_sensor_controller:
+      ros__parameters:
+        sensor_name: imu_sensor
+        frame_id: imu_link
+
+# Configure the balance controller
+balance_controller:
+  ros__parameters:
+    joints:
+      - "fl_hip"
+      - "fl_knee"
+      - "fr_hip"
+      - "fr_knee"
+      - "rl_hip"
+      - "rl_knee"
+      - "rr_hip"
+      - "rr_knee"
+    command_interfaces:
+      - "effort"
+    state_interfaces:
+      - "position"
+      - "velocity"

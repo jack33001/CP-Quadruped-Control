@@ -25,7 +25,7 @@ AMENT_CMAKE_ENVIRONMENT_PARENT_PREFIX_PATH_GENERATION:BOOL=ON
 
 //Replace the CMake install command with a custom implementation
 // using symlinks instead of copying resources
-AMENT_CMAKE_SYMLINK_INSTALL:BOOL=1
+AMENT_CMAKE_SYMLINK_INSTALL:BOOL=OFF
 
 //Generate an uninstall target to revert the effects of the install
 // step
@@ -314,7 +314,7 @@ PYTHON_DEB_LAYOUT:BOOL=OFF
 PYTHON_STANDARD_LAYOUT:BOOL=OFF
 
 //Name of the computer/site where compile is being run
-SITE:STRING=jack-laptop
+SITE:STRING=docker-desktop
 
 //The directory containing a CMake configuration file for TinyXML2.
 TinyXML2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/tinyxml2
@@ -438,18 +438,6 @@ pkgcfg_lib__OPENSSL_ssl:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
 
 //The directory containing a CMake configuration file for pluginlib.
 pluginlib_DIR:PATH=/opt/ros/jazzy/share/pluginlib/cmake
-
-//Value Computed by CMake
-quadruped_BINARY_DIR:STATIC=/home/ws/build/quadruped_mpc
-
-//Value Computed by CMake
-quadruped_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-quadruped_SOURCE_DIR:STATIC=/home/ws/src/quadruped_mpc
-
-//Dependencies for the target
-quadruped_lib_LIB_DEPENDS:STATIC=general;rclcpp::rclcpp;general;controller_interface::controller_interface;general;rclcpp_lifecycle::rclcpp_lifecycle;general;/opt/ros/jazzy/lib/x86_64-linux-gnu/libpinocchio.so;general;/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/lib/x86_64-linux-gnu/libboost_serialization.so;general;/lib/x86_64-linux-gnu/libboost_system.so;
 
 //Value Computed by CMake
 quadruped_mpc_BINARY_DIR:STATIC=/home/ws/build/quadruped_mpc
@@ -858,13 +846,9 @@ _Python3_INCLUDE_DIR:INTERNAL=/usr/include/python3.12
 //Python3 Properties
 _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;3;64;;cpython-312-x86_64-linux-gnu;abi3;/usr/lib/python3.12;/usr/lib/python3.12;/usr/local/lib/python3.12/dist-packages;/usr/local/lib/python3.12/dist-packages
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=4c8bfa8951e99fa32e4000a94f8c04a2
-//Interpreter reason failure
-_Python3_Interpreter_REASON_FAILURE:INTERNAL=
 _Python3_NUMPY_SIGNATURE:INTERNAL=d5ddeb909deee809c18fdfbea68bafbe
 //Path to a file.
 _Python3_NumPy_INCLUDE_DIR:INTERNAL=/usr/lib/python3/dist-packages/numpy/core/include
-//Index for unique symlink install targets
-__AMENT_CMAKE_SYMLINK_INSTALL_TARGETS_INDEX:INTERNAL=0
 __pkg_config_arguments__OPENSSL:INTERNAL=QUIET;openssl
 __pkg_config_checked__OPENSSL:INTERNAL=1
 //Result of TRY_COMPILE

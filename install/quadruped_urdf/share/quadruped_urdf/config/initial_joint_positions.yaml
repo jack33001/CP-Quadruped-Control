@@ -1,1 +1,9 @@
-/home/ws/src/quadruped_urdf/config/initial_joint_positions.yaml
+initial_joint_positions:
+  fr_hip: 0
+  fr_knee: -1.51121634
+  fl_hip: 0
+  fl_knee: -1.51177616
+  rr_hip: 0
+  rr_knee: -1.51121629
+  rl_hip: 0
+  rl_knee: -1.51177608

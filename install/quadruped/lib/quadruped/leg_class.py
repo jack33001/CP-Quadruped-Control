@@ -1,1 +1,0 @@
-/home/ws/src/quadruped/scripts/leg_class.py

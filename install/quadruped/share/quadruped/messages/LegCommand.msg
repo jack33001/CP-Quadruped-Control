@@ -1,1 +1,0 @@
-/home/ws/src/quadruped/messages/LegCommand.msg

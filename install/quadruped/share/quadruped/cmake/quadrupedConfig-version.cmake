@@ -1,1 +1,0 @@
-/home/ws/build/quadruped/ament_cmake_core/quadrupedConfig-version.cmake

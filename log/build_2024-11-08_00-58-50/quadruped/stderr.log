@@ -1,7 +1,0 @@
-[01m[K/home/ws/src/quadruped/src/balance_controller.cpp:[m[K In member function ‘[01m[Kvirtual CallbackReturn balance_controller::BalanceController::[01;32m[Kon_configure[m[K(const rclcpp_lifecycle::State&)[m[K’:
-[01m[K/home/ws/src/quadruped/src/balance_controller.cpp:39:29:[m[K [01;31m[Kerror: [m[Kvariable ‘[01m[Kpinocchio::Data data[m[K’ has initializer but incomplete type
-   39 |   pinocchio::Data data(model[01;31m[K)[m[K;
-      |                             [01;31m[K^[m[K
-gmake[2]: *** [CMakeFiles/quadruped_lib.dir/build.make:76: CMakeFiles/quadruped_lib.dir/src/balance_controller.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:623: CMakeFiles/quadruped_lib.dir/all] Error 2
-gmake: *** [Makefile:146: all] Error 2

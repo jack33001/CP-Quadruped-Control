@@ -1,1 +1,2 @@
-/home/ws/build/quadruped_bringup/ament_cmake_environment_hooks/local_setup.dsv
+source;share/quadruped_bringup/environment/ament_prefix_path.sh
+source;share/quadruped_bringup/environment/path.sh

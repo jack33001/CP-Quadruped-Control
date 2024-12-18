@@ -1,1 +1,0 @@
-/home/ws/src/quadruped/scripts/GaitPatternGenerator.py

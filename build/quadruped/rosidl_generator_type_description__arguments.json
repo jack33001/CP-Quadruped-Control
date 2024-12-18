@@ -1,7 +1,0 @@
-{
-  "package_name": "quadruped",
-  "output_dir": "/home/ws/build/quadruped/rosidl_generator_type_description/quadruped",
-  "idl_tuples": [
-    "/home/ws/build/quadruped/rosidl_adapter/quadruped:msg/LegCommand.idl"
-  ]
-}

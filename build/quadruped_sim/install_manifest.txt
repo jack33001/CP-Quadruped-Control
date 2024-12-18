@@ -1,0 +1,16 @@
+/home/ws/install/quadruped_sim/share/quadruped_sim/launch/gazebo_sim.launch.py
+/home/ws/install/quadruped_sim/share/ament_index/resource_index/package_run_dependencies/quadruped_sim
+/home/ws/install/quadruped_sim/share/ament_index/resource_index/parent_prefix_path/quadruped_sim
+/home/ws/install/quadruped_sim/share/quadruped_sim/environment/ament_prefix_path.sh
+/home/ws/install/quadruped_sim/share/quadruped_sim/environment/ament_prefix_path.dsv
+/home/ws/install/quadruped_sim/share/quadruped_sim/environment/path.sh
+/home/ws/install/quadruped_sim/share/quadruped_sim/environment/path.dsv
+/home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.bash
+/home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.sh
+/home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.zsh
+/home/ws/install/quadruped_sim/share/quadruped_sim/local_setup.dsv
+/home/ws/install/quadruped_sim/share/quadruped_sim/package.dsv
+/home/ws/install/quadruped_sim/share/ament_index/resource_index/packages/quadruped_sim
+/home/ws/install/quadruped_sim/share/quadruped_sim/cmake/quadruped_simConfig.cmake
+/home/ws/install/quadruped_sim/share/quadruped_sim/cmake/quadruped_simConfig-version.cmake
+/home/ws/install/quadruped_sim/share/quadruped_sim/package.xml
