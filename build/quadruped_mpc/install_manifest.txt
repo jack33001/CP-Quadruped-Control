@@ -1,6 +1,0 @@
-/home/ws/install/quadruped_mpc/lib/libquadruped_mpc_controllers.so
-/home/ws/install/quadruped_mpc/lib/libbalance_controller_generated.so
-/home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpcTargets.cmake
-/home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/quadruped_mpcTargets-noconfig.cmake
-/home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/export_quadruped_mpcExport.cmake
-/home/ws/install/quadruped_mpc/share/quadruped_mpc/cmake/export_quadruped_mpcExport-noconfig.cmake

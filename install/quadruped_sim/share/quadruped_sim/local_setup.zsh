@@ -1,1 +1,0 @@
-/home/ws/build/quadruped_sim/ament_cmake_environment_hooks/local_setup.zsh

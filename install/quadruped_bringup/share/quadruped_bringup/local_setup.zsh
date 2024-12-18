@@ -1,1 +1,0 @@
-/home/ws/build/quadruped_bringup/ament_cmake_environment_hooks/local_setup.zsh
