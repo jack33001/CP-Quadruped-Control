@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include <iomanip>
 
 #include "rclcpp/rclcpp.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
@@ -56,11 +58,28 @@ controller_interface::return_type
 BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   try {
+    static bool first_update = true;
+    static int update_count = 0;
+    update_count++;
+    
+    if (first_update) {
+      RCLCPP_INFO(get_node()->get_logger(), "Balance controller received first update call");
+      first_update = false;
+    }
+
+    // Log every 100 updates to avoid flooding
+    if (update_count % 100 == 0) {
+      RCLCPP_INFO(get_node()->get_logger(), "Balance controller update count: %d", update_count);
+    }
+
     // Read from shared quadruped info
     auto& info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(info.mutex_);
 
     if (!info.is_initialized_) {
+      if (update_count % 100 == 0) {
+        RCLCPP_INFO(get_node()->get_logger(), "Waiting for initialization...");
+      }
       return controller_interface::return_type::OK;
     }
 
@@ -70,6 +89,27 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
       current_state_[i + joint_names_.size()] = state_interfaces_[i * 3 + 1].get_value();  // velocity
     }
 
+    // Update foot positions from shared info
+    std::copy(info.state_.p1.data(), info.state_.p1.data() + 3, p1_.begin());
+    std::copy(info.state_.p2.data(), info.state_.p2.data() + 3, p2_.begin());
+    std::copy(info.state_.p3.data(), info.state_.p3.data() + 3, p3_.begin());
+    std::copy(info.state_.p4.data(), info.state_.p4.data() + 3, p4_.begin());
+
+    // Change to INFO level but keep throttling
+    RCLCPP_INFO(get_node()->get_logger(),
+      "\n=== Pre-Solver State ===\n"
+      "Foot 1: [%.3f, %.3f, %.3f]\n"
+      "Foot 2: [%.3f, %.3f, %.3f]\n"
+      "Foot 3: [%.3f, %.3f, %.3f]\n"
+      "Foot 4: [%.3f, %.3f, %.3f]\n"
+      "State: [%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f]\n",
+      p1_[0], p1_[1], p1_[2],
+      p2_[0], p2_[1], p2_[2],
+      p3_[0], p3_[1], p3_[2],
+      p4_[0], p4_[1], p4_[2],
+      current_state_[0], current_state_[1], current_state_[2], current_state_[3],
+      current_state_[4], current_state_[5], current_state_[6], current_state_[7]);
+    
     // Set current state in solver using the nlp interface
     ocp_nlp_out_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", current_state_.data());
     
@@ -83,6 +123,13 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     // Get optimal control from nlp interface
     ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
     
+    // Change to INFO level but keep throttling
+    RCLCPP_INFO(get_node()->get_logger(),
+      "\n=== Post-Solver State ===\n"
+      "Control Output: [%.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f]\n",
+      optimal_control_[0], optimal_control_[1], optimal_control_[2], optimal_control_[3],
+      optimal_control_[4], optimal_control_[5], optimal_control_[6], optimal_control_[7]);
+
     // Store command result for hardware interface
     for (size_t i = 0; i < joint_names_.size(); ++i) {
       auto result = command_interfaces_[i].set_value(optimal_control_[i]);
@@ -120,6 +167,9 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
     return CallbackReturn::ERROR;
   }
+
+  // Change to INFO level
+  RCLCPP_INFO(get_node()->get_logger(), "Balance controller configured with %zu joints", joint_names_.size());
   
   // Initialize arrays with zeros
   std::fill(current_state_.begin(), current_state_.end(), 0.0);
@@ -144,8 +194,7 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
 
 BalanceController::CallbackReturn BalanceController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // The interfaces are already stored in command_interfaces_ and state_interfaces_
-  // by the controller manager, so we don't need to do anything here
+  RCLCPP_INFO(get_node()->get_logger(), "Balance controller activated");
   return CallbackReturn::SUCCESS;
 }
 

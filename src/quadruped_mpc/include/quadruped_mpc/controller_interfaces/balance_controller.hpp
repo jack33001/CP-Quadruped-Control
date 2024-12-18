@@ -44,6 +44,9 @@ protected:
   
   // Restore foot position storage
   std::array<double,3> p1_, p2_, p3_, p4_, com_;
+
+private:
+  // Remove logger_ member variable since we'll use get_node()->get_logger() directly
 };
 
 }  // namespace quadruped_mpc

@@ -115,6 +115,15 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
     pinocchio::urdf::buildModelFromXML(urdf_string_, model_);
     data_ = std::make_unique<pinocchio::Data>(model_);
 
+    // Initialize shared info
+    auto& info = SharedQuadrupedInfo::getInstance();
+    {
+      std::lock_guard<std::mutex> lock(info.mutex_);
+      info.default_model_ = model_;  // Copy the model
+      info.is_initialized_ = true;
+      RCLCPP_INFO(get_node()->get_logger(), "SharedQuadrupedInfo initialized");
+    }
+
     // Create mapping from state interface index to pinocchio joint index
     joint_mappings_.clear();
     for (size_t i = 0; i < joint_names_.size(); ++i) {
