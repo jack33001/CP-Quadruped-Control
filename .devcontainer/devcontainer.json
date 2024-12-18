@@ -24,7 +24,7 @@
     },
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}",
-        "LIBGL_ALWAYS_SOFTWARE": "0",
+        "LIBGL_ALWAYS_SO#tFTWARE": "0",
         "ROS_AUTOMATIC_DISCOVERY_RANGE": "LOCALHOST",
         "ROS_DOMAIN_ID": "42"
     },

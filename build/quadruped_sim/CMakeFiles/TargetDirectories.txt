@@ -1,9 +1,0 @@
-/home/ws/build/quadruped_sim/CMakeFiles/uninstall.dir
-/home/ws/build/quadruped_sim/CMakeFiles/quadruped_sim_uninstall.dir
-/home/ws/build/quadruped_sim/CMakeFiles/test.dir
-/home/ws/build/quadruped_sim/CMakeFiles/edit_cache.dir
-/home/ws/build/quadruped_sim/CMakeFiles/rebuild_cache.dir
-/home/ws/build/quadruped_sim/CMakeFiles/list_install_components.dir
-/home/ws/build/quadruped_sim/CMakeFiles/install.dir
-/home/ws/build/quadruped_sim/CMakeFiles/install/local.dir
-/home/ws/build/quadruped_sim/CMakeFiles/install/strip.dir

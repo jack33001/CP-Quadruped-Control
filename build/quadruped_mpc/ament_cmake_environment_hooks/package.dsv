@@ -1,4 +1,0 @@
-source;share/quadruped_mpc/local_setup.bash
-source;share/quadruped_mpc/local_setup.dsv
-source;share/quadruped_mpc/local_setup.sh
-source;share/quadruped_mpc/local_setup.zsh

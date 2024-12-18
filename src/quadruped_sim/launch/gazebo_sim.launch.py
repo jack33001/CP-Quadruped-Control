@@ -9,10 +9,7 @@ import xacro
 
 def generate_launch_description():
     # Package and path definitions
-    pkg_quadruped = FindPackageShare('quadruped').find('quadruped')
     pkg_ros_gz_sim = FindPackageShare('ros_gz_sim').find('ros_gz_sim')
-    xacro_file = os.path.join(pkg_quadruped, 'urdf', 'QuadrupedURDF.urdf.xacro')
-    robot_description = xacro.process_file(xacro_file).toxml()
 
     # Spawn robot node
     spawn_robot = Node(
