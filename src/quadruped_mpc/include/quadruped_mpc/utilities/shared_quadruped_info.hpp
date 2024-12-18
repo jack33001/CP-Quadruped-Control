@@ -28,6 +28,20 @@ struct QuadrupedState {
     std::array<double, 8> joint_vel{};  // knee and hip velocities
     std::array<double, 8> joint_eff{};  // knee and hip efforts
 
+    // Add IMU state
+    Eigen::Vector3d orientation{Eigen::Vector3d::Zero()};     // euler angles
+    Eigen::Vector3d angular_velocity{Eigen::Vector3d::Zero()}; // angular velocity
+    
+    // Add velocity state
+    Eigen::Vector3d vc{Eigen::Vector3d::Zero()};  // center of mass velocity
+
+    // Add Jacobian storage (one 3x2 Jacobian per leg)
+    // Each Jacobian maps joint velocities to foot velocities for that leg
+    Eigen::Matrix<double, 3, 2> J1{Eigen::Matrix<double, 3, 2>::Zero()};  // FL Jacobian
+    Eigen::Matrix<double, 3, 2> J2{Eigen::Matrix<double, 3, 2>::Zero()};  // FR Jacobian
+    Eigen::Matrix<double, 3, 2> J3{Eigen::Matrix<double, 3, 2>::Zero()};  // RL Jacobian
+    Eigen::Matrix<double, 3, 2> J4{Eigen::Matrix<double, 3, 2>::Zero()};  // RR Jacobian
+
     // Default constructor
     QuadrupedState() = default;
 

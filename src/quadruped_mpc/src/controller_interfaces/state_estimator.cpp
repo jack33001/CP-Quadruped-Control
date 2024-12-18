@@ -203,6 +203,8 @@ bool StateEstimator::read_state_interfaces()
       joint_states_.resize(joint_names_.size());
     }
 
+    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
+
     // Read all interfaces for each joint
     const size_t interfaces_per_joint = state_interface_types_.size();
     for (size_t i = 0; i < joint_names_.size(); ++i) {
@@ -214,11 +216,35 @@ bool StateEstimator::read_state_interfaces()
       joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
 
       // Update shared state arrays
-      std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
       quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
       quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
       quadruped_info.state_.joint_eff[i] = joint_states_[i].effort;
     }
+
+    // Read IMU data - assuming they're after all joint interfaces
+    const size_t imu_start_idx = joint_names_.size() * interfaces_per_joint;
+    
+    // Read orientation quaternion (convert to euler angles)
+    double qx = state_interfaces_[imu_start_idx].get_value();
+    double qy = state_interfaces_[imu_start_idx + 1].get_value();
+    double qz = state_interfaces_[imu_start_idx + 2].get_value();
+    double qw = state_interfaces_[imu_start_idx + 3].get_value();
+    
+    // Convert quaternion to euler angles (roll, pitch, yaw)
+    double roll = std::atan2(2.0 * (qw * qx + qy * qz), 1.0 - 2.0 * (qx * qx + qy * qy));
+    double pitch = std::asin(2.0 * (qw * qy - qz * qx));
+    double yaw = std::atan2(2.0 * (qw * qz + qx * qy), 1.0 - 2.0 * (qy * qy + qz * qz));
+    
+    // Store euler angles
+    quadruped_info.state_.orientation = Eigen::Vector3d(roll, pitch, yaw);
+
+    // Read and store angular velocities directly
+    quadruped_info.state_.angular_velocity = Eigen::Vector3d(
+      state_interfaces_[imu_start_idx + 4].get_value(),  // wx
+      state_interfaces_[imu_start_idx + 5].get_value(),  // wy
+      state_interfaces_[imu_start_idx + 6].get_value()   // wz
+    );
+
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error reading state interfaces: %s", e.what());
@@ -254,6 +280,36 @@ bool StateEstimator::update_model()
     // Update Pinocchio model with new state
     pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
     pinocchio::updateFramePlacements(model_, *data_);
+    
+    // Compute Jacobians for each foot - getting only the translation part (3x2 matrices)
+    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
+    
+    Eigen::MatrixXd J_temp(6,model_.nv);  // Temporary full Jacobian
+    
+    // For each foot, compute the full Jacobian then extract translation part
+    // FL
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[0], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J1 = J_temp.topRows(3).leftCols(2);  // Extract 3x2 translation part
+
+    // FR
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[1], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J2 = J_temp.topRows(3).leftCols(2);
+
+    // RL
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[2], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J3 = J_temp.topRows(3).leftCols(2);
+
+    // RR
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[3], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J4 = J_temp.topRows(3).leftCols(2);
     
     return true;
   } catch (const std::exception& e) {
