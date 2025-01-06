@@ -8,10 +8,22 @@ import os
 logger = logging.getLogger(__name__)
 
 class QuadrupedOptimalController:
-    def __init__(self, N=20, T=0.2, code_export_dir="/home/ws/src/quadruped_mpc/acados_generated"):
+    def __init__(self, N=20, T=0.2, code_export_dir=None):
         logger.info(f"Initializing controller with N={N}, T={T}")
         self.N = N
         self.T = T
+
+        # Get the quadruped_mpc root directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(os.path.dirname(script_dir))
+        
+        # Default to acados_generated in include directory if not specified
+        if code_export_dir is None:
+            code_export_dir = os.path.join(root_dir, 'include', 'quadruped_mpc', 'acados_generated')
+        
+        logger.info(f"Will export code to: {code_export_dir}")
+        os.makedirs(code_export_dir, exist_ok=True)
+        os.makedirs(os.path.join(code_export_dir, 'quadruped_ode_model'), exist_ok=True)
         
         # Create and verify model
         self.model = export_quadruped_ode_model()
@@ -50,8 +62,9 @@ class QuadrupedOptimalController:
         # Default ACADOS generated code location
         c_generated = "c_generated_code"
         if os.path.exists(c_generated):
-            # Create destination if it doesn't exist
-            os.makedirs(dest_dir, exist_ok=True)
+            # Create destination directories
+            os.makedirs(os.path.join(dest_dir, 'quadruped_ode_model'), exist_ok=True)
+            os.makedirs(os.path.join(dest_dir, 'acados', 'utils'), exist_ok=True)
             
             # Copy all files
             for item in os.listdir(c_generated):
@@ -60,11 +73,18 @@ class QuadrupedOptimalController:
                 if os.path.isfile(src):
                     shutil.copy2(src, dst)
                     logger.debug(f"Copied {item}")
-                elif os.path.isdir(src):
+                elif os.path.isdir(src) and item == 'quadruped_ode_model':
                     if os.path.exists(dst):
                         shutil.rmtree(dst)
                     shutil.copytree(src, dst)
                     logger.debug(f"Copied dir {item}")
+            
+            # Copy ACADOS types.h to proper location
+            types_src = os.path.join(self.ocp.acados_include_dir, 'acados', 'utils', 'types.h')
+            types_dst = os.path.join(dest_dir, 'acados', 'utils', 'types.h')
+            if os.path.exists(types_src):
+                shutil.copy2(types_src, types_dst)
+                logger.debug(f"Copied types.h to {types_dst}")
             
             # Clean up
             shutil.rmtree(c_generated)
@@ -113,10 +133,10 @@ class QuadrupedOptimalController:
         ocp.cost.Vx_e = numpy.eye(nx)  # Terminal state selection
 
         # Weight matrices
-        pos_weights = [10.0]*3    # Position tracking
-        rot_weights = [10.0]*3    # Orientation tracking
-        vel_weights = [1.0]*3     # Linear velocity
-        ang_weights = [1.0]*3     # Angular velocity
+        pos_weights = [1.0]*3    # Position tracking
+        rot_weights = [1.0]*3    # Orientation tracking
+        vel_weights = [.1]*3     # Linear velocity
+        ang_weights = [.1]*3     # Angular velocity
         ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
         ocp.cost.W_e = ocp.cost.W  # Same weights for terminal cost
 

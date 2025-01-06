@@ -50,14 +50,14 @@ quadruped_broadcaster:
   ros__parameters:
     # doesn't use any of the joints, but they are required for the controller_manager
       joints:
+        - fl_hip
+        - fl_knee  
         - fr_hip
         - fr_knee
-        - fl_hip
-        - fl_knee
-        - rr_hip
-        - rr_knee
         - rl_hip
         - rl_knee
+        - rr_hip
+        - rr_knee
       imu_name: imu_sensor
 
       # Hardware params
@@ -92,14 +92,14 @@ quadruped_broadcaster:
 state_estimator:
   ros__parameters:
     joints:
+      - fl_hip
+      - fl_knee  
       - fr_hip
       - fr_knee
-      - fl_hip
-      - fl_knee
-      - rr_hip
-      - rr_knee
       - rl_hip
       - rl_knee
+      - rr_hip
+      - rr_knee
     state_interfaces:
       - position
       - velocity
@@ -108,14 +108,14 @@ state_estimator:
 balance_controller:
   ros__parameters:
     joints:
+      - fl_hip
+      - fl_knee  
       - fr_hip
       - fr_knee
-      - fl_hip
-      - fl_knee
-      - rr_hip
-      - rr_knee
       - rl_hip
       - rl_knee
+      - rr_hip
+      - rr_knee
     command_interfaces:
       - position
       - velocity

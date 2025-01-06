@@ -18,8 +18,8 @@ def export_quadruped_ode_model() -> AcadosModel:
     logger.debug(f"Created model with name: {model.name}")
 
     # constants
-    m = 1.0     # mass of the robot
-    I = 0.1     # inertia of the robot
+    m = 12     # mass of the robot
+    I = m*.2/6     # inertia of the robot
     g = 9.81    # gravity
     pc = SX.sym('pc',3,1) # position of the center of mass
     p1 = SX.sym('p1',3,1) # position of foot 1
