@@ -127,28 +127,37 @@ class QuadrupedOptimalController:
         nx = model.x.shape[0]
         nu = model.u.shape[0]
 
-        # Selection matrices
-        ocp.cost.Vx = numpy.eye(nx)   # State selection matrix
+        # Selection matrices (track position, orientation, and velocities)
+        ocp.cost.Vx = numpy.eye(nx)   # Track all states
         ocp.cost.Vu = numpy.zeros((nx, nu))  # No direct control cost
-        ocp.cost.Vx_e = numpy.eye(nx)  # Terminal state selection
+        ocp.cost.Vx_e = ocp.cost.Vx.copy()  # Terminal cost same structure
 
-        # Weight matrices
-        pos_weights = [1.0]*3    # Position tracking
-        rot_weights = [1.0]*3    # Orientation tracking
-        vel_weights = [.1]*3     # Linear velocity
-        ang_weights = [.1]*3     # Angular velocity
+        # Balanced weights for all state components
+        pos_weights = [10.0, 10.0, 100.0]  # Stronger z-tracking
+        rot_weights = [10.0]*3     # Rotation tracking
+        vel_weights = [5.0, 5.0, 50.0]   # Linear velocity (stronger in z)
+        ang_weights = [5.0]*3      # Angular velocity
+        
+        # Combine all weights
         ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
-        ocp.cost.W_e = ocp.cost.W  # Same weights for terminal cost
+        ocp.cost.W_e = ocp.cost.W * 10.0  # Stronger terminal cost
 
         # Reference vectors (will be updated in solve())
-        ocp.cost.yref = numpy.zeros(nx)
-        ocp.cost.yref_e = numpy.zeros(nx)
+        ocp.cost.yref = numpy.zeros(nx)    # Full state reference
+        ocp.cost.yref_e = numpy.zeros(nx)  # Terminal reference
 
-        # Input bounds (keep existing constraints)
+        # Force bounds - strong enough to lift robot
+        min_force = numpy.array([-20.0, -20.0, 0.0] * 4)    # No negative z force
+        max_force = numpy.array([20.0, 20.0, 50.0] * 4)     # Higher z force limit
         ocp.constraints.idxbu = numpy.arange(nu)
-        ocp.constraints.lbu = -100 * numpy.ones(nu)
-        ocp.constraints.ubu = 100 * numpy.ones(nu)
-        
+        ocp.constraints.lbu = min_force
+        ocp.constraints.ubu = max_force
+
+        # State bounds (especially for height)
+        ocp.constraints.idxbx = numpy.array([2])    # z-position index
+        ocp.constraints.lbx = numpy.array([0.1])    # Minimum height
+        ocp.constraints.ubx = numpy.array([0.5])    # Maximum height
+
         # Initial state constraint setup
         ocp.constraints.x0 = numpy.zeros(nx)
         ocp.constraints.idxbx_0 = numpy.arange(nx)
@@ -156,10 +165,12 @@ class QuadrupedOptimalController:
         ocp.constraints.ubx_0 = numpy.zeros(nx)
 
         # set options
-        ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'
+        ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'  # Changed solver
         ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
         ocp.solver_options.integrator_type = 'ERK'
-        ocp.solver_options.nlp_solver_type = 'SQP'
+        ocp.solver_options.nlp_solver_type = 'SQP_RTI'  # Changed to RTI
+        ocp.solver_options.nlp_solver_max_iter = 200
+        ocp.solver_options.qp_solver_iter_max = 100
         
         # set prediction horizon
         ocp.solver_options.tf = self.T
@@ -192,13 +203,12 @@ class QuadrupedOptimalController:
             raise
 
     def solve(self, x0, x_ref):
-        """Solve the optimal control problem"""
         try:
             # Change initial state setting
-            self.solver.set(0, 'x', x0)  # Changed from lbx/ubx to just x
+            self.solver.set(0, 'x', x0)
             
-            # set reference trajectory (only state reference, no control reference needed)
-            yref = x_ref  # Changed: removed concatenation since we only need state reference
+            # set reference trajectory
+            yref = x_ref
             
             # set references for all nodes including terminal
             for i in range(self.N):
@@ -208,16 +218,29 @@ class QuadrupedOptimalController:
             # Add parameter check before solving
             if hasattr(self.solver, 'acados_ocp'):
                 param_size = self.solver.acados_ocp.dims.np
-                logger.debug(f"Solver parameter size: {param_size}")
-                if param_size != 15:  # Expected: 3 coords × (4 feet + COM)
+                if param_size != 15:
+                    print(f"\nERROR: Incorrect parameter dimension: {param_size}, expected 15")
                     raise ValueError(f"Incorrect parameter dimension: {param_size}, expected 15")
             
             # solve OCP
             status = self.solver.solve()
             
+            # Interpret solver status
+            status_messages = {
+                0: "Success",
+                1: "Invalid number of iterations",
+                2: "Maximum number of iterations reached",
+                3: "Minimum step size in QP reached",
+                4: "QP solver failed"
+            }
+            if status != 0:
+                status_msg = status_messages.get(status, "Unknown error")
+                print(f"\nSOLVER WARNING: Status {status} - {status_msg}")
+            
             # get solution
             u0 = self.solver.get(0, 'u')
             return u0, status
+            
         except Exception as e:
-            logger.error(f"Error during solve: {str(e)}")
+            print(f"\nSOLVER ERROR: {str(e)}")
             raise
