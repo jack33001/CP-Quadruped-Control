@@ -2,9 +2,22 @@
 
 # Configure logging before imports
 import logging
+from datetime import datetime
+import os
+
+# Create logs directory if it doesn't exist
+log_dir = os.path.join(os.path.dirname(__file__), 'logs')
+os.makedirs(log_dir, exist_ok=True)
+
+# Configure file and console logging
+log_file = os.path.join(log_dir, f'controller_test_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log')
 logging.basicConfig(
     level=logging.INFO,
-    format='%(levelname)s: %(message)s'
+    format='%(asctime)s - %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler(log_file),
+        logging.StreamHandler()
+    ]
 )
 # Suppress matplotlib debug output
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
@@ -18,38 +31,43 @@ logger = logging.getLogger(__name__)
 
 def calculate_metrics(x_hist, u_hist, x_ref, sim_time):
     """Calculate performance metrics from simulation data"""
-    # Add simulation timing
-    steps_completed = len(x_hist) - 1  # -1 because x_hist includes initial state
+    metrics = {}
     
-    # Position RMS error
-    pos_error = np.sqrt(np.mean((x_hist[:, :3] - x_ref[:3])**2, axis=0))
+    # Timing metrics
+    metrics['sim_time'] = sim_time
+    metrics['steps_completed'] = len(x_hist) - 1
+    metrics['avg_step_time'] = sim_time / metrics['steps_completed'] if metrics['steps_completed'] > 0 else 0
     
-    # Orientation RMS error
-    ori_error = np.sqrt(np.mean((x_hist[:, 3:6] - x_ref[3:6])**2, axis=0))
+    # Position metrics
+    metrics['pos_error'] = np.sqrt(np.mean((x_hist[:, :3] - x_ref[:3])**2, axis=0))
+    metrics['pos_max_error'] = np.max(np.abs(x_hist[:, :3] - x_ref[:3]), axis=0)
+    metrics['pos_drift'] = x_hist[-1, :3] - x_hist[0, :3]
     
-    # Force statistics
-    max_forces = np.max(np.abs(u_hist), axis=0).reshape(4, 3)
-    avg_forces = np.mean(np.abs(u_hist), axis=0).reshape(4, 3)
+    # Orientation metrics
+    metrics['ori_error'] = np.sqrt(np.mean((x_hist[:, 3:6] - x_ref[3:6])**2, axis=0))
+    metrics['ori_max_error'] = np.max(np.abs(x_hist[:, 3:6] - x_ref[3:6]), axis=0)
+    metrics['ori_drift'] = x_hist[-1, 3:6] - x_hist[0, 3:6]
+    
+    # Velocity metrics
+    metrics['vel_mean'] = np.mean(np.abs(x_hist[:, 6:9]), axis=0)
+    metrics['ang_vel_mean'] = np.mean(np.abs(x_hist[:, 9:12]), axis=0)
+    
+    # Force metrics
+    metrics['max_forces'] = np.max(np.abs(u_hist), axis=0).reshape(4, 3)
+    metrics['avg_forces'] = np.mean(np.abs(u_hist), axis=0).reshape(4, 3)
+    metrics['force_std'] = np.std(u_hist, axis=0).reshape(4, 3)
+    
+    # Energy metrics
+    metrics['total_force_magnitude'] = np.sum(np.linalg.norm(u_hist.reshape(-1, 4, 3), axis=2))
+    metrics['avg_power'] = np.mean(np.sum(np.abs(u_hist.reshape(-1, 4, 3) * 
+                                                x_hist[:-1, 6:9].reshape(-1, 1, 3)), axis=(1,2)))
     
     # Stability metrics
-    avg_height = np.mean(x_hist[:, 2])
-    height_var = np.std(x_hist[:, 2])
-    roll_var = np.std(x_hist[:, 3])
-    pitch_var = np.std(x_hist[:, 4])
-    
-    metrics = {
-        'sim_time': sim_time,
-        'steps_completed': steps_completed,
-        'avg_step_time': sim_time / steps_completed if steps_completed > 0 else 0,
-        'pos_error': pos_error,
-        'ori_error': ori_error,
-        'max_forces': max_forces,
-        'avg_forces': avg_forces,
-        'avg_height': avg_height,
-        'height_var': height_var,
-        'roll_var': roll_var,
-        'pitch_var': pitch_var
-    }
+    metrics['avg_height'] = np.mean(x_hist[:, 2])
+    metrics['height_var'] = np.std(x_hist[:, 2])
+    metrics['roll_var'] = np.std(x_hist[:, 3])
+    metrics['pitch_var'] = np.std(x_hist[:, 4])
+    metrics['yaw_var'] = np.std(x_hist[:, 5])
     
     return metrics
 
@@ -93,7 +111,55 @@ def rk4_step(x, u, dt, m, I, p1, p2, p3, p4, com):
     
     return x + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
 
+def log_metrics(metrics, logger):
+    """Log all metrics in a structured format"""
+    logger.info("\n============ Controller Performance Analysis ============")
+    
+    # Timing Performance
+    logger.info("\n=== Timing Performance ===")
+    logger.info(f"Total simulation time: {metrics['sim_time']:.3f} s")
+    logger.info(f"Steps completed: {metrics['steps_completed']}")
+    logger.info(f"Average step time: {metrics['avg_step_time']*1000:.2f} ms")
+    
+    # Tracking Performance
+    logger.info("\n=== Position Tracking ===")
+    logger.info(f"RMS Error (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['pos_error'])}] m")
+    logger.info(f"Max Error (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['pos_max_error'])}] m")
+    logger.info(f"Position Drift: [{', '.join(f'{x:.3f}' for x in metrics['pos_drift'])}] m")
+    
+    logger.info("\n=== Orientation Tracking ===")
+    logger.info(f"RMS Error (r,p,y): [{', '.join(f'{x:.3f}' for x in metrics['ori_error'])}] rad")
+    logger.info(f"Max Error (r,p,y): [{', '.join(f'{x:.3f}' for x in metrics['ori_max_error'])}] rad")
+    logger.info(f"Orientation Drift: [{', '.join(f'{x:.3f}' for x in metrics['ori_drift'])}] rad")
+    
+    # Velocity Performance
+    logger.info("\n=== Velocity Performance ===")
+    logger.info(f"Mean Linear Velocity (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['vel_mean'])}] m/s")
+    logger.info(f"Mean Angular Velocity (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['ang_vel_mean'])}] rad/s")
+    
+    # Force Performance
+    logger.info("\n=== Force Performance ===")
+    for i, foot in enumerate(['FR', 'FL', 'BR', 'BL']):
+        logger.info(f"\n{foot} Foot:")
+        logger.info(f"Max forces (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['max_forces'][i])}] N")
+        logger.info(f"Avg forces (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['avg_forces'][i])}] N")
+        logger.info(f"Force std (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['force_std'][i])}] N")
+    
+    # Energy Performance
+    logger.info("\n=== Energy Performance ===")
+    logger.info(f"Total force magnitude: {metrics['total_force_magnitude']:.3f} N")
+    logger.info(f"Average power: {metrics['avg_power']:.3f} W")
+    
+    # Stability Performance
+    logger.info("\n=== Stability Metrics ===")
+    logger.info(f"Average height: {metrics['avg_height']:.3f} m")
+    logger.info(f"Height variance: {metrics['height_var']:.3f} m")
+    logger.info(f"Roll variance: {metrics['roll_var']:.3f} rad")
+    logger.info(f"Pitch variance: {metrics['pitch_var']:.3f} rad")
+    logger.info(f"Yaw variance: {metrics['yaw_var']:.3f} rad")
+
 def main():
+    logger.info("Starting controller test...")
     # Robot physical parameters
     m = 1  # mass in kg
     I = .1  # inertia in kg*m^2
@@ -143,16 +209,21 @@ def main():
     try:
         for i in range(n_steps):
             t = i * dt
+            logger.debug(f"Step {i}/{n_steps} (t={t:.3f}s)")
             
             # Get optimal control input
             try:
+                solve_start = time()
                 u, status = controller.solve(x, x_ref)
-                if status != 0:  # Non-zero status means solve failed
-                    print(f"\nSOLVER ERROR: Failed at t={t:.3f} with status {status}")
+                solve_time = time() - solve_start
+                
+                if status != 0:
+                    logger.error(f"Solver failed at t={t:.3f} with status {status}")
                     break
-                success = True  # Only mark success if status is 0
+                logger.debug(f"Solve time: {solve_time*1000:.2f}ms")
+                success = True
             except Exception as e:
-                print(f"\nSOLVER ERROR: Exception at t={t:.3f}: {str(e)}")
+                logger.error(f"Solver exception at t={t:.3f}: {str(e)}")
                 break
             
             # RK4 integration step
@@ -168,38 +239,7 @@ def main():
             sim_time = time() - sim_start_time
             # Calculate and log metrics
             metrics = calculate_metrics(x_hist, u_hist, x_ref, sim_time)
-            
-            logger.info("\n=== Controller Performance Metrics ===")
-            logger.info(f"Simulation time: {metrics['sim_time']:.3f} s")
-            logger.info(f"Steps completed: {metrics['steps_completed']}")
-            logger.info(f"Average step time: {metrics['avg_step_time']*1000:.2f} ms")
-            
-            logger.info(f"\nReference State:")
-            logger.info(f"Position (x,y,z): [{', '.join(f'{x:.3f}' for x in x_ref[:3])}] m")
-            logger.info(f"Orientation (r,p,y): [{', '.join(f'{x:.3f}' for x in x_ref[3:6])}] rad")
-            logger.info(f"Linear vel (vx,vy,vz): [{', '.join(f'{x:.3f}' for x in x_ref[6:9])}] m/s")
-            logger.info(f"Angular vel (wx,wy,wz): [{', '.join(f'{x:.3f}' for x in x_ref[9:12])}] rad/s")
-            
-            logger.info(f"\nFinal State:")
-            logger.info(f"Position (x,y,z): [{', '.join(f'{x:.3f}' for x in x_hist[-1,:3])}] m")
-            logger.info(f"Orientation (r,p,y): [{', '.join(f'{x:.3f}' for x in x_hist[-1,3:6])}] rad")
-            logger.info(f"Linear vel (vx,vy,vz): [{', '.join(f'{x:.3f}' for x in x_hist[-1,6:9])}] m/s")
-            logger.info(f"Angular vel (wx,wy,wz): [{', '.join(f'{x:.3f}' for x in x_hist[-1,9:12])}] rad/s")
-            
-            logger.info(f"\nTracking Performance:")
-            logger.info(f"Position RMS Error (x,y,z): [{', '.join(f'{x:.3f}' for x in metrics['pos_error'])}] m")
-            logger.info(f"Orientation RMS Error (r,p,y): [{', '.join(f'{x:.3f}' for x in metrics['ori_error'])}] rad")
-            logger.info("\nForce Statistics (N):")
-            for i, foot in enumerate(['FR', 'FL', 'BR', 'BL']):
-                max_force = metrics['max_forces'][i]
-                avg_force = metrics['avg_forces'][i]
-                logger.info(f"{foot} max forces (x,y,z): [{', '.join(f'{x:.3f}' for x in max_force)}]")
-                logger.info(f"{foot} avg forces (x,y,z): [{', '.join(f'{x:.3f}' for x in avg_force)}]")
-            logger.info("\nStability Metrics:")
-            logger.info(f"Average height: {metrics['avg_height']:.3f} m")
-            logger.info(f"Height variance: {metrics['height_var']:.3f} m")
-            logger.info(f"Roll variance: {metrics['roll_var']:.3f} rad")
-            logger.info(f"Pitch variance: {metrics['pitch_var']:.3f} rad")
+            log_metrics(metrics, logger)
             
             # Continue with plotting
             plt.figure(figsize=(12, 8))
@@ -220,16 +260,24 @@ def main():
             
             plt.tight_layout()
             plt.show()
+            
+            # Save data
+            data_file = os.path.join(log_dir, f'simulation_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.npz')
+            np.savez(data_file, 
+                    x_hist=x_hist, 
+                    u_hist=u_hist, 
+                    t_hist=t_hist,
+                    x_ref=x_ref,
+                    metrics=metrics)
+            logger.info(f"Simulation data saved to {data_file}")
+            
         else:
-            print("No successful iterations to plot")
+            logger.error("No successful iterations to plot")
             
     except Exception as e:
-        print(f"Simulation failed: {str(e)}")
-        if len(x_hist) > 1:  # If we have some data, try to plot it
-            print("Attempting to plot partial data...")
-            x_hist = np.array(x_hist)
-            t_hist = np.array(t_hist)
-            # ... plotting code ...
+        logger.error(f"Simulation failed: {str(e)}", exc_info=True)
+        
+    # ...existing error handling code...
 
 if __name__ == "__main__":
     main()
