@@ -206,8 +206,8 @@ class QuadrupedOptimalController:
             logger.error(f"Failed to update parameters: {str(e)}")
             raise
 
-    def solve(self, x0, x_ref):
-        try:
+    def solve(self, x0, x_ref, p1, p2, p3, p4, com):
+        try:            
             # Change initial state setting
             self.solver.set(0, 'x', x0)
             
@@ -219,6 +219,9 @@ class QuadrupedOptimalController:
                 self.solver.set(i, 'yref', yref)
             self.solver.set(self.N, 'yref', yref)
             
+            # Update foot positions and COM
+            self.update_foot_positions(p1, p2, p3, p4, com)
+            
             # Add parameter check before solving
             if hasattr(self.solver, 'acados_ocp'):
                 param_size = self.solver.acados_ocp.dims.np
@@ -229,20 +232,91 @@ class QuadrupedOptimalController:
             # solve OCP
             status = self.solver.solve()
             
-            # Interpret solver status
-            status_messages = {
-                0: "Success",
-                1: "Invalid number of iterations",
-                2: "Maximum number of iterations reached",
-                3: "Minimum step size in QP reached",
-                4: "QP solver failed"
-            }
-            if status != 0:
-                status_msg = status_messages.get(status, "Unknown error")
-                print(f"\nSOLVER WARNING: Status {status} - {status_msg}")
-            
             # get solution
             u0 = self.solver.get(0, 'u')
+            
+            # Print formatted tables
+            print("\n=== Control Step Info ===")
+            
+            # State and Reference Table
+            print("\nState vs Reference:")
+            print("┌──────────┬────────────┬───��────────┬────────────┐")
+            print("│ Variable │   Current  │  Reference │    Error   │")
+            print("├──────────┼────────────┼────────────┼────────────┤")
+            state_names = ['pos_x', 'pos_y', 'pos_z', 
+                         'roll', 'pitch', 'yaw',
+                         'vel_x', 'vel_y', 'vel_z',
+                         'ang_x', 'ang_y', 'ang_z']
+            for i, name in enumerate(state_names):
+                print(f"│{name:^10}│{x0[i]:^11.3f} │{x_ref[i]:^11.3f} │{x_ref[i]-x0[i]:^11.3f} │")
+            print("└──────────┴──────────���─┴────────────┴────────────┘")
+            
+            # Foot Forces Table
+            print("\nComputed Foot Forces:")
+            print("┌──────┬────────────┬────────────┬────────────┐")
+            print("│ Foot │    F_x     │    F_y     │    F_z     │")
+            print("├──────┼────────────┼────────────┼────────────┤")
+            feet = ['FR', 'FL', 'BR', 'BL']
+            for i, foot in enumerate(feet):
+                fx = u0[i*3]
+                fy = u0[i*3 + 1]
+                fz = u0[i*3 + 2]
+                print(f"│ {foot:^4} │{fx:^11.3f} │{fy:^11.3f} │{fz:^11.3f} │")
+            print("└──────┴────────────┴────────────┴────────────┘")
+            
+            # Add detailed solver state tables
+            for stage in range(self.N + 1):
+                print(f"\n=== Stage {stage} of {self.N} ===")
+                
+                # Get all solver values for this stage
+                stage_x = self.solver.get(stage, 'x')
+                stage_ref = numpy.zeros(12)
+                stage_p = numpy.zeros(15)
+                
+                try:
+                    if stage < self.N:
+                        stage_ref = self.solver.get(stage, 'yref')
+                    else:
+                        stage_ref = self.solver.get(stage, 'yref_e')
+                    stage_p = self.solver.get(stage, 'p')
+                except:
+                    pass
+                
+                # State Table
+                print("\nPredicted State:")
+                print("┌──────────┬────────────┐")
+                print("│ Variable │   Value    │")
+                print("├──────────┼────────────┤")
+                state_names = ['pos_x', 'pos_y', 'pos_z', 
+                             'roll', 'pitch', 'yaw',
+                             'vel_x', 'vel_y', 'vel_z',
+                             'ang_x', 'ang_y', 'ang_z']
+                for i, name in enumerate(state_names):
+                    print(f"│{name:^10}│{stage_x[i]:^11.3f} │")
+                print("└──────────┴────────────┘")
+                
+                # Reference Table
+                print("\nReference Target:")
+                print("┌──────────┬────────────┐")
+                print("│ Variable │   Value    │")
+                print("├──────────┼────────────┤")
+                for i, name in enumerate(state_names):
+                    print(f"│{name:^10}│{stage_ref[i]:^11.3f} │")
+                print("└��─────────┴────────────┘")
+                
+                # Parameters Table
+                print("\nStage Parameters:")
+                print("┌──────────┬────────────┬────────────┬────────────┐")
+                print("│  Point   │     X      │     Y      │     Z      │")
+                print("├──────────┼────────────┼────────────┼────────────┤")
+                points = ['FR Foot', 'FL Foot', 'BR Foot', 'BL Foot', 'COM']
+                for i, point in enumerate(points):
+                    idx = i * 3
+                    print(f"│{point:^10}│{stage_p[idx]:^11.3f} │{stage_p[idx+1]:^11.3f} │{stage_p[idx+2]:^11.3f} │")
+                print("└──────────┴────────────┴────────────┴────────────┘")
+                
+                print("\n-----------------------------------------------------------")
+            
             return u0, status
             
         except Exception as e:

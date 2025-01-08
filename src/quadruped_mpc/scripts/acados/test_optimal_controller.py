@@ -178,7 +178,7 @@ def main():
     
     # Target state - setpoint at standing position
     x_ref = np.zeros(12)
-    x_ref[2] = 0.15  # Target height matches initial height
+    x_ref[2] = 0.18  # Target height matches initial height
     
     # Example foot positions (in robot frame)
     leg_length = 0.15  # Robot leg length
@@ -188,7 +188,7 @@ def main():
     p4 = np.array([-leg_length, -leg_length, 0.0]) # back left
     
     # Initialize COM position at target height
-    com = np.array([0.0, 0.0, 0.15])
+    com = x0[:3].copy()
     
     # Update foot positions in the controller
     controller.update_foot_positions(p1, p2, p3, p4, com)
@@ -213,8 +213,9 @@ def main():
             
             # Get optimal control input
             try:
+                com = x[:3].copy()  # Update COM position
                 solve_start = time()
-                u, status = controller.solve(x, x_ref)
+                u, status = controller.solve(x, x_ref, p1, p2, p3, p4, com)
                 solve_time = time() - solve_start
                 
                 if status != 0:

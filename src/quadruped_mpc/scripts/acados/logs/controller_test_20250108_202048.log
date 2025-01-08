@@ -1,0 +1,64 @@
+2025-01-08 20:20:48,589 - INFO: Starting controller test...
+2025-01-08 20:20:48,589 - INFO: Initializing controller with N=20, T=0.2
+2025-01-08 20:20:48,589 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-01-08 20:20:48,589 - INFO: Creating quadruped ODE model...
+2025-01-08 20:20:48,590 - INFO: Model creation completed successfully
+2025-01-08 20:20:48,592 - INFO: Setting up OCP...
+2025-01-08 20:20:48,592 - INFO: Dimensions - nx: 12, nu: 12, np: 15, ny: 12, ny_e: 12
+2025-01-08 20:20:48,592 - INFO: OCP setup completed
+2025-01-08 20:20:48,592 - INFO: Creating solver...
+2025-01-08 20:20:49,616 - INFO: Moving generated files...
+2025-01-08 20:20:51,345 - INFO: 
+============ Controller Performance Analysis ============
+2025-01-08 20:20:51,346 - INFO: 
+=== Timing Performance ===
+2025-01-08 20:20:51,346 - INFO: Total simulation time: 1.728 s
+2025-01-08 20:20:51,346 - INFO: Steps completed: 1000
+2025-01-08 20:20:51,346 - INFO: Average step time: 1.73 ms
+2025-01-08 20:20:51,346 - INFO: 
+=== Position Tracking ===
+2025-01-08 20:20:51,346 - INFO: RMS Error (x,y,z): [0.000, 0.000, 219.523] m
+2025-01-08 20:20:51,346 - INFO: Max Error (x,y,z): [0.000, 0.000, 490.500] m
+2025-01-08 20:20:51,346 - INFO: Position Drift: [0.000, 0.000, -490.500] m
+2025-01-08 20:20:51,346 - INFO: 
+=== Orientation Tracking ===
+2025-01-08 20:20:51,346 - INFO: RMS Error (r,p,y): [0.000, 0.000, 0.000] rad
+2025-01-08 20:20:51,346 - INFO: Max Error (r,p,y): [0.000, 0.000, 0.000] rad
+2025-01-08 20:20:51,346 - INFO: Orientation Drift: [0.000, 0.000, 0.000] rad
+2025-01-08 20:20:51,346 - INFO: 
+=== Velocity Performance ===
+2025-01-08 20:20:51,346 - INFO: Mean Linear Velocity (x,y,z): [0.000, 0.000, 49.050] m/s
+2025-01-08 20:20:51,346 - INFO: Mean Angular Velocity (x,y,z): [0.000, 0.000, 0.000] rad/s
+2025-01-08 20:20:51,346 - INFO: 
+=== Force Performance ===
+2025-01-08 20:20:51,346 - INFO: 
+FR Foot:
+2025-01-08 20:20:51,346 - INFO: Max forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Avg forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: 
+FL Foot:
+2025-01-08 20:20:51,346 - INFO: Max forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Avg forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: 
+BR Foot:
+2025-01-08 20:20:51,346 - INFO: Max forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Avg forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: 
+BL Foot:
+2025-01-08 20:20:51,346 - INFO: Max forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Avg forces (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 20:20:51,346 - INFO: 
+=== Energy Performance ===
+2025-01-08 20:20:51,346 - INFO: Total force magnitude: 0.000 N
+2025-01-08 20:20:51,346 - INFO: Average power: 0.000 W
+2025-01-08 20:20:51,346 - INFO: 
+=== Stability Metrics ===
+2025-01-08 20:20:51,346 - INFO: Average height: -163.432 m
+2025-01-08 20:20:51,346 - INFO: Height variance: 146.394 m
+2025-01-08 20:20:51,346 - INFO: Roll variance: 0.000 rad
+2025-01-08 20:20:51,346 - INFO: Pitch variance: 0.000 rad
+2025-01-08 20:20:51,346 - INFO: Yaw variance: 0.000 rad
