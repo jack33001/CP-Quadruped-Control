@@ -1,4 +1,3 @@
-
 FROM ros:jazzy
 ARG USERNAME=USERNAME
 ARG USER_UID=1000
@@ -53,16 +52,20 @@ RUN addgroup realtime \
     && echo "@realtime hard priority 99" >> /etc/security/limits.conf \
     && echo "@realtime hard memlock 102400" >> /etc/security/limits.conf
 
-# Install acados
-RUN mkdir -p /home/acados \
-    && cd /home/acados \
-    && git clone https://github.com/acados/acados.git \
-    && cd acados \
-    && git submodule update --recursive --init \
-    && mkdir -p build \
-    && cd build \
-    && cmake -DACADOS_WITH_QPOASES=ON .. \
-    && make install -j4
+# ACADOS installation in separate steps
+RUN mkdir -p /home/acados
+WORKDIR /home/acados
+
+RUN git clone https://github.com/acados/acados.git
+WORKDIR /home/acados/acados
+
+RUN git submodule update --recursive --init
+
+RUN mkdir -p build
+WORKDIR /home/acados/acados/build
+
+RUN cmake -DACADOS_WITH_QPOASES=ON ..
+RUN make install -j4
 
 # Install CasADi
 RUN mkdir -p /home/casadi \
@@ -78,6 +81,9 @@ RUN mkdir -p /home/casadi \
 
 # Install ROS2 dependencies
 RUN apt-get update \
+    && apt-get install -y software-properties-common \
+    && add-apt-repository universe \
+    && apt-get update \
     && apt-get install -y \
     ros-jazzy-ros2-control \
     ros-jazzy-xacro \
@@ -92,7 +98,7 @@ RUN apt-get update \
     ros-jazzy-joint-trajectory-controller \
     ros-jazzy-imu-sensor-broadcaster \
     ros-jazzy-pinocchio \
-    ros-jazzy-joint-state-publisher-gui
+    ros-jazzy-joint-state-publisher-gui 
 
 # More ACADOS setup
 RUN pip install --break-system-packages -e /home/acados/acados/interfaces/acados_template
@@ -109,14 +115,18 @@ RUN cd /home/acados/acados/bin \
 
 
 # Install required packages for ROS2 development
-pip3 install -U \
-    colcon-common-extensions \
-    vcstool \
-    rosdep \
-    pytest \
-    pytest-ros \
-    launch-testing \
-    launch-testing-ros \
+RUN pip3 install --break-system-packages -U colcon-common-extensions
+RUN pip3 install --break-system-packages -U vcstool
+RUN pip3 install --break-system-packages -U rosdep
+
+# Install testing packages without upgrading system packages
+RUN pip3 install --break-system-packages --ignore-installed pytest
+RUN apt-get install -y \
+    python3-pytest \
+    ros-jazzy-launch-testing \
+    ros-jazzy-launch-testing-ros
+
+RUN pip3 install --break-system-packages --ignore-installed -U \
     flake8 \
     flake8-blind-except \
     flake8-builtins \
@@ -125,13 +135,8 @@ pip3 install -U \
     flake8-deprecated \
     flake8-docstrings \
     flake8-import-order \
-    flake8-quotes \
-    ament-flake8 \
-    ament-lint \
-    ament-copyright \
-    ament-pep257 \
-    ament-index-python
-
+    flake8-quotes
+    
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
 CMD ["/bin/bash"]
