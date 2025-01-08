@@ -81,9 +81,9 @@ def export_quadruped_ode_model() -> AcadosModel:
     
     # Force dynamics (linear acceleration)
     dv_lin = vertcat(
-        (F1[0] + F2[0] + F3[0] + F4[0])/m,
+        (F1[0] + F2[0] + F3[0] + F4[0])/m,  # Revert back to original
         (F1[1] + F2[1] + F3[1] + F4[1])/m,
-        (F1[2] + F2[2] + F3[2] + F4[2])/m + g
+        (F1[2] + F2[2] + F3[2] + F4[2])/m + g  # g is already negative, so add it
     )
     
     # Torque dynamics (angular acceleration)

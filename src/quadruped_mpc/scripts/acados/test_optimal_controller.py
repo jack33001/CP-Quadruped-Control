@@ -169,16 +169,16 @@ def main():
     
     # Set up simulation parameters
     dt = 0.01  # simulation timestep
-    t_final = 2.0  # simulation duration
+    t_final = 10  # simulation duration
     n_steps = int(t_final / dt)
     
     # Initial state [x, y, z, theta, phi, psi, vx, vy, vz, wx, wy, wz]
     x0 = np.zeros(12)
-    x0[2] = 0.3  # Start at higher z for safety
+    x0[2] = 0.15  # Changed from 0.3 to match height constraints (0.14-0.16)
     
     # Target state - setpoint at standing position
     x_ref = np.zeros(12)
-    x_ref[2] = 0.15  # Desired standing height
+    x_ref[2] = 0.15  # Target height matches initial height
     
     # Example foot positions (in robot frame)
     leg_length = 0.15  # Robot leg length

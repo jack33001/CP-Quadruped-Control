@@ -133,10 +133,10 @@ class QuadrupedOptimalController:
         ocp.cost.Vx_e = ocp.cost.Vx.copy()  # Terminal cost same structure
 
         # Balanced weights for all state components
-        pos_weights = [10.0, 10.0, 100.0]  # Stronger z-tracking
-        rot_weights = [10.0]*3     # Rotation tracking
-        vel_weights = [5.0, 5.0, 50.0]   # Linear velocity (stronger in z)
-        ang_weights = [5.0]*3      # Angular velocity
+        pos_weights = [10.0, 10.0, 20.0]    # Back to original weights
+        rot_weights = [10.0]*3              # Original rotation weights
+        vel_weights = [1.0, 1.0, 2.0]       # Original velocity weights
+        ang_weights = [1.0]*3               # Original angular weights
         
         # Combine all weights
         ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
@@ -146,23 +146,27 @@ class QuadrupedOptimalController:
         ocp.cost.yref = numpy.zeros(nx)    # Full state reference
         ocp.cost.yref_e = numpy.zeros(nx)  # Terminal reference
 
-        # Force bounds - strong enough to lift robot
-        min_force = numpy.array([-20.0, -20.0, 0.0] * 4)    # No negative z force
-        max_force = numpy.array([20.0, 20.0, 50.0] * 4)     # Higher z force limit
+        # Force bounds - adjusted for 1kg robot
+        min_force = numpy.array([-5.0, -5.0, 0.0] * 4)     # Reduced lateral forces
+        max_force = numpy.array([5.0, 5.0, 10.0] * 4)      # Max vertical ~2.5x robot weight
         ocp.constraints.idxbu = numpy.arange(nu)
         ocp.constraints.lbu = min_force
         ocp.constraints.ubu = max_force
 
-        # State bounds (especially for height)
+        # Tighter state bounds for better stabilization
         ocp.constraints.idxbx = numpy.array([2])    # z-position index
-        ocp.constraints.lbx = numpy.array([0.1])    # Minimum height
-        ocp.constraints.ubx = numpy.array([0.5])    # Maximum height
+        ocp.constraints.lbx = numpy.array([0.14])   # Tighter minimum height
+        ocp.constraints.ubx = numpy.array([0.16])   # Tighter maximum height
 
-        # Initial state constraint setup
+        # Initial state constraint setup - allow specified z height
         ocp.constraints.x0 = numpy.zeros(nx)
         ocp.constraints.idxbx_0 = numpy.arange(nx)
         ocp.constraints.lbx_0 = numpy.zeros(nx)
         ocp.constraints.ubx_0 = numpy.zeros(nx)
+        
+        # Allow z-position (index 2) to match our desired initial height
+        ocp.constraints.lbx_0[2] = 0.15  # Match initial z height
+        ocp.constraints.ubx_0[2] = 0.15  # Match initial z height
 
         # set options
         ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'  # Changed solver
