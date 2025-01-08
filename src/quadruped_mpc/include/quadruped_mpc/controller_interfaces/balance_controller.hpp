@@ -11,9 +11,9 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
 #include "hardware_interface/handle.hpp"
-#include "quadruped_ode_model/acados_c_types.h"  // Add this before ACADOS headers
-#include "quadruped_ode_model/quadruped_ode_model.h"  // Generated ACADOS model header
-#include "acados_solver_quadruped_ode.h"              // Generated ACADOS solver header
+#include "acados/utils/types.h"
+#include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
+#include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
 
 namespace quadruped_mpc
 {
@@ -37,7 +37,7 @@ public:
 
 protected:
   std::vector<std::string> joint_names_;
-  quadruped_ode_solver_capsule* solver_{nullptr};
+  quadruped_ode_solver_capsule* solver_{nullptr};  // Fix type name to match generated code
   std::array<double,12> current_state_;
   std::array<double,12> desired_state_;
   std::array<double,12> optimal_control_;

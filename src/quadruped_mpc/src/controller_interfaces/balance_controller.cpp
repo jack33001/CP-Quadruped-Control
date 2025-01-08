@@ -84,7 +84,7 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
 
     // Create single stringstream for all logging
     std::stringstream ss;
-    ss << "\n=== Current State ===\n";
+    ss << "\n================================================== Current State ==================================================\n";
     
     // State vector with better formatting
     ss << "State Vector:\n";
@@ -176,7 +176,7 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     ss << "Foot Forces (N):\n";
     ss << "┌──────┬────────────┬────────────┬────────────┐\n";
     ss << "│ Foot │    F_x     │    F_y     │    F_z     │\n";
-    ss << "├──────┼────────────┼────────────┼────────────┤\n";
+    ss << "├──────┼────────────┼────────────┤\n";
     for (size_t i = 0; i < 4; ++i) {  // Loop through 4 feet
         ss << "│  " << (i==0 ? "FL" : i==1 ? "FR" : i==2 ? "RL" : "RR") << "  │"
            << std::setw(10) << std::scientific << std::setprecision(3) << optimal_control_[i*3] << " │"
@@ -271,17 +271,17 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   
   // Initialize arrays with zeros
   std::fill(current_state_.begin(), current_state_.end(), 0.0);
-  std::fill(desired_state_.begin(), desired_state_.end(), 0.0);
+  std::fill(desired_state_.begin(), current_state_.end(), 0.0);
   std::fill(optimal_control_.begin(), optimal_control_.end(), 0.0);
   
   // Create and initialize ACADOS solver
-  solver_ = quadruped_ode_acados_create_capsule();
+  solver_ = quadruped_ode_acados_create_capsule();  // This function name is correct
   if (solver_ == nullptr) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to create ACADOS solver capsule");
     return CallbackReturn::ERROR;
   }
 
-  int status = quadruped_ode_acados_create(solver_);
+  int status = quadruped_ode_acados_create(solver_);  // This function name is correct
   if (status != 0) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize ACADOS solver");
     return CallbackReturn::ERROR;

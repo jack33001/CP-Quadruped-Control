@@ -18,9 +18,9 @@ def export_quadruped_ode_model() -> AcadosModel:
     logger.debug(f"Created model with name: {model.name}")
 
     # constants
-    m = 1.0     # mass of the robot
-    I = 0.1     # inertia of the robot
-    g = 9.81    # gravity
+    m = 1    # mass of the robot (kg)
+    I = .1    # inertia of the robot (kg*m^2)
+    g = -9.81  # gravity (m/s^2)
     pc = SX.sym('pc',3,1) # position of the center of mass
     p1 = SX.sym('p1',3,1) # position of foot 1
     p2 = SX.sym('p2',3,1) # position of foot 2
@@ -81,9 +81,9 @@ def export_quadruped_ode_model() -> AcadosModel:
     
     # Force dynamics (linear acceleration)
     dv_lin = vertcat(
-        (F1[0] + F2[0] + F3[0] + F4[0])/m,
+        (F1[0] + F2[0] + F3[0] + F4[0])/m,  # Revert back to original
         (F1[1] + F2[1] + F3[1] + F4[1])/m,
-        (F1[2] + F2[2] + F3[2] + F4[2])/m + g
+        (F1[2] + F2[2] + F3[2] + F4[2])/m + g  # g is already negative, so add it
     )
     
     # Torque dynamics (angular acceleration)

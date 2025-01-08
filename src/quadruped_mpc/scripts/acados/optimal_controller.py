@@ -8,10 +8,22 @@ import os
 logger = logging.getLogger(__name__)
 
 class QuadrupedOptimalController:
-    def __init__(self, N=20, T=0.2, code_export_dir="/home/ws/src/quadruped_mpc/acados_generated"):
+    def __init__(self, N=20, T=0.2, code_export_dir=None):
         logger.info(f"Initializing controller with N={N}, T={T}")
         self.N = N
         self.T = T
+
+        # Get the quadruped_mpc root directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(os.path.dirname(script_dir))
+        
+        # Default to acados_generated in include directory if not specified
+        if code_export_dir is None:
+            code_export_dir = os.path.join(root_dir, 'include', 'quadruped_mpc', 'acados_generated')
+        
+        logger.info(f"Will export code to: {code_export_dir}")
+        os.makedirs(code_export_dir, exist_ok=True)
+        os.makedirs(os.path.join(code_export_dir, 'quadruped_ode_model'), exist_ok=True)
         
         # Create and verify model
         self.model = export_quadruped_ode_model()
@@ -50,8 +62,9 @@ class QuadrupedOptimalController:
         # Default ACADOS generated code location
         c_generated = "c_generated_code"
         if os.path.exists(c_generated):
-            # Create destination if it doesn't exist
-            os.makedirs(dest_dir, exist_ok=True)
+            # Create destination directories
+            os.makedirs(os.path.join(dest_dir, 'quadruped_ode_model'), exist_ok=True)
+            os.makedirs(os.path.join(dest_dir, 'acados', 'utils'), exist_ok=True)
             
             # Copy all files
             for item in os.listdir(c_generated):
@@ -60,11 +73,18 @@ class QuadrupedOptimalController:
                 if os.path.isfile(src):
                     shutil.copy2(src, dst)
                     logger.debug(f"Copied {item}")
-                elif os.path.isdir(src):
+                elif os.path.isdir(src) and item == 'quadruped_ode_model':
                     if os.path.exists(dst):
                         shutil.rmtree(dst)
                     shutil.copytree(src, dst)
                     logger.debug(f"Copied dir {item}")
+            
+            # Copy ACADOS types.h to proper location
+            types_src = os.path.join(self.ocp.acados_include_dir, 'acados', 'utils', 'types.h')
+            types_dst = os.path.join(dest_dir, 'acados', 'utils', 'types.h')
+            if os.path.exists(types_src):
+                shutil.copy2(types_src, types_dst)
+                logger.debug(f"Copied types.h to {types_dst}")
             
             # Clean up
             shutil.rmtree(c_generated)
@@ -107,39 +127,54 @@ class QuadrupedOptimalController:
         nx = model.x.shape[0]
         nu = model.u.shape[0]
 
-        # Selection matrices
-        ocp.cost.Vx = numpy.eye(nx)   # State selection matrix
+        # Selection matrices (track position, orientation, and velocities)
+        ocp.cost.Vx = numpy.eye(nx)   # Track all states
         ocp.cost.Vu = numpy.zeros((nx, nu))  # No direct control cost
-        ocp.cost.Vx_e = numpy.eye(nx)  # Terminal state selection
+        ocp.cost.Vx_e = ocp.cost.Vx.copy()  # Terminal cost same structure
 
-        # Weight matrices
-        pos_weights = [10.0]*3    # Position tracking
-        rot_weights = [10.0]*3    # Orientation tracking
-        vel_weights = [1.0]*3     # Linear velocity
-        ang_weights = [1.0]*3     # Angular velocity
+        # Balanced weights for all state components
+        pos_weights = [10.0, 10.0, 20.0]    # Back to original weights
+        rot_weights = [10.0]*3              # Original rotation weights
+        vel_weights = [1.0, 1.0, 2.0]       # Original velocity weights
+        ang_weights = [1.0]*3               # Original angular weights
+        
+        # Combine all weights
         ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
-        ocp.cost.W_e = ocp.cost.W  # Same weights for terminal cost
+        ocp.cost.W_e = ocp.cost.W * 10.0  # Stronger terminal cost
 
         # Reference vectors (will be updated in solve())
-        ocp.cost.yref = numpy.zeros(nx)
-        ocp.cost.yref_e = numpy.zeros(nx)
+        ocp.cost.yref = numpy.zeros(nx)    # Full state reference
+        ocp.cost.yref_e = numpy.zeros(nx)  # Terminal reference
 
-        # Input bounds (keep existing constraints)
+        # Force bounds - adjusted for 1kg robot
+        min_force = numpy.array([-5.0, -5.0, 0.0] * 4)     # Reduced lateral forces
+        max_force = numpy.array([5.0, 5.0, 10.0] * 4)      # Max vertical ~2.5x robot weight
         ocp.constraints.idxbu = numpy.arange(nu)
-        ocp.constraints.lbu = -100 * numpy.ones(nu)
-        ocp.constraints.ubu = 100 * numpy.ones(nu)
-        
-        # Initial state constraint setup
+        ocp.constraints.lbu = min_force
+        ocp.constraints.ubu = max_force
+
+        # Tighter state bounds for better stabilization
+        ocp.constraints.idxbx = numpy.array([2])    # z-position index
+        ocp.constraints.lbx = numpy.array([0.14])   # Tighter minimum height
+        ocp.constraints.ubx = numpy.array([0.16])   # Tighter maximum height
+
+        # Initial state constraint setup - allow specified z height
         ocp.constraints.x0 = numpy.zeros(nx)
         ocp.constraints.idxbx_0 = numpy.arange(nx)
         ocp.constraints.lbx_0 = numpy.zeros(nx)
         ocp.constraints.ubx_0 = numpy.zeros(nx)
+        
+        # Allow z-position (index 2) to match our desired initial height
+        ocp.constraints.lbx_0[2] = 0.15  # Match initial z height
+        ocp.constraints.ubx_0[2] = 0.15  # Match initial z height
 
         # set options
-        ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'
+        ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'  # Changed solver
         ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
         ocp.solver_options.integrator_type = 'ERK'
-        ocp.solver_options.nlp_solver_type = 'SQP'
+        ocp.solver_options.nlp_solver_type = 'SQP_RTI'  # Changed to RTI
+        ocp.solver_options.nlp_solver_max_iter = 200
+        ocp.solver_options.qp_solver_iter_max = 100
         
         # set prediction horizon
         ocp.solver_options.tf = self.T
@@ -172,13 +207,12 @@ class QuadrupedOptimalController:
             raise
 
     def solve(self, x0, x_ref):
-        """Solve the optimal control problem"""
         try:
             # Change initial state setting
-            self.solver.set(0, 'x', x0)  # Changed from lbx/ubx to just x
+            self.solver.set(0, 'x', x0)
             
-            # set reference trajectory (only state reference, no control reference needed)
-            yref = x_ref  # Changed: removed concatenation since we only need state reference
+            # set reference trajectory
+            yref = x_ref
             
             # set references for all nodes including terminal
             for i in range(self.N):
@@ -188,16 +222,29 @@ class QuadrupedOptimalController:
             # Add parameter check before solving
             if hasattr(self.solver, 'acados_ocp'):
                 param_size = self.solver.acados_ocp.dims.np
-                logger.debug(f"Solver parameter size: {param_size}")
-                if param_size != 15:  # Expected: 3 coords × (4 feet + COM)
+                if param_size != 15:
+                    print(f"\nERROR: Incorrect parameter dimension: {param_size}, expected 15")
                     raise ValueError(f"Incorrect parameter dimension: {param_size}, expected 15")
             
             # solve OCP
             status = self.solver.solve()
             
+            # Interpret solver status
+            status_messages = {
+                0: "Success",
+                1: "Invalid number of iterations",
+                2: "Maximum number of iterations reached",
+                3: "Minimum step size in QP reached",
+                4: "QP solver failed"
+            }
+            if status != 0:
+                status_msg = status_messages.get(status, "Unknown error")
+                print(f"\nSOLVER WARNING: Status {status} - {status_msg}")
+            
             # get solution
             u0 = self.solver.get(0, 'u')
             return u0, status
+            
         except Exception as e:
-            logger.error(f"Error during solve: {str(e)}")
+            print(f"\nSOLVER ERROR: {str(e)}")
             raise

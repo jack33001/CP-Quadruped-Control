@@ -9,9 +9,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    # Set export directory
-    export_dir = os.path.join(os.path.dirname(__file__), '../acados_generated')
+    # Get package root directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    package_root = os.path.dirname(os.path.dirname(script_dir))
+    export_dir = os.path.join(package_root, 'include/quadruped_mpc/acados_generated')
+    
+    print(f"Generating ACADOS code to: {export_dir}")
     os.makedirs(export_dir, exist_ok=True)
+    os.makedirs(os.path.join(export_dir, 'quadruped_ode_model'), exist_ok=True)
     
     try:
         # Create controller - this will generate code
@@ -21,23 +26,11 @@ def main():
             code_export_dir=export_dir
         )
         
-        # Copy generated files from temp location if needed
-        c_generated = "c_generated_code"
-        if os.path.exists(c_generated):
-            for item in os.listdir(c_generated):
-                src = os.path.join(c_generated, item)
-                dst = os.path.join(export_dir, item)
-                if os.path.isfile(src):
-                    shutil.copy2(src, dst)
-                elif os.path.isdir(src):
-                    shutil.copytree(src, dst, dirs_exist_ok=True)
-            shutil.rmtree(c_generated)
-            
         print("Code generation successful!")
         return 0
         
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"Error during code generation: {str(e)}")
         return 1
 
 if __name__ == "__main__":

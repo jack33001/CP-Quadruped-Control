@@ -1,0 +1,78 @@
+2025-01-08 01:54:37,160 - INFO: Starting controller test...
+2025-01-08 01:54:37,160 - INFO: Initializing controller with N=20, T=0.2
+2025-01-08 01:54:37,160 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-01-08 01:54:37,160 - INFO: Creating quadruped ODE model...
+2025-01-08 01:54:37,161 - INFO: Model creation completed successfully
+2025-01-08 01:54:37,162 - INFO: Setting up OCP...
+2025-01-08 01:54:37,162 - INFO: Dimensions - nx: 12, nu: 12, np: 15, ny: 12, ny_e: 12
+2025-01-08 01:54:37,163 - INFO: OCP setup completed
+2025-01-08 01:54:37,163 - INFO: Creating solver...
+2025-01-08 01:54:38,201 - INFO: Moving generated files...
+2025-01-08 01:54:38,202 - INFO: 
+=== Initial State ===
+2025-01-08 01:54:38,202 - INFO: x:  0.058
+2025-01-08 01:54:38,202 - INFO: y:  0.025
+2025-01-08 01:54:38,202 - INFO: z:  0.155
+2025-01-08 01:54:38,202 - INFO: roll:  0.061
+2025-01-08 01:54:38,202 - INFO: pitch:  0.043
+2025-01-08 01:54:38,202 - INFO: yaw: -0.154
+2025-01-08 01:54:38,202 - INFO: vx:  0.135
+2025-01-08 01:54:38,202 - INFO: vy: -0.023
+2025-01-08 01:54:38,202 - INFO: vz:  0.022
+2025-01-08 01:54:38,202 - INFO: wx: -0.209
+2025-01-08 01:54:38,202 - INFO: wy:  0.360
+2025-01-08 01:54:38,202 - INFO: wz:  0.491
+2025-01-08 01:54:39,897 - INFO: 
+============ Controller Performance Analysis ============
+2025-01-08 01:54:39,897 - INFO: 
+=== Timing Performance ===
+2025-01-08 01:54:39,897 - INFO: Total simulation time: 1.694 s
+2025-01-08 01:54:39,897 - INFO: Steps completed: 1000
+2025-01-08 01:54:39,897 - INFO: Average step time: 1.69 ms
+2025-01-08 01:54:39,897 - INFO: 
+=== Position Tracking ===
+2025-01-08 01:54:39,897 - INFO: RMS Error (x,y,z): [0.830, 0.114, 0.130] m
+2025-01-08 01:54:39,897 - INFO: Max Error (x,y,z): [1.407, 0.208, 0.222] m
+2025-01-08 01:54:39,897 - INFO: Position Drift: [1.349, -0.234, 0.217] m
+2025-01-08 01:54:39,897 - INFO: 
+=== Orientation Tracking ===
+2025-01-08 01:54:39,897 - INFO: RMS Error (r,p,y): [1.154, 2.115, 2.702] rad
+2025-01-08 01:54:39,897 - INFO: Max Error (r,p,y): [2.029, 3.640, 4.755] rad
+2025-01-08 01:54:39,897 - INFO: Orientation Drift: [-2.090, 3.597, 4.909] rad
+2025-01-08 01:54:39,897 - INFO: 
+=== Velocity Performance ===
+2025-01-08 01:54:39,897 - INFO: Mean Linear Velocity (x,y,z): [0.135, 0.023, 0.022] m/s
+2025-01-08 01:54:39,897 - INFO: Mean Angular Velocity (x,y,z): [0.209, 0.360, 0.491] rad/s
+2025-01-08 01:54:39,897 - INFO: 
+=== Force Performance ===
+2025-01-08 01:54:39,897 - INFO: 
+FR Foot:
+2025-01-08 01:54:39,897 - INFO: Max forces (x,y,z): [0.000, 0.000, 2.452] N
+2025-01-08 01:54:39,897 - INFO: Avg forces (x,y,z): [0.000, 0.000, 2.452] N
+2025-01-08 01:54:39,897 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 01:54:39,897 - INFO: 
+FL Foot:
+2025-01-08 01:54:39,897 - INFO: Max forces (x,y,z): [0.000, 0.000, 2.453] N
+2025-01-08 01:54:39,897 - INFO: Avg forces (x,y,z): [0.000, 0.000, 2.453] N
+2025-01-08 01:54:39,897 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 01:54:39,897 - INFO: 
+BR Foot:
+2025-01-08 01:54:39,897 - INFO: Max forces (x,y,z): [0.000, 0.000, 2.453] N
+2025-01-08 01:54:39,897 - INFO: Avg forces (x,y,z): [0.000, 0.000, 2.453] N
+2025-01-08 01:54:39,897 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 01:54:39,897 - INFO: 
+BL Foot:
+2025-01-08 01:54:39,897 - INFO: Max forces (x,y,z): [0.000, 0.000, 2.452] N
+2025-01-08 01:54:39,897 - INFO: Avg forces (x,y,z): [0.000, 0.000, 2.452] N
+2025-01-08 01:54:39,898 - INFO: Force std (x,y,z): [0.000, 0.000, 0.000] N
+2025-01-08 01:54:39,898 - INFO: 
+=== Energy Performance ===
+2025-01-08 01:54:39,898 - INFO: Total force magnitude: 9810.000 N
+2025-01-08 01:54:39,898 - INFO: Average power: 0.213 W
+2025-01-08 01:54:39,898 - INFO: 
+=== Stability Metrics ===
+2025-01-08 01:54:39,898 - INFO: Average height: 0.264 m
+2025-01-08 01:54:39,898 - INFO: Height variance: 0.063 m
+2025-01-08 01:54:39,898 - INFO: Roll variance: 0.604 rad
+2025-01-08 01:54:39,898 - INFO: Pitch variance: 1.039 rad
+2025-01-08 01:54:39,898 - INFO: Yaw variance: 1.419 rad
