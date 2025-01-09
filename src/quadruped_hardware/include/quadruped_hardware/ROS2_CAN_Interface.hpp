@@ -2,24 +2,29 @@
 #define ROS2_CAN_INTERFACE_HPP
 
 #include "quadruped_hardware/CANInterface.hpp"
+#include "hardware_interface/system_interface.hpp"
+#include "hardware_interface/types/hardware_interface_return_values.hpp"
+#include "hardware_interface/hardware_info.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "std_msgs/msg/u_int8_multi_array.hpp"
 
 namespace quadruped_hardware {
-    class ROS2CANInterface : public rclcpp::Node {
+    class ROS2CANInterface : public hardware_interface::SystemInterface {
         public:
-            explicit ROS2CANInterface(const std::string& node_name, const char* socketName);
+            ROS2CANInterface();
             virtual ~ROS2CANInterface() = default;
 
-        private:
-            void canMsgCallback(const std_msgs::msg::UInt8MultiArray::SharedPtr msg);
-            void readCANCallback();
+            hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
+            hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state) override;
+            hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
+            hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
+            hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+            hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-            CAN_interface::CANInterface can_interface_;
-            rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher_;
-            rclcpp::Subscription<std_msgs::msg::UInt8MultiArray>::SharedPtr can_subscription_;
-            rclcpp::TimerBase::SharedPtr read_timer_;
+        private:
+            std::unique_ptr<CAN_interface::CANInterface> can_interface_;
+            sensor_msgs::msg::JointState joint_state_;
     };
 }
 
