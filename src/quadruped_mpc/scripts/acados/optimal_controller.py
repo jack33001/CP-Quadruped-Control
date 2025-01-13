@@ -240,7 +240,7 @@ class QuadrupedOptimalController:
             
             # State and Reference Table
             print("\nState vs Reference:")
-            print("┌──────────┬────────────┬───��────────┬────────────┐")
+            print("┌──────────┬────────────┬────────────┬────────────┐")
             print("│ Variable │   Current  │  Reference │    Error   │")
             print("├──────────┼────────────┼────────────┼────────────┤")
             state_names = ['pos_x', 'pos_y', 'pos_z', 
@@ -249,7 +249,7 @@ class QuadrupedOptimalController:
                          'ang_x', 'ang_y', 'ang_z']
             for i, name in enumerate(state_names):
                 print(f"│{name:^10}│{x0[i]:^11.3f} │{x_ref[i]:^11.3f} │{x_ref[i]-x0[i]:^11.3f} │")
-            print("└──────────┴──────────���─┴────────────┴────────────┘")
+            print("└──────────┴─────────────┴────────────┴────────────┘")
             
             # Foot Forces Table
             print("\nComputed Foot Forces:")
@@ -264,58 +264,21 @@ class QuadrupedOptimalController:
                 print(f"│ {foot:^4} │{fx:^11.3f} │{fy:^11.3f} │{fz:^11.3f} │")
             print("└──────┴────────────┴────────────┴────────────┘")
             
-            # Add detailed solver state tables
-            for stage in range(self.N + 1):
-                print(f"\n=== Stage {stage} of {self.N} ===")
-                
-                # Get all solver values for this stage
-                stage_x = self.solver.get(stage, 'x')
-                stage_ref = numpy.zeros(12)
-                stage_p = numpy.zeros(15)
-                
-                try:
-                    if stage < self.N:
-                        stage_ref = self.solver.get(stage, 'yref')
-                    else:
-                        stage_ref = self.solver.get(stage, 'yref_e')
-                    stage_p = self.solver.get(stage, 'p')
-                except:
-                    pass
-                
-                # State Table
-                print("\nPredicted State:")
-                print("┌──────────┬────────────┐")
-                print("│ Variable │   Value    │")
-                print("├──────────┼────────────┤")
-                state_names = ['pos_x', 'pos_y', 'pos_z', 
-                             'roll', 'pitch', 'yaw',
-                             'vel_x', 'vel_y', 'vel_z',
-                             'ang_x', 'ang_y', 'ang_z']
-                for i, name in enumerate(state_names):
-                    print(f"│{name:^10}│{stage_x[i]:^11.3f} │")
-                print("└──────────┴────────────┘")
-                
-                # Reference Table
-                print("\nReference Target:")
-                print("┌──────────┬────────────┐")
-                print("│ Variable │   Value    │")
-                print("├──────────┼────────────┤")
-                for i, name in enumerate(state_names):
-                    print(f"│{name:^10}│{stage_ref[i]:^11.3f} │")
-                print("└��─────────┴────────────┘")
-                
-                # Parameters Table
-                print("\nStage Parameters:")
-                print("┌──────────┬────────────┬────────────┬────────────┐")
-                print("│  Point   │     X      │     Y      │     Z      │")
-                print("├──────────┼────────────┼────────────┼────────────┤")
-                points = ['FR Foot', 'FL Foot', 'BR Foot', 'BL Foot', 'COM']
-                for i, point in enumerate(points):
-                    idx = i * 3
-                    print(f"│{point:^10}│{stage_p[idx]:^11.3f} │{stage_p[idx+1]:^11.3f} │{stage_p[idx+2]:^11.3f} │")
-                print("└──────────┴────────────┴────────────┴────────────┘")
-                
-                print("\n-----------------------------------------------------------")
+            # Add solver stages table
+            print("\nSolver Stages Analysis:")
+            print("┌──────┬────────────┬────────────┬────────────┬────────────┬────────────┐")
+            print("│ Stage│   COM_z    │  State z   │   Ref z    │ State v_z  │  Ref v_z   │")
+            print("├──────┼────────────┼────────────┼────────────┼────────────┼────────────┤")
+            for i in range(self.N + 1):
+                com_z = com[2] if com is not None else 0.0
+                state_z = self.solver.get(i, 'x')[2]
+                ref_z = x_ref[2]
+                state_vz = self.solver.get(i, 'x')[8]
+                ref_vz = x_ref[8]
+                print(f"│{i:^6}│{com_z:^11.3f} │{state_z:^11.3f} │{ref_z:^11.3f} │{state_vz:^11.3f} │{ref_vz:^11.3f} │")
+            print("└──────┴────────────┴────────────┴────────────┴────────────┴────────────┘")
+            
+            print("\n-----------------------------------------------------------")
             
             return u0, status
             
