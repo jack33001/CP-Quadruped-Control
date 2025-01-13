@@ -230,13 +230,21 @@ class QuadrupedOptimalController:
                     raise ValueError(f"Incorrect parameter dimension: {param_size}, expected 15")
             
             # solve OCP
+            print("Before solve:")
+            print(f"Initial state: {x0}")
+            print(f"Initial state in solver config: {self.solver.get(0, 'x')}")
+            print(f"Difference: {x0 - self.solver.get(0, 'x')}")
             status = self.solver.solve()
+            print("\nAfter solve:")
+            print(f"Initial state: {x0}")
+            print(f"Initial state in solver config: {self.solver.get(0, 'x')}")
+            print(f"Difference: {x0 - self.solver.get(0, 'x')}")
             
             # get solution
             u0 = self.solver.get(0, 'u')
             
             # Print formatted tables
-            print("\n=== Control Step Info ===")
+            print("\n=== New Control Step ===")
             
             # State and Reference Table
             print("\nState vs Reference:")
@@ -249,7 +257,7 @@ class QuadrupedOptimalController:
                          'ang_x', 'ang_y', 'ang_z']
             for i, name in enumerate(state_names):
                 print(f"│{name:^10}│{x0[i]:^11.3f} │{x_ref[i]:^11.3f} │{x_ref[i]-x0[i]:^11.3f} │")
-            print("└──────────┴─────────────┴────────────┴────────────┘")
+            print("└──────────┴────────────┴────────────┴────────────┘")
             
             # Foot Forces Table
             print("\nComputed Foot Forces:")
@@ -278,7 +286,7 @@ class QuadrupedOptimalController:
                 print(f"│{i:^6}│{com_z:^11.3f} │{state_z:^11.3f} │{ref_z:^11.3f} │{state_vz:^11.3f} │{ref_vz:^11.3f} │")
             print("└──────┴────────────┴────────────┴────────────┴────────────┴────────────┘")
             
-            print("\n-----------------------------------------------------------")
+            print("\n----------------------------------------------------------------------------------------------------------------------\n")
             
             return u0, status
             
