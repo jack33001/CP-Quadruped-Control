@@ -1,4 +1,5 @@
 import numpy
+import yaml
 from acados_template import AcadosOcp, AcadosOcpSolver
 from quadruped_model import export_quadruped_ode_model
 import casadi as ca
@@ -8,10 +9,24 @@ import os
 logger = logging.getLogger(__name__)
 
 class QuadrupedOptimalController:
-    def __init__(self, N=20, T=0.2, code_export_dir=None):
+    def __init__(self, N=20, T=0.2, code_export_dir=None, param_file=None):
         logger.info(f"Initializing controller with N={N}, T={T}")
         self.N = N
         self.T = T
+
+        # Load parameters from yaml
+        if param_file is None:
+            # Default to package config directory
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            root_dir = os.path.dirname(os.path.dirname(script_dir))
+            param_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
+        
+        with open(param_file, 'r') as f:
+            params = yaml.safe_load(f)['optimal_controller']
+            self.mass = params.get('mass', 1.0)
+            self.inertia = params.get('inertia', 0.1)
+            
+        logger.info(f"Loaded parameters: mass={self.mass}kg, inertia={self.inertia}kg*m^2")
 
         # Get the quadruped_mpc root directory
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -25,8 +40,8 @@ class QuadrupedOptimalController:
         os.makedirs(code_export_dir, exist_ok=True)
         os.makedirs(os.path.join(code_export_dir, 'quadruped_ode_model'), exist_ok=True)
         
-        # Create and verify model
-        self.model = export_quadruped_ode_model()
+        # Create and verify model with loaded parameters
+        self.model = export_quadruped_ode_model(mass=self.mass, inertia=self.inertia)
         if self.model.x is None:
             raise ValueError("Model state is None after creation")
         logger.debug(f"Created model with state type: {type(self.model.x)}")
@@ -146,27 +161,15 @@ class QuadrupedOptimalController:
         ocp.cost.yref = numpy.zeros(nx)    # Full state reference
         ocp.cost.yref_e = numpy.zeros(nx)  # Terminal reference
 
-        # Force bounds - adjusted for 1kg robot
-        min_force = numpy.array([-5.0, -5.0, 0.0] * 4)     # Reduced lateral forces
-        max_force = numpy.array([5.0, 5.0, 10.0] * 4)      # Max vertical ~2.5x robot weight
+        min_force = numpy.array([-self.mass, -self.mass, 0.0] * 4)     # Reduced lateral forces
+        max_force = numpy.array([self.mass, self.mass, self.mass*25] * 4)      # Max vertical ~2.5x robot weight
         ocp.constraints.idxbu = numpy.arange(nu)
         ocp.constraints.lbu = min_force
         ocp.constraints.ubu = max_force
 
-        # Tighter state bounds for better stabilization
-        ocp.constraints.idxbx = numpy.array([2])    # z-position index
-        ocp.constraints.lbx = numpy.array([0.14])   # Tighter minimum height
-        ocp.constraints.ubx = numpy.array([0.16])   # Tighter maximum height
+        # Remove ALL state constraints - let the controller work with actual state
 
-        # Initial state constraint setup - allow specified z height
-        ocp.constraints.x0 = numpy.zeros(nx)
-        ocp.constraints.idxbx_0 = numpy.arange(nx)
-        ocp.constraints.lbx_0 = numpy.zeros(nx)
-        ocp.constraints.ubx_0 = numpy.zeros(nx)
-        
-        # Allow z-position (index 2) to match our desired initial height
-        ocp.constraints.lbx_0[2] = 0.15  # Match initial z height
-        ocp.constraints.ubx_0[2] = 0.15  # Match initial z height
+        # No ocp.constraints.x0, idxbx_0, lbx_0, ubx_0, idxbx, lbx, or ubx
 
         # set options
         ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'  # Changed solver
@@ -178,6 +181,11 @@ class QuadrupedOptimalController:
         
         # set prediction horizon
         ocp.solver_options.tf = self.T
+
+        ocp.dims.nbx_0 = nx
+        ocp.constraints.idxbx_0 = numpy.arange(nx)
+        ocp.constraints.lbx_0 = numpy.zeros(nx)  # Will be updated in solve()
+        ocp.constraints.ubx_0 = numpy.zeros(nx)  # Will be updated in solve()
 
         logger.info("OCP setup completed")
         
@@ -208,16 +216,13 @@ class QuadrupedOptimalController:
 
     def solve(self, x0, x_ref, p1, p2, p3, p4, com):
         try:            
-            # Change initial state setting
+            # Set current state
             self.solver.set(0, 'x', x0)
             
-            # set reference trajectory
-            yref = x_ref
-            
-            # set references for all nodes including terminal
-            for i in range(self.N):
-                self.solver.set(i, 'yref', yref)
-            self.solver.set(self.N, 'yref', yref)
+            # Set target reference for future stages only (1 to N)
+            # Don't set any reference for stage 0 since that's our current state
+            for i in range(self.N + 1):
+                self.solver.set(i, 'yref', x_ref)
             
             # Update foot positions and COM
             self.update_foot_positions(p1, p2, p3, p4, com)
@@ -229,64 +234,15 @@ class QuadrupedOptimalController:
                     print(f"\nERROR: Incorrect parameter dimension: {param_size}, expected 15")
                     raise ValueError(f"Incorrect parameter dimension: {param_size}, expected 15")
             
-            # solve OCP
-            print("Before solve:")
-            print(f"Initial state: {x0}")
-            print(f"Initial state in solver config: {self.solver.get(0, 'x')}")
-            print(f"Difference: {x0 - self.solver.get(0, 'x')}")
+            # Re-set the initial constraints - set entire vectors at once
+            self.solver.constraints_set(0, 'lbx', x0)  # Set full vector
+            self.solver.constraints_set(0, 'ubx', x0)  # Set full vector
+            
+            # Solve and check intermediate results if possible
             status = self.solver.solve()
-            print("\nAfter solve:")
-            print(f"Initial state: {x0}")
-            print(f"Initial state in solver config: {self.solver.get(0, 'x')}")
-            print(f"Difference: {x0 - self.solver.get(0, 'x')}")
             
             # get solution
             u0 = self.solver.get(0, 'u')
-            
-            # Print formatted tables
-            print("\n=== New Control Step ===")
-            
-            # State and Reference Table
-            print("\nState vs Reference:")
-            print("┌──────────┬────────────┬────────────┬────────────┐")
-            print("│ Variable │   Current  │  Reference │    Error   │")
-            print("├──────────┼────────────┼────────────┼────────────┤")
-            state_names = ['pos_x', 'pos_y', 'pos_z', 
-                         'roll', 'pitch', 'yaw',
-                         'vel_x', 'vel_y', 'vel_z',
-                         'ang_x', 'ang_y', 'ang_z']
-            for i, name in enumerate(state_names):
-                print(f"│{name:^10}│{x0[i]:^11.3f} │{x_ref[i]:^11.3f} │{x_ref[i]-x0[i]:^11.3f} │")
-            print("└──────────┴────────────┴────────────┴────────────┘")
-            
-            # Foot Forces Table
-            print("\nComputed Foot Forces:")
-            print("┌──────┬────────────┬────────────┬────────────┐")
-            print("│ Foot │    F_x     │    F_y     │    F_z     │")
-            print("├──────┼────────────┼────────────┼────────────┤")
-            feet = ['FR', 'FL', 'BR', 'BL']
-            for i, foot in enumerate(feet):
-                fx = u0[i*3]
-                fy = u0[i*3 + 1]
-                fz = u0[i*3 + 2]
-                print(f"│ {foot:^4} │{fx:^11.3f} │{fy:^11.3f} │{fz:^11.3f} │")
-            print("└──────┴────────────┴────────────┴────────────┘")
-            
-            # Add solver stages table
-            print("\nSolver Stages Analysis:")
-            print("┌──────┬────────────┬────────────┬────────────┬────────────┬────────────┐")
-            print("│ Stage│   COM_z    │  State z   │   Ref z    │ State v_z  │  Ref v_z   │")
-            print("├──────┼────────────┼────────────┼────────────┼────────────┼────────────┤")
-            for i in range(self.N + 1):
-                com_z = com[2] if com is not None else 0.0
-                state_z = self.solver.get(i, 'x')[2]
-                ref_z = x_ref[2]
-                state_vz = self.solver.get(i, 'x')[8]
-                ref_vz = x_ref[8]
-                print(f"│{i:^6}│{com_z:^11.3f} │{state_z:^11.3f} │{ref_z:^11.3f} │{state_vz:^11.3f} │{ref_vz:^11.3f} │")
-            print("└──────┴────────────┴────────────┴────────────┴────────────┴────────────┘")
-            
-            print("\n----------------------------------------------------------------------------------------------------------------------\n")
             
             return u0, status
             

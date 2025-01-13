@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def export_quadruped_ode_model() -> AcadosModel:
+def export_quadruped_ode_model(mass=1.0, inertia=0.1) -> AcadosModel:
     logger.info("Creating quadruped ODE model...")
     
     # Create and verify model instance
@@ -18,8 +18,8 @@ def export_quadruped_ode_model() -> AcadosModel:
     logger.debug(f"Created model with name: {model.name}")
 
     # constants
-    m = 1    # mass of the robot (kg)
-    I = .1    # inertia of the robot (kg*m^2)
+    m = mass      # mass of the robot (kg)
+    I = inertia   # inertia of the robot (kg*m^2)
     g = -9.81  # gravity (m/s^2)
     pc = SX.sym('pc',3,1) # position of the center of mass
     p1 = SX.sym('p1',3,1) # position of foot 1
@@ -94,8 +94,20 @@ def export_quadruped_ode_model() -> AcadosModel:
     f_expl = vertcat(dq_pos, dq_rot, dv_lin, dv_ang)
     
     # Set model dynamics
-    model.f_impl_expr = xdot - f_expl
-    model.f_expl_expr = f_expl
+    model.f_impl_expr = xdot - f_expl  # This is fine
+    model.f_expl_expr = f_expl         # This is fine
+    
+    # Properly set initial conditions constraint - this was missing
+    model.x0 = x
+    
+    # Add dynamics constraints - these ensure state propagation
+    model.disc_dyn_expr = f_expl      # Add discrete dynamics
+    model.dyn_type = 'explicit'       # Specify explicit dynamics type
+    
+    # Set model dimensions explicitly
+    model.nx = x.shape[0]
+    model.nu = u.shape[0]
+    model.np = p.shape[0]
 
     # Set labels
     model.x_labels = ['$x$ [m]', '$y$ [m]', '$z$ [m]', '$\\theta$ [rad]', '$\\phi$ [rad]', '$\\psi$ [rad]']
