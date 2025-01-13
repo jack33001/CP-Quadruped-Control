@@ -7,12 +7,42 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "quadruped_hardware/CANInterface.hpp"
 
+
+std::vector<hardware_interface::StateInterface> QuadrupedHardware::export_state_interfaces()
+{
+    std::vector<hardware_interface::StateInterface> state_interfaces;
+    for (const auto & can_id : hardware_info_.hardware_parameters["can_ids"])
+    {
+        int id = std::stoi(can_id); // Convert CAN ID from string to integer
+        state_interfaces.emplace_back(hardware_interface::StateInterface(
+            std::to_string(id), "canbusmsg", &can_state_map_[id]));
+    }
+    return state_interfaces;
+}
+
+std::vector<hardware_interface::CommandInterface> QuadrupedHardware::export_command_interfaces()
+{
+    std::vector<hardware_interface::CommandInterface> command_interfaces;
+    for (const auto & can_id : hardware_info_.hardware_parameters["can_ids"])
+    {
+        int id = std::stoi(can_id); // Convert CAN ID from string to integer
+        command_interfaces.emplace_back(hardware_interface::CommandInterface(
+            std::to_string(id), "canbusmsg", &can_state_map_[id]));
+    }
+    return command_interfaces;
+}
+
+
 namespace quadruped_hardware {
 
 class ROS2CANInterface : public hardware_interface::SystemInterface
 {
 public:
     ROS2CANInterface() = default;
+
+
+
+
 
     hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override
     {
@@ -25,11 +55,25 @@ public:
         std::string socket_name = info.hardware_parameters.at("can_interface");
         can_interface_ = std::make_unique<CAN_interface::CANInterface>(socket_name.c_str());
 
-        // Initialize joint states
-        joint_state_.name.resize(info.joints.size());
-        joint_state_.position.resize(info.joints.size(), 0.0);
-        joint_state_.velocity.resize(info.joints.size(), 0.0);
-        joint_state_.effort.resize(info.joints.size(), 0.0);
+
+
+        
+        // Initialize state interface for each CAN ID
+        for (const auto & can_id : info.hardware_parameters["can_ids"])
+        {
+            int id = std::stoi(can_id); // Convert CAN ID from string to integer
+            state_interfaces_.emplace_back(hardware_interface::StateInterface(
+                std::to_string(id), "canbusmsg", &can_state_map_[id]));
+        }
+
+        // Initialize command interface for bus
+        command_interfaces_.emplace_back(hardware_interface::CommandInterface(
+                std::to_string(id), "canbusmsg", &can_state_map_[id]));
+
+            std::vector<double> CAN_commands_;
+            std::vector<double> CAN_received_;
+
+
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -37,6 +81,12 @@ public:
     hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state) override
     {
         // Configuration code here
+
+        // do nothing
+        
+
+
+
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -58,16 +108,28 @@ public:
         unsigned char received_data[8];
         if (can_interface_->receiveCANFrame(received_data))
         {
+            
+            // Assuming received_data contains the CAN bus messages in a specific format
+            for (size_t i = 0; i < state_interfaces_.size(); ++i)
+            {
+                *state_interfaces_[i].get_value_ptr() = static_cast<double>(received_data[i]);
+            }
             // Process received_data and update joint_state_
             // Example: joint_state_.position[0] = some_value_from_received_data;
         }
+
+
         return hardware_interface::return_type::OK;
     }
 
     hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override
     {
         // Write commands to CAN bus
-        unsigned char cmd[8] = {0x10, 0x00, 0xFF, 0x00, 0xAB, 0xCD, 0x12, 0x34};
+        unsigned char cmd[8];
+        for (size_t i = 0; i < command_interfaces_.size(); ++i)
+        {
+            cmd[i] = static_cast<unsigned char>(*command_interfaces_[i].get_value_ptr());
+        }
         can_interface_->sendCANFrame(10, cmd);
         return hardware_interface::return_type::OK;
     }

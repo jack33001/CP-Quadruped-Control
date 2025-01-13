@@ -1,6 +1,5 @@
 #launch  2 can interfaces on can0 and can1
 #launch  4 motor drivers  each on can0 and can1
-
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node

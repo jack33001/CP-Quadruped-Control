@@ -61,6 +61,10 @@ namespace CAN_interface
         else
         {
             memcpy(CANMsg, frame.data, frame.can_dlc);
+            
+            // Save the last received frame to a state interface
+            std::lock_guard<std::mutex> lock(state_mutex_);
+            last_received_frame_ = frame;
             return true;
         }
     }

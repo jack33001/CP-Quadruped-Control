@@ -24,6 +24,10 @@ namespace quadruped_hardware {
 
         private:
             std::unique_ptr<CAN_interface::CANInterface> can_interface_;
+
+            std::vector<double> CAN_commands_;
+            std::vector<double> CAN_received_;
+
             sensor_msgs::msg::JointState joint_state_;
     };
 }

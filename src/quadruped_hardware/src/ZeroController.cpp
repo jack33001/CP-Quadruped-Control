@@ -1,47 +1,65 @@
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
+// Controller to zero the robot's joints
 
-int main(int argc, char** argv) {
-    ros::init(argc, argv, "can_broadcaster");
-    ros::NodeHandle nh;
-    ros::Publisher joint_pub = nh.advertise<sensor_msgs::JointState>("joint_states", 10);
-    ros::Rate loop_rate(10);
+#include "ZeroController.h"
 
-    sensor_msgs::JointState joint_state;
-    joint_state.name.resize(4);
-    joint_state.position.resize(4);
-    joint_state.velocity.resize(4);
-    joint_state.effort.resize(4);
+#include <boost/interprocess/managed_shared_memory.hpp>
+#include <memory>
+#include "controller_interface/controller_interface.hpp"
+#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
-    while (ros::ok()) {
-        joint_state.header.stamp = ros::Time::now();
+namespace my_robot_controllers
+{
 
-        // Example joint names and states
-        joint_state.name[0] = "joint1";
-        joint_state.position[0] = 1.0;
-        joint_state.velocity[0] = 0.1;
-        joint_state.effort[0] = 0.01;
+struct SharedJointData {
+  double positions[8];
+  double velocities[8];
+};
 
-        joint_state.name[1] = "joint2";
-        joint_state.position[1] = 1.5;
-        joint_state.velocity[1] = 0.2;
-        joint_state.effort[1] = 0.02;
+class ZeroController : public controller_interface::ControllerInterface
+{
+public:
+  ZeroController() : controller_interface::ControllerInterface() {}
 
-        joint_state.name[2] = "joint3";
-        joint_state.position[2] = 2.0;
-        joint_state.velocity[2] = 0.3;
-        joint_state.effort[2] = 0.03;
+  controller_interface::CallbackReturn on_init() override
+  {
+    using namespace boost::interprocess;
+    try {
+      // Create or open shared memory
+      shm_ = std::make_unique<managed_shared_memory>(
+        open_or_create, "MySharedMemory", 1024 * 1024);
 
-        joint_state.name[3] = "joint4";
-        joint_state.position[3] = 2.5;
-        joint_state.velocity[3] = 0.4;
-        joint_state.effort[3] = 0.04;
-
-        joint_pub.publish(joint_state);
-
-        ros::spinOnce();
-        loop_rate.sleep();
+      // Construct our shared data structure
+      shared_data_ = shm_->find_or_construct<SharedJointData>("JointData")();
+    } catch (...) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to open or create shared memory.");
+      return controller_interface::CallbackReturn::ERROR;
     }
+    return controller_interface::CallbackReturn::SUCCESS;
+  }
 
-    return 0;
-}
+  controller_interface::CallbackReturn on_configure(
+    const rclcpp_lifecycle::State &) override
+  {
+    // Load joint names or other parameters if needed
+    return controller_interface::CallbackReturn::SUCCESS;
+  }
+
+  controller_interface::return_type update(
+    const rclcpp::Time &, const rclcpp::Duration &) override
+  {
+    // Example for writing to shared memory
+    // Here we assume 8 joints
+    for (int i = 0; i < 8; i++) {
+      // Fake data: zero everything
+      shared_data_->positions[i] = 0.0;
+      shared_data_->velocities[i] = 0.0;
+    }
+    return controller_interface::return_type::OK;
+  }
+
+private:
+  std::unique_ptr<boost::interprocess::managed_shared_memory> shm_;
+  SharedJointData* shared_data_;
+};
+
+}  // namespace my_robot_controllers

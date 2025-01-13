@@ -1,0 +1,35 @@
+# This yaml file holds important information about the hardware, like a config file with some extra capability. 
+
+quadruped_hardware:
+  ros__parameters:
+    hardware_parameters:
+      can_bus_0: "can0"
+      can_bus_1: "can1"
+
+      i2c_interface: "/dev/i2c-1"
+      
+      # Motor CAN IDs
+      motor0_can_id: 10
+      motor1_can_id: 11
+      motor2_can_id: 12
+      motor3_can_id: 13
+      motor4_can_id: 14
+      motor5_can_id: 15
+      motor6_can_id: 16
+      motor7_can_id: 17
+
+      motor0_can_bus: "can0"
+      motor1_can_bus: "can0"
+      motor2_can_bus: "can0"
+      motor3_can_bus: "can0"
+      motor4_can_bus: "can1"
+      motor5_can_bus: "can1"
+      motor6_can_bus: "can1"
+      motor7_can_bus: "can1"
+
+      
+      # IMU I2C address
+      imu_i2c_address: 0x68  # Typical address for MPU6050
+      
+      # Power board CAN ID
+      power_board_can_id: 10
