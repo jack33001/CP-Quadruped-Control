@@ -2,6 +2,7 @@
 
 # Configure logging before imports
 import logging
+import yaml
 from datetime import datetime
 import os
 
@@ -158,14 +159,26 @@ def log_metrics(metrics, logger):
     logger.info(f"Pitch variance: {metrics['pitch_var']:.3f} rad")
     logger.info(f"Yaw variance: {metrics['yaw_var']:.3f} rad")
 
+# ...existing code...
+
 def main():
     logger.info("Starting controller test...")
-    # Robot physical parameters
-    m = 1  # mass in kg
-    I = .1  # inertia in kg*m^2
     
-    # Initialize controller
-    controller = QuadrupedOptimalController(N=20, T=0.2)
+    # Get config file path
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(os.path.dirname(script_dir))
+    config_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
+    
+    # Load parameters from yaml
+    with open(config_file, 'r') as f:
+        params = yaml.safe_load(f)['optimal_controller']
+        m = params.get('mass', 1.0)
+        I = params.get('inertia', 0.1)
+    
+    logger.info(f"Loaded parameters: mass={m}kg, inertia={I}kg*m^2")
+    
+    # Initialize controller with config file
+    controller = QuadrupedOptimalController(N=20, T=0.2, param_file=config_file)
     
     # Set up simulation parameters
     dt = 0.01  # simulation timestep
@@ -173,12 +186,20 @@ def main():
     n_steps = int(t_final / dt)
     
     # Initial state [x, y, z, theta, phi, psi, vx, vy, vz, wx, wy, wz]
+    # Initial state with random perturbations within reasonable bounds
     x0 = np.zeros(12)
-    x0[2] = 0.15  # Changed from 0.3 to match height constraints (0.14-0.16)
+    # Position bounds (in meters)
+    x0[0:3] = np.random.uniform([-0.1, -0.1, 0.14], [0.1, 0.1, 0.16])
+    # Orientation bounds (in radians, roughly ±15 degrees)
+    x0[3:6] = np.random.uniform(-0.26, 0.26, 3)
+    # Linear velocity bounds (in m/s)
+    x0[6:9] = np.random.uniform(-0.2, 0.2, 3)
+    # Angular velocity bounds (in rad/s)
+    x0[9:12] = np.random.uniform(-0.5, 0.5, 3)
     
     # Target state - setpoint at standing position
     x_ref = np.zeros(12)
-    x_ref[2] = 0.15  # Target height matches initial height
+    x_ref[2] = 0.18  # Target height matches initial height
     
     # Example foot positions (in robot frame)
     leg_length = 0.15  # Robot leg length
@@ -188,7 +209,7 @@ def main():
     p4 = np.array([-leg_length, -leg_length, 0.0]) # back left
     
     # Initialize COM position at target height
-    com = np.array([0.0, 0.0, 0.15])
+    com = x0[:3].copy()
     
     # Update foot positions in the controller
     controller.update_foot_positions(p1, p2, p3, p4, com)
@@ -213,8 +234,9 @@ def main():
             
             # Get optimal control input
             try:
+                com = x[:3].copy()  # Update COM position
                 solve_start = time()
-                u, status = controller.solve(x, x_ref)
+                u, status = controller.solve(x, x_ref, p1, p2, p3, p4, com)
                 solve_time = time() - solve_start
                 
                 if status != 0:

@@ -238,7 +238,7 @@ static ocp_nlp_dims* quadruped_ode_acados_create_setup_dimensions(quadruped_ode_
     nbx[0] = NBX0;
     nsbx[0] = 0;
     ns[0] = NS0;
-    nbxe[0] = 12;
+    nbxe[0] = 0;
     ny[0] = NY0;
     nh[0] = NH0;
     nsh[0] = NSH0;
@@ -617,30 +617,12 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     double* lbx0 = lubx0;
     double* ubx0 = lubx0 + NBX0;
     // change only the non-zero elements:
-    lbx0[2] = 0.15;
-    ubx0[2] = 0.15;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbx", idxbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "ubx", ubx0);
     free(idxbx0);
     free(lubx0);
-    // idxbxe_0
-    int* idxbxe_0 = malloc(12 * sizeof(int));
-    idxbxe_0[0] = 0;
-    idxbxe_0[1] = 1;
-    idxbxe_0[2] = 2;
-    idxbxe_0[3] = 3;
-    idxbxe_0[4] = 4;
-    idxbxe_0[5] = 5;
-    idxbxe_0[6] = 6;
-    idxbxe_0[7] = 7;
-    idxbxe_0[8] = 8;
-    idxbxe_0[9] = 9;
-    idxbxe_0[10] = 10;
-    idxbxe_0[11] = 11;
-    ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbxe", idxbxe_0);
-    free(idxbxe_0);
 
 
 
@@ -667,26 +649,26 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     double* lubu = calloc(2*NBU, sizeof(double));
     double* lbu = lubu;
     double* ubu = lubu + NBU;
-    lbu[0] = -5;
-    ubu[0] = 5;
-    lbu[1] = -5;
-    ubu[1] = 5;
-    ubu[2] = 10;
-    lbu[3] = -5;
-    ubu[3] = 5;
-    lbu[4] = -5;
-    ubu[4] = 5;
-    ubu[5] = 10;
-    lbu[6] = -5;
-    ubu[6] = 5;
-    lbu[7] = -5;
-    ubu[7] = 5;
-    ubu[8] = 10;
-    lbu[9] = -5;
-    ubu[9] = 5;
-    lbu[10] = -5;
-    ubu[10] = 5;
-    ubu[11] = 10;
+    lbu[0] = -20;
+    ubu[0] = 20;
+    lbu[1] = -20;
+    ubu[1] = 20;
+    ubu[2] = 500;
+    lbu[3] = -20;
+    ubu[3] = 20;
+    lbu[4] = -20;
+    ubu[4] = 20;
+    ubu[5] = 500;
+    lbu[6] = -20;
+    ubu[6] = 20;
+    lbu[7] = -20;
+    ubu[7] = 20;
+    ubu[8] = 500;
+    lbu[9] = -20;
+    ubu[9] = 20;
+    lbu[10] = -20;
+    ubu[10] = 20;
+    ubu[11] = 500;
 
     for (int i = 0; i < N; i++)
     {
@@ -704,23 +686,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
 
 
 
-    // x
-    int* idxbx = malloc(NBX * sizeof(int));
-    idxbx[0] = 2;
-    double* lubx = calloc(2*NBX, sizeof(double));
-    double* lbx = lubx;
-    double* ubx = lubx + NBX;
-    lbx[0] = 0.14;
-    ubx[0] = 0.16;
-
-    for (int i = 1; i < N; i++)
-    {
-        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, i, "idxbx", idxbx);
-        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, i, "lbx", lbx);
-        ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, i, "ubx", ubx);
-    }
-    free(idxbx);
-    free(lubx);
 
 
 
@@ -856,7 +821,6 @@ void quadruped_ode_acados_set_nlp_out(quadruped_ode_solver_capsule* capsule)
     double* x0 = xu0;
 
     // initialize with x0
-    x0[2] = 0.15;
 
 
     double* u0 = xu0 + NX;
