@@ -5,28 +5,50 @@ namespace CAN_interface
 {
     CANInterface::CANInterface(const char* socketName)
     {
-        struct ifreq ifr; // Interface Request structure
+        // const char* socketIfName = &socketName;  
+        // int s;  // File descriptor for the socket as everything in Linux/Unix is a file. 
+        struct sockaddr_can addr; // structure for CAN sockets : address family number AF_CAN
+        struct ifreq ifr; // from if.h Interface Request structure used for all socket ioctl's. All interface ioctl's must have parameter definitions which begin with ifr name. The remainder may be interface specific.
+
         int loopback = 0; /* 0 = disabled, 1 = enabled (default) */
 
-        if ((socket_descrp_ = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
+        // socket(int domain, int type, int protocol): returns file descriptor int or -1 if fail
+        if ((socket_descrp_ = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+        {
             perror("CANInterface: Error While Opening CAN Socket");
-            return;
         }
+        else {
+            // If socket was created successfully, apply the can filter for only receiving from motor and not from master.
+            // setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
 
-        setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback));
-        strcpy(ifr.ifr_name, socketName);
-        ioctl(socket_descrp_, SIOCGIFINDEX, &ifr);
+            setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback));
 
-        // Setup the interface parameters in the socketcan address struct
-        struct sockaddr_can addr;
-        memset(&addr, 0, sizeof(addr));
-        addr.can_family = AF_CAN;
-        addr.can_ifindex = ifr.ifr_ifindex;
+            // Retrieve the interface index for the interface name (can0, can1, vcan0) to be used to the ifreq struct
+            strcpy(ifr.ifr_name, socketName);
 
-        if (bind(socket_descrp_, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-            perror("CANInterface: Error while binding to the CAN Socket.");
-        } else {
-            std::cout << "The Socket Descriptor is: " << socket_descrp_ << std::endl;
+            // Send an I/O control call and pass an ifreq structure containing the interface name
+            // ioctl() system call manipulates the underlying device parameters of special files. 
+            // SIOCGIFINDEX Retrieve the interface index of the interface into ifr_ifindex inside ifr struct.
+            ioctl(socket_descrp_, SIOCGIFINDEX, &ifr);
+
+            // with the interface index, now bind the socket to the CAN Interface
+            struct sockaddr_can addr;
+
+            // set address to all zeros. Done in example/man pages. But why?
+            memset(&addr, 0, sizeof(addr));
+
+            // Setup the interface parameters in the socketcan address struct
+            addr.can_family = AF_CAN;
+            addr.can_ifindex = ifr.ifr_ifindex;
+
+            if (bind(socket_descrp_, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+            {
+               perror("CANInterface: Error while binding to the CAN Socket.");
+            }
+            else
+            {
+                std::cout << "The Socket Descriptor is: " << socket_descrp_ << std::endl;
+            }
         }
     }
 
@@ -61,10 +83,6 @@ namespace CAN_interface
         else
         {
             memcpy(CANMsg, frame.data, frame.can_dlc);
-            
-            // Save the last received frame to a state interface
-            std::lock_guard<std::mutex> lock(state_mutex_);
-            last_received_frame_ = frame;
             return true;
         }
     }

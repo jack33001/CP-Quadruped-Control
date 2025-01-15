@@ -53,14 +53,17 @@ ros2_control:
       - name: CAN_interface_1
         type: quadruped_hardware/QuadrupedHardware
         parameters:
+          
           can_interface: "can1"
           can_ids: [motor4_can_id, motor5_can_id, motor6_can_id, motor7_can_id]
+          command_interface: "velocity"
 
       - name: Motor_driver_0
         type: quadruped_hardware/QuadrupedHardware
         parameters:
           can_interface: "can0"
           can_id: [motor0_can_id]
+          command_interface: "velocity"
 
 
     # Controllers

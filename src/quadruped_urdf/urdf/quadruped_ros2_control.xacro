@@ -1,0 +1,27 @@
+<robot name="quadruped">
+    <!-- Other robot elements... -->
+
+    <ros2_control name="QuadrupedHardware" type="system">
+        <hardware>
+            <plugin>quadruped_hardware/QuadrupedHardwareInterface</plugin>
+            
+            <!-- CAN bus 0 configuration -->
+            <param name="can_interface" value="can0"/>
+            <param name="can_ids" value="1,2,3,4"/>
+            <command_interface name="CAN"/>
+            <state_interface name="CAN"/>
+
+            <!-- CAN bus 1 configuration -->
+            <param name="can_interface" value="can1"/>
+            <param name="can_ids" value="5,6,7,8"/>
+            <command_interface name="CAN"/>
+            <state_interface name="CAN"/>
+        </hardware>
+
+        <joint name="joint1">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <!-- Define other joints and interfaces -->
+    </ros2_control>
+</robot>
