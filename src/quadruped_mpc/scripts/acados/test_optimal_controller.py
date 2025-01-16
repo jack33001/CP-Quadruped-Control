@@ -167,7 +167,7 @@ def main():
     # Get config file path
     script_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(os.path.dirname(script_dir))
-    config_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
+    config_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
     
     # Load parameters from yaml
     with open(config_file, 'r') as f:

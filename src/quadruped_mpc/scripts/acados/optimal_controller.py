@@ -19,7 +19,7 @@ class QuadrupedOptimalController:
             # Default to package config directory
             script_dir = os.path.dirname(os.path.abspath(__file__))
             root_dir = os.path.dirname(os.path.dirname(script_dir))
-            param_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
+            param_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
         
         with open(param_file, 'r') as f:
             params = yaml.safe_load(f)['optimal_controller']
@@ -172,10 +172,16 @@ class QuadrupedOptimalController:
         # No ocp.constraints.x0, idxbx_0, lbx_0, ubx_0, idxbx, lbx, or ubx
 
         # set options
-        ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'  # Changed solver
+        ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'  # Use HPIPM instead
+        ocp.solver_options.hpipm_mode = 'BALANCE'  # Set HPIPM to balance mode
+        ocp.solver_options.qp_solver_cond_N = self.N  # Full condensing
+        ocp.solver_options.qp_solver_warm_start = 2  # More aggressive warm start
         ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
         ocp.solver_options.integrator_type = 'ERK'
-        ocp.solver_options.nlp_solver_type = 'SQP_RTI'  # Changed to RTI
+        ocp.solver_options.nlp_solver_type = 'SQP_RTI'
+        ocp.solver_options.qp_solver_cond_N = self.N  # Number of stages to condense
+        ocp.solver_options.qp_solver_cond_ric_alg = 0  # Use classical Riccati for condensing
+        ocp.solver_options.qp_solver_ric_alg = 0       # Use classical Riccati for QP
         ocp.solver_options.nlp_solver_max_iter = 200
         ocp.solver_options.qp_solver_iter_max = 100
         

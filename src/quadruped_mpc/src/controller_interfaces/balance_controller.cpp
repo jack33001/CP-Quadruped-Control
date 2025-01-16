@@ -82,53 +82,6 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
         quadruped_ode_acados_update_params(solver_, stage, params, 15);
     }
 
-    // Create single stringstream for all logging
-    std::stringstream ss;
-    ss << "\n================================================== Current State ==================================================\n";
-    
-    // State vector with better formatting
-    ss << "State Vector:\n";
-    ss << "┌──────────┬────────────┬────────────┐\n";
-    ss << "│  State   │   Value    │   Units    │\n";
-    ss << "├──────────┼────────────┼────────────┤\n";
-    
-    const std::array<std::string, 12> state_names = {
-        "pos_x", "pos_y", "pos_z",
-        "roll", "pitch", "yaw",
-        "vel_x", "vel_y", "vel_z",
-        "ang_x", "ang_y", "ang_z"
-    };
-    const std::array<std::string, 12> units = {
-        "m", "m", "m",
-        "rad", "rad", "rad",
-        "m/s", "m/s", "m/s",
-        "rad/s", "rad/s", "rad/s"
-    };
-    
-    for (size_t i = 0; i < 12; ++i) {
-        ss << "│" << std::setw(10) << state_names[i] << " │"
-           << std::setw(10) << std::fixed << std::setprecision(3) << current_state_[i] << " │"
-           << std::setw(10) << units[i] << " │\n";
-    }
-    ss << "└──────────┴────────────┴────────────┘\n\n";
-    
-    // Foot positions with better formatting
-    ss << "Foot Positions:\n";
-    ss << "┌──────┬────────────┬────────────┬────────────┐\n";
-    ss << "│ Foot │     X      │     Y      │     Z      │\n";
-    ss << "├──────┼────────────┼────────────┼────────────┤\n";
-    ss << "│  FL  │" << std::setw(10) << std::fixed << std::setprecision(3) << p1_[0] << " │"
-       << std::setw(10) << p1_[1] << " │" << std::setw(10) << p1_[2] << " │\n";
-    ss << "│  FR  │" << std::setw(10) << p2_[0] << " │"
-       << std::setw(10) << p2_[1] << " │" << std::setw(10) << p2_[2] << " │\n";
-    ss << "│  RL  │" << std::setw(10) << p3_[0] << " │"
-       << std::setw(10) << p3_[1] << " │" << std::setw(10) << p3_[2] << " │\n";
-    ss << "│  RR  │" << std::setw(10) << p4_[0] << " │"
-       << std::setw(10) << p4_[1] << " │" << std::setw(10) << p4_[2] << " │\n";
-    ss << "└──────┴────────────┴────────────┘\n\n";
-    
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
-
     // Fill current state vector according to quadruped_model.py:
     // [x1, y1, z1, theta, phi, psi, vx, vy, vz, wx, wy, wz]
     
@@ -167,25 +120,48 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     }
     RCLCPP_INFO(get_node()->get_logger(), "Solver completed successfully");
 
+    // Print state vector table
+    // Get solver state
+    std::array<double, 12> solver_state;
+    ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", solver_state.data());
+
+    std::stringstream ss;
+    ss << "\n╭─────────────────────────────────────────────────────╮\n";
+    ss << "│                    State Vector                     │\n";
+    ss << "├───────────────┬──────────────────┬──────────────────┤\n";
+    ss << "│ Variable      │ Input State      │ Solver State     │\n";
+    ss << "├───────────────┼──────────────────┼──────────────────┤\n";
+    ss << "│ x             │" << std::setw(16) << std::fixed << std::setprecision(3) << current_state_[0] 
+       << "  │" << std::setw(16) << solver_state[0] << "  │\n";
+    ss << "│ y             │" << std::setw(16) << current_state_[1] 
+       << "  │" << std::setw(16) << solver_state[1] << "  │\n";
+    ss << "│ z             │" << std::setw(16) << current_state_[2] 
+       << "  │" << std::setw(16) << solver_state[2] << "  │\n";
+    ss << "│ roll          │" << std::setw(16) << current_state_[3] 
+       << "  │" << std::setw(16) << solver_state[3] << "  │\n";
+    ss << "│ pitch         │" << std::setw(16) << current_state_[4] 
+       << "  │" << std::setw(16) << solver_state[4] << "  │\n";
+    ss << "│ yaw           │" << std::setw(16) << current_state_[5] 
+       << "  │" << std::setw(16) << solver_state[5] << "  │\n";
+    ss << "│ vx            │" << std::setw(16) << current_state_[6] 
+       << "  │" << std::setw(16) << solver_state[6] << "  │\n";
+    ss << "│ vy            │" << std::setw(16) << current_state_[7] 
+       << "  │" << std::setw(16) << solver_state[7] << "  │\n";
+    ss << "│ vz            │" << std::setw(16) << current_state_[8] 
+       << "  │" << std::setw(16) << solver_state[8] << "  │\n";
+    ss << "│ wx            │" << std::setw(16) << current_state_[9] 
+       << "  │" << std::setw(16) << solver_state[9] << "  │\n";
+    ss << "│ wy            │" << std::setw(16) << current_state_[10] 
+       << "  │" << std::setw(16) << solver_state[10] << "  │\n";
+    ss << "│ wz            │" << std::setw(16) << current_state_[11] 
+       << "  │" << std::setw(16) << solver_state[11] << "  │\n";
+    ss << "╰───────────────┴──────────────────┴──────────────────╯\n";
+    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
+
+
+
     // Get optimal control from nlp interface - these are FOOT FORCES, not joint efforts!
     ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
-    
-    // Log the optimal foot forces first
-    ss.str("");  // Clear stringstream
-    ss << "\n=== Optimal Forces ===\n";
-    ss << "Foot Forces (N):\n";
-    ss << "┌──────┬────────────┬────────────┬────────────┐\n";
-    ss << "│ Foot │    F_x     │    F_y     │    F_z     │\n";
-    ss << "├──────┼────────────┼────────────┤\n";
-    for (size_t i = 0; i < 4; ++i) {  // Loop through 4 feet
-        ss << "│  " << (i==0 ? "FL" : i==1 ? "FR" : i==2 ? "RL" : "RR") << "  │"
-           << std::setw(10) << std::scientific << std::setprecision(3) << optimal_control_[i*3] << " │"
-           << std::setw(10) << optimal_control_[i*3 + 1] << " │"
-           << std::setw(10) << optimal_control_[i*3 + 2] << " │\n";
-    }
-    ss << "└──────┴────────────┴────────────┘\n\n";
-
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
 
     // Convert foot forces to joint efforts using the Jacobian transpose
     std::array<double, 8> joint_efforts;  // 2 joints per leg × 4 legs
@@ -214,19 +190,6 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     Eigen::Vector2d tau4 = info.state_.J4.transpose() * f4;
     joint_efforts[6] = tau4[0];  // RR hip
     joint_efforts[7] = tau4[1];  // RR knee
-
-    // Add joint efforts table to logging
-    ss << "\nJoint Efforts (Nm):\n";
-    ss << "┌──────────┬────────────┐\n";
-    ss << "│  Joint   │   Effort   │\n";
-    ss << "├──────────┼────────────┤\n";
-    for (size_t i = 0; i < joint_names_.size(); ++i) {
-        ss << "│" << std::setw(10) << joint_names_[i] << " │"
-           << std::setw(10) << std::fixed << std::setprecision(3) << joint_efforts[i] << " │\n";
-    }
-    ss << "└──────────┴────────────┘\n";
-    
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
 
     // Store command result for hardware interface using computed joint efforts
     for (size_t i = 0; i < joint_names_.size(); ++i) {

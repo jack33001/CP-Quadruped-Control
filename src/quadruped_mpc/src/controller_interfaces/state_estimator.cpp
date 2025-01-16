@@ -45,7 +45,7 @@ StateEstimator::state_interface_configuration() const
 controller_interface::return_type
 StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  if (!read_state_interfaces() || !update_model() || !inverse_kinematics() || !detect_contact()) {
+  if (!read_state_interfaces() || !update_model() || !forward_kinematics() || !detect_contact()) {
     return controller_interface::return_type::ERROR;
   }
   return controller_interface::return_type::OK;
@@ -318,7 +318,7 @@ bool StateEstimator::update_model()
   }
 }
 
-bool StateEstimator::inverse_kinematics()
+bool StateEstimator::forward_kinematics()
 {
   try {
     // Lock the shared data structure while updating

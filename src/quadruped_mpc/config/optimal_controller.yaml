@@ -1,0 +1,3 @@
+optimal_controller:
+  mass: 20.0  # Robot mass in kg
+  inertia: 10  # Robot inertia in kg*m^2
