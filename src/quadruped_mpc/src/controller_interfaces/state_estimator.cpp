@@ -209,6 +209,7 @@ bool StateEstimator::read_state_interfaces()
       joint_states_.resize(joint_names_.size());
     }
 
+    auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
     // Read all interfaces for each joint
@@ -293,7 +294,7 @@ bool StateEstimator::update_model()
 bool StateEstimator::foot_positions()
 {
   try {
-    // Lock the shared data structure while updating
+    auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
     
     // Get body position
@@ -321,6 +322,7 @@ bool StateEstimator::foot_positions()
 bool StateEstimator::detect_contact()
 {
   try {
+    auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
     
     // For now, just set all contacts to true
@@ -339,6 +341,7 @@ bool StateEstimator::detect_contact()
 bool StateEstimator::pin_kinematics()
 {
   try {
+    auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     // Update Pinocchio model with new state
     pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
     pinocchio::updateFramePlacements(model_, *data_);

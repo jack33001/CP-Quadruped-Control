@@ -66,6 +66,8 @@ WORKDIR /home/acados/acados/build
 
 RUN cmake -DACADOS_WITH_QPOASES=ON ..
 RUN make install -j4
+RUN cd /home/acados/acados/external/qpoases \
+    && make
 
 # Install CasADi
 RUN mkdir -p /home/casadi \
