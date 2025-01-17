@@ -45,7 +45,13 @@ StateEstimator::state_interface_configuration() const
 controller_interface::return_type
 StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  if (!read_state_interfaces() || !update_model() || !forward_kinematics() || !detect_contact()) {
+  if (!read_state_interfaces() 
+      || !estimate_orientation()
+      || !update_model() 
+      || !pin_kinematics()
+      || !estimate_base_position()
+      || !pin_kinematics()
+      || !foot_positions() ) {
     return controller_interface::return_type::ERROR;
   }
   return controller_interface::return_type::OK;
@@ -276,40 +282,6 @@ bool StateEstimator::update_model()
       }
       current_velocities_[joint.idx_v()] = state.velocity;
     }
-
-    // Update Pinocchio model with new state
-    pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
-    pinocchio::updateFramePlacements(model_, *data_);
-    
-    // Compute Jacobians for each foot - getting only the translation part (3x2 matrices)
-    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
-    
-    Eigen::MatrixXd J_temp(6,model_.nv);  // Temporary full Jacobian
-    
-    // For each foot, compute the full Jacobian then extract translation part
-    // FL
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[0], pinocchio::LOCAL_WORLD_ALIGNED, 
-                                   J_temp);
-    quadruped_info.state_.J1 = J_temp.topRows(3).leftCols(2);  // Extract 3x2 translation part
-
-    // FR
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[1], pinocchio::LOCAL_WORLD_ALIGNED, 
-                                   J_temp);
-    quadruped_info.state_.J2 = J_temp.topRows(3).leftCols(2);
-
-    // RL
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[2], pinocchio::LOCAL_WORLD_ALIGNED, 
-                                   J_temp);
-    quadruped_info.state_.J3 = J_temp.topRows(3).leftCols(2);
-
-    // RR
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[3], pinocchio::LOCAL_WORLD_ALIGNED, 
-                                   J_temp);
-    quadruped_info.state_.J4 = J_temp.topRows(3).leftCols(2);
     
     return true;
   } catch (const std::exception& e) {
@@ -318,7 +290,7 @@ bool StateEstimator::update_model()
   }
 }
 
-bool StateEstimator::forward_kinematics()
+bool StateEstimator::foot_positions()
 {
   try {
     // Lock the shared data structure while updating
@@ -360,6 +332,70 @@ bool StateEstimator::detect_contact()
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in contact detection: %s", e.what());
+    return false;
+  }
+}
+
+bool StateEstimator::pin_kinematics()
+{
+  try {
+    // Update Pinocchio model with new state
+    pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
+    pinocchio::updateFramePlacements(model_, *data_);
+    
+    // Compute Jacobians for each foot - getting only the translation part (3x2 matrices)
+    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
+    
+    Eigen::MatrixXd J_temp(6,model_.nv);  // Temporary full Jacobian
+    
+    // For each foot, compute the full Jacobian then extract translation part
+    // FL
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[0], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J1 = J_temp.topRows(3).leftCols(2);  // Extract 3x2 translation part
+
+    // FR
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[1], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J2 = J_temp.topRows(3).leftCols(2);
+
+    // RL
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[2], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J3 = J_temp.topRows(3).leftCols(2);
+
+    // RR
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
+                                   foot_frame_ids_[3], pinocchio::LOCAL_WORLD_ALIGNED, 
+                                   J_temp);
+    quadruped_info.state_.J4 = J_temp.topRows(3).leftCols(2);
+
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error in pin kinematics: %s", e.what());
+    return false;
+  }
+}
+
+bool StateEstimator::estimate_base_position()
+{
+  try {
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error in base position estimation: %s", e.what());
+    return false;
+  }
+}
+
+bool StateEstimator::estimate_orientation()
+{
+  try {
+    return true;
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Error in orientation estimation: %s", e.what());
     return false;
   }
 }

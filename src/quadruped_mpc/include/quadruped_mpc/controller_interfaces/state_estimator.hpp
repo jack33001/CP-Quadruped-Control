@@ -96,10 +96,15 @@ protected:
   bool update_model();
   
   // Returns true if successful, false if error
-  bool inverse_kinematics();
+  bool foot_positions();
 
   // Returns true if successful, false if error
   bool detect_contact();
+
+  // New estimation methods
+  bool pin_kinematics();
+  bool estimate_base_position();
+  bool estimate_orientation();
 
 private:
   // Removed hardware_height_
