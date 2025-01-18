@@ -17,6 +17,13 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Include the hardware interface launch file
+    hardware_interface_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('quadruped_hardware'), 'launch', 'real_quadruped_hardware.launch.py')])
+    )
+
+
     return LaunchDescription([
         controller_manager_node
     ])

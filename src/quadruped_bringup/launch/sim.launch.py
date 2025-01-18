@@ -48,25 +48,25 @@ def generate_launch_description():
     )
 
     # Wrap MPC launch in TimerAction for delayed start
-    mpc_launch = TimerAction(
-        period = 7.0,  # Wait for 10 seconds after launch start
-        actions=[
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
-                    PathJoinSubstitution([
-                        FindPackageShare('quadruped_mpc'),
-                        'launch',
-                        'mpc.launch.py'
-                    ])
-                ])
-            )
-        ]
-    )
+    # mpc_launch = TimerAction(
+    #     period = 7.0,  # Wait for 10 seconds after launch start
+    #     actions=[
+    #         IncludeLaunchDescription(
+    #             PythonLaunchDescriptionSource([
+    #                 PathJoinSubstitution([
+    #                     FindPackageShare('quadruped_mpc'),
+    #                     'launch',
+    #                     'mpc.launch.py'
+    #                 ])
+    #             ])
+    #         )
+    #     ]
+    # )
     
     # Return launch description with timed execution
     return LaunchDescription([
         urdf_launch,
         rviz_node,
         gazebo_launch,
-        mpc_launch,
+        # mpc_launch,
     ])
