@@ -3,24 +3,26 @@
 #include <unordered_map>
 #include <hardware_interface/system_interface.hpp>
 #include <hardware_interface/handle.hpp>
+#include <pluginlib/class_list_macros.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 
 #include "quadruped_hardware/CANInterface.hpp"
 #include "quadruped_hardware/ROS2_CAN_Interface.hpp"
 
 
-namespace QuadrupedHardware {
+namespace quadruped_hardware {
 
 
-class ROS2CANInterface final : public hardware_interface::SystemInterface {
-    
-ROS2CANInterface() {
-    // Initialization code
-    state_interfaces_.clear();
-}
-
+class ROS2CANInterface : public hardware_interface::SystemInterface {
 
 public:
+    ROS2CANInterface() {
+        // Initialization code
+        state_interfaces_.clear();
+    }
+
+
+
     hardware_interface::HardwareInfo hardware_info_;
 
     std::unordered_map<int, double> can_state_map_;
@@ -129,48 +131,6 @@ public:
             }
         }
 
-        // std::string hex_message = "A1B2C3D4";
-
-        // // Extract the first two bytes (4 characters, 2 bytes)
-        // std::string first_two_bytes = hex_message.substr(0, 4);
-
-        // // Convert the hexadecimal string to an integer
-        // unsigned int numeral_value;
-        // std::stringstream ss;
-        // ss << std::hex << first_two_bytes;
-        // ss >> numeral_value;
-
-        // // read CAN Bus
-        //         unsigned char received_data[8];
-        // if (can_interface_->receiveCANFrame(received_data))
-        // {
-        //     for (size_t i = 0; i < state_interfaces_.size(); ++i)
-        //     {
-        //         if (state_interfaces_[i].get_name() == std::to_string(received_data[0]))
-        //         {
-        //             double value = static_cast<double>(received_data[1]); // Example conversion
-                    
-        //             //set state interface value with logging
-        //             auto result = state_interfaces_[i].set_value(value);
-        //             if (!result) //if failed 
-        //             {
-        //                 RCLCPP_WARN(this->get_logger(), "Failed to set value for state interface %s", state_interfaces_[i].get_name().c_str());
-        //             }
-        //         }
-        //     }
-        // }
-
-        // // Read CAN messages and update 
-        // unsigned char received_data[8];
-        // if (can_interface_->receiveCANFrame(received_data))
-        // {
-        //     for (size_t i = 0; i < state_interfaces_.size(); ++i) {
-        //         if (state_interfaces_[i].get_name() == std::to_string(received_data[0])) {
-        //             double value = static_cast<double>(received_data[1]); // Example conversion
-        //             state_interfaces_[i].set_value(value);
-        //         }
-        //     }
-        // }
 
         return hardware_interface::return_type::OK;
     }
@@ -209,3 +169,4 @@ private:
 };
 
 } // namespace quadruped_hardware
+PLUGINLIB_EXPORT_CLASS(quadruped_hardware::ROS2CANInterface, hardware_interface::SystemInterface)

@@ -7,6 +7,9 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
+
+
+
     # Define the RViz2 node   
     rviz_node = Node(
         package='rviz2',
@@ -14,6 +17,7 @@ def generate_launch_description():
         name='rviz2',
         output='screen'
     )
+
 
     print('rvis_node complete')
     
@@ -29,6 +33,7 @@ def generate_launch_description():
     )
 
     print('urdf_launch complete')
+
     
     # Define the package and launch file paths
     hardware_launch = IncludeLaunchDescription(
@@ -43,11 +48,10 @@ def generate_launch_description():
     
     print('hardware_launch complete')
     
-    
     # Return launch description with timed execution
     return LaunchDescription([
         urdf_launch,
-        # rviz_node,
-        # hardware_launch
+        rviz_node,
+        hardware_launch
         
     ])

@@ -37,10 +37,24 @@ quadruped_hardware:
 
 # This yaml file configures the hardware interface and controllers for the robot.
 
+
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+    robot_description: "<robot_description>"
+    robot_description_semantic: "<robot_description_semantic>"
+    robot_description_kinematics: "<robot_description_kinematics>"
+    robot_description_planning: "<robot_description_planning>"
+    robot_description_transmissions: "<robot_description_transmissions>"
+    robot_description_controllers: "<robot_description_controllers>"
+    hardware_plugin: "quadruped_hardware/QuadrupedHardwareInterface"
+
+
 ros2_control:
   ros__parameters:
     # Controller manager
     controller_manager_name: controller_manager
+
 
     # Hardware components
     hardware_components:

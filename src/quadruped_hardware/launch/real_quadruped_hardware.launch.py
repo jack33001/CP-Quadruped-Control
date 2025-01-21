@@ -21,16 +21,17 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
-        # Launch CAN interface nodes
+
+        # Launch CAN hardware interface using spawner
         Node(
             package='quadruped_hardware',
-            executable='can_interface_node',
+            executable='spawner',
             name='can_interface_node_0',
             parameters=[{'can_interface': 'can0'}]
         ),
         Node(
             package='quadruped_hardware',
-            executable='can_interface_node',
+            executable='spawner',
             name='can_interface_node_1',
             parameters=[{'can_interface': 'can1'}]
         ),
@@ -38,7 +39,7 @@ def generate_launch_description():
         # Launch Motor Driver nodes
         Node(
             package='quadruped_hardware',
-            executable='motor_driver_node',
+            executable='spawner',
             name='motor_driver_node_0',
             parameters=[config_path, {
         'motor_ids': [
@@ -51,7 +52,7 @@ def generate_launch_description():
     }]),
         Node(
             package='quadruped_hardware',
-            executable='motor_driver_node',
+            executable='spawner',
             name='motor_driver_node_1',
             parameters=[{'motor_ids': [LaunchConfiguration('motor4_can_id'),
                                        LaunchConfiguration('motor4_can_id'),
