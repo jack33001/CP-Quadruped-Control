@@ -2,9 +2,9 @@
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- ros2 plugins -->
-    <ros2_control name="quadruped_hardware" type="system">
+    <ros2_control name="quadruped_hardware/ROS2CANInterface" type="system">
         <hardware>
-            <!-- package/class-->
+            <!-- namespace/class-->
             <plugin>quadruped_hardware/ROS2CANInterface</plugin>
             
             <!-- CAN bus 0 configuration -->
@@ -13,11 +13,11 @@
             <command_interface name="CAN0_cmd"/>
             <state_interface name="CAN0_msg"/>
 
-            <!-- CAN bus 1 configuration -->
+            <!-- CAN bus 1 configuration
             <param name="can_interface" value="can1"/>
             <param name="can_ids" value="5,6,7,8"/>
             <command_interface name="CAN1_cmd"/>
-            <state_interface name="CAN1_msg"/>
+            <state_interface name="CAN1_msg"/> -->
         </hardware>
 
     </ros2_control>

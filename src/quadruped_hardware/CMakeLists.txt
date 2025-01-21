@@ -31,6 +31,7 @@ ament_target_dependencies(${PROJECT_NAME}
   std_msgs
 )
 
+pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 
 install(
   DIRECTORY launch
