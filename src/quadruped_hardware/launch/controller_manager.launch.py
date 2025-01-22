@@ -30,6 +30,16 @@ def generate_launch_description():
             ],
 
         )
+        # ,
+        
+        # # Start the CANCommandController
+        # Node(
+        #     package='controller_manager',
+        #     executable='spawner',
+        #     arguments=['CANCommandController'],
+        #     parameters=[config_path],
+        #     output='screen'
+        # )
 
 
 

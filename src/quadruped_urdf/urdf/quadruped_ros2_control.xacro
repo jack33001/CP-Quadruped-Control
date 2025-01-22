@@ -16,11 +16,22 @@
             <command_interface name="CAN0_cmd"/>
             <state_interface name="CAN0_msg"/>
 
-            <!-- CAN bus 1 configuration
-            <param name="can_interface" value="can1"/>
-            <param name="can_ids" value="5,6,7,8"/>
+        </hardware>
+    </ros2_control>
+
+
+    <ros2_control name="quadruped_hardware/ROS2CANInterfaceCAN" type="system">
+        <hardware>
+            <!-- namespace/class-->
+            <plugin>quadruped_hardware/ROS2CANInterface</plugin>
+            <parameter> $(find quadruped_hardware)/config/quadruped_hardware.yaml </parameter>
+            <!-- CAN bus 0 configuration -->
+            <param name="can_interface" >can1</param>
+            <param name="can_ids" >5,6,7,8</param>
+            <param name="test">5</param>
             <command_interface name="CAN1_cmd"/>
-            <state_interface name="CAN1_msg"/> -->
+            <state_interface name="CAN1_msg"/>
+
         </hardware>
 
     </ros2_control>

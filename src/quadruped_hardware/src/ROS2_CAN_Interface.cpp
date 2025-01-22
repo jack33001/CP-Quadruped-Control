@@ -15,16 +15,13 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
         return hardware_interface::CallbackReturn::ERROR;
     }
 
-    std::string test = info_.hardware_parameters["test"];
-    std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" <<test<< std::endl;
-
     hardware_info_ = info_;
     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Hardware Info: %s", info.name.c_str());
 
     // Log all hardware parameters
-    for (const auto &param : info.hardware_parameters) {
-        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Parameter: %s = %s", param.first.c_str(), param.second.c_str());
-    }
+    // for (const auto &param : info.hardware_parameters) {
+    //     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Parameter: %s = %s", param.first.c_str(), param.second.c_str());
+    // }
 
     // Retrieve the socket name from the hardware info parameters
     std::string socket_name = info.hardware_parameters.at("can_interface");
@@ -51,13 +48,20 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
     //     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Added CAN ID: %d", id);
             
     // }
+    std::array<uint8_t, 8> test_bytes = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}; // Example 8-byte string
+
+
     while (std::getline(iss, token, ',')) {
         try {
             int id = std::stoi(token); // Convert CAN ID from string to integer
             std::string name = std::to_string(id);
             state_interfaces_map_.emplace(name, hardware_interface::StateInterface("can_interface", name + "_msg", &can_state_map_[id]));
-            command_interfaces_map_.emplace(name, hardware_interface::CommandInterface("can_interface", name + "_cmd", &can_command_map_[id]));
+            // command_interfaces_map_.emplace(name, hardware_interface::CommandInterface("can_interface", name + "_cmd", &can_command_map_[id]));
+            command_interfaces_map_.emplace(name, CustomCommandInterface("can_interface", name + "_cmd", &can_command_map_[id]));
             RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Added CAN ID: %d", id);
+
+            can_command_map_[id] = test_bytes; // Set the initial 8-byte string value
+    
         } catch (const std::invalid_argument &e) {
             RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Invalid CAN ID: %s", token.c_str());
             return hardware_interface::CallbackReturn::ERROR;
@@ -102,6 +106,19 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_configure(const rclcpp_l
 
 hardware_interface::CallbackReturn ROS2CANInterface::on_activate(const rclcpp_lifecycle::State &) {
     // Activation logic here (if needed)
+
+        for (const auto &cmd : command_interfaces_map_) {
+        int id = std::stoi(cmd.first);
+        double value;
+        if (cmd.second.get_value(value)) {
+            unsigned char CANMsg[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+            CANMsg[0] = static_cast<unsigned char>(id);
+            CANMsg[1] = static_cast<unsigned char>(value); // Example conversion
+            can_interface_->sendCANFrame(id, CANMsg);
+        } else {
+            RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "Failed to get value for command interface %s", cmd.first.c_str());
+        }
+    }
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -159,11 +176,13 @@ hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, con
 }
 
 hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, const rclcpp::Duration &) {
+
+
     for (const auto &cmd : command_interfaces_map_) {
         int id = std::stoi(cmd.first);
         double value;
         if (cmd.second.get_value(value)) {
-            unsigned char CANMsg[8] = {0};
+            unsigned char CANMsg[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
             CANMsg[0] = static_cast<unsigned char>(id);
             CANMsg[1] = static_cast<unsigned char>(value); // Example conversion
             can_interface_->sendCANFrame(id, CANMsg);
@@ -171,6 +190,10 @@ hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, co
             RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "Failed to get value for command interface %s", cmd.first.c_str());
         }
     }
+
+
+
+
     return hardware_interface::return_type::OK;
 }
 

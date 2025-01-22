@@ -1,48 +1,5 @@
-# This yaml file holds important information about the hardware, like a config file with some extra capability. 
-
-quadruped_hardware:
-  ros__parameters:
-    hardware_parameters:
-
-      can_interface: "can0"
-      can_ids: "1,2,3,4"
-      power_board_can_id: 10
-
-
-      can_bus_0: "can0"
-      can_bus_1: "can1"
-
-      i2c_interface: "/dev/i2c-1"
-      
-      # Motor CAN IDs
-      motor0_can_id: 10
-      motor1_can_id: 11
-      motor2_can_id: 12
-      motor3_can_id: 13
-      motor4_can_id: 14
-      motor5_can_id: 15
-      motor6_can_id: 16
-      motor7_can_id: 17
-
-      motor0_can_bus: "can0"
-      motor1_can_bus: "can0"
-      motor2_can_bus: "can0"
-      motor3_can_bus: "can0"
-      motor4_can_bus: "can1"
-      motor5_can_bus: "can1"
-      motor6_can_bus: "can1"
-      motor7_can_bus: "can1"
-
-      
-      # IMU I2C address
-      imu_i2c_address: 0x68  # Typical address for MPU6050
-      
-      # Power board CAN ID
-      power_board_can_id: 10
-
-
 # This yaml file configures the hardware interface and controllers for the robot.
-
+# yaml files config controllers URDF files config hardware interfaces
 
 controller_manager:
   ros__parameters:
@@ -56,11 +13,15 @@ controller_manager:
     hardware_plugin: "quadruped_hardware/QuadrupedHardwareInterface"
 
 
+CANCommandController:
+  ros__parameters:
+    type: "quadruped_hardware/CANCommandController"
+    some_parameter: some_value  # Add any necessary parameters here
+
 ros2_control:
   ros__parameters:
     # Controller manager
     controller_manager_name: controller_manager
-
 
     hardware_parameters:
 
@@ -69,31 +30,6 @@ ros2_control:
         power_board_can_id: 10
 
 
-    # # Hardware components
-    # hardware_components:
-    #   - name: CAN_interface_0
-    #     type: quadruped_hardware/QuadrupedHardware
-    #     parameters:
-    #       can_interface: "can0"
-    #       can_ids: [motor0_can_id, motor1_can_id, motor2_can_id, motor3_can_id]
-
-    #   - name: CAN_interface_1
-    #     type: quadruped_hardware/QuadrupedHardware
-    #     parameters:
-          
-    #       can_interface: "can1"
-    #       can_ids: [motor4_can_id, motor5_can_id, motor6_can_id, motor7_can_id]
-    #       command_interface: "velocity"
-
-    #   - name: Motor_driver_0
-    #     type: quadruped_hardware/QuadrupedHardware
-    #     parameters:
-    #       can_interface: "can0"
-    #       can_id: [motor0_can_id]
-    #       command_interface: "velocity"
-
-
-    # Controllers
     controllers:
       - name: controller_1
         type: controller_interface/YourControllerType

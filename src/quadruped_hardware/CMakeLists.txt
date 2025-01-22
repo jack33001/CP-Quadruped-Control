@@ -6,15 +6,20 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(hardware_interface REQUIRED)
+find_package(controller_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
+
+
+  src/CANtester.cpp
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
 )
+
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
@@ -23,6 +28,9 @@ target_include_directories(${PROJECT_NAME}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
+
+  
+  controller_interface
   hardware_interface
   pluginlib
   rclcpp
@@ -33,6 +41,22 @@ ament_target_dependencies(${PROJECT_NAME}
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 
+# Install the plugin description file
+install(FILES ros2_Cantester.xml
+  DESTINATION share/${PROJECT_NAME}
+)
+
+pluginlib_export_plugin_description_file(controller_interface ros2_Cantester.xml)
+
+# # Install the shared library
+# install(TARGETS CAN_Tester
+#   EXPORT export_CAN_Tester
+#   ARCHIVE DESTINATION lib
+#   LIBRARY DESTINATION lib
+#   RUNTIME DESTINATION bin
+# )
+
+
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
@@ -42,6 +66,8 @@ install(
   DIRECTORY config
   DESTINATION share/${PROJECT_NAME}
 )
+
+
 
 install(
   TARGETS ${PROJECT_NAME}
