@@ -62,6 +62,13 @@ ros2_control:
     controller_manager_name: controller_manager
 
 
+    hardware_parameters:
+
+        can_interface: "can0"
+        can_ids: "1,2,3,4"
+        power_board_can_id: 10
+
+
     # # Hardware components
     # hardware_components:
     #   - name: CAN_interface_0

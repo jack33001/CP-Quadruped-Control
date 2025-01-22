@@ -1,6 +1,7 @@
 #include "quadruped_hardware/ROS2_CAN_Interface.hpp"
 
 #include <rclcpp/logging.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <sstream>
 
 namespace quadruped_hardware {
@@ -14,7 +15,10 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
         return hardware_interface::CallbackReturn::ERROR;
     }
 
-    hardware_info_ = info;
+    std::string test = info_.hardware_parameters["test"];
+    std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" <<test<< std::endl;
+
+    hardware_info_ = info_;
     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Hardware Info: %s", info.name.c_str());
 
     // Log all hardware parameters
@@ -30,27 +34,37 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
     std::string can_ids_str = info.hardware_parameters.at("can_ids");
 
 
-    
-    std::cout << "IDs: " << can_ids_str << std::endl;
-
-
     // Tokenize the can_ids string and populate the state and command interfaces
     std::istringstream iss(can_ids_str);
     std::string token;
 
-    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "ABOUT TO START MAKING INTERFACES");
 
-    while (iss >> token) {
+    // while (iss >> token) {
         
-        int id = std::stoi(token); // Convert CAN ID from string to integer
+    //     int id = std::stoi(token); // Convert CAN ID from string to integer
 
-        std::cout << "ID: " << id << std::endl;
+    //     std::cout << "ID: " << id << std::endl;
 
-        std::string name = std::to_string(id);
-        state_interfaces_map_.emplace(name, hardware_interface::StateInterface(name, "canbusmsg", &can_state_map_[id]));
-        command_interfaces_map_.emplace(name, hardware_interface::CommandInterface(name, "canbuscmd", &can_command_map_[id]));
-        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Added CAN ID: %d", id);
+    //     std::string name = std::to_string(id);
+    //     state_interfaces_map_.emplace(name, hardware_interface::StateInterface(name, "canbusmsg", &can_state_map_[id]));
+    //     command_interfaces_map_.emplace(name, hardware_interface::CommandInterface(name, "canbuscmd", &can_command_map_[id]));
+    //     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Added CAN ID: %d", id);
             
+    // }
+    while (std::getline(iss, token, ',')) {
+        try {
+            int id = std::stoi(token); // Convert CAN ID from string to integer
+            std::string name = std::to_string(id);
+            state_interfaces_map_.emplace(name, hardware_interface::StateInterface("can_interface", name + "_msg", &can_state_map_[id]));
+            command_interfaces_map_.emplace(name, hardware_interface::CommandInterface("can_interface", name + "_cmd", &can_command_map_[id]));
+            RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Added CAN ID: %d", id);
+        } catch (const std::invalid_argument &e) {
+            RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Invalid CAN ID: %s", token.c_str());
+            return hardware_interface::CallbackReturn::ERROR;
+        } catch (const std::out_of_range &e) {
+            RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "CAN ID out of range: %s", token.c_str());
+            return hardware_interface::CallbackReturn::ERROR;
+        }
     }
 
     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "DONE MAKING INTERFACES");
@@ -98,10 +112,23 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_deactivate(const rclcpp_
 
 std::vector<hardware_interface::StateInterface> ROS2CANInterface::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> state_interfaces;
-    for (const auto &can_id : hardware_info_.hardware_parameters.at("can_ids")) {
-        int id = std::stoi(std::string(1, can_id)); // Convert CAN ID from string to integer
-        state_interfaces.emplace_back(
-            hardware_interface::StateInterface(std::to_string(id), "canbusmsg", &can_state_map_[id]));
+    std::string can_ids_str = hardware_info_.hardware_parameters.at("can_ids");
+
+    // Tokenize the can_ids string and populate the state interfaces
+    std::istringstream iss(can_ids_str);
+    std::string token;
+
+    while (std::getline(iss, token, ',')) {
+        try {
+            int id = std::stoi(token); // Convert CAN ID from string to integer
+            state_interfaces.emplace_back(
+                hardware_interface::StateInterface(std::to_string(id), "canbusmsg", &can_state_map_[id]));
+            RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Added State Interface for CAN ID: %d", id);
+        } catch (const std::invalid_argument &e) {
+            RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Invalid CAN ID: %s", token.c_str());
+        } catch (const std::out_of_range &e) {
+            RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "CAN ID out of range: %s", token.c_str());
+        }
     }
     return state_interfaces;
 }
