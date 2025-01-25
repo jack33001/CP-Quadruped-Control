@@ -42,8 +42,8 @@ public:
 private:
     hardware_interface::HardwareInfo hardware_info_;  ///< Hardware information from URDF.
     std::unique_ptr<CAN_interface::CANInterface> can_interface_;  ///< CAN interface for communication.
-    std::unordered_map<int, std::array<uint8_t, 8>> can_state_map_;  ///< State values mapped by CAN IDs.
-    std::unordered_map<int, std::array<uint8_t, 8>> can_command_map_; // Change the type to store 8-byte arrays
+    std::unordered_map<std::string, std::map<size_t, uint8_t>> can_state_map_;  ///< State values mapped by CAN IDs.
+    std::unordered_map<std::string, std::map<size_t, uint8_t>> can_command_map_; // Change the type to store 8-byte arrays
     
     std::vector<hardware_interface::StateInterface> state_interfaces_;  ///< List of state interfaces.
     std::unordered_map<std::string, hardware_interface::StateInterface> state_interfaces_map_;  ///< State interfaces mapped by name.

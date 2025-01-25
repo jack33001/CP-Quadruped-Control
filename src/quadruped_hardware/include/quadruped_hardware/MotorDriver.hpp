@@ -213,8 +213,8 @@ const motorParams AK10_9_V1p1_params = {
 
 // Working parameters for Steadywin GIM8108 firmware
 const motorParams GIM8108_PARAMS = {
-    -15*2*3.141592,  // P_MIN
-    15*2*3.141592,   // P_MAX
+    -15*2*3.14159265359,  // P_MIN
+    15*2*3.14159265359,   // P_MAX
     -45,    // V_MIN
     45,     // V_MAX
     -18,  // T_MIN
