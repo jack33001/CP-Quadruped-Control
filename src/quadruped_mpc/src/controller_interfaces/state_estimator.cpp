@@ -302,12 +302,12 @@ bool StateEstimator::read_state_interfaces()
     // Read IMU data - assuming they're after all joint interfaces
     const size_t imu_start_idx = joint_names_.size() * interfaces_per_joint;
     
-    // Store quaternion directly from IMU
+    // Store quaternion in Pinocchio's order [x,y,z,w]
     quadruped_info.state_.orientation_quat = Eigen::Vector4d(
-      state_interfaces_[imu_start_idx + 3].get_value(),  // w
       state_interfaces_[imu_start_idx].get_value(),      // x
       state_interfaces_[imu_start_idx + 1].get_value(),  // y
-      state_interfaces_[imu_start_idx + 2].get_value()   // z
+      state_interfaces_[imu_start_idx + 2].get_value(),  // z
+      state_interfaces_[imu_start_idx + 3].get_value()   // w
     );
 
     // Read and store angular velocities directly
@@ -518,7 +518,7 @@ bool StateEstimator::pin_kinematics()
       // Show what indices this joint maps to in the Pinocchio state vector
       const auto& joint = model_.joints[mapping.pinocchio_idx];
       debug << "q[" << joint.idx_q() << ":" << joint.idx_q() + joint.nq() - 1 << "], "
-            << "v[" << joint.idx_v() << ":" << joint.idx_v() + joint.nv - 1 << "]\n";
+            << "v[" << joint.idx_v() << ":" << joint.idx_v() + joint.nv() - 1 << "]\n";
     }
     
     RCLCPP_INFO(
@@ -606,11 +606,11 @@ bool StateEstimator::estimate_orientation()
     auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
-    // Copy quaternion directly to Pinocchio state
-    current_positions_[3] = quadruped_info.state_.orientation_quat[0];  // w
-    current_positions_[4] = quadruped_info.state_.orientation_quat[1];  // x
-    current_positions_[5] = quadruped_info.state_.orientation_quat[2];  // y
-    current_positions_[6] = quadruped_info.state_.orientation_quat[3];  // z
+    // Copy quaternion to Pinocchio state (already in [x,y,z,w] order)
+    current_positions_[3] = quadruped_info.state_.orientation_quat[0];  // x
+    current_positions_[4] = quadruped_info.state_.orientation_quat[1];  // y
+    current_positions_[5] = quadruped_info.state_.orientation_quat[2];  // z
+    current_positions_[6] = quadruped_info.state_.orientation_quat[3];  // w
 
     return true;
   } catch (const std::exception& e) {
