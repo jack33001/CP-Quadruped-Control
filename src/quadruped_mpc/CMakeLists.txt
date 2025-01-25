@@ -27,6 +27,8 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(pinocchio REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(tf2_ros REQUIRED)  # Add this line
+find_package(nav_msgs REQUIRED)  # Add this line
 
 # Add cmake modules path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -119,6 +121,8 @@ ament_target_dependencies(quadruped_mpc_controllers PUBLIC
   pluginlib
   rclcpp_lifecycle
   pinocchio
+  tf2_ros  # Add this line
+  nav_msgs  # Add this line
 )
 
 target_include_directories(quadruped_mpc_controllers PUBLIC
@@ -157,6 +161,8 @@ ament_export_dependencies(
   pluginlib
   pinocchio
   Eigen3
+  tf2_ros  # Add this line
+  nav_msgs  # Add this line
 )
 
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)

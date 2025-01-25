@@ -14,6 +14,7 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "rosgraph_msgs/msg/clock.hpp"  // Add Clock message include
 
 // Project headers
 #include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
@@ -23,6 +24,11 @@
 #include <pinocchio/parsers/urdf.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/frames.hpp>
+
+// Simplify to just the essential tf2_ros includes
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_ros/transform_broadcaster.h"
+#include "nav_msgs/msg/odometry.hpp"  // Move after transform includes
 
 namespace quadruped_mpc
 {
@@ -106,8 +112,16 @@ protected:
   bool estimate_base_position();
   bool estimate_orientation();
 
+  // New method to handle odometry updates
+  bool update_odometry();
+
 private:
   // Removed hardware_height_
+  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+  bool clock_connected_{false};
+  rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
+  rclcpp::Clock::SharedPtr sim_clock_;
 };
 
 }  // namespace quadruped_mpc

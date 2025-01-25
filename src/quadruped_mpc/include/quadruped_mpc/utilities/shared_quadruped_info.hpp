@@ -28,8 +28,8 @@ struct QuadrupedState {
     std::array<double, 8> joint_vel{};  // knee and hip velocities
     std::array<double, 8> joint_eff{};  // knee and hip efforts
 
-    // Add IMU state
-    Eigen::Vector3d orientation{Eigen::Vector3d::Zero()};     // euler angles
+    // Add IMU state - replace euler angles with quaternion
+    Eigen::Vector4d orientation_quat{1.0, 0.0, 0.0, 0.0};  // quaternion in w,x,y,z order
     Eigen::Vector3d angular_velocity{Eigen::Vector3d::Zero()}; // angular velocity
     
     // Add velocity state
