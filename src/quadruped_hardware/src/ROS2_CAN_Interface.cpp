@@ -1,10 +1,15 @@
 #include "quadruped_hardware/ROS2_CAN_Interface.hpp"
+#include "quadruped_hardware/hex_utils.hpp"
+
+
 
 #include <rclcpp/logging.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sstream>
 
 namespace quadruped_hardware {
+
+double hexStringToDouble(const std::string& hexString);
 
 ROS2CANInterface::ROS2CANInterface() {
     state_interfaces_.clear();
@@ -29,9 +34,17 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
     std::array<uint8_t, 8> enable = {0xFF, 0xFF, 0xFF, 0xFF,
                                          0xFF, 0xFF, 0xFF, 0xFC}; // disable 8-byte hex values
 
-
     std::array<uint8_t, 8> disable =  {0xFF, 0xFF, 0xFF, 0xFF,
                                           0xFF, 0xFF, 0xFF, 0xFD};
+
+    std::string hexStr = "405EDD2F1A9FBE77"; // Example hex string
+    
+    double result = hexStringToDouble(hexStr); 
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Converted double: %f", result);
+    std::string convertedHexStr = doubleToHexString(result);
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Converted back to hex: %s", convertedHexStr.c_str());
+
+
 
     // Tokenize the can_ids string and populate the state and command interfaces
     std::istringstream iss(can_ids_str);
@@ -47,7 +60,7 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
             std::map<size_t, uint8_t> byte_map;
 
             for (size_t i = 0; i < 8; ++i) {
-                byte_map.emplace(i, enable[i]);
+                byte_map.emplace(i, disable[i]);
             }
 
             can_command_map_[name] = byte_map;
@@ -202,7 +215,7 @@ hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, co
     rclcpp::Rate rate(1);
 
     for (auto &[message_name, byte_map] : can_command_map_) {
-        unsigned char CANMsg[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+        unsigned char CANMsg[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         
         for (size_t i = 0; i < 8; ++i) {
             double value = static_cast<double>(byte_map[i]); // Convert uint8_t to double
@@ -214,6 +227,8 @@ hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, co
         int can_id = std::stoi(message_name);
 
         can_interface_->sendCANFrame(can_id, CANMsg);
+
+
         RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "ID: %d CANMSG %02x %02x %02x %02x %02x %02x %02x %02x", can_id, 
             CANMsg[0], CANMsg[1], CANMsg[2], CANMsg[3], CANMsg[4], CANMsg[5], CANMsg[6], CANMsg[7]);
     

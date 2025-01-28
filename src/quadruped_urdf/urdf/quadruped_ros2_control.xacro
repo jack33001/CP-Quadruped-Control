@@ -11,7 +11,7 @@
             <parameter> $(find quadruped_hardware)/config/quadruped_hardware.yaml </parameter>
             <!-- CAN bus 0 configuration -->
             <param name="can_interface" >can0</param>
-            <param name="can_ids" >10,11,12,13</param>
+            <param name="can_ids" >14,11,12,13</param>
             <param name="test">5</param>
             <command_interface name="CAN0_cmd"/>
             <state_interface name="CAN0_msg"/>
@@ -27,7 +27,7 @@
             <parameter> $(find quadruped_hardware)/config/quadruped_hardware.yaml </parameter>
             <!-- CAN bus 0 configuration -->
             <param name="can_interface" >can1</param>
-            <param name="can_ids" >14,15,16,17</param>
+            <param name="can_ids" >10</param>
             <param name="test">5</param>
             <command_interface name="CAN1_cmd"/>
             <state_interface name="CAN1_msg"/>

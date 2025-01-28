@@ -13,7 +13,7 @@ find_package(std_msgs REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
 
-
+  src/hex_utils.cpp
   src/CANtester.cpp
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp

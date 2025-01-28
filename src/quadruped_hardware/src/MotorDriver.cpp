@@ -39,6 +39,12 @@ MotorDriver::MotorDriver(const std::vector<int>& motor_ids,
       std::cout << "Using Motor Type AK10-9 V1.1" << std::endl;
       current_params_ = default_params::AK10_9_V1p1_params;
       break;
+    case MotorType::GIM8108:
+      std::cout << "Using Motor Type GIM8108" << std::endl;
+      current_params_ = default_params::GIM8108_params;
+      break;
+
+
     default:
       perror("Specified Motor Type Not Found!!");
   }

@@ -48,7 +48,8 @@ enum MotorType {
   AK80_9_V1p1,
   AK80_9_V2,
   AK70_10V1p1,
-  AK10_9_V1p1
+  AK10_9_V1p1,
+  GIM8108
 };
 
 class MotorDriver {
@@ -212,7 +213,7 @@ const motorParams AK10_9_V1p1_params = {
 };
 
 // Working parameters for Steadywin GIM8108 firmware
-const motorParams GIM8108_PARAMS = {
+const motorParams GIM8108_params = {
     -15*2*3.14159265359,  // P_MIN
     15*2*3.14159265359,   // P_MAX
     -45,    // V_MIN
