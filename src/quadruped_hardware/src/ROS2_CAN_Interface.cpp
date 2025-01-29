@@ -7,6 +7,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sstream>
 
+using namespace CAN_interface;
 namespace quadruped_hardware {
 
 double hexStringToDouble(const std::string& hexString);
@@ -25,6 +26,11 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
 
     // Retrieve the socket name from the hardware info parameters
     std::string socket_name = info.hardware_parameters.at("can_interface");
+
+    // Create a new CAN interface object
+    // CANInterface can_interface_("can0");
+
+
     can_interface_ = std::make_unique<CAN_interface::CANInterface>(socket_name.c_str());
 
     // Retrieve the can_ids string from the hardware info parameters
@@ -95,6 +101,12 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_configure(const rclcpp_l
 hardware_interface::CallbackReturn ROS2CANInterface::on_activate(const rclcpp_lifecycle::State &) {
     // Activation logic here (if needed)
 
+    unsigned char message[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+
+    int test_ID = 11;
+    can_interface_->sendCANFrame(test_ID, message);
+
+
     //     for (const auto &cmd : command_interfaces_map_) {
     //     int id = std::stoi(cmd.first);
     //     double value;
@@ -149,39 +161,38 @@ std::vector<hardware_interface::CommandInterface> ROS2CANInterface::export_comma
 }
 
 hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, const rclcpp::Duration &) {
-    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Starting read loop");
+    // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Starting read loop");
 
-    unsigned char received_data[8];
-    if (can_interface_->receiveCANFrame(received_data)) {
+    auto start_time = std::chrono::steady_clock::now();
+    auto end_time = start_time + std::chrono::milliseconds(500); // Run for # milliseconds
 
-        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Exiting if statement");
-        
+    while (std::chrono::steady_clock::now() < end_time) {
+        unsigned char received_data[8];
+        if (can_interface_->receiveCANFrame(received_data)) {
+            // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Exiting if statement");
 
-        unsigned char id = received_data[0];
+            unsigned char id = received_data[0];
 
-        // Convert the ID to an integer
-        int number = static_cast<int>(id);
-       
+            // Convert the ID to an integer
+            int number = static_cast<int>(id);
 
-        // Convert the ID to a string (if needed)
-        std::string name = std::to_string(id);
+            // Convert the ID to a string (if needed)
+            std::string name = std::to_string(id);
 
-        
+            // Print the ID for debugging
+            // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Received ID: %d", number);
 
-        
-        // Print the ID for debugging
-        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Received ID: %d", number);
-
-
-
-        // auto it = state_interfaces_map_.find(name);
-        // if (it != state_interfaces_map_.end()) {
-        //     std::array<uint8_t, 8> value = static_cast<double>(received_data[1]); // Example conversion
-        //     if (!it->second.set_value(value)) {
-        //         RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "Failed to set value for state interface %s", name.c_str());
-        //     }
-        // } else {
-        //     RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "State interface %s not found", name.c_str());
+            // auto it = state_interfaces_map_.find(name);
+            // if (it != state_interfaces_map_.end()) {
+            //     std::array<uint8_t, 8> value = static_cast<double>(received_data[1]); // Example conversion
+            //     if (!it->second.set_value(value)) {
+            //         RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "Failed to set value for state interface %s", name.c_str());
+            //     }
+            // } else {
+            //     RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "State interface %s not found", name.c_str());
+            // }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Sleep for 10ms between reads
     }
 
 
@@ -212,30 +223,40 @@ hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, con
 
 hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, const rclcpp::Duration &) {
 
+    unsigned char message[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+
+    int test_ID = 11;
+    can_interface_->sendCANFrame(test_ID, message);
+        
+
+
     rclcpp::Rate rate(1);
 
-    for (auto &[message_name, byte_map] : can_command_map_) {
-        unsigned char CANMsg[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    // for (auto &[message_name, byte_map] : can_command_map_) {
+    //     unsigned char CANMsg[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         
-        for (size_t i = 0; i < 8; ++i) {
-            double value = static_cast<double>(byte_map[i]); // Convert uint8_t to double
+    //     for (size_t i = 0; i < 8; ++i) {
+    //         double value = static_cast<double>(byte_map[i]); // Convert uint8_t to double
 
-            CANMsg[i] = static_cast<unsigned char>(value); // Example conversion
-        }
+    //         CANMsg[i] = static_cast<unsigned char>(value); // Example conversion
+    //     }
 
-        // Convert message_name to an integer CAN ID
-        int can_id = std::stoi(message_name);
+    //     // Convert message_name to an integer CAN ID
+    //     int can_id = std::stoi(message_name);
 
-        can_interface_->sendCANFrame(can_id, CANMsg);
+    //     can_interface_->sendCANFrame(can_id, CANMsg);
 
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "ID: %d CANMSG %02x %02x %02x %02x %02x %02x %02x %02x", can_id, 
-            CANMsg[0], CANMsg[1], CANMsg[2], CANMsg[3], CANMsg[4], CANMsg[5], CANMsg[6], CANMsg[7]);
+    //     // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "ID: %d CANMSG %02x %02x %02x %02x %02x %02x %02x %02x", can_id, 
+    //         // CANMsg[0], CANMsg[1], CANMsg[2], CANMsg[3], CANMsg[4], CANMsg[5], CANMsg[6], CANMsg[7]);
     
         
-    }
+    // }
 
     rate.sleep();
+
+    // cut
 
     // for (const auto &cmd : command_interfaces_map_) {
     //     int id = std::stoi(cmd.first);

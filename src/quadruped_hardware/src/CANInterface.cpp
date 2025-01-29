@@ -1,5 +1,5 @@
 #include "quadruped_hardware/CANInterface.hpp"
-#include <iomanip>
+
 
 
 namespace CAN_interface
@@ -60,10 +60,6 @@ namespace CAN_interface
         frame.can_dlc = 8;
         memcpy(frame.data, CANMsg, 8);
 
-        // for (int i = 0; i < frame.can_dlc; ++i) {
-        // std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(frame.data[i]) << " ";
-        // }
-
         if (write(socket_descrp_, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame))
         {
             perror("CANInterface: Error writing to CAN Interface.");
@@ -71,9 +67,7 @@ namespace CAN_interface
         }
         else
         {
-
             return true;
-
         }
     }
 
