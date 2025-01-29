@@ -54,6 +54,7 @@ StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /
       || !pin_kinematics()
       || !detect_contact()
       || !estimate_base_position()
+      || !pin_kinematics()
       || !foot_positions()
       || !update_odometry()
       ) {
@@ -185,7 +186,7 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
 
     try {
       // Create Pinocchio model from URDF
-      pinocchio::urdf::buildModelFromXML(urdf_string_, model_);
+      pinocchio::urdf::buildModelFromXML(urdf_string_, pinocchio::JointModelFreeFlyer(), model_);
       data_ = std::make_unique<pinocchio::Data>(model_);
 
       // Initialize shared info
@@ -364,16 +365,33 @@ bool StateEstimator::foot_positions()
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
     // Get foot positions in correct order: FL, FR, RL,
-    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation() - quadruped_info.state_.pc;  // FL
-    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation() - quadruped_info.state_.pc;  // FR
-    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation() - quadruped_info.state_.pc;  // RL
-    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation() - quadruped_info.state_.pc;  // RR
+    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation();// - quadruped_info.state_.pc;  // FL
+    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation();// - quadruped_info.state_.pc;  // FR
+    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation();// - quadruped_info.state_.pc;  // RL
+    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation();// - quadruped_info.state_.pc;  // RR
 
     // Copy joint states to shared info
     for (size_t i = 0; i < joint_states_.size(); ++i) {
       quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
       quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
     }
+
+    /*RCLCPP_INFO(
+      get_node()->get_logger(),
+      "Foot 1: [%.3f, %.3f, %.3f] m\n\rFoot 2: [%.3f, %.3f, %.3f] m\n\rFoot 3: [%.3f, %.3f, %.3f] m\n\rFoot 4: [%.3f, %.3f, %.3f] m",
+      data_->oMf[foot_frame_ids_[0]].translation()[0],
+      data_->oMf[foot_frame_ids_[0]].translation()[1], 
+      data_->oMf[foot_frame_ids_[0]].translation()[2],
+      data_->oMf[foot_frame_ids_[1]].translation()[0],
+      data_->oMf[foot_frame_ids_[1]].translation()[1],
+      data_->oMf[foot_frame_ids_[1]].translation()[2], 
+      data_->oMf[foot_frame_ids_[2]].translation()[0],
+      data_->oMf[foot_frame_ids_[2]].translation()[1],
+      data_->oMf[foot_frame_ids_[2]].translation()[2],
+      data_->oMf[foot_frame_ids_[3]].translation()[0],
+      data_->oMf[foot_frame_ids_[3]].translation()[1],
+      data_->oMf[foot_frame_ids_[3]].translation()[2]
+    );*/
 
     return true;
   } catch (const std::exception& e) {
@@ -447,12 +465,12 @@ bool StateEstimator::pin_kinematics()
         table << "\n";
     }
     
-    // Log the table (removed throttling)
-    RCLCPP_INFO(
+    // Comment out the first log message
+    /*RCLCPP_INFO(
         get_node()->get_logger(),
         "%s",
         table.str().c_str()
-    );
+    );*/
 
     // Store foot positions as before
     quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation();  // FL
@@ -521,11 +539,12 @@ bool StateEstimator::pin_kinematics()
             << "v[" << joint.idx_v() << ":" << joint.idx_v() + joint.nv() - 1 << "]\n";
     }
     
-    RCLCPP_INFO(
+    // Comment out the second log message
+    /*RCLCPP_INFO(
       get_node()->get_logger(),
       "%s",
       debug.str().c_str()
-    );
+    );*/
 
     return true;
   } catch (const std::exception& e) {
@@ -557,7 +576,7 @@ bool StateEstimator::estimate_base_position()
       quadruped_info.state_.contact_4_
     };
 
-    // Calculate average Z height only, using the average of the contacting footp positions
+    // Calculate average Z height only, using the average of the contacting foot positions
     double world_z = 0.0;
     int contact_count = 0;
 
@@ -578,6 +597,11 @@ bool StateEstimator::estimate_base_position()
       quadruped_info.state_.pc.x() = 0.0;
       quadruped_info.state_.pc.y() = 0.0;
       quadruped_info.state_.pc.z() = -world_z;
+
+      // Update the pinnochio model values
+      current_positions_[0] = quadruped_info.state_.pc.x();
+      current_positions_[1] = quadruped_info.state_.pc.y();
+      current_positions_[2] = quadruped_info.state_.pc.z();
       
       RCLCPP_DEBUG(
         get_node()->get_logger(),
