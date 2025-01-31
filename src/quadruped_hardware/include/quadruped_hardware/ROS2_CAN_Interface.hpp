@@ -16,7 +16,7 @@
 #include "quadruped_hardware/CustomCommandInterface.hpp"
 #include "quadruped_hardware/CustomStateInterface.hpp"
 
-
+using namespace CAN_interface;
 namespace quadruped_hardware {
 
 /**
@@ -31,6 +31,9 @@ public:
     hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state) override;
     hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
     hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
+    // hardware_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & previous_state) override;
+
+
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
@@ -43,6 +46,9 @@ public:
 private:
     hardware_interface::HardwareInfo hardware_info_;  ///< Hardware information from URDF.
     std::unique_ptr<CAN_interface::CANInterface> can_interface_;  ///< CAN interface for communication.
+    
+    // CAN_interface::CANInterface can_interface;
+    
     std::unordered_map<std::string, std::map<size_t, uint8_t>> can_state_map_;  ///< State values mapped by CAN IDs.
     std::unordered_map<std::string, std::map<size_t, uint8_t>> can_command_map_; // Change the type to store 8-byte arrays
     

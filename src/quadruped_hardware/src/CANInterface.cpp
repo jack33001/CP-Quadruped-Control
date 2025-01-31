@@ -57,7 +57,9 @@ namespace CAN_interface
     {
         struct can_frame frame;
         frame.can_id = can_id;
-        frame.can_dlc = 8;
+        // frame.can_dlc = 8; //DEPRECATED
+        frame.len = 8;
+        frame.__pad = 0x00; //set padding to 00 it is set positive by default
         memcpy(frame.data, CANMsg, 8);
 
         if (write(socket_descrp_, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame))

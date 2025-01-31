@@ -14,6 +14,7 @@ double hexStringToDouble(const std::string& hexString);
 
 ROS2CANInterface::ROS2CANInterface() {
     state_interfaces_.clear();
+
 }
 
 hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_interface::HardwareInfo &info) {
@@ -28,11 +29,12 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_inte
     std::string socket_name = info.hardware_parameters.at("can_interface");
 
     // Create a new CAN interface object
-    // CANInterface can_interface_("can0");
+    // CANInterface can_interface("can0");
+    
 
 
     can_interface_ = std::make_unique<CAN_interface::CANInterface>(socket_name.c_str());
-
+    // can_interface_ = std::make_unique<CAN_interface::CANInterface>(socket_name.c_str());
     // Retrieve the can_ids string from the hardware info parameters
     std::string can_ids_str = info.hardware_parameters.at("can_ids");
 
@@ -101,32 +103,44 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_configure(const rclcpp_l
 hardware_interface::CallbackReturn ROS2CANInterface::on_activate(const rclcpp_lifecycle::State &) {
     // Activation logic here (if needed)
 
-    unsigned char message[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+    unsigned char CANMsg[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
 
-    int test_ID = 11;
-    can_interface_->sendCANFrame(test_ID, message);
-
-
-    //     for (const auto &cmd : command_interfaces_map_) {
-    //     int id = std::stoi(cmd.first);
-    //     double value;
-    //     if (cmd.second.get_value(value)) {
-    //         unsigned char CANMsg[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
-            
-    //         // CANMsg[0] = static_cast<unsigned char>(id);
-    //         // CANMsg[1] = static_cast<unsigned char>(value); // Example conversion
-    //         // can_interface_->sendCANFrame(id, CANMsg);
-    //         RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "SENDING %d ON %s ", id,CANMsg);
+    for (auto &[message_name, byte_map] : can_command_map_) {
         
-    //     } else {
-    //         RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "Failed to get value for command interface %s", cmd.first.c_str());
-    //     }
-    // }
+        int can_id = std::stoi(message_name);
+
+        can_interface_->sendCANFrame(can_id, CANMsg);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+
+    }
+
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn ROS2CANInterface::on_deactivate(const rclcpp_lifecycle::State &) {
     // Deactivation logic here (if needed)
+    // unsigned char deactivate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+
+    // for (auto &[message_name, byte_map] : can_command_map_) {
+        
+
+    //     int can_id = std::stoi(message_name);
+
+    //     can_interface_->sendCANFrame(can_id, deactivate);
+
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+    //     // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "ID: %d CANMSG %02x %02x %02x %02x %02x %02x %02x %02x", can_id, 
+    //         // CANMsg[0], CANMsg[1], CANMsg[2], CANMsg[3], CANMsg[4], CANMsg[5], CANMsg[6], CANMsg[7]);
+   
+   
+    // }
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "_______DEACTIVATED HARDWARE INTERFACE_______");
+
+    // rclpp::shutdown();
+
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -161,23 +175,44 @@ std::vector<hardware_interface::CommandInterface> ROS2CANInterface::export_comma
 }
 
 hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, const rclcpp::Duration &) {
-    // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Starting read loop");
 
-    auto start_time = std::chrono::steady_clock::now();
-    auto end_time = start_time + std::chrono::milliseconds(500); // Run for # milliseconds
+    // auto readFunction = [&]() {
+    //     unsigned char received_data[8];
+    //     if (can_interface_->receiveCANFrame(received_data)) {
+    //         unsigned char id = received_data[0];
+    //         int number = static_cast<int>(id);
+    //         std::string name = std::to_string(id);
+    //         RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Received ID: %d", number);
+    //     }
+    // };
 
-    while (std::chrono::steady_clock::now() < end_time) {
-        unsigned char received_data[8];
-        if (can_interface_->receiveCANFrame(received_data)) {
-            // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Exiting if statement");
+    // std::future<void> result = std::async(std::launch::async, readFunction);
 
-            unsigned char id = received_data[0];
+    // if (result.wait_for(std::chrono::milliseconds(100)) == std::future_status::ready) {
+    //     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Read completed within the timeout");
+    // } else {
+    //     RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "Read timed out");
+    // }
 
-            // Convert the ID to an integer
-            int number = static_cast<int>(id);
 
-            // Convert the ID to a string (if needed)
-            std::string name = std::to_string(id);
+
+    // auto start_time = std::chrono::steady_clock::now();
+    // auto end_time = start_time + std::chrono::milliseconds(500); // Run for # milliseconds
+
+    // while (std::chrono::steady_clock::now() < end_time) {
+    //     unsigned char received_data[8];
+    //     if (can_interface_->receiveCANFrame(received_data)) {
+        
+
+    //         // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Exiting if statement");
+
+    //         unsigned char id = received_data[0];
+
+    //         // Convert the ID to an integer
+    //         int number = static_cast<int>(id);
+
+    //         // Convert the ID to a string (if needed)
+    //         std::string name = std::to_string(id);
 
             // Print the ID for debugging
             // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Received ID: %d", number);
@@ -191,9 +226,9 @@ hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, con
             // } else {
             //     RCLCPP_WARN(rclcpp::get_logger("ROS2CANInterface"), "State interface %s not found", name.c_str());
             // }
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Sleep for 10ms between reads
-    }
+        
+        
+    
 
 
     // for (auto &[message_name, byte_map] : can_command_map_) {
@@ -215,22 +250,36 @@ hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, con
     //     rate.sleep();
     // }
 
-
-
     
     return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, const rclcpp::Duration &) {
+    // try {
+    //     rclcpp::Rate rate(1);
+    //     unsigned char activate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFC};
 
-    unsigned char message[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+    //     int test_ID = 11;
+    //     can_interface_->sendCANFrame(test_ID, activate);
+    //     rate.sleep();
 
-    int test_ID = 11;
-    can_interface_->sendCANFrame(test_ID, message);
+    //     unsigned char deactivate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+    //     can_interface_->sendCANFrame(test_ID, deactivate);
+    //     rate.sleep();
+        
+    //     return hardware_interface::return_type::OK;
+    // } catch (const std::exception& e) {
+    //     RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Exception during write: %s", e.what());
+    //     return hardware_interface::return_type::ERROR;
+    // } catch (...) {
+    //     RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Unknown exception during write");
+    //     return hardware_interface::return_type::ERROR;
+    // }
+    
         
 
 
-    rclcpp::Rate rate(1);
+    
 
     // for (auto &[message_name, byte_map] : can_command_map_) {
     //     unsigned char CANMsg[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -254,7 +303,7 @@ hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, co
         
     // }
 
-    rate.sleep();
+    // rate.sleep();
 
     // cut
 
