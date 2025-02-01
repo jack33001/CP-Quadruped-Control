@@ -126,7 +126,8 @@ RUN pip3 install --break-system-packages --ignore-installed pytest
 RUN apt-get install -y \
     python3-pytest \
     ros-jazzy-launch-testing \
-    ros-jazzy-launch-testing-ros
+    ros-jazzy-launch-testing-ros \
+    ros-jazzy-plotjuggler-ros
 
 RUN pip3 install --break-system-packages --ignore-installed -U \
     flake8 \

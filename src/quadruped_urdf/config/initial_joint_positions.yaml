@@ -1,9 +1,9 @@
 initial_joint_positions:
-  fr_hip: 0.015
-  fr_knee: -1.53
-  fl_hip: 0.015
-  fl_knee: -1.53
-  rr_hip: 0.015
-  rr_knee: -1.53
-  rl_hip: 0.015
-  rl_knee: -1.53
+  fr_hip: .88
+  fr_knee: .04
+  fl_hip: -.88
+  fl_knee: -3.18
+  rr_hip: .88
+  rr_knee: .04
+  rl_hip: -.88
+  rl_knee: -3.18

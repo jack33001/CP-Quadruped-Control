@@ -124,89 +124,143 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     // Set current state in solver using the nlp interface
     ocp_nlp_out_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", current_state_.data());
 
-    // Get solver state for comparison before printing tables
-    std::array<double, 12> solver_state;
-    ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", solver_state.data());
-
-    /*
-    // Print state vector table
-    std::stringstream ss;
-    ss << "\n╭─────────────────────────────────────────────────────╮\n";
-    ss << "│                    State Vector                     │\n";
-    ss << "├───────────────┬──────────────────┬──────────────────┤\n";
-    ss << "│ Variable      │ Input State      │ Solver State     │\n";
-    ss << "├───────────────┼──────────────────┼──────────────────┤\n";
-    ss << "│ x             │" << std::setw(16) << std::fixed << std::setprecision(3) << current_state_[0] 
-       << "  │" << std::setw(16) << solver_state[0] << "  │\n";
-    // ... table content ...
-    ss << "│ ang_vel_z     │" << std::setw(16) << current_state_[11] 
-       << "  │" << std::setw(16) << solver_state[11] << "  │\n";
-    ss << "╰───────────────┴──────────────────┴──────────────────╯\n\n";
-
-    // Add parameter table showing what we're setting in the solver
-    ss << "╭───────────────────────────────────────────────────────────────────────╮\n";
-    ss << "│                         Parameter Values                              │\n";
-    ss << "├───────────────┬──────────┬──────────┬─────────────┬─────────────────┤\n";
-    ss << "│ Point         │    X     │    Y     │     Z       │  Stage Values   │\n";
-    ss << "├───────────────┼──────────┼──────────┼─────────────┼─────────────────┤\n";
-    // ... table content ...
-    ss << "╰───────────────┴──────────┴──────────┴─────────────┴─────────────────╯\n\n";
-
-    // Log both tables to terminal
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
-
-    // Add update divider
-    RCLCPP_INFO(get_node()->get_logger(), 
-        "\n====================================================================\n"
-        "                          End of Update                               \n"
-        "====================================================================\n");
-    */
-
-    // Solve OCP
-    //RCLCPP_INFO(get_node()->get_logger(), "Solving optimization problem...");
-    int solver_status = quadruped_ode_acados_solve(solver_);
-    if (solver_status != 0) {
-        RCLCPP_ERROR(get_node()->get_logger(), "Solver failed with status %d", solver_status);
-        return controller_interface::return_type::ERROR;
+    // Set desired state as reference for all nodes in prediction horizon
+    for (int stage = 0; stage <= solver_->nlp_solver_plan->N; stage++) {
+        ocp_nlp_cost_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, stage, "yref", desired_state_.data());
     }
-    //RCLCPP_INFO(get_node()->get_logger(), "Solver completed successfully");
+
+    // Get solver state and reference state for comparison before printing tables
+    std::array<double, 12> solver_state;
+    std::array<double, 12> solver_reference = desired_state_;  // Just use our desired state instead of trying to read from solver
+    ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", solver_state.data());
     
+    // Remove the problematic get operation that was causing the segfault
+    ocp_nlp_cost_model_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "yref", solver_reference.data());
+
     // Get optimal control from nlp interface - these are FOOT FORCES, not joint efforts!
     ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
 
     // Convert foot forces to joint efforts using the Jacobian transpose
-    std::array<double, 8> joint_efforts;  // 2 joints per leg × 4 legs
+    std::array<double, 8> joint_efforts{};  // Initialize all elements to 0
     
+    double scaler = 1;
+
     // Process each leg (2 joints each)
     // FL leg (indices 0,1)
     Eigen::Vector3d f1(optimal_control_[0], optimal_control_[1], optimal_control_[2]);
-    Eigen::Vector2d tau1 = info.state_.J1.transpose() * f1;
+    Eigen::Vector2d tau1 = info.state_.J1.transpose() * -f1 * scaler;
     joint_efforts[0] = tau1[0];  // FL hip
     joint_efforts[1] = tau1[1];  // FL knee
-    
+
     // FR leg (indices 2,3)
     Eigen::Vector3d f2(optimal_control_[3], optimal_control_[4], optimal_control_[5]);
-    Eigen::Vector2d tau2 = info.state_.J2.transpose() * f2;
+    Eigen::Vector2d tau2 = info.state_.J2.transpose() * -f2 * scaler;
     joint_efforts[2] = tau2[0];  // FR hip
     joint_efforts[3] = tau2[1];  // FR knee
     
     // RL leg (indices 4,5)
     Eigen::Vector3d f3(optimal_control_[6], optimal_control_[7], optimal_control_[8]);
-    Eigen::Vector2d tau3 = info.state_.J3.transpose() * f3;
+    Eigen::Vector2d tau3 = info.state_.J3.transpose() * -f3 * scaler;
     joint_efforts[4] = tau3[0];  // RL hip
     joint_efforts[5] = tau3[1];  // RL knee
     
     // RR leg (indices 6,7)
     Eigen::Vector3d f4(optimal_control_[9], optimal_control_[10], optimal_control_[11]);
-    Eigen::Vector2d tau4 = info.state_.J4.transpose() * f4;
+    Eigen::Vector2d tau4 = info.state_.J4.transpose() * -f4 * scaler;
     joint_efforts[6] = tau4[0];  // RR hip
     joint_efforts[7] = tau4[1];  // RR knee
+
+    // Now generate all tables
+    std::stringstream ss;
+    ss << "\n╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮\n";
+    ss << "│                                                 State Vector                                                        │\n";
+    ss << "├───────────────┬──────────────────┬──────────────────┬──────────────────┬──────────────────┬──────────────────┬────┤\n";
+    ss << "│ Variable      │ Input State      │ Solver State     │ Solver Reference │ Desired State    │ Error            │\n";
+    ss << "├───────────────┼──────────────────┼──────────────────┼──────────────────┼──────────────────┼──────────────────┤\n";
+    
+    for (int i = 0; i < 12; i++) {
+        const char* var_names[] = {"x", "y", "z", "roll", "pitch", "yaw", 
+                                 "vel_x", "vel_y", "vel_z", "ang_vel_x", "ang_vel_y", "ang_vel_z"};
+        double error = desired_state_[i] - current_state_[i];
+        ss << "│ " << std::left << std::setw(12) << var_names[i] 
+           << "  │" << std::right << std::setw(16) << std::fixed << std::setprecision(3) << current_state_[i] 
+           << "  │" << std::setw(16) << solver_state[i]
+           << "  │" << std::setw(16) << solver_reference[i]
+           << "  │" << std::setw(16) << desired_state_[i]
+           << "  │" << std::setw(16) << error << "  │\n";
+    }
+    
+    ss << "╰───────────────┴──────────────────┴──────────────────┴──────────────────┴──────────────────┴──────────────────╯\n\n";
+
+    // Add parameter table showing what we're setting in the solver
+    ss << "╭───────────────────────────────────────────────╮\n";
+    ss << "│              Parameter Values                 │\n";
+    ss << "├───────────────┬──────────┬──────────┬─────────┤\n";
+    ss << "│ Point         │    X     │    Y     │    Z    │\n";
+    ss << "├───────────────┼──────────┼──────────┼─────────┤\n";
+    ss << "│ FL Foot       │" << std::setw(10) << p1_[0] << "│" << std::setw(10) << p1_[1] 
+       << "│" << std::setw(8) << p1_[2] << " │\n";
+    ss << "│ FR Foot       │" << std::setw(10) << p2_[0] << "│" << std::setw(10) << p2_[1] 
+       << "│" << std::setw(8) << p2_[2] << " │\n";
+    ss << "│ RL Foot       │" << std::setw(10) << p3_[0] << "│" << std::setw(10) << p3_[1] 
+       << "│" << std::setw(8) << p3_[2] << " │\n";
+    ss << "│ RR Foot       │" << std::setw(10) << p4_[0] << "│" << std::setw(10) << p4_[1] 
+       << "│" << std::setw(8) << p4_[2] << " │\n";
+    ss << "│ COM           │" << std::setw(10) << com_[0] << "│" << std::setw(10) << com_[1] 
+       << "│" << std::setw(8) << com_[2] << " │\n";
+    ss << "╰───────────────┴──────────┴──────────┴─────────╯\n\n";
+
+    // Add controller outputs table
+    ss << "╭─────────────────────────────────────────────────────────────────────────────────╮\n";
+    ss << "│                              Controller Outputs                                 │\n";
+    ss << "├───────────────┬──────────────────────────────┬──────────────────────────────────┤\n";
+    ss << "│ Leg           │ Foot Forces (X, Y, Z)        │ Joint Efforts (Hip, Knee)        │\n";
+    ss << "├───────────────┼──────────────────────────────┼──────────────────────────────────┤\n";
+    ss << "│ FL            │" << std::setw(8) << optimal_control_[0] << ", " 
+                             << std::setw(8) << optimal_control_[1] << ", "
+                             << std::setw(8) << optimal_control_[2] << "  │" 
+                             << std::setw(8) << joint_efforts[0] << ", "
+                             << std::setw(8) << joint_efforts[1] << "                │\n";
+    ss << "│ FR            │" << std::setw(8) << optimal_control_[3] << ", " 
+                             << std::setw(8) << optimal_control_[4] << ", "
+                             << std::setw(8) << optimal_control_[5] << "  │"
+                             << std::setw(8) << joint_efforts[2] << ", "
+                             << std::setw(8) << joint_efforts[3] << "                │\n";
+    ss << "│ RL            │" << std::setw(8) << optimal_control_[6] << ", " 
+                             << std::setw(8) << optimal_control_[7] << ", "
+                             << std::setw(8) << optimal_control_[8] << "  │"
+                             << std::setw(8) << joint_efforts[4] << ", "
+                             << std::setw(8) << joint_efforts[5] << "                │\n";
+    ss << "│ RR            │" << std::setw(8) << optimal_control_[9] << ", " 
+                             << std::setw(8) << optimal_control_[10] << ", "
+                             << std::setw(8) << optimal_control_[11] << "  │"
+                             << std::setw(8) << joint_efforts[6] << ", "
+                             << std::setw(8) << joint_efforts[7] << "                │\n";
+    ss << "├───────────────┼──────────────────────────────┼──────────────────────────────────┤\n";
+    
+    // Calculate total forces
+    double total_fx = optimal_control_[0] + optimal_control_[3] + optimal_control_[6] + optimal_control_[9];
+    double total_fy = optimal_control_[1] + optimal_control_[4] + optimal_control_[7] + optimal_control_[10];
+    double total_fz = optimal_control_[2] + optimal_control_[5] + optimal_control_[8] + optimal_control_[11];
+    
+    ss << "│ Total Force   │" << std::setw(8) << total_fx << ", " 
+                             << std::setw(8) << total_fy << ", "
+                             << std::setw(8) << total_fz << "  │                                  │\n";
+    ss << "╰───────────────┴──────────────────────────────┴──────────────────────────────────╯\n\n";
+
+    // Log all tables to terminal
+    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
+
+    // Add update divider
+    RCLCPP_INFO(get_node()->get_logger(), 
+        "\n==============================================================================================\n"
+        "                                           End of Step                                        \n"
+        "==============================================================================================\n");
 
     // Store command result for hardware interface using computed joint efforts
     for (size_t i = 0; i < joint_names_.size(); ++i) {
       // Set output small to keep the simulation stable
-        //auto result = command_interfaces_[i].set_value(joint_efforts[i]);
-        auto result = command_interfaces_[i].set_value(.01);
+        auto result = command_interfaces_[i].set_value(joint_efforts[i]);
         if (!result) {
             RCLCPP_WARN(get_node()->get_logger(), "Failed to set command for joint %zu", i);
         }
@@ -257,6 +311,7 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   std::fill(current_state_.begin(), current_state_.end(), 0.0);
   std::fill(desired_state_.begin(), current_state_.end(), 0.0);
   std::fill(optimal_control_.begin(), optimal_control_.end(), 0.0);
+  desired_state_[2] = 0.1;  // Set desired height
 
   // Find package share directory
   RCLCPP_INFO(get_node()->get_logger(), "Finding ACADOS library path");

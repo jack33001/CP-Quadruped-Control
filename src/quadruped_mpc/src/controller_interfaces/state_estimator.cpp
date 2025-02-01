@@ -54,7 +54,6 @@ StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /
       || !pin_kinematics()
       || !detect_contact()
       || !estimate_base_position()
-      || !pin_kinematics()
       || !foot_positions()
       || !update_odometry()
       ) {
@@ -365,33 +364,16 @@ bool StateEstimator::foot_positions()
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
     // Get foot positions in correct order: FL, FR, RL,
-    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation();// - quadruped_info.state_.pc;  // FL
-    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation();// - quadruped_info.state_.pc;  // FR
-    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation();// - quadruped_info.state_.pc;  // RL
-    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation();// - quadruped_info.state_.pc;  // RR
+    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation() - quadruped_info.state_.pc;  // FL
+    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation() - quadruped_info.state_.pc;  // FR
+    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation() - quadruped_info.state_.pc;  // RL
+    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation() - quadruped_info.state_.pc;  // RR
 
     // Copy joint states to shared info
     for (size_t i = 0; i < joint_states_.size(); ++i) {
       quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
       quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
     }
-
-    /*RCLCPP_INFO(
-      get_node()->get_logger(),
-      "Foot 1: [%.3f, %.3f, %.3f] m\n\rFoot 2: [%.3f, %.3f, %.3f] m\n\rFoot 3: [%.3f, %.3f, %.3f] m\n\rFoot 4: [%.3f, %.3f, %.3f] m",
-      data_->oMf[foot_frame_ids_[0]].translation()[0],
-      data_->oMf[foot_frame_ids_[0]].translation()[1], 
-      data_->oMf[foot_frame_ids_[0]].translation()[2],
-      data_->oMf[foot_frame_ids_[1]].translation()[0],
-      data_->oMf[foot_frame_ids_[1]].translation()[1],
-      data_->oMf[foot_frame_ids_[1]].translation()[2], 
-      data_->oMf[foot_frame_ids_[2]].translation()[0],
-      data_->oMf[foot_frame_ids_[2]].translation()[1],
-      data_->oMf[foot_frame_ids_[2]].translation()[2],
-      data_->oMf[foot_frame_ids_[3]].translation()[0],
-      data_->oMf[foot_frame_ids_[3]].translation()[1],
-      data_->oMf[foot_frame_ids_[3]].translation()[2]
-    );*/
 
     return true;
   } catch (const std::exception& e) {
@@ -427,50 +409,6 @@ bool StateEstimator::pin_kinematics()
     pinocchio::updateFramePlacements(model_, *data_);
     
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
-    
-    // Create foot position table for logging
-    const std::array<std::string, 4> foot_names = {"FL", "FR", "RL", "RR"};
-    std::stringstream table;
-    table << "\nFoot Positions:\n";
-    table << "----------------------------------------\n";
-    table << "Foot | Frame ID |      X      |      Y      |      Z\n";
-    table << "----------------------------------------\n";
-    
-    for (size_t i = 0; i < 4; ++i) {
-        const auto& pos = data_->oMf[foot_frame_ids_[i]].translation();
-        table << std::setw(4) << foot_names[i] << " | "
-              << std::setw(8) << foot_frame_ids_[i] << " | "
-              << std::fixed << std::setprecision(6)
-              << std::setw(11) << pos[0] << " | "
-              << std::setw(11) << pos[1] << " | "
-              << std::setw(11) << pos[2] << "\n";
-    }
-    table << "----------------------------------------\n";
-    
-    // Add frame transform details
-    table << "\nFrame Transforms:\n";
-    table << "----------------------------------------\n";
-    for (size_t i = 0; i < 4; ++i) {
-        const auto& M = data_->oMf[foot_frame_ids_[i]];
-        table << foot_names[i] << " rotation matrix:\n";
-        table << std::fixed << std::setprecision(4);
-        for (int row = 0; row < 3; row++) {
-            table << "  [";
-            for (int col = 0; col < 3; col++) {
-                table << std::setw(9) << M.rotation()(row,col);
-                if (col < 2) table << ", ";
-            }
-            table << "]\n";
-        }
-        table << "\n";
-    }
-    
-    // Comment out the first log message
-    /*RCLCPP_INFO(
-        get_node()->get_logger(),
-        "%s",
-        table.str().c_str()
-    );*/
 
     // Store foot positions as before
     quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation();  // FL
@@ -478,73 +416,41 @@ bool StateEstimator::pin_kinematics()
     quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation();  // RL
     quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation();  // RR
 
-    // Compute Jacobians as before
-    Eigen::MatrixXd J_temp(6,model_.nv);
-    
+    // Compute full Jacobians in world frame
+    Eigen::MatrixXd J_temp(6, model_.nv);
+
+    // For each leg, get the correct joint indices from the model
     // FL
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[0], pinocchio::LOCAL_WORLD_ALIGNED, 
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_,
+                                   foot_frame_ids_[0], pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED,
                                    J_temp);
-    quadruped_info.state_.J1 = J_temp.topRows(3).leftCols(2);
+    // Extract just the position Jacobian (top 3 rows) for the leg's joints
+    quadruped_info.state_.J1 = J_temp.block<3,2>(0, model_.joints[joint_mappings_[0].pinocchio_idx].idx_v());
 
     // FR
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[1], pinocchio::LOCAL_WORLD_ALIGNED, 
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_,
+                                   foot_frame_ids_[1], pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED,
                                    J_temp);
-    quadruped_info.state_.J2 = J_temp.topRows(3).leftCols(2);
+    quadruped_info.state_.J2 = J_temp.block<3,2>(0, model_.joints[joint_mappings_[2].pinocchio_idx].idx_v());
 
     // RL
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[2], pinocchio::LOCAL_WORLD_ALIGNED, 
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_,
+                                   foot_frame_ids_[2], pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED,
                                    J_temp);
-    quadruped_info.state_.J3 = J_temp.topRows(3).leftCols(2);
+    quadruped_info.state_.J3 = J_temp.block<3,2>(0, model_.joints[joint_mappings_[4].pinocchio_idx].idx_v());
 
     // RR
-    pinocchio::computeFrameJacobian(model_, *data_, current_positions_, 
-                                   foot_frame_ids_[3], pinocchio::LOCAL_WORLD_ALIGNED, 
+    pinocchio::computeFrameJacobian(model_, *data_, current_positions_,
+                                   foot_frame_ids_[3], pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED,
                                    J_temp);
-    quadruped_info.state_.J4 = J_temp.topRows(3).leftCols(2);
+    quadruped_info.state_.J4 = J_temp.block<3,2>(0, model_.joints[joint_mappings_[6].pinocchio_idx].idx_v());
 
-    // Log joint states and model state
-    std::stringstream debug;
-    debug << "\nJoint States & Model State:\n";
-    debug << "----------------------------------------\n";
-    debug << "Current Positions Vector:\n";
-    for (int i = 0; i < current_positions_.size(); ++i) {
-      debug << "  [" << i << "]: " << current_positions_[i] << "\n";
-    }
-    debug << "\nJoint Mappings:\n";
-    for (const auto& mapping : joint_mappings_) {
-      debug << "  " << mapping.name 
-            << " -> Pinocchio idx: " << mapping.pinocchio_idx 
-            << " (state_interface_idx: " << mapping.state_interface_idx << ")\n";
-    }
-    
-    // Add joint state information to debug output
-    debug << "\nJoint States:\n";
-    debug << "----------------------------------------\n";
-    for (size_t i = 0; i < joint_states_.size(); ++i) {
-      const auto& mapping = joint_mappings_[i];
-      const auto& state = joint_states_[i];
-      debug << mapping.name << ":\n"
-            << "  Position: " << state.position 
-            << "  Velocity: " << state.velocity
-            << "  Effort: " << state.effort << "\n"
-            << "  Maps to Pinocchio idx: " << mapping.pinocchio_idx 
-            << " at position indices: ";
-      
-      // Show what indices this joint maps to in the Pinocchio state vector
-      const auto& joint = model_.joints[mapping.pinocchio_idx];
-      debug << "q[" << joint.idx_q() << ":" << joint.idx_q() + joint.nq() - 1 << "], "
-            << "v[" << joint.idx_v() << ":" << joint.idx_v() + joint.nv() - 1 << "]\n";
-    }
-    
-    // Comment out the second log message
-    /*RCLCPP_INFO(
-      get_node()->get_logger(),
-      "%s",
-      debug.str().c_str()
-    );*/
+    // Debug print to check Jacobian values
+    RCLCPP_DEBUG(get_node()->get_logger(), 
+                 "FL Jacobian:\n%.3f %.3f\n%.3f %.3f\n%.3f %.3f",
+                 quadruped_info.state_.J1(0,0), quadruped_info.state_.J1(0,1),
+                 quadruped_info.state_.J1(1,0), quadruped_info.state_.J1(1,1),
+                 quadruped_info.state_.J1(2,0), quadruped_info.state_.J1(2,1));
 
     return true;
   } catch (const std::exception& e) {
@@ -576,7 +482,7 @@ bool StateEstimator::estimate_base_position()
       quadruped_info.state_.contact_4_
     };
 
-    // Calculate average Z height only, using the average of the contacting foot positions
+    // Calculate average Z height only, using the average of the contacting footp positions
     double world_z = 0.0;
     int contact_count = 0;
 
@@ -597,11 +503,6 @@ bool StateEstimator::estimate_base_position()
       quadruped_info.state_.pc.x() = 0.0;
       quadruped_info.state_.pc.y() = 0.0;
       quadruped_info.state_.pc.z() = -world_z;
-
-      // Update the pinnochio model values
-      current_positions_[0] = quadruped_info.state_.pc.x();
-      current_positions_[1] = quadruped_info.state_.pc.y();
-      current_positions_[2] = quadruped_info.state_.pc.z();
       
       RCLCPP_DEBUG(
         get_node()->get_logger(),
@@ -675,9 +576,9 @@ bool StateEstimator::update_odometry()
     Eigen::Vector3d base_position = pc - body_placement.translation();
     
     // Set translation with the base_link offset
-    transform.transform.translation.x = base_position.x();
-    transform.transform.translation.y = base_position.y();
-    transform.transform.translation.z = base_position.z();
+    transform.transform.translation.x = current_positions_[0];
+    transform.transform.translation.y = current_positions_[1];
+    transform.transform.translation.z = current_positions_[2];
     
     // Set rotation (quaternion stays the same as it represents the orientation of the whole robot)
     transform.transform.rotation.w = current_positions_[3];

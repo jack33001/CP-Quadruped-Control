@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def export_quadruped_ode_model(mass=1.0, inertia=0.1) -> AcadosModel:
+def export_quadruped_ode_model(mass, inertia) -> AcadosModel:
     logger.info("Creating quadruped ODE model...")
     
     # Create and verify model instance

@@ -13,6 +13,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# Fix MeshcatCpp configuration - update include path and library name
+set(MeshcatCpp_DIR "/home/meshcat-cpp/build")
+list(APPEND CMAKE_PREFIX_PATH "/home/meshcat-cpp/build")
+
 # Find core packages first
 find_package(ament_cmake REQUIRED)
 
@@ -136,7 +140,7 @@ target_include_directories(quadruped_mpc_controllers PUBLIC
     ${ACADOS_INSTALL_DIR}/external/qpoases//include
 )
 
-# Link quadruped_mpc_controllers with exxplicit dependencies
+# Link quadruped_mpc_controllers with explicit dependencies
 target_link_libraries(quadruped_mpc_controllers PUBLIC
     acados_generated_code
     ${CASADI_INSTALL_DIR}/lib/libcasadi.so

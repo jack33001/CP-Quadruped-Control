@@ -23,8 +23,8 @@ class QuadrupedOptimalController:
         
         with open(param_file, 'r') as f:
             params = yaml.safe_load(f)['optimal_controller']
-            self.mass = params.get('mass', 1.0)
-            self.inertia = params.get('inertia', 0.1)
+            self.mass = params.get('mass',.001)
+            self.inertia = params.get('inertia', .09)
             
         logger.info(f"Loaded parameters: mass={self.mass}kg, inertia={self.inertia}kg*m^2")
 
@@ -138,28 +138,31 @@ class QuadrupedOptimalController:
         ocp.cost.cost_type = 'LINEAR_LS'
         ocp.cost.cost_type_e = 'LINEAR_LS'
 
-        # Define stage cost matrices
+                # Define dimensions
         nx = model.x.shape[0]
         nu = model.u.shape[0]
+        ny = nx  # Track only states
+        ny_e = nx
 
-        # Selection matrices (track position, orientation, and velocities)
-        ocp.cost.Vx = numpy.eye(nx)   # Track all states
-        ocp.cost.Vu = numpy.zeros((nx, nu))  # No direct control cost
-        ocp.cost.Vx_e = ocp.cost.Vx.copy()  # Terminal cost same structure
+        # Selection matrices
+        ocp.cost.Vx = numpy.eye(nx)
+        ocp.cost.Vu = numpy.zeros((ny, nu))
+        ocp.cost.Vx_e = numpy.eye(nx)
 
-        # Balanced weights for all state components
-        pos_weights = [10.0, 10.0, 20.0]    # Back to original weights
-        rot_weights = [10.0]*3              # Original rotation weights
-        vel_weights = [1.0, 1.0, 2.0]       # Original velocity weights
-        ang_weights = [1.0]*3               # Original angular weights
-        
-        # Combine all weights
+        # Weights
+        pos_weights = [1]*3
+        rot_weights = [1]*3
+        vel_weights = [1]*3
+        ang_weights = [1]*3
+        force_weights = [0.1]*nu
+
+        # Cost matrices
         ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
-        ocp.cost.W_e = ocp.cost.W * 10.0  # Stronger terminal cost
+        ocp.cost.W_e = ocp.cost.W * 0.01
 
-        # Reference vectors (will be updated in solve())
-        ocp.cost.yref = numpy.zeros(nx)    # Full state reference
-        ocp.cost.yref_e = numpy.zeros(nx)  # Terminal reference
+        # References
+        ocp.cost.yref = numpy.zeros(ny)
+        ocp.cost.yref_e = numpy.zeros(ny_e)
 
         min_force = numpy.array([-self.mass, -self.mass, 0.0] * 4)     # Reduced lateral forces
         max_force = numpy.array([self.mass, self.mass, self.mass*25] * 4)      # Max vertical ~2.5x robot weight

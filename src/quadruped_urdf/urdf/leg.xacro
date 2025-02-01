@@ -34,7 +34,7 @@
     <link name="${prefix}_shin">
       <inertial>
         <origin xyz="0.124878082316303 -0.00732497518642785 0.000177556490133124" rpy="0 0 0"/>
-        <mass value="0.3"/>
+        <mass value="0.5"/>
         <inertia ixx="3.51684106957956E-05" ixy="8.64609723784203E-07" ixz="7.49065225476954E-10"
                 iyy="4.98576660561721E-05" iyz="-4.653287647839E-11" izz="5.09700357908982E-05"/>
       </inertial>
@@ -64,7 +64,7 @@
     <link name="${prefix}_foot">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.01"/>
+        <mass value="0.1"/>
         <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
       </inertial>
       <visual>

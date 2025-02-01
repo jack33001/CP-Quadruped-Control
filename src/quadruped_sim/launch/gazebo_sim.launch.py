@@ -1,11 +1,15 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
-from launch.substitutions import PathJoinSubstitution
+from launch.actions import ExecuteProcess
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import os
 import xacro
+import datetime
+import shutil  # Add this import
+import uuid  # Add this import
 
 def generate_launch_description():
     # Package and path definitions
@@ -26,6 +30,19 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock']  # Using gz instead of ignition
     )
 
+    # Joint and pose state bridge node
+    state_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='state_bridge',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
+        arguments=[
+            # Bridge with both ROS and Gazebo message types explicitly defined
+            '/world/empty/pose/info@geometry_msgs/msg/PoseArray[ignition.msgs.Pose_V',
+        ]
+    )
+
     # Spawn robot node
     spawn_robot = Node(
         package='ros_gz_sim',
@@ -36,6 +53,31 @@ def generate_launch_description():
                    '-x', '0.0', '-y', '0.0', '-z', '1.0', 
                    '-entity', 'Edward'],
         parameters=[{'use_sim_time': True, 'update_rate': 1000}]
+    )
+
+    # PlotJuggler node with only auto-subscribe
+    plotjuggler = Node(
+        package='plotjuggler',
+        executable='plotjuggler',
+        name='plotjuggler',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    # Configure storage location for ROS2 bags with unique timestamp
+    base_path = os.path.join(os.getcwd(), 'src', 'quadruped_sim', 'logs')
+    if os.path.exists(base_path):
+        shutil.rmtree(base_path)
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    unique_id = str(uuid.uuid4())[:8]
+    storage_path = os.path.join(base_path, f"{timestamp}-{unique_id}")
+    os.makedirs(storage_path)
+
+    # ROS2 bag recording node with only pose data
+    bag_recorder = ExecuteProcess(
+        cmd=['ros2', 'bag', 'record',
+             '--output', storage_path,
+             '/world/empty/pose/info'],
+        output='screen'
     )
 
     return LaunchDescription([
@@ -53,8 +95,11 @@ def generate_launch_description():
                 'gz_args': '-r empty.sdf',
             }.items()
         ),
-        # Add clock bridge node
         clock_bridge,
-        # Add robot spawning node
+        # Spawn robot first
         spawn_robot,
+        # Then bridge its pose
+        state_bridge,
+        plotjuggler,
+        bag_recorder,
     ])

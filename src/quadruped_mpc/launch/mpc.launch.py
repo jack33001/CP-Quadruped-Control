@@ -22,7 +22,16 @@ def generate_launch_description():
             'imu_sensor_controller',
             'quadruped_broadcaster',
             'state_estimator',
-            'balance_controller',
+            'balance_controller'
+        ],
+        output='screen',
+    )
+    
+    inactive_controllers_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            '--inactive', 'balance_controller'  # Flag goes before the controller it affects
         ],
         output='screen',
     )
@@ -30,4 +39,5 @@ def generate_launch_description():
     return LaunchDescription([
         #generate_controller,  # Run this first
         controllers_spawner,
+        #inactive_controllers_spawner
     ])

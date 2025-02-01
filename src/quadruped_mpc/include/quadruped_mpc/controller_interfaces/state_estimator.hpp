@@ -30,6 +30,10 @@
 #include "tf2_ros/transform_broadcaster.h"
 #include "nav_msgs/msg/odometry.hpp"  // Move after transform includes
 
+// Remove MeshcatCpp includes
+// #include <MeshcatCpp/Meshcat.h>
+// #include <MeshcatCpp/Shape.h>
+
 namespace quadruped_mpc
 {
 
@@ -122,6 +126,8 @@ private:
   bool clock_connected_{false};
   rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
   rclcpp::Clock::SharedPtr sim_clock_;
+  // Remove Meshcat visualizer pointer
+  // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
 
 }  // namespace quadruped_mpc
