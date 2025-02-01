@@ -129,6 +129,13 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
         ocp_nlp_cost_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, stage, "yref", desired_state_.data());
     }
 
+    // Solve the optimization problem
+    int solve_status = quadruped_ode_acados_solve(solver_);
+    if (solve_status != 0) {
+        RCLCPP_ERROR(get_node()->get_logger(), "ACADOS solver failed with status %d", solve_status);
+        return controller_interface::return_type::ERROR;
+    }
+
     // Get solver state and reference state for comparison before printing tables
     std::array<double, 12> solver_state;
     std::array<double, 12> solver_reference = desired_state_;  // Just use our desired state instead of trying to read from solver
