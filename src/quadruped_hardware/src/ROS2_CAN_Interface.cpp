@@ -12,9 +12,24 @@ namespace quadruped_hardware {
 
 double hexStringToDouble(const std::string& hexString);
 
-ROS2CANInterface::ROS2CANInterface() {
+ROS2CANInterface::ROS2CANInterface()
+    :running(true) {
     state_interfaces_.clear();
+}
 
+
+// Function to run in the thread
+void ROS2CANInterface::readthread(std::atomic<bool>& running) {
+
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "starting thread");
+    while (running) {
+        // Perform some work here
+        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "This is the thread!");
+
+        // Sleep for a short duration to avoid busy-waiting
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    std::cout << "Thread is stopping..." << std::endl;
 }
 
 hardware_interface::CallbackReturn ROS2CANInterface::on_init(const hardware_interface::HardwareInfo &info) {
@@ -105,16 +120,33 @@ hardware_interface::CallbackReturn ROS2CANInterface::on_activate(const rclcpp_li
 
     unsigned char CANMsg[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
 
+    int can_id;
+
     for (auto &[message_name, byte_map] : can_command_map_) {
         
-        int can_id = std::stoi(message_name);
+        can_id = std::stoi(message_name);
 
         can_interface_->sendCANFrame(can_id, CANMsg);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
+        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Activated CAN ID: %d", can_id);
+
 
     }
+
+    can_id = 2;
+    unsigned char activate_PDB[8]= {0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    can_interface_->sendCANFrame(can_id, activate_PDB);
+
+
+    // Create and start the thread
+    std::thread t([this]() { this->readthread(this->running); });
+    t.detach();
+
+
+
+
 
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -175,7 +207,9 @@ std::vector<hardware_interface::CommandInterface> ROS2CANInterface::export_comma
 }
 
 hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, const rclcpp::Duration &) {
-
+    
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Starting read function");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     // auto readFunction = [&]() {
     //     unsigned char received_data[8];
     //     if (can_interface_->receiveCANFrame(received_data)) {
@@ -255,29 +289,31 @@ hardware_interface::return_type ROS2CANInterface::read(const rclcpp::Time &, con
 }
 
 hardware_interface::return_type ROS2CANInterface::write(const rclcpp::Time &, const rclcpp::Duration &) {
-    // try {
-    //     rclcpp::Rate rate(1);
-    //     unsigned char activate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFC};
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "Starting write function");
 
-    //     int test_ID = 11;
-    //     can_interface_->sendCANFrame(test_ID, activate);
-    //     rate.sleep();
+    try {
+        rclcpp::Rate rate(1);
+        unsigned char activate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFC};
 
-    //     unsigned char deactivate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
-    //     can_interface_->sendCANFrame(test_ID, deactivate);
-    //     rate.sleep();
+        int test_ID = 25;
+        can_interface_->sendCANFrame(test_ID, activate);
+        rate.sleep();
+
+        unsigned char deactivate[8] = {0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFD};
+        can_interface_->sendCANFrame(test_ID, deactivate);
+        rate.sleep();
         
-    //     return hardware_interface::return_type::OK;
-    // } catch (const std::exception& e) {
-    //     RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Exception during write: %s", e.what());
-    //     return hardware_interface::return_type::ERROR;
-    // } catch (...) {
-    //     RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Unknown exception during write");
-    //     return hardware_interface::return_type::ERROR;
-    // }
+        return hardware_interface::return_type::OK;
+    } catch (const std::exception& e) {
+        RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Exception during write: %s", e.what());
+        return hardware_interface::return_type::ERROR;
+    } catch (...) {
+        RCLCPP_ERROR(rclcpp::get_logger("ROS2CANInterface"), "Unknown exception during write");
+        return hardware_interface::return_type::ERROR;
+    }
     
         
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     
 

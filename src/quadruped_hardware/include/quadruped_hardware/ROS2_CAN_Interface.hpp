@@ -41,6 +41,9 @@ public:
     hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
     hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+   
+
+    
 
 
 private:
@@ -63,6 +66,10 @@ private:
 
     // State data buffer (8-byte array for state information).
     std::vector<uint8_t> state_data_;
+
+    std::atomic<bool> running;
+    void readthread(std::atomic<bool>& running);
+
 
     };
 
