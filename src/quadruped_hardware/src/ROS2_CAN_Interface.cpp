@@ -24,7 +24,9 @@ void ROS2CANInterface::readthread(std::atomic<bool>& running) {
     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "starting thread");
     while (running) {
         // Perform some work here
-        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "This is the thread!");
+        // RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "This is the thread!");
+
+
 
         // Sleep for a short duration to avoid busy-waiting
         std::this_thread::sleep_for(std::chrono::seconds(1));

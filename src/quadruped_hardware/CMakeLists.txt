@@ -40,6 +40,8 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
+pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
+
 
 # Install the plugin description file
 install(FILES ros2_Cantester.xml
@@ -47,6 +49,7 @@ install(FILES ros2_Cantester.xml
 )
 
 pluginlib_export_plugin_description_file(controller_interface ros2_Cantester.xml)
+
 
 # # Install the shared library
 # install(TARGETS CAN_Tester

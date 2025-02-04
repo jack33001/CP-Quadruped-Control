@@ -44,7 +44,6 @@ MotorDriver::MotorDriver(const std::vector<int>& motor_ids,
       current_params_ = default_params::GIM8108_params;
       break;
 
-
     default:
       perror("Specified Motor Type Not Found!!");
   }
@@ -100,7 +99,7 @@ std::map<int, motorState> MotorDriver::disableMotor(
     // {
     //     std::cout << "MotorDriver::disableMotor() Motor seems to already be
     //     in disabled state. \
-    //                           Did you want to really do this?" << std::endl;
+            //                   Did you want to really do this?" << std::endl;
     // }
 
     // Bugfix: To remove the initial kick at motor start.
@@ -184,12 +183,26 @@ std::map<int, motorState> MotorDriver::sendRadCommand(
   motorState state;
   std::map<int, motorState> motor_state_map;
 
-  // Fixed the range-based for loop
-  for (const auto& command_pair : motor_rad_commands) {
+  for (const std::pair<int, motorCommand>& command_pair : motor_rad_commands) {
     int cmd_motor_id = command_pair.first;
     const motorCommand& cmd_to_send = command_pair.second;
-    // ...rest of the function remains unchanged...
+
+    encodeCANFrame(cmd_to_send, this->CAN_msg_);
+    // TODO: Enable enabled check better across multiple objects of this class.
+    // if (is_motor_enabled_[cmd_motor_id])
+    // {
+    //     std::cout << "MotorDriver::sendRadCommand() Motor in disabled state.\
+            //                   Did you want to really do this?" << std::endl;
+    // }
+    motor_CAN_interface_.sendCANFrame(cmd_motor_id, CAN_msg_);
+    usleep(motorReplyWaitTime);
+    if (motor_CAN_interface_.receiveCANFrame(CAN_reply_msg_)) {
+      state = decodeCANFrame(CAN_reply_msg_);
+    } else {
+      perror("MotorDriver::sendRadCommand() Unable to Receive CAN Reply.");
+    }
   }
+
   return motor_state_map;
 }
 
@@ -238,12 +251,12 @@ motorState MotorDriver::decodeCANFrame(
   float i = uint_to_float(i_int, -current_params_.T_MAX, current_params_.T_MAX,
                           12);  // here -T_MAX, in encode T_MIN
 
-  motorState state;
-      state.motor_id = id;
-      state.position = p * current_params_.AXIS_DIRECTION;
-      state.velocity = v * current_params_.AXIS_DIRECTION;
-      state.torque = i * current_params_.AXIS_DIRECTION;
-      return state;
+  motorState state{.motor_id = id,
+                   .position = p * current_params_.AXIS_DIRECTION,
+                   .velocity = v * current_params_.AXIS_DIRECTION,
+                   .torque = i * current_params_.AXIS_DIRECTION};
+
+  return state;
 }
 
 void MotorDriver::encodeCANFrame(const motorCommand& cmd_to_send,
