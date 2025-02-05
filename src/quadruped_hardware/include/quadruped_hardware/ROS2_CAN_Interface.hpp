@@ -13,8 +13,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 #include "quadruped_hardware/CANInterface.hpp"
-#include "quadruped_hardware/CustomCommandInterface.hpp"
-#include "quadruped_hardware/CustomStateInterface.hpp"
+
 
 using namespace CAN_interface;
 namespace quadruped_hardware {

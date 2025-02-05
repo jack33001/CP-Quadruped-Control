@@ -13,20 +13,21 @@
   <!-- ros2 plugins -->
     
   <!-- ros2 plugins -->
-    <ros2_control name="quadruped_hardware/ROS2CANInterface" type="system">
-        <hardware>
-            <!-- namespace/class-->
-            <plugin>quadruped_hardware/ROS2CANInterface</plugin>
-            <parameter> $(find quadruped_hardware)/config/quadruped_hardware.yaml </parameter>
-            <!-- CAN bus 0 configuration -->
-            <param name="can_interface" >can0</param>
-            <param name="can_ids" >10,11,12,13</param>
-            <param name="test">5</param>
-            <command_interface name="CAN0_cmd"/>
-            <state_interface name="CAN0_msg"/>
 
-        </hardware>
-    </ros2_control>
+    <!-- <ros2_control name="quadruped_hardware/ROS2CANInterface" type="system"> -->
+        <!-- <hardware> -->
+            <!-- namespace/class -->
+            <!-- <plugin>quadruped_hardware/ROS2CANInterface</plugin> -->
+            <!-- <parameter> $(find quadruped_hardware)/config/quadruped_hardware.yaml </parameter> -->
+            <!-- CAN bus 0 configuration -->
+            <!-- <param name="can_interface" >can0</param> -->
+            <!-- <param name="can_ids" >10,11,12,13</param> -->
+            <!-- <param name="test">5</param> -->
+            <!-- <command_interface name="CAN0_cmd"/> -->
+            <!-- <state_interface name="CAN0_msg"/> -->
+<!--  -->
+        <!-- </hardware> -->
+    <!-- </ros2_control> -->
 
 
     <!-- <ros2_control name="quadruped_hardware/ROS2CANInterfaceCAN" type="system"> -->
@@ -49,10 +50,10 @@
     <ros2_control name="quadruped_hardware/CANMotorDriver_RR" type="system">
         <hardware>
             
-            <plugin>quadruped_hardware/CANMotor_ROS2</plugin>
-            <param name="joint_name">rr_elbow</param> 
-            <param name="can_interface" >can0</param>
-            <param name="can_id" >10</param>
+            <plugin>quadruped_hardware/CANMotor</plugin>
+            <param name="joint_name">rr_knee</param> 
+            <param name="can_bus" >can0</param>
+            <param name="can_id" >25</param>
             
 
         </hardware>

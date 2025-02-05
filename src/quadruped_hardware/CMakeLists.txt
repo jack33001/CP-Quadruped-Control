@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} SHARED
 
   src/hex_utils.cpp
   src/CANtester.cpp
+  src/ROS2_CAN_Motor.cpp
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
