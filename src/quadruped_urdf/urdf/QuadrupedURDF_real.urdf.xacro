@@ -8,6 +8,7 @@
   <xacro:include filename="$(find quadruped_urdf)/urdf/leg.xacro"/>
   <xacro:include filename="$(find quadruped_urdf)/urdf/sensors.xacro"/>
   <xacro:include filename="$(find quadruped_urdf)/urdf/quadruped_ros2_control.xacro"/>
+  <!-- <xacro:include filename="$(find quadruped_urdf)/urdf/joint_interfaces.xacro"/> -->
   
 
 

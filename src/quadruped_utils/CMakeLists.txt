@@ -50,6 +50,21 @@ ament_export_dependencies(
   std_msgs
 )
 
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 

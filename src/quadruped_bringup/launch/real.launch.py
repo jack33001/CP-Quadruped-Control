@@ -46,6 +46,20 @@ def generate_launch_description():
         ])
     )
     
+    # # Define the package and launch file paths
+    # hardware_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         PathJoinSubstitution([
+    #             FindPackageShare('quadruped_utils'),
+    #             'launch',
+    #             'testcontroller.launch.py'
+    #         ])
+    #     ])
+    # )
+    
+    
+    
+    
     print('hardware_launch complete')
     
     # Return launch description with timed execution

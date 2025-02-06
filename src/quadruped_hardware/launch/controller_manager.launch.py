@@ -8,11 +8,12 @@ import os
 def generate_launch_description():
 
     robot_description_path = '/home/ws/src/quadruped_urdf/urdf/QuadrupedURDF_real.urdf.xacro'  # Path to your URDF file
+    yaml_path = '/home/ws/src/quadruped_utils/config/controller.yaml'
 
     # Path to your controller YAML file
 
     config_path = os.path.join(
-        get_package_share_directory('quadruped_hardware'), 'config', 'quadruped_hardware.yaml')
+        get_package_share_directory('quadruped_utils'), 'config', 'controller.yaml')
 
 
 
@@ -26,7 +27,7 @@ def generate_launch_description():
             output='screen',
             # namespace= "quadruped_hardware",
             parameters=[
-                config_path  # Load URDF
+                yaml_path , # Load yaml
             ],
 
         )

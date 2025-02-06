@@ -51,12 +51,29 @@
         <hardware>
             
             <plugin>quadruped_hardware/CANMotor</plugin>
-            <param name="joint_name">rr_knee</param> 
+            <param name="joint_name">fr_hip</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >25</param>
             
 
         </hardware>
+
+        <!-- fr_hip Joint -->
+        <joint name="fr_hip">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+      
+
+        </joint>
+
+
+
     </ros2_control>
 
 

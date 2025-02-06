@@ -24,7 +24,7 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 
 
-CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(0), cmd_kd(0),
+CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1),
                        state_position(0), state_velocity(0), state_effort(0) {}
 
 
@@ -134,6 +134,7 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     commandMap[can_id[0]] = movecmd;
 
 
+    std::cout << "Commanded position: " << cmd_position << std::endl;
 
     stateMap = motor_controller_->sendDegreeCommand( commandMap);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
