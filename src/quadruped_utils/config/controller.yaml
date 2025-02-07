@@ -102,3 +102,4 @@ joint_group_position_controller:
         - fr_hip
         # - fr_knee
       # interface_name: position
+      command_topic: /joint_group_position_controller/command

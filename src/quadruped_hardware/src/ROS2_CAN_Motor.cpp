@@ -87,7 +87,9 @@ std::vector<hardware_interface::StateInterface> CANMotor::export_state_interface
 }
 
 std::vector<hardware_interface::CommandInterface> CANMotor::export_command_interfaces() {
-    
+    std::cout << "Exporting command interfaces" << std::endl;
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "exporting command interfaces");
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "start cmd_position: %f", cmd_position);
 
     command_interfaces.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "position", &cmd_position));
@@ -99,6 +101,9 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
         hardware_interface::CommandInterface(joint_name,  "kp", &cmd_kp));
     command_interfaces.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "kd", &cmd_kd));
+
+
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "end cmd_position: %f", cmd_position);
 
     // command_interfaces.emplace_back(joint_name, "position", &command_data_[0]);
     // command_interfaces.emplace_back(joint_name, "velocity", &command_data_[1]);
@@ -116,6 +121,17 @@ hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const r
 
     return hardware_interface::return_type::OK;
 }
+
+// hardware_interface::return_type CANMotor::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
+//     // Read data from the hardware
+
+//     // std::vector<hardware_interface::CommandInterface> command_interfaces = can_motor.export_command_interfaces();
+//     std::cout << "Updating" << std::endl;
+
+
+//     return hardware_interface::return_type::OK;
+// }
+
 
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
@@ -143,6 +159,9 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     state_velocity = stateMap[can_id[0]].velocity;
     state_effort = stateMap[can_id[0]].torque;
 
+    std::cout << "State position: " << state_position << std::endl;
+    std::cout << "State velocity: " << state_velocity << std::endl;
+    std::cout << "State torque: " << state_effort << std::endl;
 
 
     motor_controller_->disableMotor(can_id);
