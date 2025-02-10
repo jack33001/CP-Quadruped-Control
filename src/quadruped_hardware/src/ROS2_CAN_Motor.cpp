@@ -62,7 +62,8 @@ hardware_interface::CallbackReturn CANMotor::on_cleanup(const rclcpp_lifecycle::
 
 hardware_interface::CallbackReturn CANMotor::on_activate(const rclcpp_lifecycle::State& previous_state) {
     // Activation code
-    auto start_state = motor_controller_->disableMotor(can_id);
+    // auto start_state = motor_controller_->disableMotor(can_id);
+    auto start_state = motor_controller_->enableMotor(can_id);
 
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -136,7 +137,7 @@ hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const r
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
 
-    motor_controller_->enableMotor(can_id); 
+    // motor_controller_->enableMotor(can_id); 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 
@@ -159,12 +160,15 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     state_velocity = stateMap[can_id[0]].velocity;
     state_effort = stateMap[can_id[0]].torque;
 
+    std::cout << "State position: " << stateMap[can_id[0]].position << std::endl;
+
+
     std::cout << "State position: " << state_position << std::endl;
     std::cout << "State velocity: " << state_velocity << std::endl;
     std::cout << "State torque: " << state_effort << std::endl;
 
 
-    motor_controller_->disableMotor(can_id);
+    // motor_controller_->disableMotor(can_id);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 

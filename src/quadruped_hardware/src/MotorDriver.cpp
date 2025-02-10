@@ -198,6 +198,7 @@ std::map<int, motorState> MotorDriver::sendRadCommand(
     usleep(motorReplyWaitTime);
     if (motor_CAN_interface_.receiveCANFrame(CAN_reply_msg_)) {
       state = decodeCANFrame(CAN_reply_msg_);
+      motor_state_map[cmd_motor_id] = state;
     } else {
       perror("MotorDriver::sendRadCommand() Unable to Receive CAN Reply.");
     }
