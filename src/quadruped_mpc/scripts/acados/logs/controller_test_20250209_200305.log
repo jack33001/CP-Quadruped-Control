@@ -1,0 +1,13 @@
+2025-02-09 20:03:06,527 - INFO: Starting controller test...
+2025-02-09 20:03:06,529 - INFO: Loaded parameters: mass=14.5kg, inertia=0.1kg*m^2
+2025-02-09 20:03:06,529 - INFO: Initializing controller with N=20, T=2
+2025-02-09 20:03:06,530 - INFO: Loaded parameters: mass=14.5kg, inertia=0.1kg*m^2
+2025-02-09 20:03:06,531 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-09 20:03:06,531 - INFO: Creating quadruped ODE model...
+2025-02-09 20:03:06,531 - INFO: Created model with name: quadruped_ode
+2025-02-09 20:03:06,532 - INFO: Created state vector with shape: (24, 1)
+2025-02-09 20:03:06,532 - INFO: State vector: [x, y, z, theta, phi, psi, vx, vy, vz, wx, wy, wz, f1_x, f1_y, f1_z, f2_x, f2_y, f2_z, f3_x, f3_y, f3_z, f4_x, f4_y, f4_z]
+2025-02-09 20:03:06,532 - INFO: Set model.x with type: <class 'casadi.casadi.SX'>
+2025-02-09 20:03:06,533 - INFO: Control vector created with shape: (12, 1)
+2025-02-09 20:03:06,533 - INFO: Set model.xdot with shape: (24, 1)
+2025-02-09 20:03:06,535 - INFO: Created dynamics vector with shape: (24, 1)

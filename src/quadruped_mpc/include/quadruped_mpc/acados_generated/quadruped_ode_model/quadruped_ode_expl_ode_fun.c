@@ -32,6 +32,7 @@ extern "C" {
 #define casadi_f0 CASADI_PREFIX(f0)
 #define casadi_s0 CASADI_PREFIX(s0)
 #define casadi_s1 CASADI_PREFIX(s1)
+#define casadi_s2 CASADI_PREFIX(s2)
 
 /* Symbol visibility in DLLs */
 #ifndef CASADI_SYMBOL_EXPORT
@@ -48,10 +49,11 @@ extern "C" {
   #endif
 #endif
 
-static const casadi_int casadi_s0[16] = {12, 1, 0, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-static const casadi_int casadi_s1[19] = {15, 1, 0, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+static const casadi_int casadi_s0[28] = {24, 1, 0, 24, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+static const casadi_int casadi_s1[16] = {12, 1, 0, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+static const casadi_int casadi_s2[4] = {0, 1, 0, 0};
 
-/* quadruped_ode_expl_ode_fun:(i0[12],i1[12],i2[15])->(o0[12]) */
+/* quadruped_ode_expl_ode_fun:(i0[24],i1[12],i2[0])->(o0[24]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a2, a20, a21, a22, a3, a4, a5, a6, a7, a8, a9;
   a0=arg[0]? arg[0][6] : 0;
@@ -73,7 +75,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a2=(a2+a3);
   a4=arg[1]? arg[1][9] : 0;
   a2=(a2+a4);
-  a5=20.;
+  a5=15.;
   a2=(a2/a5);
   if (res[0]!=0) res[0][6]=a2;
   a2=arg[1]? arg[1][1] : 0;
@@ -96,62 +98,62 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a5=-9.8100000000000005e+00;
   a11=(a11+a5);
   if (res[0]!=0) res[0][8]=a11;
-  a11=arg[2]? arg[2][1] : 0;
-  a5=arg[2]? arg[2][13] : 0;
+  a11=arg[0]? arg[0][13] : 0;
+  a5=arg[0]? arg[0][1] : 0;
   a11=(a11-a5);
   a14=(a11*a7);
-  a15=arg[2]? arg[2][2] : 0;
-  a16=arg[2]? arg[2][14] : 0;
+  a15=arg[0]? arg[0][14] : 0;
+  a16=arg[0]? arg[0][2] : 0;
   a15=(a15-a16);
   a17=(a15*a2);
   a14=(a14-a17);
-  a17=arg[2]? arg[2][4] : 0;
+  a17=arg[0]? arg[0][16] : 0;
   a17=(a17-a5);
   a18=(a17*a10);
-  a19=arg[2]? arg[2][5] : 0;
+  a19=arg[0]? arg[0][17] : 0;
   a19=(a19-a16);
   a20=(a19*a6);
   a18=(a18-a20);
   a14=(a14+a18);
-  a18=arg[2]? arg[2][7] : 0;
+  a18=arg[0]? arg[0][19] : 0;
   a18=(a18-a5);
   a20=(a18*a12);
-  a21=arg[2]? arg[2][8] : 0;
+  a21=arg[0]? arg[0][20] : 0;
   a21=(a21-a16);
   a22=(a21*a8);
   a20=(a20-a22);
   a14=(a14+a20);
-  a20=arg[2]? arg[2][10] : 0;
+  a20=arg[0]? arg[0][22] : 0;
   a20=(a20-a5);
   a5=(a20*a13);
-  a22=arg[2]? arg[2][11] : 0;
+  a22=arg[0]? arg[0][23] : 0;
   a22=(a22-a16);
   a16=(a22*a9);
   a5=(a5-a16);
   a14=(a14+a5);
-  a5=10.;
+  a5=1.0000000000000001e-01;
   a14=(a14/a5);
   if (res[0]!=0) res[0][9]=a14;
   a15=(a15*a0);
-  a14=arg[2]? arg[2][0] : 0;
-  a16=arg[2]? arg[2][12] : 0;
+  a14=arg[0]? arg[0][12] : 0;
+  a16=arg[0]? arg[0][0] : 0;
   a14=(a14-a16);
   a7=(a14*a7);
   a15=(a15-a7);
   a19=(a19*a1);
-  a7=arg[2]? arg[2][3] : 0;
+  a7=arg[0]? arg[0][15] : 0;
   a7=(a7-a16);
   a10=(a7*a10);
   a19=(a19-a10);
   a15=(a15+a19);
   a21=(a21*a3);
-  a19=arg[2]? arg[2][6] : 0;
+  a19=arg[0]? arg[0][18] : 0;
   a19=(a19-a16);
   a12=(a19*a12);
   a21=(a21-a12);
   a15=(a15+a21);
   a22=(a22*a4);
-  a21=arg[2]? arg[2][9] : 0;
+  a21=arg[0]? arg[0][21] : 0;
   a21=(a21-a16);
   a13=(a21*a13);
   a22=(a22-a13);
@@ -175,6 +177,19 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a14=(a14+a21);
   a14=(a14/a5);
   if (res[0]!=0) res[0][11]=a14;
+  a14=0.;
+  if (res[0]!=0) res[0][12]=a14;
+  if (res[0]!=0) res[0][13]=a14;
+  if (res[0]!=0) res[0][14]=a14;
+  if (res[0]!=0) res[0][15]=a14;
+  if (res[0]!=0) res[0][16]=a14;
+  if (res[0]!=0) res[0][17]=a14;
+  if (res[0]!=0) res[0][18]=a14;
+  if (res[0]!=0) res[0][19]=a14;
+  if (res[0]!=0) res[0][20]=a14;
+  if (res[0]!=0) res[0][21]=a14;
+  if (res[0]!=0) res[0][22]=a14;
+  if (res[0]!=0) res[0][23]=a14;
   return 0;
 }
 
@@ -235,8 +250,8 @@ CASADI_SYMBOL_EXPORT const char* quadruped_ode_expl_ode_fun_name_out(casadi_int 
 CASADI_SYMBOL_EXPORT const casadi_int* quadruped_ode_expl_ode_fun_sparsity_in(casadi_int i) {
   switch (i) {
     case 0: return casadi_s0;
-    case 1: return casadi_s0;
-    case 2: return casadi_s1;
+    case 1: return casadi_s1;
+    case 2: return casadi_s2;
     default: return 0;
   }
 }

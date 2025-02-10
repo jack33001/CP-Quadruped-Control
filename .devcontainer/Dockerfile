@@ -138,7 +138,8 @@ RUN pip3 install --break-system-packages --ignore-installed -U \
     flake8-deprecated \
     flake8-docstrings \
     flake8-import-order \
-    flake8-quotes
+    flake8-quotes \
+    tqdm
     
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME

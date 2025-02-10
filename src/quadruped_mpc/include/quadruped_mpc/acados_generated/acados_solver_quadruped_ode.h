@@ -36,13 +36,13 @@
 #include "acados_c/ocp_nlp_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define QUADRUPED_ODE_NX     12
+#define QUADRUPED_ODE_NX     24
 #define QUADRUPED_ODE_NZ     0
 #define QUADRUPED_ODE_NU     12
-#define QUADRUPED_ODE_NP     15
+#define QUADRUPED_ODE_NP     0
 #define QUADRUPED_ODE_NP_GLOBAL     0
 #define QUADRUPED_ODE_NBX    0
-#define QUADRUPED_ODE_NBX0   12
+#define QUADRUPED_ODE_NBX0   24
 #define QUADRUPED_ODE_NBU    12
 #define QUADRUPED_ODE_NSBX   0
 #define QUADRUPED_ODE_NSBU   0

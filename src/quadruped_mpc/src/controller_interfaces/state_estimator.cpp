@@ -525,13 +525,13 @@ bool StateEstimator::estimate_base_position()
   }
 }
 
-bool StateEstimator::estimate_orientation()
+bool StateEstimator::estimate_orientation() 
 {
   try {
     auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
-    // Copy quaternion to Pinocchio state (already in [x,y,z,w] order)
+    // Copy quaternion from Pinocchio state (already in [x,y,z,w] order)
     current_positions_[3] = quadruped_info.state_.orientation_quat[0];  // x
     current_positions_[4] = quadruped_info.state_.orientation_quat[1];  // y
     current_positions_[5] = quadruped_info.state_.orientation_quat[2];  // z

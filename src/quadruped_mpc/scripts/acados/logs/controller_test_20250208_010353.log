@@ -1,0 +1,18 @@
+2025-02-08 01:03:54,263 - INFO: Starting controller test...
+2025-02-08 01:03:54,263 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-08 01:03:54,263 - INFO: Initializing controller with N=20, T=0.2
+2025-02-08 01:03:54,263 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-08 01:03:54,263 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-08 01:03:54,263 - INFO: Creating quadruped ODE model...
+2025-02-08 01:03:54,264 - INFO: Model creation completed successfully
+2025-02-08 01:03:54,265 - INFO: Setting up OCP...
+2025-02-08 01:03:54,265 - INFO: Dimensions - nx: 24, nu: 12, np: 0, ny: 24, ny_e: 24
+2025-02-08 01:03:54,266 - INFO: OCP setup completed
+2025-02-08 01:03:54,266 - INFO: Creating solver...
+2025-02-08 01:03:55,783 - INFO: Moving generated files...
+2025-02-08 01:03:55,793 - ERROR: Simulation failed: rk4_step() takes 5 positional arguments but 10 were given
+Traceback (most recent call last):
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 273, in main
+    x = rk4_step(x, u, dt, m, I, p1, p2, p3, p4, com)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: rk4_step() takes 5 positional arguments but 10 were given

@@ -75,6 +75,18 @@ int main()
     x_current[9] = 0.0;
     x_current[10] = 0.0;
     x_current[11] = 0.0;
+    x_current[12] = 0.0;
+    x_current[13] = 0.0;
+    x_current[14] = 0.0;
+    x_current[15] = 0.0;
+    x_current[16] = 0.0;
+    x_current[17] = 0.0;
+    x_current[18] = 0.0;
+    x_current[19] = 0.0;
+    x_current[20] = 0.0;
+    x_current[21] = 0.0;
+    x_current[22] = 0.0;
+    x_current[23] = 0.0;
 
   
     x_current[0] = 0;
@@ -89,6 +101,18 @@ int main()
     x_current[9] = 0;
     x_current[10] = 0;
     x_current[11] = 0;
+    x_current[12] = 0;
+    x_current[13] = 0;
+    x_current[14] = 0;
+    x_current[15] = 0;
+    x_current[16] = 0;
+    x_current[17] = 0;
+    x_current[18] = 0;
+    x_current[19] = 0;
+    x_current[20] = 0;
+    x_current[21] = 0;
+    x_current[22] = 0;
+    x_current[23] = 0;
     
   
 
@@ -107,26 +131,6 @@ int main()
     u0[9] = 0.0;
     u0[10] = 0.0;
     u0[11] = 0.0;
-    // set parameters
-    double p[NP];
-    p[0] = 0;
-    p[1] = 0;
-    p[2] = 0;
-    p[3] = 0;
-    p[4] = 0;
-    p[5] = 0;
-    p[6] = 0;
-    p[7] = 0;
-    p[8] = 0;
-    p[9] = 0;
-    p[10] = 0;
-    p[11] = 0;
-    p[12] = 0;
-    p[13] = 0;
-    p[14] = 0;
-
-    quadruped_ode_acados_sim_update_params(capsule, p, NP);
-  
 
   
 

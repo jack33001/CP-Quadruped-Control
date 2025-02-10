@@ -3,6 +3,7 @@
 import os
 import shutil
 import logging
+import yaml
 from optimal_controller import QuadrupedOptimalController
 
 logging.basicConfig(level=logging.INFO)
@@ -18,11 +19,21 @@ def main():
     os.makedirs(export_dir, exist_ok=True)
     os.makedirs(os.path.join(export_dir, 'quadruped_ode_model'), exist_ok=True)
     
+    # Default to package config directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(os.path.dirname(script_dir))
+    param_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
+    
+    with open(param_file, 'r') as f:
+        params = yaml.safe_load(f)['optimal_controller']
+        N = params.get('stages')
+        T = params.get('horizon')
+    
     try:
         # Create controller - this will generate code
         controller = QuadrupedOptimalController(
-            N=20, 
-            T=0.2, 
+            N, 
+            T, 
             code_export_dir=export_dir
         )
         

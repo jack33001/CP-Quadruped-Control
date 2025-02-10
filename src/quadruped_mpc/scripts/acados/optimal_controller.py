@@ -9,7 +9,7 @@ import os
 logger = logging.getLogger(__name__)
 
 class QuadrupedOptimalController:
-    def __init__(self, N=20, T=0.2, code_export_dir=None, param_file=None):
+    def __init__(self, N, T, code_export_dir=None, param_file=None):
         logger.info(f"Initializing controller with N={N}, T={T}")
         self.N = N
         self.T = T
@@ -44,12 +44,12 @@ class QuadrupedOptimalController:
         self.model = export_quadruped_ode_model(mass=self.mass, inertia=self.inertia)
         if self.model.x is None:
             raise ValueError("Model state is None after creation")
-        logger.debug(f"Created model with state type: {type(self.model.x)}")
+        logger.info(f"Created model with state type: {type(self.model.x)}")
         
         # Initialize OCP with model
         self.ocp = AcadosOcp()
         self.ocp.model = self.model  # Set model explicitly
-        logger.debug("Set model in OCP")
+        logger.info("Set model in OCP")
         
         # Setup OCP
         self.setup_ocp()
@@ -87,19 +87,19 @@ class QuadrupedOptimalController:
                 dst = os.path.join(dest_dir, item)
                 if os.path.isfile(src):
                     shutil.copy2(src, dst)
-                    logger.debug(f"Copied {item}")
+                    logger.info(f"Copied {item}")
                 elif os.path.isdir(src) and item == 'quadruped_ode_model':
                     if os.path.exists(dst):
                         shutil.rmtree(dst)
                     shutil.copytree(src, dst)
-                    logger.debug(f"Copied dir {item}")
+                    logger.info(f"Copied dir {item}")
             
             # Copy ACADOS types.h to proper location
             types_src = os.path.join(self.ocp.acados_include_dir, 'acados', 'utils', 'types.h')
             types_dst = os.path.join(dest_dir, 'acados', 'utils', 'types.h')
             if os.path.exists(types_src):
                 shutil.copy2(types_src, types_dst)
-                logger.debug(f"Copied types.h to {types_dst}")
+                logger.info(f"Copied types.h to {types_dst}")
             
             # Clean up
             shutil.rmtree(c_generated)
@@ -111,150 +111,104 @@ class QuadrupedOptimalController:
         model = self.model
         
         # Verify model attributes
-        logger.debug(f"Model state shape: {model.x.shape}")
-        logger.debug(f"Model control shape: {model.u.shape}")
+        logger.info(f"Model state shape: {model.x.shape}")
+        logger.info(f"Model control shape: {model.u.shape}")
         
         # Get dimensions from model
-        nx = model.x.shape[0]  # Should be 12
-        nu = model.u.shape[0]  # Should be 12
-        np = model.p.shape[0]  # Should be 15 (3 coords × 5 points: 4 feet + COM)
-        ny = nx               # Cost dimension should match state dimension
-        ny_e = nx            # Terminal cost dimension
-        
+        nx = model.x.shape[0]  # 24 (state dimension)
+        nu = model.u.shape[0]  # 12 (control dimension)
+        np = 0
+        ny = 12              # We only track 12 states in the cost
+        ny_e = 12           # Terminal cost tracks same states
+
         logger.info(f"Dimensions - nx: {nx}, nu: {nu}, np: {np}, ny: {ny}, ny_e: {ny_e}")
 
         # Set dimensions
         ocp.dims.nx = nx
         ocp.dims.nu = nu
-        ocp.dims.np = np  # Must be set before parameter_values
+        ocp.dims.np = 0
+        ocp.dims.ny = ny      # Track only 12 states
+        ocp.dims.ny_e = ny_e  # Same for terminal cost
         ocp.dims.N = self.N
 
-        # Initialize parameter values with correct size (must be after setting np)
-        p_init = numpy.zeros(np)  # 15 values for 5 points (4 feet + COM) × 3 coordinates each
-        ocp.parameter_values = p_init
-        logger.debug(f"Initialized parameters with shape: {p_init.shape}")
+        # Selection matrices - only select first 12 states
+        Vx = numpy.zeros((ny, nx))
+        Vx[:12, :12] = numpy.eye(12)  # Select only first 12 states
+        Vu = numpy.zeros((nu, nu))*.001 # for now, don't worry about policing the controller effort
+        
+        ocp.cost.Vx = Vx
+        ocp.cost.Vu = Vu
+        ocp.cost.Vx_e = Vx  # Terminal cost same selection
+        logger.info("Set selection matrices to track only first 12 states")
 
-        # Switch to LINEAR_LS cost type instead of EXTERNAL
-        ocp.cost.cost_type = 'LINEAR_LS'
-        ocp.cost.cost_type_e = 'LINEAR_LS'
+        # Weights for tracked states
+        pos_weights = [100.0]*3     # Position tracking
+        rot_weights = [20]*3      # Rotation tracking
+        vel_weights = [2]*3      # Linear velocity tracking
+        ang_weights = [.2]*3      # Angular velocity tracking
+        
+        # Combine weights into diagonal matrices
+        W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
+        W_e = W * 10.0  # Terminal cost higher to enforce convergence
+        
+        ocp.cost.W = W
+        ocp.cost.W_e = W_e
+        logger.info("Set weight matrices")
 
-                # Define dimensions
-        nx = model.x.shape[0]
-        nu = model.u.shape[0]
-        ny = nx  # Track only states
-        ny_e = nx
+        # References (only for tracked states)
+        ocp.cost.yref = numpy.zeros(ny)     # Reference for tracked states
+        ocp.cost.yref_e = numpy.zeros(ny_e) # Terminal reference
+        logger.info("Set zero references")
 
-        # Selection matrices
-        ocp.cost.Vx = numpy.eye(nx)
-        ocp.cost.Vu = numpy.zeros((ny, nu))
-        ocp.cost.Vx_e = numpy.eye(nx)
-
-        # Weights
-        pos_weights = [1]*3
-        rot_weights = [1]*3
-        vel_weights = [1]*3
-        ang_weights = [1]*3
-        force_weights = [0.1]*nu
-
-        # Cost matrices
-        ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
-        ocp.cost.W_e = ocp.cost.W * 0.01
-
-        # References
-        ocp.cost.yref = numpy.zeros(ny)
-        ocp.cost.yref_e = numpy.zeros(ny_e)
-
-        min_force = numpy.array([-self.mass, -self.mass, 0.0] * 4)     # Reduced lateral forces
-        max_force = numpy.array([self.mass, self.mass, self.mass*25] * 4)      # Max vertical ~2.5x robot weight
+        # Force constraints
+        # Constrain friction to below mu = .2, constrain force to positive values 4x what's necessary to lift the robot
+        min_force = numpy.array([-self.mass*9.81 / 4 * .2,-self.mass*9.81 / 4 * .2, 0] * 4)
+        max_force = numpy.array([self.mass*9.81 / 4 * .2, self.mass*9.81 / 4 * .2, self.mass*9.81] * 4)
         ocp.constraints.idxbu = numpy.arange(nu)
         ocp.constraints.lbu = min_force
         ocp.constraints.ubu = max_force
+        logger.info(f"Set force constraints: min={min_force[0]}, max={max_force[0]}")
 
-        # Remove ALL state constraints - let the controller work with actual state
-
-        # No ocp.constraints.x0, idxbx_0, lbx_0, ubx_0, idxbx, lbx, or ubx
-
-        # set options
-        ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'  # Use HPIPM instead
-        ocp.solver_options.hpipm_mode = 'BALANCE'  # Set HPIPM to balance mode
-        ocp.solver_options.qp_solver_cond_N = self.N  # Full condensing
-        ocp.solver_options.qp_solver_warm_start = 2  # More aggressive warm start
+        # Solver options
+        ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'
+        ocp.solver_options.hpipm_mode = 'BALANCE'
+        ocp.solver_options.qp_solver_cond_N = self.N
+        ocp.solver_options.qp_solver_warm_start = 2
         ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
         ocp.solver_options.integrator_type = 'ERK'
         ocp.solver_options.nlp_solver_type = 'SQP_RTI'
-        ocp.solver_options.qp_solver_cond_N = self.N  # Number of stages to condense
-        ocp.solver_options.qp_solver_cond_ric_alg = 0  # Use classical Riccati for condensing
-        ocp.solver_options.qp_solver_ric_alg = 0       # Use classical Riccati for QP
+        ocp.solver_options.qp_solver_cond_ric_alg = 0
+        ocp.solver_options.qp_solver_ric_alg = 0
         ocp.solver_options.nlp_solver_max_iter = 200
         ocp.solver_options.qp_solver_iter_max = 100
+        logger.info("Set solver options")
         
-        # set prediction horizon
+        # Prediction horizon
         ocp.solver_options.tf = self.T
+        logger.info(f"Set prediction horizon to {self.T}s")
 
+        # Initial state bounds
         ocp.dims.nbx_0 = nx
         ocp.constraints.idxbx_0 = numpy.arange(nx)
-        ocp.constraints.lbx_0 = numpy.zeros(nx)  # Will be updated in solve()
-        ocp.constraints.ubx_0 = numpy.zeros(nx)  # Will be updated in solve()
+        ocp.constraints.x0 = numpy.zeros(nx)
+        logger.info("Set initial state constraints")
 
         logger.info("OCP setup completed")
-        
-    def update_foot_positions(self, p1, p2, p3, p4, com=None):
-        """Update foot positions and COM in the model
-        
-        Args:
-            p1, p2, p3, p4: np.array(3,) - foot positions
-            com: np.array(3,) - center of mass position (optional)
-        """
-        if com is None:
-            com = numpy.zeros(3)
-        
-        # Concatenate all parameters (15 total: 3 coords × 5 points)
-        p = numpy.concatenate([p1, p2, p3, p4, com])
-        logger.debug(f"Updating parameters with shape: {p.shape}")
-        
-        # Set parameter values in OCP
-        self.ocp.parameter_values = p
-        
-        # Update parameters for all nodes in the solver
-        try:
-            for i in range(self.N + 1):
-                self.solver.set(i, 'p', p)
-        except Exception as e:
-            logger.error(f"Failed to update parameters: {str(e)}")
-            raise
 
-    def solve(self, x0, x_ref, p1, p2, p3, p4, com):
-        try:            
-            # Set current state
-            self.solver.set(0, 'x', x0)
+    def solve(self, x0, x_ref):
+        try:         
+            self.solver.yref_0 = x0[:12]
+            # Set the reference trajectory
+            for i in range(self.N):
+                self.solver.set(i, "yref", x_ref[:12])  # Only first 12 states as per cost setup
+            self.solver.set(self.N, "yref", x_ref[:12])  # Terminal reference
             
-            # Set target reference for future stages only (1 to N)
-            # Don't set any reference for stage 0 since that's our current state
-            for i in range(self.N + 1):
-                self.solver.set(i, 'yref', x_ref)
-            
-            # Update foot positions and COM
-            self.update_foot_positions(p1, p2, p3, p4, com)
-            
-            # Add parameter check before solving
-            if hasattr(self.solver, 'acados_ocp'):
-                param_size = self.solver.acados_ocp.dims.np
-                if param_size != 15:
-                    print(f"\nERROR: Incorrect parameter dimension: {param_size}, expected 15")
-                    raise ValueError(f"Incorrect parameter dimension: {param_size}, expected 15")
-            
-            # Re-set the initial constraints - set entire vectors at once
-            self.solver.constraints_set(0, 'lbx', x0)  # Set full vector
-            self.solver.constraints_set(0, 'ubx', x0)  # Set full vector
-            
-            # Solve and check intermediate results if possible
-            status = self.solver.solve()
-            
-            # get solution
-            u0 = self.solver.get(0, 'u')
+            u0 = self.solver.solve_for_x0(x0)
+            status = 0
+            logger.debug(f"Got control solution with shape: {u0.shape}")
             
             return u0, status
             
         except Exception as e:
-            print(f"\nSOLVER ERROR: {str(e)}")
+            logger.error(f"Solver error: {str(e)}")
             raise

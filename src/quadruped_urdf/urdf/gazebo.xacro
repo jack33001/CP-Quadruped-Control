@@ -19,7 +19,6 @@
       <topic>imu</topic>
       <plugin filename="libgz-sim-imu-system.so"
               name="gz::sim::systems::Imu">
-        <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>
     </sensor>
   </gazebo>

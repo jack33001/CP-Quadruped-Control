@@ -1,0 +1,21 @@
+2025-02-08 01:03:00,517 - INFO: Starting controller test...
+2025-02-08 01:03:00,517 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-08 01:03:00,517 - INFO: Initializing controller with N=20, T=0.2
+2025-02-08 01:03:00,518 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-08 01:03:00,518 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-08 01:03:00,518 - INFO: Creating quadruped ODE model...
+2025-02-08 01:03:00,518 - INFO: Model creation completed successfully
+2025-02-08 01:03:00,520 - INFO: Setting up OCP...
+2025-02-08 01:03:00,520 - INFO: Dimensions - nx: 24, nu: 12, np: 0, ny: 24, ny_e: 24
+2025-02-08 01:03:00,520 - INFO: OCP setup completed
+2025-02-08 01:03:00,520 - INFO: Creating solver...
+2025-02-08 01:03:02,065 - INFO: Moving generated files...
+2025-02-08 01:03:02,071 - ERROR: Simulation failed: operands could not be broadcast together with shapes (24,) (12,) 
+Traceback (most recent call last):
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 272, in main
+    x = rk4_step(x, u, dt, m, I, p1, p2, p3, p4, com)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 116, in rk4_step
+    k2 = system_dynamics(x + dt/2 * k1, u, m, I)
+                         ~~^~~~~~~~~~~
+ValueError: operands could not be broadcast together with shapes (24,) (12,) 

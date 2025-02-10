@@ -34,10 +34,10 @@
 #include "acados_c/sim_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define QUADRUPED_ODE_NX     12
+#define QUADRUPED_ODE_NX     24
 #define QUADRUPED_ODE_NZ     0
 #define QUADRUPED_ODE_NU     12
-#define QUADRUPED_ODE_NP     15
+#define QUADRUPED_ODE_NP     0
 
 #ifdef __cplusplus
 extern "C" {
