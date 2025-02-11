@@ -62,6 +62,7 @@ hardware_interface::CallbackReturn CANMotor::on_cleanup(const rclcpp_lifecycle::
 
 hardware_interface::CallbackReturn CANMotor::on_activate(const rclcpp_lifecycle::State& previous_state) {
     // Activation code
+
     // auto start_state = motor_controller_->disableMotor(can_id);
     auto start_state = motor_controller_->enableMotor(can_id);
 
@@ -104,7 +105,6 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
         hardware_interface::CommandInterface(joint_name,  "kd", &cmd_kd));
 
 
-    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "end cmd_position: %f", cmd_position);
 
     // command_interfaces.emplace_back(joint_name, "position", &command_data_[0]);
     // command_interfaces.emplace_back(joint_name, "velocity", &command_data_[1]);
@@ -138,9 +138,28 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     // Write data to the hardware
 
     // motor_controller_->enableMotor(can_id); 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "start write");
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+    if (state_effort > .5)
+    {
+        
 
+        RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "EFFORT LIMIT EXCEEDED"); 
+
+        cmd_kp  = 0;
+        cmd_kd = 0;
+
+        movecmd = {static_cast<float>(cmd_position),
+     static_cast<float>(cmd_velocity),
+      static_cast<float>(cmd_kp),
+       static_cast<float>(cmd_kd),
+        static_cast<float>(cmd_effort)};
+
+        commandMap[can_id[0]] = movecmd;
+    }
+    else
+    {
     
     movecmd = {static_cast<float>(cmd_position),
      static_cast<float>(cmd_velocity),
@@ -149,18 +168,22 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
         static_cast<float>(cmd_effort)};
 
     commandMap[can_id[0]] = movecmd;
+    }
 
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "sending cmd");
+    stateMap = motor_controller_->sendDegreeCommand( commandMap);
+    RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "cmd received");
 
     std::cout << "Commanded position: " << cmd_position << std::endl;
+    std::cout << "Commanded velocity: " << cmd_velocity << std::endl;
+    std::cout << "Commanded kp: " << cmd_kp << std::endl;
+    std::cout << "Commanded kd: " << cmd_kd << std::endl;
+    std::cout << "Commanded effort: " << cmd_effort << std::endl;
 
-    stateMap = motor_controller_->sendDegreeCommand( commandMap);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
+    //update state variables
     state_position = stateMap[can_id[0]].position;
     state_velocity = stateMap[can_id[0]].velocity;
     state_effort = stateMap[can_id[0]].torque;
-
-    std::cout << "State position: " << stateMap[can_id[0]].position << std::endl;
 
 
     std::cout << "State position: " << state_position << std::endl;
@@ -169,7 +192,6 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
 
     // motor_controller_->disableMotor(can_id);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 
     return hardware_interface::return_type::OK;

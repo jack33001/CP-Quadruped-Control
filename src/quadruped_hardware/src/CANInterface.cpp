@@ -4,12 +4,13 @@
 
 namespace CAN_interface
 {
-    CANInterface::CANInterface(const char* socketName)
+    CANInterface::CANInterface(const char* socketName, const struct can_filter rfilter)
     {
         // const char* socketIfName = &socketName;  
         // int s;  // File descriptor for the socket as everything in Linux/Unix is a file. 
         struct sockaddr_can addr; // structure for CAN sockets : address family number AF_CAN
         struct ifreq ifr; // from if.h Interface Request structure used for all socket ioctl's. All interface ioctl's must have parameter definitions which begin with ifr name. The remainder may be interface specific.
+
 
         int loopback = 0; /* 0 = disabled, 1 = enabled (default) */
 
@@ -20,9 +21,9 @@ namespace CAN_interface
         }
         else {
             // If socket was created successfully, apply the can filter for only receiving from motor and not from master.
-            // setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+            setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
 
-            setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback));
+            // setsockopt(socket_descrp_, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback));
 
             // Retrieve the interface index for the interface name (can0, can1, vcan0) to be used to the ifreq struct
             strcpy(ifr.ifr_name, socketName);

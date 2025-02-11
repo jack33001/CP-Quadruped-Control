@@ -86,7 +86,9 @@ private:
 
     std::map<int, motor_driver::motorState> stateMap;
     
-    };
+
+
+};
 
 } // namespace quadruped_hardware
 

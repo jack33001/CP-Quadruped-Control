@@ -23,7 +23,7 @@ namespace CAN_interface
     class CANInterface{
 
     public:
-        CANInterface(const char* socketName);
+        CANInterface(const char* socketName, const struct can_filter rfilter);
 
         ~CANInterface();
         

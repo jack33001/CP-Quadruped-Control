@@ -100,7 +100,10 @@ class MotorDriver {
   // Pre-allocate memory for CAN messages which are overwritten by functions.
   unsigned char CAN_msg_[8];
   unsigned char CAN_reply_msg_[8];
+  const struct can_filter rfilter_;
   CAN_interface::CANInterface motor_CAN_interface_;
+
+  
 
   const double pi = 3.14159265359;
 };

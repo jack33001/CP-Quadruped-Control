@@ -85,7 +85,7 @@ RUN apt-get update \
     && add-apt-repository universe \
     && apt-get update \
     && apt-get install -y \
-    # ros-jazzy-ros2-control \
+    ros-jazzy-ros2-control \
     ros-jazzy-xacro \
     ros-jazzy-rqt-graph \
     ros-jazzy-joint-state-publisher \

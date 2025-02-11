@@ -1,4 +1,5 @@
 #include "quadruped_hardware/MotorDriver.hpp"
+#include <memory>
 
 namespace motor_driver {
 
@@ -7,7 +8,16 @@ MotorDriver::MotorDriver(const std::vector<int>& motor_ids,
                          MotorType motor_type = MotorType::AK80_6_V1p1)
     : motor_type_(motor_type),
       motor_ids_(motor_ids),
-      motor_CAN_interface_(motor_can_socket) {
+      rfilter_({.can_id = static_cast<canid_t>(motor_ids_[0]), .can_mask = CAN_SFF_MASK}),
+      // motor_CAN_interface_(motor_can_socket, rfilter_) {
+      motor_CAN_interface_(motor_can_socket, rfilter_) {
+
+    // rfilter_.can_id = motor_ids_[0];
+    // rfilter_.can_mask = CAN_SFF_MASK;
+    std::cout << "MotorID filter: "<< motor_ids_[0] << std::endl;
+
+    
+  
   // Set Motor Parameters According to Motor Type
 
   switch (motor_type_) {
@@ -50,6 +60,9 @@ MotorDriver::MotorDriver(const std::vector<int>& motor_ids,
 
   // Initialize all Motors to not enabled.
   // TODO: Enable enabled check better across multiple objects of this class.
+
+
+
   for (int motor_id : motor_ids_) is_motor_enabled_[motor_id] = false;
 }
 
