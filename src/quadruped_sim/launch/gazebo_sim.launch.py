@@ -30,7 +30,7 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock']  # Using gz instead of ignition
     )
 
-    # Joint and pose state bridge node
+    # Odometry bridge node
     state_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -38,8 +38,8 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': True}],
         arguments=[
-            # Bridge with both ROS and Gazebo message types explicitly defined
-            '/world/empty/pose/info@geometry_msgs/msg/PoseArray[ignition.msgs.Pose_V',
+            # Bridge Gazebo odometry to ROS topic
+            '/model/quadruped/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
         ]
     )
 
@@ -101,6 +101,6 @@ def generate_launch_description():
         spawn_robot,
         # Then bridge its pose
         state_bridge,
-        plotjuggler,
+        #plotjuggler,
         bag_recorder,
     ])

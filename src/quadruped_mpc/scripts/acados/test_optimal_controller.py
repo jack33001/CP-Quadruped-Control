@@ -75,14 +75,24 @@ def calculate_metrics(x_hist, u_hist, x_ref, sim_time):
 
 def system_dynamics(x, u, m, I):
     """Calculate state derivatives given current state and control"""
-    dx = np.zeros(24)
-    dx[0:6] = x[6:12]         # velocities affect positions
+    dx = np.zeros(25)
+    
+    # Linear velocities are easy
+    dx[0:3] = x[7:10]
+    
+    # Angular velocities need to be converted to quaternion derivative
+    dx[3:7] = .5 * np.array([
+        -x[4]*x[10] - x[5]*x[11] - x[6]*x[12],
+        x[3]*x[10] + x[5]*x[12] - x[6]*x[11],
+        x[3]*x[11] - x[4]*x[12] + x[6]*x[10],
+        x[3]*x[12] + x[4]*x[11] - x[5]*x[10]
+        ])
     
     # Unpack foot and com positions
-    p1 = x[12:15]
-    p2 = x[15:18]
-    p3 = x[18:21]
-    p4 = x[21:24]
+    p1 = x[13:16]
+    p2 = x[16:19]
+    p3 = x[19:22]
+    p4 = x[22:25]
     com = x[:3]
     
     # Reshape control output into foot forces
@@ -93,8 +103,8 @@ def system_dynamics(x, u, m, I):
     
     # Sum all foot forces for linear acceleration
     total_force = F1 + F2 + F3 + F4
-    dx[6:9] = total_force/m   # linear accelerations
-    dx[8] += -9.81            # add gravity to z acceleration
+    dx[7:10] = total_force/m   # linear accelerations
+    dx[9] += -9.81            # add gravity to z acceleration
     
     # Calculate torques from foot forces
     r1 = p1 - com  # vectors from COM to each foot
@@ -107,8 +117,8 @@ def system_dynamics(x, u, m, I):
                    np.cross(r2, F2) + 
                    np.cross(r3, F3) + 
                    np.cross(r4, F4))
-    dx[9:12] = total_torque/I  # angular accelerations
-    dx[12:] = 0.0  # foot positions are constant
+    dx[10:13] = total_torque/I  # angular accelerations
+    dx[13:] = 0.0  # foot positions are constant
     
     return dx
 
@@ -168,7 +178,12 @@ def log_metrics(metrics, logger):
     logger.info(f"Pitch variance: {metrics['pitch_var']:.3f} rad")
     logger.info(f"Yaw variance: {metrics['yaw_var']:.3f} rad")
 
-# ...existing code...
+def normalize_quaternion(q):
+    """Normalize a quaternion to unit length."""
+    norm = np.sqrt(np.sum(q**2))
+    if norm < 1e-10:
+        return np.array([1.0, 0.0, 0.0, 0.0])
+    return q / norm
 
 def main():
     logger.info("Starting controller test...")
@@ -193,29 +208,13 @@ def main():
     
     # Set up simulation parameters
     dt = 0.001  # simulation timestep
-    t_final = 6  # simulation duration
+    t_final = 5  # simulation duration
     n_steps = int(t_final / dt)
-    
-    # Initial state [x, y, z, theta, phi, psi, vx, vy, vz, wx, wy, wz]
-    # Initial state with random perturbations within reasonable bounds
-    x0 = np.zeros(12)
-    # Position bounds (in meters)
-    x0[0:3] = np.random.uniform([-0.1, -0.1, 0.14], [0.1, 0.1, 0.16])
-    # Orientation bounds (in radians, roughly ±15 degrees)
-    x0[3:6] = np.random.uniform(-0.26, 0.26, 3)
-    # Linear velocity bounds (in m/s)
-    x0[6:9] = np.random.uniform(-0.2, 0.2, 3)
-    # Angular velocity bounds (in rad/s)
-    x0[9:12] = np.random.uniform(-0.5, 0.5, 3)
-    
-    # Target state - setpoint at standing position
-    x_ref = np.zeros(12)
-    x_ref[2] = 0.18  # Target height matches initial height
     
     # Example foot positions (in robot frame)
     leg_length = 0.15  # Robot leg length
     # Add random perturbations to foot positions
-    foot_variation = 0
+    foot_variation = .03
     p1 = np.array([leg_length + np.random.uniform(-foot_variation, foot_variation), leg_length + np.random.uniform(-foot_variation, foot_variation), 0.0])   # front right
     p2 = np.array([leg_length + np.random.uniform(-foot_variation, foot_variation), -leg_length + np.random.uniform(-foot_variation, foot_variation), 0.0])  # front left
     p3 = np.array([-leg_length + np.random.uniform(-foot_variation, foot_variation), leg_length + np.random.uniform(-foot_variation, foot_variation), 0.0])  # back right
@@ -228,20 +227,30 @@ def main():
     logger.info(f"BR (p3): {p3}")
     logger.info(f"BL (p4): {p4}")
     
-    # Initialize COM position at target height
-    com = x0[:3].copy()
-    
     # Create full 24-dimensional state vector
-    x0_full = np.zeros(24)
-    x0_full[:12] = x0  # First 12 states (dynamics)
+        
+    # Initial state [x, y, z, theta, phi, psi, vx, vy, vz, wx, wy, wz]
+    # Initial state with random perturbations within reasonable bounds
+    x0_full = np.zeros(25)
+    # Position bounds (in meters)
+    x0_full[0:3] = np.random.uniform([-0.1, -0.1, 0.14], [0.1, 0.1, 0.16])
+    # Orientation bounds (in radians, roughly ±15 degrees)
+    x0_full[3:7] = normalize_quaternion(np.array([1.0, 
+                                            np.random.uniform(-0.1, 0.1),
+                                            np.random.uniform(-0.1, 0.1),
+                                            np.random.uniform(-0.1, 0.1)]))
+    # Linear velocity bounds (in m/s)
+    x0_full[7:10] = np.random.uniform(-0.2, 0.2, 3)
+    # Angular velocity bounds (in rad/s)
+    x0_full[10:13] = np.random.uniform(-0.5, 0.5, 3)
     # Add foot positions to state vector
-    x0_full[12:15] = p1
-    x0_full[15:18] = p2
-    x0_full[18:21] = p3
-    x0_full[21:24] = p4
+    x0_full[13:16] = p1
+    x0_full[16:19] = p2
+    x0_full[19:22] = p3
+    x0_full[22:25] = p4
     
     # Initialize history arrays for 24-dimensional state
-    x_hist = np.zeros((n_steps+1, 24))  # Pre-allocate full state history
+    x_hist = np.zeros((n_steps+1, 25))  # Pre-allocate full state history
     u_hist = np.zeros((n_steps, 12))    # Pre-allocate control history
     t_hist = np.zeros(n_steps+1)        # Pre-allocate time history
     
@@ -251,8 +260,9 @@ def main():
     t_hist[0] = 0.0
 
     # Target state - include all states including foot positions
-    x_ref = np.zeros(24)  # Reference for all states
-    x_ref[2] = 0.18      # Target height
+    x_ref = np.zeros(25)  # Reference for all states
+    x_ref[2] = 0.18  # Target height matches initial height
+    x_ref[3] = 1.0   # Quaternion w = 1 for [0 0 0] Euler angles
     x_ref[12:] = x0_full[12:]  # Keep foot positions constant
     
     # Simple simulation loop
@@ -318,7 +328,7 @@ def main():
             
             # Orientation plot
             plt.subplot(4, 1, 2)  # Changed to 4x1 layout
-            for i, label in enumerate(['theta', 'phi', 'psi']):
+            for i, label in enumerate(["w","x","y","z"]):
                 plt.plot(t_hist, x_hist[:, i+3], label=label)
             plt.grid(True)
             plt.legend()
@@ -353,7 +363,7 @@ def main():
             
             # New foot position XY plot with position labels
             plt.subplot(4, 1, 4)
-            foot_indices = [(12,13), (15,16), (18,19), (21,22)]  # X,Y indices for each foot
+            foot_indices = [(13,14), (16,17), (19,20), (22,23)]  # X,Y indices for each foot
             
             # Plot each foot position over time
             for i, ((x_idx, y_idx), leg, color) in enumerate(zip(foot_indices, legs, colors)):

@@ -15,6 +15,7 @@
 #include "std_msgs/msg/string.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "rosgraph_msgs/msg/clock.hpp"  // Add Clock message include
+#include <nav_msgs/msg/odometry.hpp>
 
 // Project headers
 #include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
@@ -126,7 +127,8 @@ private:
   bool clock_connected_{false};
   rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
   rclcpp::Clock::SharedPtr sim_clock_;
-  // Remove Meshcat visualizer pointer
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+  nav_msgs::msg::Odometry::SharedPtr latest_odom_;
   // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
 

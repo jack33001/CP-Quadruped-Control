@@ -255,6 +255,17 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       return CallbackReturn::ERROR;
     }
 
+    // Set up odometry subscription with best effort QoS
+    odom_sub_ = get_node()->create_subscription<nav_msgs::msg::Odometry>(
+      "/model/quadruped/odometry",
+      rclcpp::QoS(1).reliable(),
+      [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
+        latest_odom_ = msg;
+      }
+    );
+
+    RCLCPP_INFO(get_node()->get_logger(), "Created odometry subscription");
+
     return CallbackReturn::SUCCESS;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception thrown during configure stage with message: %s", e.what());
@@ -364,10 +375,10 @@ bool StateEstimator::foot_positions()
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
     // Get foot positions in correct order: FL, FR, RL,
-    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation() - quadruped_info.state_.pc;  // FL
-    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation() - quadruped_info.state_.pc;  // FR
-    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation() - quadruped_info.state_.pc;  // RL
-    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation() - quadruped_info.state_.pc;  // RR
+    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation() + quadruped_info.state_.pc;  // FL
+    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation() + quadruped_info.state_.pc;  // FR
+    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation() + quadruped_info.state_.pc;  // RL
+    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation() + quadruped_info.state_.pc;  // RR
 
     // Copy joint states to shared info
     for (size_t i = 0; i < joint_states_.size(); ++i) {
@@ -503,6 +514,22 @@ bool StateEstimator::estimate_base_position()
       quadruped_info.state_.pc.x() = 0.0;
       quadruped_info.state_.pc.y() = 0.0;
       quadruped_info.state_.pc.z() = -world_z;
+
+      if (latest_odom_){
+        // Get the latest odometry message
+        auto odom = latest_odom_;
+        // Get the position from the odometry message
+        auto position = odom->pose.pose.position;
+        auto velocity = odom->twist.twist.linear;
+        // Update the body position with the odometry position
+        quadruped_info.state_.pc.x() = position.x;
+        quadruped_info.state_.pc.y() = position.y;
+        quadruped_info.state_.pc.z() = position.z;
+        // Update the body velocity with the odometry velocity
+        quadruped_info.state_.vc.x() = velocity.x;
+        quadruped_info.state_.vc.y() = velocity.y;
+        quadruped_info.state_.vc.z() = velocity.z;
+      }
       
       RCLCPP_DEBUG(
         get_node()->get_logger(),

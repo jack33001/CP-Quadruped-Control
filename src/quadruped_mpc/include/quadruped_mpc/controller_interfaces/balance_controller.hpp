@@ -38,9 +38,9 @@ public:
 protected:
   std::vector<std::string> joint_names_;
   quadruped_ode_solver_capsule* solver_{nullptr};  // Fix type name to match generated code
-  std::array<double,24> current_state_;
-  std::array<double,24> desired_state_;
-  std::array<double,24> optimal_control_;
+  std::array<double,25> current_state_;
+  std::array<double,25> desired_state_;
+  std::array<double,25> optimal_control_;
   
   // Restore foot position storage
   std::array<double,3> p1_, p2_, p3_, p4_, com_;

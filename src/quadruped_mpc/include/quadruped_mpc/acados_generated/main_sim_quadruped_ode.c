@@ -87,6 +87,7 @@ int main()
     x_current[21] = 0.0;
     x_current[22] = 0.0;
     x_current[23] = 0.0;
+    x_current[24] = 0.0;
 
   
     x_current[0] = 0;
@@ -113,6 +114,7 @@ int main()
     x_current[21] = 0;
     x_current[22] = 0;
     x_current[23] = 0;
+    x_current[24] = 0;
     
   
 

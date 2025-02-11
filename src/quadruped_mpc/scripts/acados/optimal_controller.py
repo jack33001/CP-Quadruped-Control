@@ -106,7 +106,7 @@ class QuadrupedOptimalController:
             logger.info(f"Generated code moved to: {dest_dir}")
         
     def setup_ocp(self):
-        logger.info("Setting up OCP...")
+        logger.info(" =========================== Setting up OCP  =========================== ")
         ocp = self.ocp
         model = self.model
         
@@ -115,11 +115,11 @@ class QuadrupedOptimalController:
         logger.info(f"Model control shape: {model.u.shape}")
         
         # Get dimensions from model
-        nx = model.x.shape[0]  # 24 (state dimension)
+        nx = model.x.shape[0]  # 25 (state dimension)
         nu = model.u.shape[0]  # 12 (control dimension)
         np = 0
-        ny = 12              # We only track 12 states in the cost
-        ny_e = 12           # Terminal cost tracks same states
+        ny = 13              # We only track 13 states in the cost
+        ny_e = 13           # Terminal cost tracks same states
 
         logger.info(f"Dimensions - nx: {nx}, nu: {nu}, np: {np}, ny: {ny}, ny_e: {ny_e}")
 
@@ -127,25 +127,25 @@ class QuadrupedOptimalController:
         ocp.dims.nx = nx
         ocp.dims.nu = nu
         ocp.dims.np = 0
-        ocp.dims.ny = ny      # Track only 12 states
+        ocp.dims.ny = ny      # Track only 13 states
         ocp.dims.ny_e = ny_e  # Same for terminal cost
         ocp.dims.N = self.N
 
-        # Selection matrices - only select first 12 states
+        # Selection matrices - only select first 13 states
         Vx = numpy.zeros((ny, nx))
-        Vx[:12, :12] = numpy.eye(12)  # Select only first 12 states
-        Vu = numpy.zeros((nu, nu))*.001 # for now, don't worry about policing the controller effort
+        Vx[:13, :13] = numpy.eye(13)  # Select only first 13 states
+        Vu = numpy.zeros((ny, nu))*.001 # for now, don't worry about policing the controller effort
         
         ocp.cost.Vx = Vx
         ocp.cost.Vu = Vu
         ocp.cost.Vx_e = Vx  # Terminal cost same selection
-        logger.info("Set selection matrices to track only first 12 states")
+        logger.info("Set selection matrices to track only first 13 states")
 
         # Weights for tracked states
-        pos_weights = [100.0]*3     # Position tracking
-        rot_weights = [20]*3      # Rotation tracking
-        vel_weights = [2]*3      # Linear velocity tracking
-        ang_weights = [.2]*3      # Angular velocity tracking
+        pos_weights = [20]*3     # Position tracking
+        rot_weights = [200]*4      # Rotation tracking
+        vel_weights = [5]*3      # Linear velocity tracking
+        ang_weights = [.5]*3      # Angular velocity tracking
         
         # Combine weights into diagonal matrices
         W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
@@ -197,11 +197,11 @@ class QuadrupedOptimalController:
 
     def solve(self, x0, x_ref):
         try:         
-            self.solver.yref_0 = x0[:12]
+            self.solver.yref_0 = x0[:13]
             # Set the reference trajectory
             for i in range(self.N):
-                self.solver.set(i, "yref", x_ref[:12])  # Only first 12 states as per cost setup
-            self.solver.set(self.N, "yref", x_ref[:12])  # Terminal reference
+                self.solver.set(i, "yref", x_ref[:13])  # Only first 13 states as per cost setup
+            self.solver.set(self.N, "yref", x_ref[:13])  # Terminal reference
             
             u0 = self.solver.solve_for_x0(x0)
             status = 0

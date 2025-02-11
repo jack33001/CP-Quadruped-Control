@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def export_quadruped_ode_model(mass, inertia) -> AcadosModel:
-    logger.info("Creating quadruped ODE model...")
+    logger.info(" =========================== Creating quadruped ODE model =========================== ")
     
     # Create and verify model instance
     model = AcadosModel()
@@ -23,8 +23,8 @@ def export_quadruped_ode_model(mass, inertia) -> AcadosModel:
     g = -9.81  # gravity (m/s^2)
 
     # Create state vector first
-    states = [SX.sym(name) for name in [# positions
-                                        'x', 'y', 'z', 'theta', 'phi', 'psi', 
+    states = [SX.sym(name) for name in [# positions/orientations
+                                        'x', 'y', 'z', 'q_w', 'q_x', 'q_y', 'q_z', 
                                         # velocities
                                         'vx', 'vy', 'vz', 'wx', 'wy', 'wz',
                                         # foot positions
@@ -65,13 +65,13 @@ def export_quadruped_ode_model(mass, inertia) -> AcadosModel:
     # dynamics
     # State positions for easier access
     q_pos = x[:3]           # position states [x1, y1, z1]
-    q_rot = x[3:6]         # rotation states [theta, phi, psi]
-    v_lin = x[6:9]         # linear velocities [vx, vy, vz]
-    v_ang = x[9:12]        # angular velocities [wx, wy, wz]
-    p1 = x[12:15]      # position of foot 1 [x,y,z]
-    p2 = x[15:18]      # position of foot 2 [x,y,z]
-    p3 = x[18:21]      # position of foot 3 [x,y,z]
-    p4 = x[21:24]      # position of foot 4 [x,y,z]
+    q_quat = x[3:7]        # quaternion states [qw, qx, qy, qz]
+    v_lin = x[7:10]        # linear velocities [vx, vy, vz]
+    v_ang = x[10:13]       # angular velocities [wx, wy, wz]
+    p1 = x[13:16]          # position of foot 1 [x,y,z]
+    p2 = x[16:19]          # position of foot 2 [x,y,z]
+    p3 = x[19:22]          # position of foot 3 [x,y,z]
+    p4 = x[22:25]          # position of foot 4 [x,y,z]
     pc = q_pos
 
     # System dynamics
@@ -79,7 +79,14 @@ def export_quadruped_ode_model(mass, inertia) -> AcadosModel:
     dq_pos = v_lin
     logger.info(f"dq_pos: {dq_pos}")
     dq_rot = v_ang
-    logger.info(f"dq_pos: {dq_pos}")
+    # Convert angular velocity to quaternion derivative
+    dq_rot = 0.5 * vertcat(
+        -q_quat[1]*v_ang[0] - q_quat[2]*v_ang[1] - q_quat[3]*v_ang[2],  # dq_w
+        q_quat[0]*v_ang[0] + q_quat[2]*v_ang[2] - q_quat[3]*v_ang[1],   # dq_x
+        q_quat[0]*v_ang[1] - q_quat[1]*v_ang[2] + q_quat[3]*v_ang[0],   # dq_y
+        q_quat[0]*v_ang[2] + q_quat[1]*v_ang[1] - q_quat[2]*v_ang[0]    # dq_z
+    )
+    logger.info(f"dq_pos: {dq_rot}")
     
     # Force dynamics (linear acceleration)
     dv_lin = vertcat(

@@ -213,11 +213,20 @@ install(
     config
     launch
     include
+  DESTINATION share/${PROJECT_NAME}
+)
+
+# Install scripts directory with executable permissions
+install(
+  DIRECTORY 
     scripts
   DESTINATION share/${PROJECT_NAME}
-  USE_SOURCE_PERMISSIONS  # Add this to preserve permissions
-  PATTERN "*.pyc" EXCLUDE  # Exclude Python cache files
-  PATTERN "__pycache__" EXCLUDE
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING 
+  PATTERN "*.py"
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+              GROUP_READ GROUP_EXECUTE
+              WORLD_READ WORLD_EXECUTE
 )
 
 pluginlib_export_plugin_description_file(controller_interface plugin_description.xml)
