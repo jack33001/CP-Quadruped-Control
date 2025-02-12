@@ -14,6 +14,8 @@
 #include "acados/utils/types.h"
 #include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
+#include "geometry_msgs/msg/pose.hpp"
+#include <mutex>
 
 namespace quadruped_mpc
 {
@@ -46,7 +48,14 @@ protected:
   std::array<double,3> p1_, p2_, p3_, p4_, com_;
 
 private:
-  // Remove logger_ member variable since we'll use get_node()->get_logger() directly
+  // Add command handling members
+  rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr cmd_sub_;
+  std::mutex cmd_mutex_;
+  geometry_msgs::msg::Pose::SharedPtr latest_cmd_;
+  bool new_cmd_received_{false};
+  
+  // Add callback function declaration
+  void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
 };
 
 }  // namespace quadruped_mpc

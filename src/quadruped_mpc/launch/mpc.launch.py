@@ -37,5 +37,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         controllers_spawner,
-        #teleop_node,
-    ])
+        teleop_node,
+    ])                          

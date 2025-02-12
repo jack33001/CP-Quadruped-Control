@@ -229,6 +229,13 @@ install(
               WORLD_READ WORLD_EXECUTE
 )
 
+# Install scripts to the correct location
+install(
+  PROGRAMS
+    scripts/quadruped_teleop.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 pluginlib_export_plugin_description_file(controller_interface plugin_description.xml)
 
 # Must be absolute last line

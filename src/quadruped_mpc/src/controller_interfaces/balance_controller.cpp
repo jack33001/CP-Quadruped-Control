@@ -1,4 +1,5 @@
 #include "quadruped_mpc/controller_interfaces/balance_controller.hpp"
+#include "geometry_msgs/msg/pose.hpp"
 
 #include <string>
 #include <vector>
@@ -108,6 +109,21 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
       current_state_[16 + i] = info.state_.p2[i];  // Foot 2
       current_state_[19 + i] = info.state_.p3[i];  // Foot 3
       current_state_[22 + i] = info.state_.p4[i];  // Foot 4
+    }
+
+    // Update desired state from latest command if available
+    {
+      std::lock_guard<std::mutex> lock(cmd_mutex_);
+      if (new_cmd_received_ && latest_cmd_) {
+        desired_state_[0] = latest_cmd_->position.x;    // x
+        desired_state_[1] = latest_cmd_->position.y;    // y
+        desired_state_[2] = latest_cmd_->position.z;    // z
+        desired_state_[3] = latest_cmd_->orientation.w;  // qw
+        desired_state_[4] = latest_cmd_->orientation.x;  // qx
+        desired_state_[5] = latest_cmd_->orientation.y;  // qy
+        desired_state_[6] = latest_cmd_->orientation.z;  // qz
+        new_cmd_received_ = false;
+      }
     }
 
     // Set desired state as reference for all nodes in prediction horizon
@@ -251,6 +267,13 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   //RCLCPP_INFO(get_node()->get_logger(), "ACADOS solver initialized successfully");
 
   //RCLCPP_INFO(get_node()->get_logger(), "Balance controller configuration completed successfully");
+
+  // Add subscriber initialization before returning
+  cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(
+    "quadruped_cmd", 10,
+    std::bind(&BalanceController::cmd_callback, this, std::placeholders::_1));
+  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to quadruped_cmd topic");
+
   return CallbackReturn::SUCCESS;
 }
 
@@ -265,6 +288,13 @@ BalanceController::CallbackReturn BalanceController::on_deactivate(const rclcpp_
 {
   RCLCPP_INFO(get_node()->get_logger(), "on_deactivate called");
   return CallbackReturn::SUCCESS;
+}
+
+void BalanceController::cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(cmd_mutex_);
+  latest_cmd_ = msg;
+  new_cmd_received_ = true;
 }
 
 }  // namespace quadruped_mpc
