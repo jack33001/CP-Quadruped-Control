@@ -122,14 +122,14 @@ RUN pip3 install --break-system-packages -U vcstool
 RUN pip3 install --break-system-packages -U rosdep
 
 # Install testing packages without upgrading system packages
-RUN pip3 install --break-system-packages --ignore-installed pytest
 RUN apt-get install -y \
     python3-pytest \
     ros-jazzy-launch-testing \
     ros-jazzy-launch-testing-ros \
-    ros-jazzy-plotjuggler-ros
+    ros-jazzy-plotjuggler
 
-RUN pip3 install --break-system-packages --ignore-installed -U \
+# Don't try to upgrade system-installed pytest
+RUN pip3 install --break-system-packages \
     flake8 \
     flake8-blind-except \
     flake8-builtins \
@@ -140,7 +140,7 @@ RUN pip3 install --break-system-packages --ignore-installed -U \
     flake8-import-order \
     flake8-quotes \
     tqdm
-    
+
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
 CMD ["/bin/bash"]
