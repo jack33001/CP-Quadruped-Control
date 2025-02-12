@@ -56,6 +56,11 @@ private:
   
   // Add callback function declaration
   void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
+
+  // Add new private methods
+  void update_state();
+  void update_control();
+  void update_commands();
 };
 
 }  // namespace quadruped_mpc
