@@ -258,7 +258,7 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
 
     // Set up odometry subscription with best effort QoS
     odom_sub_ = get_node()->create_subscription<nav_msgs::msg::Odometry>(
-      "/model/quadruped/odometry",
+      "/quadruped/state/ground_truth/odometry",
       rclcpp::QoS(1).reliable(),
       [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
         latest_odom_ = msg;

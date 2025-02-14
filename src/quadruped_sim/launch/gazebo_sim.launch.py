@@ -27,7 +27,7 @@ def generate_launch_description():
             'qos_overrides./clock.publisher.durability': 'transient_local',
             'qos_overrides./clock.publisher.reliability': 'reliable',
         }],
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock']  # Using gz instead of ignition
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'] 
     )
 
     # Odometry bridge node
@@ -39,7 +39,10 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
         arguments=[
             # Bridge Gazebo odometry to ROS topic
-            '/model/quadruped/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/model/quadruped/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',  
+        ],
+        remappings=[
+            ('/model/quadruped/odometry' , '/quadruped/state/ground_truth/odometry')  # remap Gazebo publication
         ]
     )
 
