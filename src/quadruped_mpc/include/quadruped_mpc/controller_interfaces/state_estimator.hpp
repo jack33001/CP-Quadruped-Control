@@ -100,24 +100,14 @@ protected:
   };
   std::vector<JointState> joint_states_;
 
-  // Returns true if successful, false if error
+  // These function declarations stay here but implementations move to state_estimation.hpp
   bool read_state_interfaces();
-  
-  // Returns true if successful, false if error
   bool update_model();
-  
-  // Returns true if successful, false if error
   bool foot_positions();
-
-  // Returns true if successful, false if error
   bool detect_contact();
-
-  // New estimation methods
   bool pin_kinematics();
   bool estimate_base_position();
   bool estimate_orientation();
-
-  // New method to handle odometry updates
   bool update_odometry();
 
 private:
