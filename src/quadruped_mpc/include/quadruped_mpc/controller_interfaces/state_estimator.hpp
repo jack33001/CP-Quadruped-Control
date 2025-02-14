@@ -32,6 +32,10 @@
 #include "nav_msgs/msg/odometry.hpp"  // Move after transform includes
 #include "quadruped_msgs/msg/quadruped_state.hpp"  // Add this line
 
+// Add realtime publisher includes
+#include "realtime_tools/realtime_publisher.hpp"
+#include "realtime_tools/realtime_buffer.hpp"
+
 // Remove MeshcatCpp includes
 // #include <MeshcatCpp/Meshcat.h>
 // #include <MeshcatCpp/Shape.h>
@@ -42,6 +46,8 @@ namespace quadruped_mpc
 class StateEstimator : public controller_interface::ControllerInterface
 {
 public:
+  // Move the type alias to the public section before any usage
+  using RTPublisher = realtime_tools::RealtimePublisher<quadruped_msgs::msg::QuadrupedState>;
   using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
   StateEstimator();
@@ -120,7 +126,9 @@ private:
   rclcpp::Clock::SharedPtr sim_clock_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   nav_msgs::msg::Odometry::SharedPtr latest_odom_;
-  rclcpp::Publisher<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_pub_;
+  // Replace regular publisher with realtime publisher
+  std::unique_ptr<RTPublisher> rt_state_pub_;  // Now RTPublisher is defined before use
+  std::shared_ptr<quadruped_msgs::msg::QuadrupedState> state_msg_;
   // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
 

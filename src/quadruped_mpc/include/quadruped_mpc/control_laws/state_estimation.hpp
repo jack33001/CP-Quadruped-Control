@@ -322,13 +322,6 @@ inline bool StateEstimator::update_odometry()
     transform.transform.rotation.y = current_positions_[5];
     transform.transform.rotation.z = current_positions_[6];
 
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "TF frames: parent='%s', child='%s'",
-      transform.header.frame_id.c_str(),
-      transform.child_frame_id.c_str()
-    );
-
     odom.pose.pose.position.x = transform.transform.translation.x;
     odom.pose.pose.position.y = transform.transform.translation.y;
     odom.pose.pose.position.z = transform.transform.translation.z;
@@ -339,18 +332,81 @@ inline bool StateEstimator::update_odometry()
     odom.twist.twist.angular.y = angular_velocity.y();
     odom.twist.twist.angular.z = angular_velocity.z();
 
-    RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Transform - Position: [%.3f, %.3f, %.3f], Rotation: [%.3f, %.3f, %.3f, %.3f]",
-      transform.transform.translation.x,
-      transform.transform.translation.y,
-      transform.transform.translation.z,
-      transform.transform.rotation.w,
-      transform.transform.rotation.x,
-      transform.transform.rotation.y,
-      transform.transform.rotation.z);
-
     tf_broadcaster_->sendTransform(transform);
     odom_pub_->publish(odom);
+
+    // Add realtime state publishing here
+    if (rt_state_pub_ && rt_state_pub_->trylock()) {
+      auto& msg = rt_state_pub_->msg_;
+      auto& info = SharedQuadrupedInfo::getInstance();
+      std::lock_guard<std::mutex> lock(info.mutex_);
+
+      // Convert Eigen vectors to Point messages
+      auto eigen_to_point = [](const Eigen::Vector3d& vec) {
+        geometry_msgs::msg::Point point;
+        point.x = vec.x();
+        point.y = vec.y();
+        point.z = vec.z();
+        return point;
+      };
+
+      // Populate foot positions
+      msg.p1 = eigen_to_point(info.state_.p1);
+      msg.p2 = eigen_to_point(info.state_.p2);
+      msg.p3 = eigen_to_point(info.state_.p3);
+      msg.p4 = eigen_to_point(info.state_.p4);
+      msg.pc = eigen_to_point(info.state_.pc);
+
+      // Convert array to vector for joint states
+      msg.joint_positions = std::vector<double>(
+        info.state_.joint_pos.begin(), 
+        info.state_.joint_pos.end()
+      );
+      msg.joint_velocities = std::vector<double>(
+        info.state_.joint_vel.begin(), 
+        info.state_.joint_vel.end()
+      );
+      msg.joint_efforts = std::vector<double>(
+        info.state_.joint_eff.begin(), 
+        info.state_.joint_eff.end()
+      );
+
+      // Populate IMU state
+      msg.orientation.w = info.state_.orientation_quat[3];
+      msg.orientation.x = info.state_.orientation_quat[0];
+      msg.orientation.y = info.state_.orientation_quat[1];
+      msg.orientation.z = info.state_.orientation_quat[2];
+
+      // Convert Eigen vector to Vector3 message for angular velocity
+      msg.angular_velocity.x = info.state_.angular_velocity[0];
+      msg.angular_velocity.y = info.state_.angular_velocity[1];
+      msg.angular_velocity.z = info.state_.angular_velocity[2];
+
+      // Convert Eigen vector to Vector3 message for COM velocity
+      msg.com_velocity.x = info.state_.vc[0];
+      msg.com_velocity.y = info.state_.vc[1];
+      msg.com_velocity.z = info.state_.vc[2];
+
+      // Convert Eigen matrices to vectors for Jacobians
+      // Using row-major storage for Jacobians
+      Eigen::Map<const Eigen::VectorXd> j1_vec(info.state_.J1.data(), info.state_.J1.size());
+      Eigen::Map<const Eigen::VectorXd> j2_vec(info.state_.J2.data(), info.state_.J2.size());
+      Eigen::Map<const Eigen::VectorXd> j3_vec(info.state_.J3.data(), info.state_.J3.size());
+      Eigen::Map<const Eigen::VectorXd> j4_vec(info.state_.J4.data(), info.state_.J4.size());
+
+      msg.j1.assign(j1_vec.data(), j1_vec.data() + j1_vec.size());
+      msg.j2.assign(j2_vec.data(), j2_vec.data() + j2_vec.size());
+      msg.j3.assign(j3_vec.data(), j3_vec.data() + j3_vec.size());
+      msg.j4.assign(j4_vec.data(), j4_vec.data() + j4_vec.size());
+
+      // Populate contact states
+      msg.contact_1 = info.state_.contact_1_;
+      msg.contact_2 = info.state_.contact_2_;
+      msg.contact_3 = info.state_.contact_3_;
+      msg.contact_4 = info.state_.contact_4_;
+
+      rt_state_pub_->unlockAndPublish();
+    }
 
     return true;
   } catch (const std::exception& e) {

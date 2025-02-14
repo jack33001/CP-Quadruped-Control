@@ -60,6 +60,7 @@ StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /
       ) {
     return controller_interface::return_type::ERROR;
   }
+
   return controller_interface::return_type::OK;
 }
 
@@ -267,10 +268,14 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
 
     RCLCPP_INFO(get_node()->get_logger(), "Created odometry subscription");
 
-    // Set up state publisher
-    state_pub_ = get_node()->create_publisher<quadruped_msgs::msg::QuadrupedState>(
+    // Create a regular publisher first
+    auto state_pub = get_node()->create_publisher<quadruped_msgs::msg::QuadrupedState>(
       "/quadruped/state/state_estimate", 10);
-    RCLCPP_INFO(get_node()->get_logger(), "Created state publisher");
+    
+    // Then create the realtime publisher using the regular publisher
+    rt_state_pub_ = std::make_unique<RTPublisher>(state_pub);
+    state_msg_ = std::make_shared<quadruped_msgs::msg::QuadrupedState>();
+    RCLCPP_INFO(get_node()->get_logger(), "Created realtime state publisher");
 
     return CallbackReturn::SUCCESS;
   } catch (const std::exception& e) {
