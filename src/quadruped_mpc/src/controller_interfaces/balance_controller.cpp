@@ -132,15 +132,15 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize ACADOS solver with status %d", status);
     return CallbackReturn::ERROR;
   }
-  //RCLCPP_INFO(get_node()->get_logger(), "ACADOS solver initialized successfully");
+  RCLCPP_INFO(get_node()->get_logger(), "ACADOS solver initialized successfully");
 
-  //RCLCPP_INFO(get_node()->get_logger(), "Balance controller configuration completed successfully");
+  RCLCPP_INFO(get_node()->get_logger(), "Balance controller configuration completed successfully");
 
   // Add subscriber initialization before returning
   cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(
-    "quadruped_cmd", 10,
+    "quadruped/cmd/single_state", 10,
     std::bind(&BalanceController::cmd_callback, this, std::placeholders::_1));
-  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to quadruped_cmd topic");
+  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to quadruped/cmd/single_state topic");
 
   return CallbackReturn::SUCCESS;
 }

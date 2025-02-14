@@ -50,7 +50,7 @@ def generate_launch_description():
         name='spawn_robot_urdf',
         output='screen',
         arguments=['-topic', 'robot_description',
-                   '-x', '0.0', '-y', '0.0', '-z', '1.0',
+                   '-x', '0.0', '-y', '0.0', '-z', '.3',
                    '-R', '0.0', '-P', '0.0', '-Y', '0.0',
                    '-entity', 'Edward'],
         parameters=[{'use_sim_time': True, 'update_rate': 1000}]

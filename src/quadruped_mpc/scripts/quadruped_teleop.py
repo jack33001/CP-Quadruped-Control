@@ -8,7 +8,7 @@ from pynput import keyboard
 class QuadrupedTeleop(Node):
     def __init__(self):
         super().__init__('quadruped_teleop')
-        self.publisher = self.create_publisher(Pose, 'quadruped_cmd', 10)
+        self.publisher = self.create_publisher(Pose, '/quadruped/cmd/single_state', 10)
         self.pose = Pose()
         
         # Movement parameters
@@ -25,7 +25,7 @@ class QuadrupedTeleop(Node):
         self.timer = self.create_timer(0.1, self.timer_callback)
         
         # Log control scheme
-        self.get_logger().info('Quadruped Teleop node started, publishing to topic: quadruped_cmd')
+        self.get_logger().info('Quadruped Teleop node started, publishing to topic: /quadruped/cmd/single_state')
         self.get_logger().info('Control Scheme:')
         self.get_logger().info('W/S: +/- X position')
         self.get_logger().info('A/D: +/- Y position')
