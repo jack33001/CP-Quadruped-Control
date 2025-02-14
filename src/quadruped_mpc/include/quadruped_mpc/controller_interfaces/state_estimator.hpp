@@ -30,6 +30,7 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2_ros/transform_broadcaster.h"
 #include "nav_msgs/msg/odometry.hpp"  // Move after transform includes
+#include "quadruped_msgs/msg/quadruped_state.hpp"  // Add this line
 
 // Remove MeshcatCpp includes
 // #include <MeshcatCpp/Meshcat.h>
@@ -119,6 +120,7 @@ private:
   rclcpp::Clock::SharedPtr sim_clock_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   nav_msgs::msg::Odometry::SharedPtr latest_odom_;
+  rclcpp::Publisher<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_pub_;
   // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
 

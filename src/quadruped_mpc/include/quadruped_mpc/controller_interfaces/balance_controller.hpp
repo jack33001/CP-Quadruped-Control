@@ -15,6 +15,7 @@
 #include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
 #include "geometry_msgs/msg/pose.hpp"
+#include "quadruped_msgs/msg/quadruped_state.hpp"
 #include <mutex>
 
 namespace quadruped_mpc
@@ -54,8 +55,15 @@ private:
   geometry_msgs::msg::Pose::SharedPtr latest_cmd_;
   bool new_cmd_received_{false};
   
-  // Add callback function declaration
+  // Add state handling members
+  rclcpp::Subscription<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_sub_;
+  quadruped_msgs::msg::QuadrupedState::SharedPtr latest_state_;
+  std::mutex state_mutex_;
+  bool new_state_received_{false};
+  
+  // Add callback function declarations
   void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
+  void state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
 
   // Add new private methods
   void update_state();

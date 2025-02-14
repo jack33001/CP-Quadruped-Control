@@ -267,6 +267,11 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
 
     RCLCPP_INFO(get_node()->get_logger(), "Created odometry subscription");
 
+    // Set up state publisher
+    state_pub_ = get_node()->create_publisher<quadruped_msgs::msg::QuadrupedState>(
+      "/quadruped/state/state_estimate", 10);
+    RCLCPP_INFO(get_node()->get_logger(), "Created state publisher");
+
     return CallbackReturn::SUCCESS;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception thrown during configure stage with message: %s", e.what());

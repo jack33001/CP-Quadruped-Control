@@ -142,6 +142,12 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     std::bind(&BalanceController::cmd_callback, this, std::placeholders::_1));
   RCLCPP_INFO(get_node()->get_logger(), "Subscribed to quadruped/cmd/single_state topic");
 
+  // Set up state subscriber
+  state_sub_ = get_node()->create_subscription<quadruped_msgs::msg::QuadrupedState>(
+    "/quadruped/state/state_estimate", 10,
+    std::bind(&BalanceController::state_callback, this, std::placeholders::_1));
+  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to state estimation topic");
+
   return CallbackReturn::SUCCESS;
 }
 
@@ -163,6 +169,13 @@ void BalanceController::cmd_callback(const geometry_msgs::msg::Pose::SharedPtr m
   std::lock_guard<std::mutex> lock(cmd_mutex_);
   latest_cmd_ = msg;
   new_cmd_received_ = true;
+}
+
+void BalanceController::state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(state_mutex_);
+  latest_state_ = msg;
+  new_state_received_ = true;
 }
 
 }  // namespace quadruped_mpc
