@@ -11,17 +11,19 @@ find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
-add_library(${PROJECT_NAME} SHARED
+add_library(quadruped_utils_controllers SHARED
     src/quadruped_utils.cpp
+    src/ZeroJointsController.cpp
+
 )
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(quadruped_utils_controllers
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
-ament_target_dependencies(${PROJECT_NAME}
+ament_target_dependencies(quadruped_utils_controllers
   controller_interface
   hardware_interface
   pluginlib
@@ -32,7 +34,7 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS quadruped_utils_controllers
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -50,6 +52,7 @@ ament_export_dependencies(
   std_msgs
 )
 
+
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
@@ -64,6 +67,8 @@ install(
   DIRECTORY include/
   DESTINATION include
 )
+
+pluginlib_export_plugin_description_file(controller_interface ZeroJointsController.xml)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})

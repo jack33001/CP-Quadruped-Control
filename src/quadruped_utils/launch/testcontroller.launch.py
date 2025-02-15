@@ -34,13 +34,14 @@ def generate_launch_description():
     #         output='screen'
     #     )
 
-    
-    joint_group_position_controller = Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=['joint_group_position_controller'],
-            output='screen'
-        )
+    # This one is the one that works
+    # joint_group_position_controller = Node(
+    #         package='controller_manager',
+    #         executable='spawner',
+    #         arguments=['joint_group_position_controller'],
+    #         output='screen'
+    #     )
+
         # Node(
         #     package='controller_manager',
         #     executable='spawner',
@@ -71,6 +72,14 @@ def generate_launch_description():
         #     arguments=['joint_trajectory_controller'],
         #     output='screen'
         # ),
+
+
+    zero_joints_controller = Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['zero_joints_controller'],
+            output='screen'
+        )
         
     joint_state_broadcaster = Node(
             package="controller_manager",
@@ -82,14 +91,15 @@ def generate_launch_description():
 
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action= joint_group_position_controller,
+                target_action= zero_joints_controller,
                 on_exit=[joint_state_broadcaster],
             )
         )
     
     nodes = [
             # joint_state_controller,
-            joint_group_position_controller,
+            # joint_group_position_controller,
+            zero_joints_controller,
 
             delay_joint_state_broadcaster_after_robot_controller_spawner,
         ]
