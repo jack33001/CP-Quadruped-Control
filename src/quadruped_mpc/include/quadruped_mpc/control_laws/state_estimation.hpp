@@ -15,30 +15,22 @@ inline bool StateEstimator::read_state_interfaces()
       joint_states_.resize(joint_names_.size());
     }
 
-    auto& quadruped_info = SharedQuadrupedInfo::getInstance();
-    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
-
     // Read all interfaces for each joint
     const size_t interfaces_per_joint = state_interface_types_.size();
     for (size_t i = 0; i < joint_names_.size(); ++i) {
       size_t base_idx = i * interfaces_per_joint;
       
-      // Update local storage
+      // Update local storage only
       joint_states_[i].position = state_interfaces_[base_idx].get_value();      // position
       joint_states_[i].velocity = state_interfaces_[base_idx + 1].get_value();  // velocity
       joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
-
-      // Update shared state arrays
-      quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
-      quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
-      quadruped_info.state_.joint_eff[i] = joint_states_[i].effort;
     }
 
     // Read IMU data - assuming they're after all joint interfaces
     const size_t imu_start_idx = joint_names_.size() * interfaces_per_joint;
     
     // Store quaternion in Pinocchio's order [x,y,z,w]
-    quadruped_info.state_.orientation_quat = Eigen::Vector4d(
+    imu_orientation_ = Eigen::Vector4d(
       state_interfaces_[imu_start_idx].get_value(),      // x
       state_interfaces_[imu_start_idx + 1].get_value(),  // y
       state_interfaces_[imu_start_idx + 2].get_value(),  // z
@@ -46,10 +38,17 @@ inline bool StateEstimator::read_state_interfaces()
     );
 
     // Read and store angular velocities directly
-    quadruped_info.state_.angular_velocity = Eigen::Vector3d(
+    imu_angular_velocity_ = Eigen::Vector3d(
       state_interfaces_[imu_start_idx + 4].get_value(),  // wx
       state_interfaces_[imu_start_idx + 5].get_value(),  // wy
       state_interfaces_[imu_start_idx + 6].get_value()   // wz
+    );
+
+    // Read and store linear accelerations
+    imu_linear_acceleration_ = Eigen::Vector3d(
+      state_interfaces_[imu_start_idx + 7].get_value(),  // ax
+      state_interfaces_[imu_start_idx + 8].get_value(),  // ay
+      state_interfaces_[imu_start_idx + 9].get_value()   // az
     );
 
     return true;
@@ -98,21 +97,14 @@ inline bool StateEstimator::foot_positions()
     auto& quadruped_info = SharedQuadrupedInfo::getInstance();
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
-    // Get foot positions in correct order: FL, FR, RL,
-    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation() + quadruped_info.state_.pc;  // FL
-    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation() + quadruped_info.state_.pc;  // FR
-    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation() + quadruped_info.state_.pc;  // RL
-    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation() + quadruped_info.state_.pc;  // RR
-
-    // Copy joint states to shared info
-    for (size_t i = 0; i < joint_states_.size(); ++i) {
-      quadruped_info.state_.joint_pos[i] = joint_states_[i].position;
-      quadruped_info.state_.joint_vel[i] = joint_states_[i].velocity;
+    // Update foot states with positions relative to center of mass
+    for (size_t i = 0; i < 4; ++i) {
+      foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation() + quadruped_info.state_.pc;
     }
 
     return true;
   } catch (const std::exception& e) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Error in inverse kinematics: %s", e.what());
+    RCLCPP_ERROR(get_node()->get_logger(), "Error in foot position calculation: %s", e.what());
     return false;
   }
 }
@@ -145,11 +137,11 @@ inline bool StateEstimator::pin_kinematics()
     
     std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
 
-    // Store foot positions as before
-    quadruped_info.state_.p1 = data_->oMf[foot_frame_ids_[0]].translation();  // FL
-    quadruped_info.state_.p2 = data_->oMf[foot_frame_ids_[1]].translation();  // FR
-    quadruped_info.state_.p3 = data_->oMf[foot_frame_ids_[2]].translation();  // RL
-    quadruped_info.state_.p4 = data_->oMf[foot_frame_ids_[3]].translation();  // RR
+    // Update foot positions and set default contact states
+    for (size_t i = 0; i < 4; ++i) {
+      foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation();
+      foot_states_[i].in_contact = true;  // Default to true for now
+    }
 
     // Compute full Jacobians in world frame
     Eigen::MatrixXd J_temp(6, model_.nv);
@@ -179,6 +171,9 @@ inline bool StateEstimator::pin_kinematics()
                                    J_temp);
     quadruped_info.state_.J4 = J_temp.block<3,2>(0, model_.joints[joint_mappings_[6].pinocchio_idx].idx_v());
 
+    // Update angular velocity in shared info from local storage
+    quadruped_info.state_.angular_velocity = imu_angular_velocity_;
+
     RCLCPP_DEBUG(get_node()->get_logger(), 
                  "FL Jacobian:\n%.3f %.3f\n%.3f %.3f\n%.3f %.3f",
                  quadruped_info.state_.J1(0,0), quadruped_info.state_.J1(0,1),
@@ -201,27 +196,13 @@ inline bool StateEstimator::estimate_base_position()
     // Define foot sphere radius
     constexpr double foot_radius = 0.015;  // meters
 
-    // Get foot positions and contact states
-    std::vector<Eigen::Vector3d> foot_positions = {
-      quadruped_info.state_.p1,  // FL
-      quadruped_info.state_.p2,  // FR
-      quadruped_info.state_.p3,  // RL
-      quadruped_info.state_.p4   // RR
-    };
-    std::vector<bool> contacts = {
-      quadruped_info.state_.contact_1_,
-      quadruped_info.state_.contact_2_,
-      quadruped_info.state_.contact_3_,
-      quadruped_info.state_.contact_4_
-    };
-
-    // Calculate average Z height only, using the average of the contacting footp positions
+    // Calculate average Z height only using contacting feet
     double world_z = 0.0;
     int contact_count = 0;
 
-    for (size_t i = 0; i < 4; ++i) {
-      if (contacts[i]) {
-        world_z += foot_positions[i].z();
+    for (const auto& foot : foot_states_) {
+      if (foot.in_contact) {
+        world_z += foot.position.z();
         contact_count++;
       }
     }
@@ -230,28 +211,42 @@ inline bool StateEstimator::estimate_base_position()
       world_z /= contact_count;
       world_z = world_z - foot_radius;  // Subtract foot radius to get body center
 
-      quadruped_info.state_.pc.x() = 0.0;
-      quadruped_info.state_.pc.y() = 0.0;
-      quadruped_info.state_.pc.z() = -world_z;
+      // Initialize base position
+      current_positions_[0] = 0.0;  // x
+      current_positions_[1] = 0.0;  // y
+      current_positions_[2] = -world_z;  // z
 
-      if (latest_odom_){
+      current_velocities_[0] = 0.0;  // vx
+      current_velocities_[1] = 0.0;  // vy
+      current_velocities_[2] = 0.0;  // vz
+
+      // Update with odometry if available
+      if (latest_odom_) {
         auto odom = latest_odom_;
         auto position = odom->pose.pose.position;
         auto velocity = odom->twist.twist.linear;
-        quadruped_info.state_.pc.x() = position.x;
-        quadruped_info.state_.pc.y() = position.y;
-        quadruped_info.state_.pc.z() = position.z;
-        quadruped_info.state_.vc.x() = velocity.x;
-        quadruped_info.state_.vc.y() = velocity.y;
-        quadruped_info.state_.vc.z() = velocity.z;
+        
+        // Update position in both current state and shared info
+        current_positions_[0] = position.x;
+        current_positions_[1] = position.y;
+        current_positions_[2] = position.z;
+        
+        // Update velocity in both current state and shared info
+        current_velocities_[0] = velocity.x;
+        current_velocities_[1] = velocity.y;
+        current_velocities_[2] = velocity.z;
+
+        // Keep shared info updated for backwards compatibility
+        quadruped_info.state_.pc = Eigen::Vector3d(position.x, position.y, position.z);
+        quadruped_info.state_.vc = Eigen::Vector3d(velocity.x, velocity.y, velocity.z);
       }
       
       RCLCPP_DEBUG(
         get_node()->get_logger(),
         "Estimated body position: [%.3f, %.3f, %.3f] m",
-        quadruped_info.state_.pc.x(),
-        quadruped_info.state_.pc.y(),
-        quadruped_info.state_.pc.z()
+        current_positions_[0],
+        current_positions_[1],
+        current_positions_[2]
       );
     } else {
       RCLCPP_WARN(
@@ -270,13 +265,10 @@ inline bool StateEstimator::estimate_base_position()
 inline bool StateEstimator::estimate_orientation()
 {
   try {
-    auto& quadruped_info = SharedQuadrupedInfo::getInstance();
-    std::lock_guard<std::mutex> lock(quadruped_info.mutex_);
-
-    current_positions_[3] = quadruped_info.state_.orientation_quat[0];  // x
-    current_positions_[4] = quadruped_info.state_.orientation_quat[1];  // y
-    current_positions_[5] = quadruped_info.state_.orientation_quat[2];  // z
-    current_positions_[6] = quadruped_info.state_.orientation_quat[3];  // w
+    current_positions_[3] = imu_orientation_[0];  // x
+    current_positions_[4] = imu_orientation_[1];  // y
+    current_positions_[5] = imu_orientation_[2];  // z
+    current_positions_[6] = imu_orientation_[3];  // w
 
     return true;
   } catch (const std::exception& e) {
@@ -338,8 +330,6 @@ inline bool StateEstimator::update_odometry()
     // Add realtime state publishing here
     if (rt_state_pub_ && rt_state_pub_->trylock()) {
       auto& msg = rt_state_pub_->msg_;
-      auto& info = SharedQuadrupedInfo::getInstance();
-      std::lock_guard<std::mutex> lock(info.mutex_);
 
       // Convert Eigen vectors to Point messages
       auto eigen_to_point = [](const Eigen::Vector3d& vec) {
@@ -350,44 +340,52 @@ inline bool StateEstimator::update_odometry()
         return point;
       };
 
-      // Populate foot positions
-      msg.p1 = eigen_to_point(info.state_.p1);
-      msg.p2 = eigen_to_point(info.state_.p2);
-      msg.p3 = eigen_to_point(info.state_.p3);
-      msg.p4 = eigen_to_point(info.state_.p4);
-      msg.pc = eigen_to_point(info.state_.pc);
+      // Update foot positions and contacts in message
+      msg.p1 = eigen_to_point(foot_states_[0].position);
+      msg.p2 = eigen_to_point(foot_states_[1].position);
+      msg.p3 = eigen_to_point(foot_states_[2].position);
+      msg.p4 = eigen_to_point(foot_states_[3].position);
+      msg.contact_1 = foot_states_[0].in_contact;
+      msg.contact_2 = foot_states_[1].in_contact;
+      msg.contact_3 = foot_states_[2].in_contact;
+      msg.contact_4 = foot_states_[3].in_contact;
 
-      // Convert array to vector for joint states
-      msg.joint_positions = std::vector<double>(
-        info.state_.joint_pos.begin(), 
-        info.state_.joint_pos.end()
-      );
-      msg.joint_velocities = std::vector<double>(
-        info.state_.joint_vel.begin(), 
-        info.state_.joint_vel.end()
-      );
-      msg.joint_efforts = std::vector<double>(
-        info.state_.joint_eff.begin(), 
-        info.state_.joint_eff.end()
-      );
+      // Convert joint states directly from local storage
+      msg.joint_positions.resize(joint_states_.size());
+      msg.joint_velocities.resize(joint_states_.size());
+      msg.joint_efforts.resize(joint_states_.size());
+      
+      for (size_t i = 0; i < joint_states_.size(); ++i) {
+        msg.joint_positions[i] = joint_states_[i].position;
+        msg.joint_velocities[i] = joint_states_[i].velocity;
+        msg.joint_efforts[i] = joint_states_[i].effort;
+      }
 
       // Populate IMU state
-      msg.orientation.w = info.state_.orientation_quat[3];
-      msg.orientation.x = info.state_.orientation_quat[0];
-      msg.orientation.y = info.state_.orientation_quat[1];
-      msg.orientation.z = info.state_.orientation_quat[2];
+      msg.orientation.w = imu_orientation_[3];  // w
+      msg.orientation.x = imu_orientation_[0];  // x
+      msg.orientation.y = imu_orientation_[1];  // y
+      msg.orientation.z = imu_orientation_[2];  // z
 
       // Convert Eigen vector to Vector3 message for angular velocity
-      msg.angular_velocity.x = info.state_.angular_velocity[0];
-      msg.angular_velocity.y = info.state_.angular_velocity[1];
-      msg.angular_velocity.z = info.state_.angular_velocity[2];
+      msg.angular_velocity.x = imu_angular_velocity_[0];
+      msg.angular_velocity.y = imu_angular_velocity_[1];
+      msg.angular_velocity.z = imu_angular_velocity_[2];
 
       // Convert Eigen vector to Vector3 message for COM velocity
-      msg.com_velocity.x = info.state_.vc[0];
-      msg.com_velocity.y = info.state_.vc[1];
-      msg.com_velocity.z = info.state_.vc[2];
+      msg.com_velocity.x = current_velocities_[0];
+      msg.com_velocity.y = current_velocities_[1];
+      msg.com_velocity.z = current_velocities_[2];
+
+      // Add COM position from current state vectors
+      msg.pc.x = current_positions_[0];
+      msg.pc.y = current_positions_[1];
+      msg.pc.z = current_positions_[2];
 
       // Convert Eigen matrices to vectors for Jacobians
+      auto& info = SharedQuadrupedInfo::getInstance();
+      std::lock_guard<std::mutex> lock(info.mutex_);
+      
       // Using row-major storage for Jacobians
       Eigen::Map<const Eigen::VectorXd> j1_vec(info.state_.J1.data(), info.state_.J1.size());
       Eigen::Map<const Eigen::VectorXd> j2_vec(info.state_.J2.data(), info.state_.J2.size());

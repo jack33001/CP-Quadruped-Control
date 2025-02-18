@@ -71,6 +71,18 @@ protected:
   std::vector<std::string> joint_names_;
   std::vector<std::string> state_interface_types_;
   
+  // Add IMU data storage
+  Eigen::Vector4d imu_orientation_;  // [x,y,z,w]
+  Eigen::Vector3d imu_angular_velocity_;
+  Eigen::Vector3d imu_linear_acceleration_;
+  
+  // Add foot state storage
+  struct FootState {
+    Eigen::Vector3d position;
+    bool in_contact;
+  };
+  std::array<FootState, 4> foot_states_;  // FL, FR, RL, RR
+
   // Pinocchio model and data
   pinocchio::Model model_;
   std::unique_ptr<pinocchio::Data> data_;
