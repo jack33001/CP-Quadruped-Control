@@ -9,7 +9,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
-#include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
 #include "hardware_interface/handle.hpp"
 #include "acados/utils/types.h"
 #include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
