@@ -40,7 +40,7 @@
 #include "acados_solver_quadruped_ode.h"
 
 // blasfeo
-#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
+#include "blasfeo_d_aux_ext_dep.h"
 
 #define NX     QUADRUPED_ODE_NX
 #define NP     QUADRUPED_ODE_NP

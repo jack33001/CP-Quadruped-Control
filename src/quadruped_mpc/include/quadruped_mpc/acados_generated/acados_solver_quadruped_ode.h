@@ -149,8 +149,9 @@ ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_update_params_sparse(quadruped_ode
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_set_p_global_and_precompute_dependencies(quadruped_ode_solver_capsule* capsule, double* data, int data_len);
 
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_solve(quadruped_ode_solver_capsule * capsule);
+ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_setup_qp_matrices_and_factorize(quadruped_ode_solver_capsule* capsule);
 
-ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_solve(quadruped_ode_solver_capsule ** capsules, int N_batch);
+ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_solve(quadruped_ode_solver_capsule ** capsules, int * status_out, int N_batch);
 
 ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_set_flat(quadruped_ode_solver_capsule ** capsules, const char *field, double *data, int N_data, int N_batch);
 ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_get_flat(quadruped_ode_solver_capsule ** capsules, const char *field, double *data, int N_data, int N_batch);

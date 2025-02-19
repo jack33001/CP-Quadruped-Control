@@ -808,6 +808,9 @@ static void quadruped_ode_acados_create_set_opts(quadruped_ode_solver_capsule* c
     int with_value_sens_wrt_params = false;
     ocp_nlp_solver_opts_set(nlp_config, capsule->nlp_opts, "with_value_sens_wrt_params", &with_value_sens_wrt_params);
 
+    double solution_sens_qp_t_lam_min = 0.000000001;
+    ocp_nlp_solver_opts_set(nlp_config, capsule->nlp_opts, "solution_sens_qp_t_lam_min", &solution_sens_qp_t_lam_min);
+
     int globalization_full_step_dual = 0;
     ocp_nlp_solver_opts_set(nlp_config, capsule->nlp_opts, "globalization_full_step_dual", &globalization_full_step_dual);
 
@@ -856,6 +859,11 @@ static void quadruped_ode_acados_create_set_opts(quadruped_ode_solver_capsule* c
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "store_iterates", &store_iterates);
     // set HPIPM mode: should be done before setting other QP solver options
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_hpipm_mode", "BALANCE");
+
+
+
+    int qp_solver_t0_init = 2;
+    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_t0_init", &qp_solver_t0_init);
 
 
 
@@ -1082,7 +1090,8 @@ int quadruped_ode_acados_update_params_sparse(quadruped_ode_solver_capsule * cap
 int quadruped_ode_acados_set_p_global_and_precompute_dependencies(quadruped_ode_solver_capsule* capsule, double* data, int data_len)
 {
 
-    printf("p_global is not defined, quadruped_ode_acados_set_p_global_and_precompute_dependencies does nothing.\n");
+    printf("No global_data, quadruped_ode_acados_set_p_global_and_precompute_dependencies does nothing.\n");
+    return 0;
 }
 
 
@@ -1097,12 +1106,35 @@ int quadruped_ode_acados_solve(quadruped_ode_solver_capsule* capsule)
 }
 
 
-void quadruped_ode_acados_batch_solve(quadruped_ode_solver_capsule ** capsules, int N_batch)
+
+int quadruped_ode_acados_setup_qp_matrices_and_factorize(quadruped_ode_solver_capsule* capsule)
+{
+    int solver_status = ocp_nlp_setup_qp_matrices_and_factorize(capsule->nlp_solver, capsule->nlp_in, capsule->nlp_out);
+
+    return solver_status;
+}
+
+
+
+void quadruped_ode_acados_batch_solve(quadruped_ode_solver_capsule ** capsules, int * status_out, int N_batch)
 {
 
     for (int i = 0; i < N_batch; i++)
     {
-        ocp_nlp_solve(capsules[i]->nlp_solver, capsules[i]->nlp_in, capsules[i]->nlp_out);
+        status_out[i] = ocp_nlp_solve(capsules[i]->nlp_solver, capsules[i]->nlp_in, capsules[i]->nlp_out);
+    }
+
+
+    return;
+}
+
+
+void quadruped_ode_acados_batch_setup_qp_matrices_and_factorize(quadruped_ode_solver_capsule ** capsules, int * status_out, int N_batch)
+{
+
+    for (int i = 0; i < N_batch; i++)
+    {
+        status_out[i] = ocp_nlp_setup_qp_matrices_and_factorize(capsules[i]->nlp_solver, capsules[i]->nlp_in, capsules[i]->nlp_out);
     }
 
 
@@ -1140,7 +1172,7 @@ void quadruped_ode_acados_batch_eval_solution_sens_adj_p(quadruped_ode_solver_ca
 
 void quadruped_ode_acados_batch_set_flat(quadruped_ode_solver_capsule ** capsules, const char *field, double *data, int N_data, int N_batch)
 {
-    int offset = ocp_nlp_dims_get_total_from_attr(capsules[0]->nlp_solver->config, capsules[0]->nlp_solver->dims, field);
+    int offset = ocp_nlp_dims_get_total_from_attr(capsules[0]->nlp_solver->config, capsules[0]->nlp_solver->dims, capsules[0]->nlp_out, field);
 
     if (N_batch*offset != N_data)
     {
@@ -1162,7 +1194,7 @@ void quadruped_ode_acados_batch_set_flat(quadruped_ode_solver_capsule ** capsule
 
 void quadruped_ode_acados_batch_get_flat(quadruped_ode_solver_capsule ** capsules, const char *field, double *data, int N_data, int N_batch)
 {
-    int offset = ocp_nlp_dims_get_total_from_attr(capsules[0]->nlp_solver->config, capsules[0]->nlp_solver->dims, field);
+    int offset = ocp_nlp_dims_get_total_from_attr(capsules[0]->nlp_solver->config, capsules[0]->nlp_solver->dims, capsules[0]->nlp_out, field);
 
     if (N_batch*offset != N_data)
     {

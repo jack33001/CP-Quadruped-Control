@@ -113,8 +113,18 @@ RUN echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/acados/acados/lib"' >> 
 RUN cd /home/acados/acados/bin \
     && wget https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux \
     && mv t_renderer-v0.0.34-linux t_renderer \
-    && sudo chown $USERNAME:$USERNAME t_renderer 
+    && chmod +x t_renderer \
+    && chown $USERNAME:$USERNAME t_renderer \
+    && chmod 755 .
 
+# Pre-generate ACADOS code during build
+RUN mkdir -p /tmp/quadruped_ws/src \
+    && cd /tmp/quadruped_ws/src \
+    && git clone https://github.com/jack33001/CP-Quadruped-Control.git \
+    && cd CP-Quadruped-Control/src/quadruped_mpc/scripts/acados \
+    && yes y | /bin/python3 generate_controller.py \
+    && cd /tmp \
+    && rm -rf quadruped_ws
 
 # Install required packages for ROS2 development
 RUN pip3 install --break-system-packages -U colcon-common-extensions
