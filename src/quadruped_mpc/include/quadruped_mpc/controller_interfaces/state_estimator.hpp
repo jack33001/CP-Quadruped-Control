@@ -18,7 +18,6 @@
 #include <nav_msgs/msg/odometry.hpp>
 
 // Project headers
-#include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
 
 // Pinocchio headers
 #include <pinocchio/fwd.hpp>
@@ -82,6 +81,13 @@ protected:
     bool in_contact;
   };
   std::array<FootState, 4> foot_states_;  // FL, FR, RL, RR
+
+  // Add Jacobian storage
+  using JacobianMatrix = Eigen::Matrix<double, 3, 2>;
+  struct LegJacobians {
+    JacobianMatrix J1, J2, J3, J4;  // FL, FR, RL, RR
+  };
+  LegJacobians leg_jacobians_;
 
   // Pinocchio model and data
   pinocchio::Model model_;

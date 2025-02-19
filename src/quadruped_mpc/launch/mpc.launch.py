@@ -20,7 +20,6 @@ def generate_launch_description():
         arguments=[
             'joint_state_broadcaster',
             'imu_sensor_controller',
-            'quadruped_broadcaster',
             'state_estimator',
             'balance_controller'
         ],

@@ -114,8 +114,6 @@ target_link_libraries(acados_generated_code PUBLIC
 add_library(quadruped_mpc_controllers SHARED
   src/controller_interfaces/balance_controller.cpp
   src/controller_interfaces/state_estimator.cpp
-  src/controller_interfaces/quadruped_broadcaster.cpp
-  src/utilities/shared_quadruped_info.cpp
 )
 
 # Single unified dependency and configuration section
