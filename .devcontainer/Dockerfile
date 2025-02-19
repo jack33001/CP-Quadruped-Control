@@ -139,7 +139,8 @@ RUN pip3 install --break-system-packages \
     flake8-docstrings \
     flake8-import-order \
     flake8-quotes \
-    tqdm
+    tqdm \
+    pynput
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
