@@ -193,7 +193,7 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
     // motor_controller_->disableMotor(can_id);
 
-
+    sleep(1);
     return hardware_interface::return_type::OK;
 }
 

@@ -9,6 +9,14 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    config_file = PathJoinSubstitution(
+        [
+            FindPackageShare("quadruped_utils"),
+            "config",
+            "controller.yaml",
+        ])
+
+
     # Declare arguments
     declared_arguments = []
     declared_arguments.append(
@@ -77,8 +85,10 @@ def generate_launch_description():
     zero_joints_controller = Node(
             package='controller_manager',
             executable='spawner',
+            # namespace='quadruped_utils',
             arguments=['zero_joints_controller'],
-            output='screen'
+            output='screen',
+            parameters=[config_file]
         )
         
     joint_state_broadcaster = Node(
@@ -89,19 +99,20 @@ def generate_launch_description():
         )
         
 
-    delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action= zero_joints_controller,
-                on_exit=[joint_state_broadcaster],
-            )
-        )
+    # delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
+    #         event_handler=OnProcessExit(
+    #             target_action= zero_joints_controller,
+    #             on_exit=[joint_state_broadcaster],
+    #         )
+    #     )
     
     nodes = [
             # joint_state_controller,
             # joint_group_position_controller,
+            joint_state_broadcaster,
             zero_joints_controller,
 
-            delay_joint_state_broadcaster_after_robot_controller_spawner,
+            # delay_joint_state_broadcaster_after_robot_controller_spawner,
         ]
         
     

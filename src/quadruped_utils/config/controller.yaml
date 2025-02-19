@@ -55,30 +55,30 @@ controller_manager:
 
     zero_joints_controller:
       type: quadruped_utils/ZeroJointsController
-      # joints:
-      #   - fr_hip
+
 
 
 # joint_state_broadcaster:
 #   ros__parameters:
+
 #     publish_rate: 50
-#     joints:
-#       - fr_hip
-#       - fr_knee
-#       - fr_ankle
-#       - fl_hip
-#       - fl_knee
-#       - fl_ankle
-#       - rr_hip
-#       - rr_knee
-#       - rr_ankle
-#       - rl_hip
-#       - rl_knee
-#       - rl_ankle
-#     state_interfaces:
-#       - position
-#       - velocity
-#       - effort
+  #   joints:
+  #     - fr_hip
+  #     - fr_knee
+  #     - fr_ankle
+  #     - fl_hip
+  #     - fl_knee
+  #     - fl_ankle
+  #     - rr_hip
+  #     - rr_knee
+  #     - rr_ankle
+  #     - rl_hip
+  #     - rl_knee
+  #     - rl_ankle
+  #   state_interfaces:
+  #     - position
+  #     - velocity
+  #     - effort
 
 
 joint_position_controller:
@@ -106,13 +106,19 @@ joint_group_position_controller:
       # interface_name: position
       command_topic: /joint_group_position_controller/command
 
+
 zero_joints_controller:
   ros__parameters:
-      joints: 
-        - fr_hips
-      command_interfaces:
-        -velocity
-
-      state_interfaces:
-        -velocity
+    update_rate: 79
+    test: 1
+    test1:
+      -fr_hip
+    joints:
+   
+      - fr_hip
+      
+    command_interfaces:
+      -velocity
+    state_interfaces:
+      -velocity
       # interface_name: position
