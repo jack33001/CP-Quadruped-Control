@@ -34,6 +34,9 @@ class ZeroJointController : public controller_interface::ControllerInterface
         controller_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
     protected:
+
+
+        
         std::vector<std::string> joint_names_;
         std::vector<std::string> state_interface_types_;
 
@@ -44,6 +47,21 @@ class ZeroJointController : public controller_interface::ControllerInterface
           };
 
         std::vector<JointState> joint_states_;
+
+
+        struct MotorHandle
+        {
+          std::reference_wrapper<const hardware_interface::LoanedStateInterface> feedback;
+          std::reference_wrapper<hardware_interface::LoanedCommandInterface> velocity;
+        };
+      
+        // const char * feedback_type() const;
+        
+        // controller_interface::CallbackReturn configure_side(
+        //   const std::string & side, const std::vector<std::string> & wheel_names,
+        //   std::vector<WheelHandle> & registered_handles);
+      
+        std::vector<MotorHandle> registered_motor_handles_;
 
     private:
         // subscriptions

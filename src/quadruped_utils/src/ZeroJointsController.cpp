@@ -13,16 +13,17 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
        
     }
 
+
+
+
+
     // ________INTERFACE CONFIGURATION________
     controller_interface::InterfaceConfiguration ZeroJointController::command_interface_configuration() const
     {
-        // controller_interface::InterfaceConfiguration config;
-        // config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        // config.names = {
-        //     "fr_hip/velocity",
-
-        // };
-        // return config;
+        
+        // const auto left_result =
+        //     configure_side("left", params_.left_wheel_names, registered_motor_handles_);
+        
 
         controller_interface::InterfaceConfiguration config;
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
@@ -33,6 +34,8 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
             RCLCPP_INFO(get_node()->get_logger(), "Adding command interface for joint %s", joint.c_str());
         }
         
+
+
         return config;
     
     }
@@ -75,6 +78,10 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
         // auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
 
         
+      
+
+
+
         try {
             fprintf(stderr, "Balance controller trying to declare parameters\n");
             // Get parameters from yaml
@@ -135,6 +142,23 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
     controller_interface::CallbackReturn ZeroJointController::on_activate(const rclcpp_lifecycle::State & previous_state)
     {
         RCLCPP_INFO(get_node()->get_logger(), "on_activate called");
+
+        try {
+            // Resize joint states vector if needed
+            if (joint_states_.size() != joint_names_.size()) {
+              joint_states_.resize(joint_names_.size());
+            }
+        } catch (const std::exception& e) {
+            RCLCPP_ERROR(get_node()->get_logger(), "Error reading state interfaces: %s", e.what());
+            return CallbackReturn::ERROR;
+          }
+
+        RCLCPP_INFO(get_node()->get_logger(), "State interfaces:");
+        for (const auto & state_interface : state_interfaces_) {
+            RCLCPP_INFO(get_node()->get_logger(), "State interface: %s", state_interface.get_name().c_str());
+        }
+        
+        
     
         // // Get command and state interfaces
         // for (const auto & joint : joint_names_) {
@@ -173,6 +197,10 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
         }
 
         RCLCPP_INFO(get_node()->get_logger(), "Joint states:");
+        fprintf(stderr, "Joint states size: %zu\n", joint_states_.size());
+        fprintf(stderr, "Joint names size: %zu\n", joint_names_.size());
+
+
         for (size_t i = 0; i < joint_states_.size(); ++i) {
             RCLCPP_INFO(get_node()->get_logger(), "Joint %s - Position: %f, Velocity: %f, Effort: %f",
                         joint_names_[i].c_str(),
@@ -181,27 +209,27 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
                         joint_states_[i].effort);
         }
 
-        
-        try {
-            // Resize joint states vector if needed
-            if (joint_states_.size() != joint_names_.size()) {
-              joint_states_.resize(joint_names_.size());
-            }
+
+        // try {
+        //     // Resize joint states vector if needed
+        //     if (joint_states_.size() != joint_names_.size()) {
+        //       joint_states_.resize(joint_names_.size());
+        //     }
             
-            // Read all interfaces for each joint
-            const size_t interfaces_per_joint = state_interface_types_.size();
-            for (size_t i = 0; i < joint_names_.size(); ++i) {
-              size_t base_idx = i * interfaces_per_joint;
-              // Update local storage only
-              joint_states_[i].position = state_interfaces_[base_idx].get_value();      // position
-              joint_states_[i].velocity = state_interfaces_[base_idx + 1].get_value();  // velocity
-              joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
-            }
-        }
-        catch (const std::exception & e) {
-            fprintf(stderr, "Exception thrown during update stage with message: %s \n", e.what());
-            return controller_interface::return_type::ERROR;
-        }
+        //     // Read all interfaces for each joint
+        //     const size_t interfaces_per_joint = state_interface_types_.size();
+        //     for (size_t i = 0; i < joint_names_.size(); ++i) {
+        //       size_t base_idx = i * interfaces_per_joint;
+        //       // Update local storage only
+        //       joint_states_[i].position = state_interfaces_[base_idx].get_value();      // position
+        //       joint_states_[i].velocity = state_interfaces_[base_idx + 1].get_value();  // velocity
+        //       joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
+        //     }
+        // }
+        // catch (const std::exception & e) {
+        //     fprintf(stderr, "Exception thrown during update stage with message: %s \n", e.what());
+        //     return controller_interface::return_type::ERROR;
+        // }
 
 
 
