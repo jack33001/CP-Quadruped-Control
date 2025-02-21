@@ -151,29 +151,30 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
     RCLCPP_INFO(get_node()->get_logger(), "Activating with command interfaces:");
     for (const auto & command_interface : command_interfaces_)
     {
-        RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_name().c_str());
-        
-        
-        // RCLCPP_INFO(get_node()->get_logger(), "Command interface %s has value %f", command_interface.get_name().c_str(), command_interface.get_value());
-        
-        RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_interface_name().c_str());
-            
-
+        RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_name().c_str());  
     }
     // print size of command interfaces
     RCLCPP_INFO(get_node()->get_logger(), "command_interfaces_ size: %zu", command_interfaces_.size());
 
-    // // assign command interfaces
-    // for (auto & interface : command_interfaces_)
-    // {
-    //     command_interface_map_[interface.get_interface_name()]->push_back(interface);
-    // }
+    // print all state interfaces
+    RCLCPP_INFO(get_node()->get_logger(), "Activating with state interfaces:");
+    for (const auto & state_interface : state_interfaces_)
+    {
+        RCLCPP_INFO(get_node()->get_logger(), "State interface: %s", state_interface.get_name().c_str());  
+    }
 
-    // // assign state interfaces
-    // for (auto & interface : state_interfaces_)
-    // {
-    //     state_interface_map_[interface.get_interface_name()]->push_back(interface);
-    // }
+
+    // // assign command interfaces
+    for (auto & interface : command_interfaces_)
+    {
+        command_interface_map_[interface.get_interface_name()]->push_back(interface);
+    }
+
+    // assign state interfaces
+    for (auto & interface : state_interfaces_)
+    {
+        state_interface_map_[interface.get_interface_name()]->push_back(interface);
+    }
 
     return CallbackReturn::SUCCESS;
     }
@@ -182,7 +183,7 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
 controller_interface::return_type ZeroJointController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
     RCLCPP_INFO(get_node()->get_logger(), "___________________ UPDATING ZERO JOINT CONTROLLER ___________________");
-    float pos = 180;
+    float pos = 10;
     float vel = 0;
 
     // print joint position command interfaces
@@ -195,24 +196,26 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
     // print joint position command interface size
     RCLCPP_INFO(get_node()->get_logger(), "Joint position command interface size: %zu", joint_position_command_interface_.size());
 
-    command_interfaces_[0].set_value(pos);
+    // command_interfaces_[0].set_value(pos);
 
-    // for (size_t i = 0; i < joint_position_command_interface_.size(); ++i) {
-    //         // bool success = joint_position_command_interface_[i].get().set_value(pos);
+    for (size_t i = 0; i < joint_position_command_interface_.size(); ++i) 
+        {
+            bool success = joint_position_command_interface_[i].get().set_value(pos);
             
-    //         if (!success) {
-    //             RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set position value for joint %zu", i);
-    //             return controller_interface::return_type::ERROR;
-    //         }
-    //     }
-
-    //     for (size_t i = 0; i < joint_velocity_command_interface_.size(); ++i) {
-    //         bool success = joint_velocity_command_interface_[i].get().set_value(vel);
-    //         if (!success) {
-    //             RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set velocity value for joint %zu", i);
-    //             return controller_interface::return_type::ERROR;
-    //         }
-    //     }
+            if (!success) {
+                RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set position value for joint %zu", i);
+                return controller_interface::return_type::ERROR;
+            }
+        }
+ 
+    for (size_t i = 0; i < joint_velocity_command_interface_.size(); ++i) 
+        {
+            bool success = joint_velocity_command_interface_[i].get().set_value(vel);
+            if (!success) {
+                RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set velocity value for joint %zu", i);
+                return controller_interface::return_type::ERROR;
+            }
+        }
             return controller_interface::return_type::OK;
     }
 

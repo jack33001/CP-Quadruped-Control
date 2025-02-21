@@ -120,10 +120,12 @@ zero_joints_controller:
     command_interfaces:
       - position
       - velocity
+      # - kp
+      # - kd
     # state_interfaces:
     #   -velocity
       # interface_name: position
     state_interfaces:
       - position
       - velocity
-      - effort
+      # - effort

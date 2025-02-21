@@ -61,7 +61,7 @@ protected:
         state_interface_map_ = {
         {"position", &joint_position_state_interface_},
         {"velocity", &joint_velocity_state_interface_}};
-
+        
     struct JointState {
         double position;
         double velocity;
@@ -92,8 +92,7 @@ private:
 
 
 
-    // std::vector<hardware_interface::LoanedCommandInterface> command_interfaces_;
-    // std::vector<hardware_interface::LoanedStateInterface> state_interfaces_;
+    
 };
 } // namespace quadruped_utils
 
