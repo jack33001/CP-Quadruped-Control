@@ -54,8 +54,8 @@ private:
     // std::unique_ptr<CAN_interface::CANInterface> can_interface_;  ///< CAN interface for communication.
     std::unique_ptr<motor_driver::MotorDriver> motor_controller_;  ///< Motor controller for managing motors.
     
-    std::vector<hardware_interface::StateInterface> state_interfaces;  ///< List of state interfaces.
-    std::vector<hardware_interface::CommandInterface> command_interfaces;  ///< List of state interfaces.
+    std::vector<hardware_interface::StateInterface> state_interfaces_;  ///< List of state interfaces.
+    std::vector<hardware_interface::CommandInterface> command_interfaces_;  ///< List of state interfaces.
     
     // Command data buffer (8-byte array for commands).
     // std::vector<uint8_t> command_data_;

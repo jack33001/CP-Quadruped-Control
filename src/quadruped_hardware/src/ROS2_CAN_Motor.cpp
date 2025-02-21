@@ -77,15 +77,15 @@ hardware_interface::CallbackReturn CANMotor::on_deactivate(const rclcpp_lifecycl
 
 std::vector<hardware_interface::StateInterface> CANMotor::export_state_interfaces() {
     // Export state interfaces
-    state_interfaces.emplace_back(
+    state_interfaces_.emplace_back(
         hardware_interface::StateInterface(joint_name,  "position", &state_position));
-    state_interfaces.emplace_back(
+    state_interfaces_.emplace_back(
         hardware_interface::StateInterface(joint_name,  "velocity", &state_velocity));
-    state_interfaces.emplace_back(
+    state_interfaces_.emplace_back(
         hardware_interface::StateInterface(joint_name,  "effort", &state_effort));
 
 
-    return std::move(state_interfaces);
+    return std::move(state_interfaces_);
 }
 
 std::vector<hardware_interface::CommandInterface> CANMotor::export_command_interfaces() {
@@ -93,15 +93,15 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "exporting command interfaces");
     RCLCPP_INFO(rclcpp::get_logger("ROS2CANInterface"), "start cmd_position: %f", cmd_position);
 
-    command_interfaces.emplace_back(
+    command_interfaces_.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "position", &cmd_position));
-    command_interfaces.emplace_back(
+    command_interfaces_.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "velocity", &cmd_velocity));
-    command_interfaces.emplace_back(
+    command_interfaces_.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "effort", &cmd_effort));
-    command_interfaces.emplace_back(
+    command_interfaces_.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "kp", &cmd_kp));
-    command_interfaces.emplace_back(
+    command_interfaces_.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "kd", &cmd_kd));
 
 
@@ -110,7 +110,7 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
     // command_interfaces.emplace_back(joint_name, "velocity", &command_data_[1]);
     // command_interfaces.emplace_back(joint_name, "effort", &command_data_[2]);
 
-    return std::move(command_interfaces);
+    return std::move(command_interfaces_);
 }
 
 hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const rclcpp::Duration& period) {

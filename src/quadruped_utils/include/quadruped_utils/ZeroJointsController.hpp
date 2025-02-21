@@ -66,6 +66,9 @@ class ZeroJointController : public controller_interface::ControllerInterface
     private:
         // subscriptions
         // rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr cmd_sub_;
+        
+
+
 
         std::vector<hardware_interface::LoanedCommandInterface> command_interfaces_;
         std::vector<hardware_interface::LoanedStateInterface> state_interfaces_;

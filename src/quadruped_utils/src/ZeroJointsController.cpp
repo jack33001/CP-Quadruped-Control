@@ -1,6 +1,8 @@
 #include "quadruped_utils/ZeroJointsController.hpp"
 
+// using namespace quadruped_hardware; 
 namespace quadruped_utils
+
 {
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
@@ -13,46 +15,9 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
        
     }
 
-
-
-
-
-    // ________INTERFACE CONFIGURATION________
-    controller_interface::InterfaceConfiguration ZeroJointController::command_interface_configuration() const
-    {
-        
-        // const auto left_result =
-        //     configure_side("left", params_.left_wheel_names, registered_motor_handles_);
-        
-
-        controller_interface::InterfaceConfiguration config;
-        config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        
-        // Add command interfaces for each joint
-        for (const auto & joint : joint_names_) {
-            config.names.push_back(joint + "/velocity");
-            RCLCPP_INFO(get_node()->get_logger(), "Adding command interface for joint %s", joint.c_str());
-        }
-        
-
-
-        return config;
     
-    }
 
-    controller_interface::InterfaceConfiguration ZeroJointController::state_interface_configuration() const
-    {
-        controller_interface::InterfaceConfiguration config;
-        config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        
-        // Add command interfaces for each joint
-        for (const auto & joint : joint_names_) {
-            config.names.push_back(joint + "/effort");
-            RCLCPP_INFO(get_node()->get_logger(), "Adding state interface for joint %s", joint.c_str());
-        }
 
-        return config;
-    }
 
     // void controller_interface::InterfaceConfiguration ZeroJointController::cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg)
     //     {
@@ -75,69 +40,116 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
 
         RCLCPP_INFO(rclcpp::get_logger("ZeroJointController"), "Starting ZeroJointController on_init");
 
-        // auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
+       
 
-        
-      
-
+   
 
 
         try {
-            fprintf(stderr, "Balance controller trying to declare parameters\n");
+            fprintf(stderr, "Zero controller trying to declare parameters\n");
             // Get parameters from yaml
             auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
             auto_declare<std::vector<std::string>>("state_interfaces", std::vector<std::string>());
-            fprintf(stderr, "Balance controller parameters declared\n");
+            fprintf(stderr, "Zero controller parameters declared\n");
+
+            // update joint_names with all motors in use
+            joint_names_ = get_node()->get_parameter("joints").as_string_array();
+            if (joint_names_.empty()) {
+                RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
+                return CallbackReturn::ERROR;
+            }
+            RCLCPP_INFO(get_node()->get_logger(), "ZeroJointController configured with %zu joints", joint_names_.size());
+
             
-            fprintf(stderr, "Balance controller on_init completed successfully\n");
-            fprintf(stderr, "Balance controller waiting for on_configure\n");
+            
+            // auto ret = ControllerInterface::init("zero_joint_controller");
+            // if (ret != controller_interface::return_type::OK) {
+            //     return ret;
+            // }
+
+            // Initialize command interfaces
+            for (const auto& joint_name : joint_names_) {
+
+                auto command_interface = std::make_shared<hardware_interface::CommandInterface>(joint_name, "velocity");
+                // RCLCPP_INFO(get_node()->get_logger(), "Adding command interface for joint %s", command_interface);
+                
+                command_interfaces_.emplace_back(*command_interface);
+
+            }
+
+
+            // print command_interfaces_
+            RCLCPP_INFO(get_node()->get_logger(), "Command interfaces:");
+            for (const auto& command_interface : command_interfaces_) {
+                RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_name().c_str());
+            }
+            
+
+
             return CallbackReturn::SUCCESS;
         } catch (const std::exception & e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return CallbackReturn::ERROR;
         }
-      
-        // return controller_interface::CallbackReturn::SUCCESS;
     }
     
     controller_interface::CallbackReturn ZeroJointController::on_configure(const rclcpp_lifecycle::State & previous_state) 
     {
         RCLCPP_INFO(get_node()->get_logger(), "Configuring ZeroJointController...");
 
-        // List all parameters
+        // List all parameters from yaml config
         auto parameters = get_node()->list_parameters({}, 10);
         RCLCPP_INFO(get_node()->get_logger(), "Listing all parameters:");
         for (const auto & name : parameters.names) {
-            RCLCPP_INFO(get_node()->get_logger(), "Parameter: %s", name.c_str());
             auto param_value = get_node()->get_parameter(name).value_to_string();
-            RCLCPP_INFO(get_node()->get_logger(), "Parameter value: %s", param_value.c_str());
+            RCLCPP_INFO(get_node()->get_logger(), "Parameter: %s = %s", name.c_str() ,param_value.c_str());
         }
-        
         
         // Check if joints parameter is set from yaml and initilized
         if (!get_node()->has_parameter("joints")) {
             RCLCPP_ERROR(get_node()->get_logger(), "Parameter 'joints' not set");
             return CallbackReturn::ERROR;
         }
+
         state_interface_types_ = get_node()->get_parameter("state_interfaces").as_string_array();
-
-        // update joint_names with all motors in use
-        joint_names_ = get_node()->get_parameter("joints").as_string_array();
-        if (joint_names_.empty()) {
-            RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
-            return CallbackReturn::ERROR;
-        }
-        RCLCPP_INFO(get_node()->get_logger(), "ZeroJointController configured with %zu joints", joint_names_.size());
-
-        // Add subscriber initialization before returning
-        // cmd_sub_ = get_node()->create_subscription<std_msgs::msg::Float64>(
-        //     "zero_joints_velocity", 10,
-        //     std::bind(&ZeroJointController::cmd_callback, this, std::placeholders::_1));
-
-        // RCLCPP_INFO(get_node()->get_logger(), "Subscribed to quadruped/cmd/single_state topic");
 
         return controller_interface::CallbackReturn::SUCCESS;
     }
+
+
+    // ________INTERFACE CONFIGURATION________
+    controller_interface::InterfaceConfiguration ZeroJointController::command_interface_configuration() const
+    {
+        RCLCPP_INFO(get_node()->get_logger(), "command_interface_configuration called");
+
+        controller_interface::InterfaceConfiguration config;
+        config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
+        
+        // Add command interfaces for each joint
+        for (const auto & joint : joint_names_) {
+            config.names.push_back(joint + "/velocity");
+            RCLCPP_INFO(get_node()->get_logger(), "Adding command interface for joint %s", joint.c_str());
+        }
+        
+        return config;
+    }
+
+    controller_interface::InterfaceConfiguration ZeroJointController::state_interface_configuration() const
+    {
+        RCLCPP_INFO(get_node()->get_logger(), "state_interface_configuration called");
+        controller_interface::InterfaceConfiguration config;
+        config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
+        
+        // Add command interfaces for each joint
+        for (const auto & joint : joint_names_) {
+            config.names.push_back(joint + "/effort");
+            RCLCPP_INFO(get_node()->get_logger(), "Adding state interface for joint %s", joint.c_str());
+        }
+
+        return config;
+    }
+
+    // ___________________________
 
     controller_interface::CallbackReturn ZeroJointController::on_activate(const rclcpp_lifecycle::State & previous_state)
     {
@@ -181,6 +193,9 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
         return CallbackReturn::SUCCESS;
     }
 
+
+
+
     controller_interface::CallbackReturn ZeroJointController::on_deactivate(const rclcpp_lifecycle::State & previous_state)
         {
         RCLCPP_INFO(get_node()->get_logger(), "on_deactivate called");
@@ -201,14 +216,27 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
         fprintf(stderr, "Joint names size: %zu\n", joint_names_.size());
 
 
-        for (size_t i = 0; i < joint_states_.size(); ++i) {
-            RCLCPP_INFO(get_node()->get_logger(), "Joint %s - Position: %f, Velocity: %f, Effort: %f",
-                        joint_names_[i].c_str(),
-                        joint_states_[i].position,
-                        joint_states_[i].velocity,
-                        joint_states_[i].effort);
-        }
+        // for (size_t i = 0; i < joint_states_.size(); ++i) {
+        //     RCLCPP_INFO(get_node()->get_logger(), "Joint %s - Position: %f, Velocity: %f, Effort: %f",
+        //                 joint_names_[i].c_str(),
+        //                 joint_states_[i].position,
+        //                 joint_states_[i].velocity,
+        //                 joint_states_[i].effort);
+        // }
 
+        fprintf(stderr, "Command interfaces size: %zu\n", command_interfaces_.size());
+
+        for (size_t i = 0; i < command_interfaces_.size(); ++i) {
+                RCLCPP_INFO(get_node()->get_logger(), "Command interface %zu: %f", i, command_interfaces_[i].get_value());
+
+                bool success = command_interfaces_[i].set_value(10.0); // Set the velocity to zero
+            if (!success) {
+                // Handle the error appropriately
+                RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set value for command interface %zu", i);
+                return controller_interface::return_type::ERROR;
+            }
+            RCLCPP_INFO(get_node()->get_logger(), "Command interface %zu set to %f", i, command_interfaces_[i].get_value());
+        }
 
         // try {
         //     // Resize joint states vector if needed
