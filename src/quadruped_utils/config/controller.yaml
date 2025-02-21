@@ -112,13 +112,14 @@ zero_joints_controller:
     update_rate: 100
     test: 1
     test1:
-      -fr_hip
+      - fr_hip
     joints:
    
       - fr_hip
       
     command_interfaces:
-      -velocity
+      - position
+      - velocity
     # state_interfaces:
     #   -velocity
       # interface_name: position

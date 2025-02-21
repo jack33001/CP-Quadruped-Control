@@ -1,88 +1,55 @@
+// based on ROS2 control demo example 7
+// https://github.com/ros-controls/ros2_control_demos/blob/master/example_7/controller/r6bot_controller.cpp
+
+
 #include "quadruped_utils/ZeroJointsController.hpp"
 
 // using namespace quadruped_hardware; 
+
+using config_type = controller_interface::interface_configuration_type;
+
 namespace quadruped_utils
 
 {
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-
-    ZeroJointController::ZeroJointController()
-    : controller_interface::ControllerInterface()
+ZeroJointController::ZeroJointController(): controller_interface::ControllerInterface()
     {
         RCLCPP_INFO(rclcpp::get_logger("ZeroJointController"), "XXX___XXX Starting ZeroJointController contructor");
        
     }
 
-    
-
-
-
-    // void controller_interface::InterfaceConfiguration ZeroJointController::cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg)
-    //     {
-    //     std::lock_guard<std::mutex> lock(cmd_mutex_);
-    //     latest_cmd_ = msg;
-    //     new_cmd_received_ = true;
-    //     }
-
-    // void controller_interface::InterfaceConfiguration ZeroJointController::state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg)
-    //     {
-    //     std::lock_guard<std::mutex> lock(state_mutex_);
-    //     latest_state_ = msg;
-    //     new_state_received_ = true;
-    //     }
-
-
-    // ________CONTROLLER LIFECYCLE FUNCTIONS________
-    controller_interface::CallbackReturn ZeroJointController::on_init()
+controller_interface::CallbackReturn ZeroJointController::on_init()
     {
-
         RCLCPP_INFO(rclcpp::get_logger("ZeroJointController"), "Starting ZeroJointController on_init");
 
-       
-
-   
-
-
+        // Get parameters from yaml
         try {
             fprintf(stderr, "Zero controller trying to declare parameters\n");
-            // Get parameters from yaml
-            auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
-            auto_declare<std::vector<std::string>>("state_interfaces", std::vector<std::string>());
-            fprintf(stderr, "Zero controller parameters declared\n");
+            
+            joint_names_ = auto_declare<std::vector<std::string>>("joints", joint_names_);
 
-            // update joint_names with all motors in use
-            joint_names_ = get_node()->get_parameter("joints").as_string_array();
+            command_interface_types_ = auto_declare<std::vector<std::string>>("command_interfaces", command_interface_types_);
+            state_interface_types_ = auto_declare<std::vector<std::string>>("state_interfaces", state_interface_types_);
+
+            // print command and state interface types
+            RCLCPP_INFO(get_node()->get_logger(), "Command interface types:");
+            for (const auto & command_interface_type : command_interface_types_) {
+                RCLCPP_INFO(get_node()->get_logger(), "Command interface type: %s", command_interface_type.c_str());
+            }
+            RCLCPP_INFO(get_node()->get_logger(), "State interface types:");
+            for (const auto & state_interface_type : state_interface_types_) {
+                RCLCPP_INFO(get_node()->get_logger(), "State interface type: %s", state_interface_type.c_str());
+            }
+
+
             if (joint_names_.empty()) {
                 RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
                 return CallbackReturn::ERROR;
             }
             RCLCPP_INFO(get_node()->get_logger(), "ZeroJointController configured with %zu joints", joint_names_.size());
 
-            
-            
-            // auto ret = ControllerInterface::init("zero_joint_controller");
-            // if (ret != controller_interface::return_type::OK) {
-            //     return ret;
-            // }
-
-            // Initialize command interfaces
-            for (const auto& joint_name : joint_names_) {
-
-                auto command_interface = std::make_shared<hardware_interface::CommandInterface>(joint_name, "velocity");
-                // RCLCPP_INFO(get_node()->get_logger(), "Adding command interface for joint %s", command_interface);
-                
-                command_interfaces_.emplace_back(*command_interface);
-
-            }
-
-
-            // print command_interfaces_
-            RCLCPP_INFO(get_node()->get_logger(), "Command interfaces:");
-            for (const auto& command_interface : command_interfaces_) {
-                RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_name().c_str());
-            }
+  
             
 
 
@@ -93,200 +60,167 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
         }
     }
     
-    controller_interface::CallbackReturn ZeroJointController::on_configure(const rclcpp_lifecycle::State & previous_state) 
+controller_interface::CallbackReturn ZeroJointController::on_configure(const rclcpp_lifecycle::State & previous_state) 
     {
-        RCLCPP_INFO(get_node()->get_logger(), "Configuring ZeroJointController...");
+    // auto callback =
+    //     [this](const std::shared_ptr<trajectory_msgs::msg::JointTrajectory> traj_msg) -> void
+    // {
+    //     traj_msg_external_point_ptr_.writeFromNonRT(traj_msg);
+    //     new_msg_ = true;
+    // };
 
-        // List all parameters from yaml config
-        auto parameters = get_node()->list_parameters({}, 10);
-        RCLCPP_INFO(get_node()->get_logger(), "Listing all parameters:");
-        for (const auto & name : parameters.names) {
-            auto param_value = get_node()->get_parameter(name).value_to_string();
-            RCLCPP_INFO(get_node()->get_logger(), "Parameter: %s = %s", name.c_str() ,param_value.c_str());
-        }
-        
-        // Check if joints parameter is set from yaml and initilized
-        if (!get_node()->has_parameter("joints")) {
-            RCLCPP_ERROR(get_node()->get_logger(), "Parameter 'joints' not set");
-            return CallbackReturn::ERROR;
-        }
+    // joint_command_subscriber_ =
+    //     get_node()->create_subscription<trajectory_msgs::msg::JointTrajectory>(
+    //     "~/joint_trajectory", rclcpp::SystemDefaultsQoS(), callback);
 
-        state_interface_types_ = get_node()->get_parameter("state_interfaces").as_string_array();
-
-        return controller_interface::CallbackReturn::SUCCESS;
+    return CallbackReturn::SUCCESS;
     }
 
 
-    // ________INTERFACE CONFIGURATION________
-    controller_interface::InterfaceConfiguration ZeroJointController::command_interface_configuration() const
+// ________INTERFACE CONFIGURATION________
+controller_interface::InterfaceConfiguration ZeroJointController::command_interface_configuration() const
     {
-        RCLCPP_INFO(get_node()->get_logger(), "command_interface_configuration called");
+    // claim individual command interfaces for each joint and type
+    controller_interface::InterfaceConfiguration conf = {config_type::INDIVIDUAL, {}};
 
-        controller_interface::InterfaceConfiguration config;
-        config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        
-        // Add command interfaces for each joint
-        for (const auto & joint : joint_names_) {
-            config.names.push_back(joint + "/velocity");
-            RCLCPP_INFO(get_node()->get_logger(), "Adding command interface for joint %s", joint.c_str());
+    conf.names.reserve(joint_names_.size() * command_interface_types_.size());
+    // for each joint name
+    for (const auto & joint_name : joint_names_)
+    {
+        // for each interface type
+        for (const auto & interface_type : command_interface_types_)
+        {
+        conf.names.push_back(joint_name + "/" + interface_type);
+
+        // print command interface name
+        RCLCPP_INFO(get_node()->get_logger(), "Command interface name: %s", (joint_name + "/" + interface_type).c_str());
         }
-        
-        return config;
     }
 
-    controller_interface::InterfaceConfiguration ZeroJointController::state_interface_configuration() const
-    {
-        RCLCPP_INFO(get_node()->get_logger(), "state_interface_configuration called");
-        controller_interface::InterfaceConfiguration config;
-        config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        
-        // Add command interfaces for each joint
-        for (const auto & joint : joint_names_) {
-            config.names.push_back(joint + "/effort");
-            RCLCPP_INFO(get_node()->get_logger(), "Adding state interface for joint %s", joint.c_str());
-        }
+    return conf;
+    }
 
-        return config;
+controller_interface::InterfaceConfiguration ZeroJointController::state_interface_configuration() const
+    {
+    // claim individual state interfaces for each joint and type
+    controller_interface::InterfaceConfiguration conf = {config_type::INDIVIDUAL, {}};
+
+    conf.names.reserve(joint_names_.size() * state_interface_types_.size());
+    // for each joint name
+    for (const auto & joint_name : joint_names_)
+    {
+        // for each interface type
+        for (const auto & interface_type : state_interface_types_)
+        {
+        conf.names.push_back(joint_name + "/" + interface_type);
+        }
+    }
+
+    return conf;
     }
 
     // ___________________________
 
-    controller_interface::CallbackReturn ZeroJointController::on_activate(const rclcpp_lifecycle::State & previous_state)
+controller_interface::CallbackReturn ZeroJointController::on_activate(const rclcpp_lifecycle::State & previous_state)
     {
-        RCLCPP_INFO(get_node()->get_logger(), "on_activate called");
-
-        try {
-            // Resize joint states vector if needed
-            if (joint_states_.size() != joint_names_.size()) {
-              joint_states_.resize(joint_names_.size());
-            }
-        } catch (const std::exception& e) {
-            RCLCPP_ERROR(get_node()->get_logger(), "Error reading state interfaces: %s", e.what());
-            return CallbackReturn::ERROR;
-          }
-
-        RCLCPP_INFO(get_node()->get_logger(), "State interfaces:");
-        for (const auto & state_interface : state_interfaces_) {
-            RCLCPP_INFO(get_node()->get_logger(), "State interface: %s", state_interface.get_name().c_str());
-        }
-        
-        
-    
-        // // Get command and state interfaces
-        // for (const auto & joint : joint_names_) {
-        //     auto command_interface = get_node()->get_command_interface(joint + "/velocity");
-        //     if (!command_interface) {
-        //         RCLCPP_ERROR(get_node()->get_logger(), "Failed to get command interface for joint %s", joint.c_str());
-        //         return CallbackReturn::ERROR;
-        //     }
-        //     command_interfaces_.push_back(hardware_interface::LoanedCommandInterface(command_interface));
-    
-        //     auto state_interface = get_node()->get_state_interface(joint + "/effort");
-        //     if (!state_interface) {
-        //         RCLCPP_ERROR(get_node()->get_logger(), "Failed to get state interface for joint %s", joint.c_str());
-        //         return CallbackReturn::ERROR;
-        //     }
-        //     state_interfaces_.push_back(hardware_interface::LoanedStateInterface(state_interface));
-        // }
-    
-        // RCLCPP_INFO(get_node()->get_logger(), "Zero Joints controller activated");
-        return CallbackReturn::SUCCESS;
-    }
-
-
-
-
-    controller_interface::CallbackReturn ZeroJointController::on_deactivate(const rclcpp_lifecycle::State & previous_state)
-        {
-        RCLCPP_INFO(get_node()->get_logger(), "on_deactivate called");
-        return CallbackReturn::SUCCESS;
-        }
-
-
-    controller_interface::return_type ZeroJointController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
-    {
-        RCLCPP_INFO(get_node()->get_logger(), "___________________ UPDATING ZERO JOINT CONTROLLER ___________________");
-        RCLCPP_INFO(get_node()->get_logger(), "State interface types:");
-        for (const auto & type : state_interface_types_) {
-            RCLCPP_INFO(get_node()->get_logger(), "State interface type: %s", type.c_str());
-        }
-
-        RCLCPP_INFO(get_node()->get_logger(), "Joint states:");
-        fprintf(stderr, "Joint states size: %zu\n", joint_states_.size());
-        fprintf(stderr, "Joint names size: %zu\n", joint_names_.size());
-
-
-        // for (size_t i = 0; i < joint_states_.size(); ++i) {
-        //     RCLCPP_INFO(get_node()->get_logger(), "Joint %s - Position: %f, Velocity: %f, Effort: %f",
-        //                 joint_names_[i].c_str(),
-        //                 joint_states_[i].position,
-        //                 joint_states_[i].velocity,
-        //                 joint_states_[i].effort);
-        // }
-
-        fprintf(stderr, "Command interfaces size: %zu\n", command_interfaces_.size());
-
-        for (size_t i = 0; i < command_interfaces_.size(); ++i) {
-                RCLCPP_INFO(get_node()->get_logger(), "Command interface %zu: %f", i, command_interfaces_[i].get_value());
-
-                bool success = command_interfaces_[i].set_value(10.0); // Set the velocity to zero
-            if (!success) {
-                // Handle the error appropriately
-                RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set value for command interface %zu", i);
-                return controller_interface::return_type::ERROR;
-            }
-            RCLCPP_INFO(get_node()->get_logger(), "Command interface %zu set to %f", i, command_interfaces_[i].get_value());
-        }
+        // RCLCPP_INFO(get_node()->get_logger(), "on_activate called");
 
         // try {
         //     // Resize joint states vector if needed
         //     if (joint_states_.size() != joint_names_.size()) {
         //       joint_states_.resize(joint_names_.size());
         //     }
-            
-        //     // Read all interfaces for each joint
-        //     const size_t interfaces_per_joint = state_interface_types_.size();
-        //     for (size_t i = 0; i < joint_names_.size(); ++i) {
-        //       size_t base_idx = i * interfaces_per_joint;
-        //       // Update local storage only
-        //       joint_states_[i].position = state_interfaces_[base_idx].get_value();      // position
-        //       joint_states_[i].velocity = state_interfaces_[base_idx + 1].get_value();  // velocity
-        //       joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
-        //     }
-        // }
-        // catch (const std::exception & e) {
-        //     fprintf(stderr, "Exception thrown during update stage with message: %s \n", e.what());
-        //     return controller_interface::return_type::ERROR;
+        // } catch (const std::exception& e) {
+        //     RCLCPP_ERROR(get_node()->get_logger(), "Error reading state interfaces: %s", e.what());
+        //     return CallbackReturn::ERROR;
+        //   }
+
+        // RCLCPP_INFO(get_node()->get_logger(), "State interfaces:");
+        // for (const auto & state_interface : state_interfaces_) {
+        //     RCLCPP_INFO(get_node()->get_logger(), "State interface: %s", state_interface.get_name().c_str());
         // }
 
+    // clear out vectors in case of restart
+    joint_position_command_interface_.clear();
+    joint_velocity_command_interface_.clear();
+    joint_position_state_interface_.clear();
+    joint_velocity_state_interface_.clear();
 
 
-
-        RCLCPP_INFO(get_node()->get_logger(), "Command interfaces and their values:");
-        for (size_t i = 0; i < command_interfaces_.size(); ++i)
-        {
-            RCLCPP_INFO(get_node()->get_logger(), "Command interface %zu: %f", i, command_interfaces_[i].get_value());
-        }
+    // print all command interfaces
+    RCLCPP_INFO(get_node()->get_logger(), "Activating with command interfaces:");
+    for (const auto & command_interface : command_interfaces_)
+    {
+        RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_name().c_str());
         
-        for (size_t i = 0; i < command_interfaces_.size(); ++i)
-        {
-            double state_effort = state_interfaces_[i].get_value();
-
-            RCLCPP_INFO(get_node()->get_logger(), "Updating joint %s", joint_names_[i].c_str());
-            RCLCPP_INFO(get_node()->get_logger(), "State interface: %f", state_effort);
-
-
+        
+        // RCLCPP_INFO(get_node()->get_logger(), "Command interface %s has value %f", command_interface.get_name().c_str(), command_interface.get_value());
+        
+        RCLCPP_INFO(get_node()->get_logger(), "Command interface: %s", command_interface.get_interface_name().c_str());
             
-            // RCLCPP_INFO(get_node()->get_logger(), "Command effort: %f", command_position);
 
-            // double command_position = state_position; // Example: command position is the same as state position
-            // command_interfaces_[i].set_value(command_position);
-        }
-        RCLCPP_INFO(get_node()->get_logger(), "___________________ UPDATING COMPLETE ___________________");
+    }
+    // print size of command interfaces
+    RCLCPP_INFO(get_node()->get_logger(), "command_interfaces_ size: %zu", command_interfaces_.size());
 
-        return controller_interface::return_type::OK;
+    // // assign command interfaces
+    // for (auto & interface : command_interfaces_)
+    // {
+    //     command_interface_map_[interface.get_interface_name()]->push_back(interface);
+    // }
+
+    // // assign state interfaces
+    // for (auto & interface : state_interfaces_)
+    // {
+    //     state_interface_map_[interface.get_interface_name()]->push_back(interface);
+    // }
+
+    return CallbackReturn::SUCCESS;
+    }
+     
+
+controller_interface::return_type ZeroJointController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+    {
+    RCLCPP_INFO(get_node()->get_logger(), "___________________ UPDATING ZERO JOINT CONTROLLER ___________________");
+    float pos = 180;
+    float vel = 0;
+
+    // print joint position command interfaces
+    RCLCPP_INFO(get_node()->get_logger(), "Joint position command interfaces:");
+    for (size_t i = 0; i < joint_position_command_interface_.size(); i++)
+    {
+      RCLCPP_INFO(get_node()->get_logger(), "Joint position command interface: %s", joint_position_command_interface_[i].get().get_name().c_str());
     }
 
+    // print joint position command interface size
+    RCLCPP_INFO(get_node()->get_logger(), "Joint position command interface size: %zu", joint_position_command_interface_.size());
+
+    command_interfaces_[0].set_value(pos);
+
+    // for (size_t i = 0; i < joint_position_command_interface_.size(); ++i) {
+    //         // bool success = joint_position_command_interface_[i].get().set_value(pos);
+            
+    //         if (!success) {
+    //             RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set position value for joint %zu", i);
+    //             return controller_interface::return_type::ERROR;
+    //         }
+    //     }
+
+    //     for (size_t i = 0; i < joint_velocity_command_interface_.size(); ++i) {
+    //         bool success = joint_velocity_command_interface_[i].get().set_value(vel);
+    //         if (!success) {
+    //             RCLCPP_ERROR(rclcpp::get_logger("ZeroJointController"), "Failed to set velocity value for joint %zu", i);
+    //             return controller_interface::return_type::ERROR;
+    //         }
+    //     }
+            return controller_interface::return_type::OK;
+    }
+
+controller_interface::CallbackReturn ZeroJointController::on_deactivate(const rclcpp_lifecycle::State & previous_state)
+    {
+    RCLCPP_INFO(get_node()->get_logger(), "on_deactivate called");
+    return CallbackReturn::SUCCESS;
+    }
 
 } // namespace quadruped_utils
 
