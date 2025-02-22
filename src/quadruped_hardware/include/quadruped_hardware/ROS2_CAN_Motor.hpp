@@ -74,12 +74,14 @@ private:
     double cmd_effort;
     double cmd_kp;
     double cmd_kd;
+    double cmd_m_state; // 0 for Ready, 1 for deactivate, 2 activate, 3 zero 
 
     double state_position;
     double state_velocity;
     double state_effort;
     double state_kp;
     double state_kd;
+    double state_m_state;
 
     std::map<int, motor_driver::motorCommand> commandMap;
     motor_driver::motorCommand movecmd ;

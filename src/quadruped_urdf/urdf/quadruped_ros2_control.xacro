@@ -65,9 +65,11 @@
             <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
+            <command_interface name="m_state"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
+            <state_interface name="m_state"/>
       
 
         </joint>

@@ -111,10 +111,9 @@ zero_joints_controller:
   ros__parameters:
     update_rate: 100
     test: 1
-    test1:
-      - fr_hip
+    effort_threshold: 0.3
+      
     joints:
-   
       - fr_hip
       
     command_interfaces:

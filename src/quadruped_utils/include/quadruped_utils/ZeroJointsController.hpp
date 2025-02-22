@@ -31,13 +31,12 @@ public:
     controller_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 protected:
-
-
-    
+    // Pramamter vectors
     std::vector<std::string> joint_names_;
     std::vector<std::string> command_interface_types_;
     std::vector<std::string> state_interface_types_;
 
+    // Command and state interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_position_command_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
@@ -49,12 +48,16 @@ protected:
 
 
 
+    // Maps to store command and state interfaces
+    // std::unordered_map<
+    //     std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> *>
+    //     command_interface_map_ = {
+    //     {"position", &joint_position_command_interface_},
+    //     {"velocity", &joint_velocity_command_interface_}};
 
     std::unordered_map<
         std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> *>
-        command_interface_map_ = {
-        {"position", &joint_position_command_interface_},
-        {"velocity", &joint_velocity_command_interface_}};
+        command_interface_map_ ;
 
     std::unordered_map<
         std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>> *>
@@ -62,28 +65,6 @@ protected:
         {"position", &joint_position_state_interface_},
         {"velocity", &joint_velocity_state_interface_}};
         
-    struct JointState {
-        double position;
-        double velocity;
-        double effort;
-        };
-
-    std::vector<JointState> joint_states_;
-
-
-    struct MotorHandle
-    {
-        std::reference_wrapper<const hardware_interface::LoanedStateInterface> feedback;
-        std::reference_wrapper<hardware_interface::LoanedCommandInterface> velocity;
-    };
-    
-    // const char * feedback_type() const;
-    
-    // controller_interface::CallbackReturn configure_side(
-    //   const std::string & side, const std::vector<std::string> & wheel_names,
-    //   std::vector<WheelHandle> & registered_handles);
-    
-    std::vector<MotorHandle> registered_motor_handles_;
 
 private:
     // subscriptions
