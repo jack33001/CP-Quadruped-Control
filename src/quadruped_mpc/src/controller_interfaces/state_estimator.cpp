@@ -1,5 +1,5 @@
 #include "quadruped_mpc/controller_interfaces/state_estimator.hpp"
-#include "quadruped_mpc/control_laws/state_estimation.hpp"
+#include "quadruped_mpc/control_laws/StateEstimation.hpp"
 #include <std_msgs/msg/string.hpp>
 #include <sstream>  // Add this header
 
@@ -49,15 +49,43 @@ StateEstimator::state_interface_configuration() const
 controller_interface::return_type
 StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  if (!read_state_interfaces() 
-      || !update_model()
-      || !estimate_orientation()
-      || !pin_kinematics()
-      || !detect_contact()
-      || !estimate_base_position()
-      || !foot_positions()
-      || !update_odometry()
-      ) {
+  if (!read_state_interfaces()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to read state interfaces");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!update_model()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to update model");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!estimate_orientation()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to estimate orientation");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!pin_kinematics()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to compute kinematics");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!detect_contact()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to detect contact");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!estimate_base_position()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to estimate base position");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!foot_positions()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to compute foot positions");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!update_odometry()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to update odometry");
     return controller_interface::return_type::ERROR;
   }
 

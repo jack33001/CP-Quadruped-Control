@@ -21,6 +21,7 @@ def generate_launch_description():
             'joint_state_broadcaster',
             'imu_sensor_controller',
             'state_estimator',
+            'gait_pattern_generator',
             'balance_controller'
         ],
         output='screen',

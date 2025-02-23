@@ -184,18 +184,6 @@ inline bool StateEstimator::estimate_base_position()
     }
 
     if (contact_count > 0) {
-      world_z /= contact_count;
-      world_z = world_z - foot_radius;  // Subtract foot radius to get body center
-
-      // Initialize base position
-      current_positions_[0] = 0.0;  // x
-      current_positions_[1] = 0.0;  // y
-      current_positions_[2] = -world_z;  // z
-
-      current_velocities_[0] = 0.0;  // vx
-      current_velocities_[1] = 0.0;  // vy
-      current_velocities_[2] = 0.0;  // vz
-
       // Update with odometry if available
       if (latest_odom_) {
         auto odom = latest_odom_;

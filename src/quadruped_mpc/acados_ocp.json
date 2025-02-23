@@ -2516,6 +2516,7 @@
         "exact_hess_dyn": 1,
         "ext_cost_num_hess": 0,
         "ext_fun_compile_flags": "-O2",
+        "ext_fun_expand": false,
         "fixed_hess": 0,
         "globalization": "FIXED_STEP",
         "globalization_alpha_min": 0.05,
@@ -2547,6 +2548,7 @@
         "nlp_solver_tol_stat": 1e-06,
         "nlp_solver_type": "SQP_RTI",
         "nlp_solver_warm_start_first_qp": false,
+        "nlp_solver_warm_start_first_qp_from_nlp": false,
         "num_threads_in_batch_solve": 1,
         "print_level": 0,
         "qp_solver": "PARTIAL_CONDENSING_HPIPM",
@@ -2556,6 +2558,7 @@
         "qp_solver_iter_max": 100,
         "qp_solver_mu0": 0.0,
         "qp_solver_ric_alg": 0,
+        "qp_solver_t0_init": 2,
         "qp_solver_tol_comp": null,
         "qp_solver_tol_eq": null,
         "qp_solver_tol_ineq": null,
@@ -2776,7 +2779,9 @@
             1,
             1
         ],
+        "solution_sens_qp_t_lam_min": 1e-09,
         "store_iterates": false,
+        "tau_min": 0.0,
         "tf": 5,
         "time_steps": [
             0.1,

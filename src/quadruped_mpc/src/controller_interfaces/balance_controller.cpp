@@ -1,5 +1,5 @@
 #include "quadruped_mpc/controller_interfaces/balance_controller.hpp"
-#include "quadruped_mpc/control_laws/balance_control.hpp"
+#include "quadruped_mpc/control_laws/BalanceControl.hpp"
 #include "geometry_msgs/msg/pose.hpp"
 
 #include <string>

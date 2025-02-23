@@ -9,20 +9,11 @@ controller_manager:
       publish_rate: 100
       sensor_name: "imu_sensor"
 
-    quadruped_broadcaster:
-      type: quadruped_mpc/quadruped_broadcaster
-      desired_state:
-        position:
-          p_c_des: [0.0, 0.0, 0.15]  # COM position [x, y, z]
-        velocity:
-          v_c_des: [0.0, 0.0, 0.0]   # COM velocity [vx, vy, vz]
-        orientation:
-          th_c_des: [1.0, 0.0, 0.0, 0.0]  # COM orientation quaternion [w, x, y, z]
-        angular_velocity:
-          om_c_des: [0.0, 0.0, 0.0]   # COM angular velocity [wx, wy, wz]
-
     state_estimator:
       type: quadruped_mpc/state_estimator
+
+    gait_pattern_generator:
+      type: quadruped_mpc/gait_pattern_generator
 
     balance_controller:
       type: quadruped_mpc/balance_controller
@@ -39,37 +30,6 @@ imu_sensor_controller:
     sensor_name: imu_sensor
     frame_id: imu_link
 
-quadruped_broadcaster:
-  ros__parameters:
-    # Remove extra indentation here
-    joints:
-      - fl_hip
-      - fl_knee  
-      - fr_hip
-      - fr_knee
-      - rl_hip
-      - rl_knee
-      - rr_hip
-      - rr_knee
-    imu_name: imu_sensor
-
-    # Hardware params - fix indentation
-    gravity: 9.81
-    hardware_height: 0.25
-    hardware_width: 0.25
-    hardware_length: 0.25
-
-    # Balance controller params - fix indentation
-    balance_m: 25.0
-    balance_kp_pos: 500.0
-    balance_kd_pos: 5.0
-    balance_kp_rot: 500.0
-    balance_kd_rot: 5.0
-    p_c_des: [0.0, 0.0, 0.2]
-    v_c_des: [0.0, 0.0, 0.0]
-    th_c_des: [1.0, 0.0, 0.0, 0.0]
-    om_c_des: [0.0, 0.0, 0.0]
-
 state_estimator:
   ros__parameters:
     joints:
@@ -85,6 +45,16 @@ state_estimator:
       - position
       - velocity
       - effort
+
+gait_pattern_generator:
+  ros__parameters:
+    gait_type: trot
+    stance_duration: 0.2
+    swing_duration: 0.2
+    duty_factor: 0.5
+    step_height: 0.05
+    step_length: 0.1
+    step_width: 0.1
 
 balance_controller:
   ros__parameters:

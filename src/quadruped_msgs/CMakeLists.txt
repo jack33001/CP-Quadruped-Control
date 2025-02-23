@@ -9,12 +9,16 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(fastcdr REQUIRED)
+find_package(fastrtps REQUIRED)
 
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   # Add your .msg files here
   "msg/QuadrupedState.msg"
+  "msg/GaitPattern.msg"
+  "msg/FootStates.msg"
   # Add dependencies on other message packages
   DEPENDENCIES std_msgs geometry_msgs
 )

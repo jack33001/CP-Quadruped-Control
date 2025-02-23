@@ -114,6 +114,7 @@ target_link_libraries(acados_generated_code PUBLIC
 add_library(quadruped_mpc_controllers SHARED
   src/controller_interfaces/balance_controller.cpp
   src/controller_interfaces/state_estimator.cpp
+  src/controller_interfaces/gait_pattern_generator.cpp
 )
 
 # Single unified dependency and configuration section
