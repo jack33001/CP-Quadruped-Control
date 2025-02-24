@@ -142,50 +142,12 @@ inline bool GaitPatternGenerator::support_polygon()
               (Phi[prev_idx] + Phi[i] + Phi[next_idx]);
     }
 
-    // Log virtual points in formatted tables
-    std::stringstream ss_p;
-    ss_p << "\nXi_p Points:\n"
-      << "╭────┬────────────┬────────────╮\n"
-      << "│Foot│ X Position │ Y Position │\n"
-      << "├────┼────────────┼────────────┤\n";
-    for (size_t i = 0; i < 4; i++) {
-      ss_p << "│ " << i + 1 << "  │  "
-        << std::setw(8) << std::fixed << std::setprecision(3) << xi_p[i][0] << "  │  "
-        << std::setw(8) << std::fixed << std::setprecision(3) << xi_p[i][1] << "  │\n";
-    }
-    ss_p << "╰────┴────────────┴────────────╯";
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss_p.str().c_str());
-
-    std::stringstream ss_m;
-    ss_m << "\nXi_m Points:\n"
-      << "╭────┬────────────┬────────────╮\n"
-      << "│Foot│ X Position │ Y Position │\n"
-      << "├────┼────────────┼────────────┤\n";
-    for (size_t i = 0; i < 4; i++) {
-      ss_m << "│ " << i + 1 << "  │  "
-        << std::setw(8) << std::fixed << std::setprecision(3) << xi_m[i][0] << "  │  "
-        << std::setw(8) << std::fixed << std::setprecision(3) << xi_m[i][1] << "  │\n";
-    }
-    ss_m << "╰────┴────────────┴────────────╯";
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss_m.str().c_str());
-
     // Calculate support polygon center
     support_center_.setZero();
     for (const auto& vertex : xi) {
       support_center_ += vertex;
     }
     support_center_ /= 4.0;
-
-    // Log support center in a formatted table
-    std::stringstream ss_c;
-    ss_c << "\nSupport Center:\n"
-      << "╭────────────┬────────────╮\n"
-      << "│ X Position │ Y Position │\n"
-      << "├────────────┼────────────┤\n"
-      << "│  " << std::setw(8) << std::fixed << std::setprecision(3) << support_center_[0]
-      << "  │  " << std::setw(8) << std::fixed << std::setprecision(3) << support_center_[1] << "  │\n"
-      << "╰────────────┴────────────╯";
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss_c.str().c_str());
 
     return true;
   } catch (const std::exception& e) {
@@ -197,6 +159,51 @@ inline bool GaitPatternGenerator::support_polygon()
 inline bool GaitPatternGenerator::publish_pattern()
 {
   try {
+    // First publish foot states
+    if (rt_foot_state_pub_ && rt_foot_state_pub_->trylock()) {
+      auto& msg = rt_foot_state_pub_->msg_;
+      msg.foot1_state = foot_info_[0].state;
+      msg.foot2_state = foot_info_[1].state;
+      msg.foot3_state = foot_info_[2].state;
+      msg.foot4_state = foot_info_[3].state;
+      rt_foot_state_pub_->unlockAndPublish();
+    }
+
+    // Then publish gait pattern
+    if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
+      auto& msg = rt_gait_pub_->msg_;
+
+      // Set foot phases
+      msg.foot1_phase = static_cast<float>(foot_info_[0].phase);
+      msg.foot2_phase = static_cast<float>(foot_info_[1].phase);
+      msg.foot3_phase = static_cast<float>(foot_info_[2].phase);
+      msg.foot4_phase = static_cast<float>(foot_info_[3].phase);
+
+      // Set step target positions
+      msg.foot1_step_position.x = foot_info_[0].step_target.x();
+      msg.foot1_step_position.y = foot_info_[0].step_target.y();
+      msg.foot1_step_position.z = foot_info_[0].step_target.z();
+
+      msg.foot2_step_position.x = foot_info_[1].step_target.x();
+      msg.foot2_step_position.y = foot_info_[1].step_target.y();
+      msg.foot2_step_position.z = foot_info_[1].step_target.z();
+
+      msg.foot3_step_position.x = foot_info_[2].step_target.x();
+      msg.foot3_step_position.y = foot_info_[2].step_target.y();
+      msg.foot3_step_position.z = foot_info_[2].step_target.z();
+
+      msg.foot4_step_position.x = foot_info_[3].step_target.x();
+      msg.foot4_step_position.y = foot_info_[3].step_target.y();
+      msg.foot4_step_position.z = foot_info_[3].step_target.z();
+
+      // Set COM position (support center)
+      msg.com_position.x = support_center_.x();
+      msg.com_position.y = support_center_.y();
+      msg.com_position.z = 0.0;  // We only compute 2D support polygon
+
+      rt_gait_pub_->unlockAndPublish();
+    }
+
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error publishing pattern: %s", e.what());

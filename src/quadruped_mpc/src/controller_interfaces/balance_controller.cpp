@@ -148,6 +148,12 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     std::bind(&BalanceController::state_callback, this, std::placeholders::_1));
   RCLCPP_INFO(get_node()->get_logger(), "Subscribed to state estimation topic");
 
+  // Set up gait pattern subscriber
+  gait_sub_ = get_node()->create_subscription<quadruped_msgs::msg::GaitPattern>(
+    "/quadruped/gait/gait_pattern", 10,
+    std::bind(&BalanceController::gait_callback, this, std::placeholders::_1));
+  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to gait pattern topic");
+
   return CallbackReturn::SUCCESS;
 }
 
@@ -176,6 +182,13 @@ void BalanceController::state_callback(const quadruped_msgs::msg::QuadrupedState
   std::lock_guard<std::mutex> lock(state_mutex_);
   latest_state_ = msg;
   new_state_received_ = true;
+}
+
+void BalanceController::gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(gait_mutex_);
+  latest_gait_ = msg;
+  new_gait_received_ = true;
 }
 
 }  // namespace quadruped_mpc

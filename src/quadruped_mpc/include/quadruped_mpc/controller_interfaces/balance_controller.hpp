@@ -15,6 +15,7 @@
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
 #include "geometry_msgs/msg/pose.hpp"
 #include "quadruped_msgs/msg/quadruped_state.hpp"
+#include "quadruped_msgs/msg/gait_pattern.hpp"  // Add this include with other message includes
 #include <mutex>
 
 namespace quadruped_mpc
@@ -60,9 +61,16 @@ private:
   std::mutex state_mutex_;
   bool new_state_received_{false};
   
+  // Add gait pattern subscription members
+  rclcpp::Subscription<quadruped_msgs::msg::GaitPattern>::SharedPtr gait_sub_;
+  std::shared_ptr<quadruped_msgs::msg::GaitPattern> latest_gait_;
+  std::mutex gait_mutex_;
+  bool new_gait_received_{false};
+  
   // Add callback function declarations
   void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
   void state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
+  void gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
 
   // Add new private methods
   void update_state();
