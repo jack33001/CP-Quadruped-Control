@@ -46,6 +46,11 @@ protected:
     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
         joint_velocity_state_interface_;
 
+     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
+        joint_effort_state_interface_;
+
+
+
 
 
     // Maps to store command and state interfaces
@@ -63,7 +68,11 @@ protected:
         std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>> *>
         state_interface_map_ = {
         {"position", &joint_position_state_interface_},
-        {"velocity", &joint_velocity_state_interface_}};
+        {"velocity", &joint_velocity_state_interface_},
+        {"effort", &joint_effort_state_interface_}};
+
+    std::vector<int> zero_status;
+
         
 
 private:

@@ -127,4 +127,4 @@ zero_joints_controller:
     state_interfaces:
       - position
       - velocity
-      # - effort
+      - effort

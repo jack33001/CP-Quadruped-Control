@@ -11,6 +11,8 @@ find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 add_library(quadruped_utils_controllers SHARED
     src/quadruped_utils.cpp
     src/ZeroJointsController.cpp
