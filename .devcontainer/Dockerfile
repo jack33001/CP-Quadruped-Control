@@ -100,6 +100,10 @@ RUN apt-get update \
     ros-jazzy-pinocchio \
     ros-jazzy-joint-state-publisher-gui 
 
+# Install ROS2 debugging dependencies
+RUN apt-get update \
+    && apt-get update \
+    sudo apt install xterm gdb gdbserver
 
 
 

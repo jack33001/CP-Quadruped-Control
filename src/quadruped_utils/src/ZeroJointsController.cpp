@@ -43,9 +43,17 @@ controller_interface::CallbackReturn ZeroJointController::on_init()
 
                 // std::string interface_name = "joint_" + interface_type + "_command_interface_";
                 std::string interface_name = interface_type;
-                std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> command_interface_vector;
 
-                command_interface_map_[interface_name] = &command_interface_vector;
+                // std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> command_interface_vector;
+                // command_interface_map_[interface_name] = &command_interface_vector;
+
+                auto command_interface_vector = new std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>();
+                
+             
+
+                
+
+                command_interface_map_[interface_name] = command_interface_vector;
 
                 // print command interface name
                 RCLCPP_INFO(get_node()->get_logger(), "Command interface init: %s", interface_name.c_str());
@@ -63,17 +71,6 @@ controller_interface::CallbackReturn ZeroJointController::on_init()
                 // print command interface name
                 RCLCPP_INFO(get_node()->get_logger(), "State interface init: %s", interface_name.c_str());
             }
-
-
-            // // print command and state interface types
-            // RCLCPP_INFO(get_node()->get_logger(), "Command interface types:");
-            // for (const auto & command_interface_type : command_interface_types_) {
-            //     RCLCPP_INFO(get_node()->get_logger(), "Command interface type: %s", command_interface_type.c_str());
-            // }
-            // RCLCPP_INFO(get_node()->get_logger(), "State interface types:");
-            // for (const auto & state_interface_type : state_interface_types_) {
-            //     RCLCPP_INFO(get_node()->get_logger(), "State interface type: %s", state_interface_type.c_str());
-            // }
 
 
             if (joint_names_.empty()) {
@@ -136,6 +133,7 @@ controller_interface::InterfaceConfiguration ZeroJointController::state_interfac
         for (const auto & interface_type : state_interface_types_)
         {
         conf.names.push_back(joint_name + "/" + interface_type);
+        RCLCPP_INFO(get_node()->get_logger(), "State interface config: %s", (joint_name + "/" + interface_type).c_str());
         }
     }
 
@@ -147,11 +145,12 @@ controller_interface::InterfaceConfiguration ZeroJointController::state_interfac
 controller_interface::CallbackReturn ZeroJointController::on_activate(const rclcpp_lifecycle::State & previous_state)
     {
     // clear out vectors in case of restart
-    joint_position_command_interface_.clear();
-    joint_velocity_command_interface_.clear();
-    joint_position_state_interface_.clear();
-    joint_velocity_state_interface_.clear();
-    joint_effort_state_interface_.clear();
+
+    // joint_position_command_interface_.clear();
+    // joint_velocity_command_interface_.clear();
+    // joint_position_state_interface_.clear();
+    // joint_velocity_state_interface_.clear();
+    // joint_effort_state_interface_.clear();
 
 
     // // assign command interfaces
@@ -164,7 +163,18 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
     for (auto & interface : state_interfaces_)
     {
         state_interface_map_[interface.get_interface_name()]->push_back(interface);
+        // state_map[interface.get_name().c_str()] = &interface;
+
     }
+
+    // print all state interface map keys
+    for (const auto & pair : state_interface_map_)
+    {
+        RCLCPP_INFO(get_node()->get_logger(), "State interface map key: %s", pair.first.c_str());
+    }
+
+
+
 
     return CallbackReturn::SUCCESS;
     }
@@ -176,11 +186,17 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
     float pos = 10;
     float vel = 0;
 
-
+    // auto test = command_interface_map_j["fr_hip/position"];
     // for each joint name
     for (size_t i = 0; i < joint_names_.size(); ++i) 
     {
         // set position command interface to 0
+        // auto &state_interface = state_interface_map_["effort"]->at(i).get();
+        auto effort = state_interface_map_["effort"]->at(0).get().get_value();
+        if (effort > 0.6)
+        {
+            RCLCPP_INFO(get_node()->get_logger(), "EFFORT LIMIT EXCEEDED IN ZERO %f", effort);
+        }
 
         auto &command_interface = command_interface_map_["position"]->at(i).get();
         RCLCPP_INFO(get_node()->get_logger(), "Data type of command interface: %s", typeid(command_interface).name());
@@ -193,6 +209,37 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
         }
     }
 
+   
+    // for (auto  & state_int : state_map)
+    // {
+
+
+    //     state_map["fr_hip/effort"]->get_name();
+    //     *state_int.get_name();
+    //     *state_int.get_value();
+
+        
+    //     // RCLCPP_INFO(get_node()->get_logger(), "State interface %s: %f", state_int.get_name().c_str(), state_int.get_value());
+    // }
+
+
+    // write
+    // for (auto & cmd_int :command_interfaces_)
+    // {
+    //     // cmd_int.get_name();
+    //     // cmd_int.set_value(pos);
+    
+
+
+    //     auto cmd = command_map[cmd_int.get_name().c_str()];
+    //     bool success= cmd_int.set_value(cmd);
+        
+    //     RCLCPP_INFO(get_node()->get_logger(), "Command interface %s: %f", cmd_int.get_name().c_str(), cmd_int.get_value());
+    //     if (!success) {
+    //         RCLCPP_ERROR(get_node()->get_logger(), "Command interface %s failed to write", cmd_int.get_name().c_str());
+    //         return controller_interface::return_type::ERROR;
+    //     }
+    // }
    
     
     

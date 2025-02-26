@@ -118,8 +118,8 @@ def generate_launch_description():
             # joint_state_controller,
             # joint_group_position_controller,
             joint_state_broadcaster,
-            zero_joints_controller,
-            # delay_controller_spawner
+            # zero_joints_controller,
+            delay_controller_spawner
             # delay_joint_state_broadcaster_after_robot_controller_spawner,
         ]
         
