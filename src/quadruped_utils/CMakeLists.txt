@@ -10,6 +10,7 @@ find_package(controller_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(controller_manager_msgs REQUIRED)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -33,6 +34,7 @@ ament_target_dependencies(quadruped_utils_controllers
   rclcpp_lifecycle
   sensor_msgs
   std_msgs
+  controller_manager_msgs
 )
 
 install(

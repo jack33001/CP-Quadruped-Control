@@ -113,10 +113,9 @@ hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const r
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
 
-    // motor_controller_->enableMotor(can_id); 
-    
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+    // if effort is over safe limits, drop kp kd to zero
     if (state_effort > 1)
     {
         RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "limit exceeded");
@@ -148,18 +147,31 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     if(cmd_m_state == 0)
     {
         stateMap = motor_controller_->sendDegreeCommand( commandMap);
+
     }
     else if(cmd_m_state == 1)
     {
         stateMap = motor_controller_->enableMotor(can_id);
+        cmd_m_state = 0;
+        std::cout << "Motor: " << can_id[0] << "Enabled"<< std::endl;
     }
     else if(cmd_m_state == 2)
     {
         stateMap = motor_controller_->disableMotor(can_id);
+        // cmd_m_state = 0;
+        std::cout << "Motor: " << can_id[0] << "Disabled"<< std::endl;
     }
     else if(cmd_m_state == 3)
     {
-        stateMap = motor_controller_->setZeroPosition(can_id);;
+        // check if zeroing would cause the motor to jump
+        if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
+        {
+            stateMap = motor_controller_->setZeroPosition(can_id);
+            cmd_m_state = 0;
+    
+            std::cout << "Motor: " << can_id[0] << "Zeroed"<< std::endl;
+        }
+
     }
 
 

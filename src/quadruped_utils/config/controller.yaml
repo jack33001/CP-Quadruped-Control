@@ -119,6 +119,7 @@ zero_joints_controller:
     command_interfaces:
       - position
       - velocity
+      - m_state
       # - kp
       # - kd
     # state_interfaces:

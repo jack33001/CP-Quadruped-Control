@@ -14,6 +14,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/float64.hpp" 
 
+#include <controller_manager_msgs/srv/switch_controller.hpp>
+
+
 
 namespace quadruped_utils
 {
@@ -37,33 +40,40 @@ protected:
     std::vector<std::string> command_interface_types_;
     std::vector<std::string> state_interface_types_;
 
-    // Command and state interface vectors
-    // std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
-    //     joint_position_command_interface_;
-    // std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
-    //     joint_velocity_command_interface_;
-    // std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
-    //     joint_position_state_interface_;
-    // std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
-    //     joint_velocity_state_interface_;
+    std::vector<float> measured_state_values_;
 
-    //  std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
-    //     joint_effort_state_interface_;
+    // Command interface vectors
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+        joint_position_command_interface_;
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+        joint_velocity_command_interface_;
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+        joint_m_state_command_interface_;
+
+
+    // State interface vectors
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
+        joint_position_state_interface_;
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
+        joint_velocity_state_interface_;
+     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
+        joint_effort_state_interface_;
 
 
 
 
 
     // Maps to store command and state interfaces
-    // std::unordered_map<
-    //     std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> *>
-    //     command_interface_map_ = {
-    //     {"position", &joint_position_command_interface_},
-    //     {"velocity", &joint_velocity_command_interface_}};
-
     std::unordered_map<
         std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> *>
-        command_interface_map_ ;
+        command_interface_map_ = {
+        {"position", &joint_position_command_interface_},
+        {"velocity", &joint_velocity_command_interface_},
+        {"m_state", &joint_m_state_command_interface_}};
+
+    // std::unordered_map<
+    //     std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> *>
+    //     command_interface_map_ ;
 
 
    std::unordered_map<
@@ -72,11 +82,11 @@ protected:
 
     std::unordered_map<
         std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>> *>
-        state_interface_map_ ;
-        // = {
-        // {"position", &joint_position_state_interface_},
-        // {"velocity", &joint_velocity_state_interface_},
-        // {"effort", &joint_effort_state_interface_}};
+        state_interface_map_ 
+        = {
+        {"position", &joint_position_state_interface_},
+        {"velocity", &joint_velocity_state_interface_},
+        {"effort", &joint_effort_state_interface_}};
 
     std::vector<int> zero_status;
 
