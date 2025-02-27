@@ -4,7 +4,8 @@ install/
 log/
 
 # ignore vscode files
-.vscode/
+.vscode/*
+!.vscode/launch.json
 
 # ignore github copilot instructions
 .github/
