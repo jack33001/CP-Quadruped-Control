@@ -1,0 +1,38 @@
+2025-02-09 20:04:27,048 - INFO: Starting controller test...
+2025-02-09 20:04:27,049 - INFO: Loaded parameters: mass=14.5kg, inertia=0.1kg*m^2
+2025-02-09 20:04:27,049 - INFO: Initializing controller with N=20, T=2
+2025-02-09 20:04:27,050 - INFO: Loaded parameters: mass=14.5kg, inertia=0.1kg*m^2
+2025-02-09 20:04:27,050 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-09 20:04:27,050 - INFO: Creating quadruped ODE model...
+2025-02-09 20:04:27,050 - INFO: Created model with name: quadruped_ode
+2025-02-09 20:04:27,051 - INFO: Created state vector with shape: (24, 1)
+2025-02-09 20:04:27,051 - INFO: State vector entries:
+2025-02-09 20:04:27,051 - INFO: [0]: x
+2025-02-09 20:04:27,051 - INFO: [1]: y
+2025-02-09 20:04:27,051 - INFO: [2]: z
+2025-02-09 20:04:27,051 - INFO: [3]: theta
+2025-02-09 20:04:27,051 - INFO: [4]: phi
+2025-02-09 20:04:27,051 - INFO: [5]: psi
+2025-02-09 20:04:27,051 - INFO: [6]: vx
+2025-02-09 20:04:27,051 - INFO: [7]: vy
+2025-02-09 20:04:27,051 - INFO: [8]: vz
+2025-02-09 20:04:27,051 - INFO: [9]: wx
+2025-02-09 20:04:27,051 - INFO: [10]: wy
+2025-02-09 20:04:27,051 - INFO: [11]: wz
+2025-02-09 20:04:27,051 - INFO: [12]: f1_x
+2025-02-09 20:04:27,051 - INFO: [13]: f1_y
+2025-02-09 20:04:27,051 - INFO: [14]: f1_z
+2025-02-09 20:04:27,051 - INFO: [15]: f2_x
+2025-02-09 20:04:27,051 - INFO: [16]: f2_y
+2025-02-09 20:04:27,051 - INFO: [17]: f2_z
+2025-02-09 20:04:27,051 - INFO: [18]: f3_x
+2025-02-09 20:04:27,051 - INFO: [19]: f3_y
+2025-02-09 20:04:27,051 - INFO: [20]: f3_z
+2025-02-09 20:04:27,051 - INFO: [21]: f4_x
+2025-02-09 20:04:27,051 - INFO: [22]: f4_y
+2025-02-09 20:04:27,051 - INFO: [23]: f4_z
+2025-02-09 20:04:27,051 - INFO: Set model.x with type: <class 'casadi.casadi.SX'>
+2025-02-09 20:04:27,052 - INFO: Control vector created with shape: (12, 1)
+2025-02-09 20:04:27,052 - INFO: Set model.xdot with shape: (24, 1)
+2025-02-09 20:04:27,052 - INFO: Created dynamics vector with shape: (24, 1)
+2025-02-09 20:04:27,053 - INFO: Dynamics vector components:

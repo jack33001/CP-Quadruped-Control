@@ -1,0 +1,20 @@
+2025-02-09 02:02:27,972 - INFO: Starting controller test...
+2025-02-09 02:02:27,973 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-09 02:02:27,973 - INFO: Initializing controller with N=20, T=0.2
+2025-02-09 02:02:27,974 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-09 02:02:27,974 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-09 02:02:27,974 - INFO: Creating quadruped ODE model...
+2025-02-09 02:02:27,975 - INFO: Model creation completed successfully
+2025-02-09 02:02:27,978 - INFO: Setting up OCP...
+2025-02-09 02:02:27,978 - INFO: Dimensions - nx: 24, nu: 12, np: 0, ny: 12, ny_e: 12
+2025-02-09 02:02:27,978 - INFO: OCP setup completed
+2025-02-09 02:02:27,978 - INFO: Creating solver...
+2025-02-09 02:02:31,063 - INFO: Moving generated files...
+2025-02-09 02:02:31,064 - INFO: Foot positions:
+2025-02-09 02:02:31,065 - INFO: FR (p1): [0.15 0.15 0.  ]
+2025-02-09 02:02:31,065 - INFO: FL (p2): [ 0.15 -0.15  0.  ]
+2025-02-09 02:02:31,066 - INFO: BR (p3): [-0.15  0.15  0.  ]
+2025-02-09 02:02:31,066 - INFO: BL (p4): [-0.15 -0.15  0.  ]
+2025-02-09 02:02:31,066 - ERROR: Solver error: AcadosOcpSolver.set(): mismatching dimension for field "yref" with dimension 12 (you have 24)
+2025-02-09 02:02:31,066 - ERROR: Solver exception at t=0.000: AcadosOcpSolver.set(): mismatching dimension for field "yref" with dimension 12 (you have 24)
+2025-02-09 02:02:31,066 - ERROR: No successful iterations to plot

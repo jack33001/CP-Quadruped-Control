@@ -1,0 +1,51 @@
+2025-02-07 23:27:46,051 - INFO: Starting controller test...
+2025-02-07 23:27:46,051 - INFO: Loading config from: /home/ws/src/quadruped_mpc/config/optimal_controller.yaml
+2025-02-07 23:27:46,052 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-07 23:27:46,052 - INFO: Initializing controller with N=20, T=0.2
+2025-02-07 23:27:46,052 - INFO: Initializing controller with N=20, T=0.2
+2025-02-07 23:27:46,052 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-07 23:27:46,052 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-07 23:27:46,052 - INFO: Creating quadruped ODE model...
+2025-02-07 23:27:46,053 - INFO: Model creation completed successfully
+2025-02-07 23:27:46,054 - INFO: Setting up OCP...
+2025-02-07 23:27:46,055 - INFO: Dimensions - nx: 24, nu: 12, ny: 12, ny_e: 12
+2025-02-07 23:27:46,055 - INFO: OCP setup completed
+2025-02-07 23:27:46,055 - INFO: Creating solver...
+2025-02-07 23:27:47,632 - INFO: Moving generated files...
+2025-02-07 23:27:47,632 - INFO: Simulation parameters: dt=0.01s, t_final=20s, n_steps=2000
+2025-02-07 23:27:47,632 - INFO: Initializing state vectors...
+2025-02-07 23:27:47,632 - INFO: Initial state position: [0.093, 0.014, 0.156]
+2025-02-07 23:27:47,632 - INFO: Initial state orientation: [0.013, 0.093, -0.213]
+2025-02-07 23:27:47,633 - INFO: Starting simulation loop...
+2025-02-07 23:27:47,633 - INFO: Step 0/2000 (t=0.000s)
+2025-02-07 23:27:47,637 - INFO: Solve time at step 0: 4.08ms
+2025-02-07 23:27:47,761 - INFO: Step 100/2000 (t=1.000s)
+2025-02-07 23:27:47,761 - INFO: Solve time at step 100: 0.62ms
+2025-02-07 23:27:47,854 - INFO: Step 200/2000 (t=2.000s)
+2025-02-07 23:27:47,854 - INFO: Solve time at step 200: 0.64ms
+2025-02-07 23:27:47,947 - INFO: Step 300/2000 (t=3.000s)
+2025-02-07 23:27:47,947 - INFO: Solve time at step 300: 0.78ms
+2025-02-07 23:27:48,039 - INFO: Step 400/2000 (t=4.000s)
+2025-02-07 23:27:48,040 - INFO: Solve time at step 400: 0.60ms
+2025-02-07 23:27:48,124 - INFO: Step 500/2000 (t=5.000s)
+2025-02-07 23:27:48,125 - INFO: Solve time at step 500: 0.66ms
+2025-02-07 23:27:48,213 - INFO: Step 600/2000 (t=6.000s)
+2025-02-07 23:27:48,214 - INFO: Solve time at step 600: 0.59ms
+2025-02-07 23:27:48,299 - INFO: Step 700/2000 (t=7.000s)
+2025-02-07 23:27:48,300 - INFO: Solve time at step 700: 0.60ms
+2025-02-07 23:27:48,384 - INFO: Step 800/2000 (t=8.000s)
+2025-02-07 23:27:48,385 - INFO: Solve time at step 800: 0.73ms
+2025-02-07 23:27:48,469 - INFO: Step 900/2000 (t=9.000s)
+2025-02-07 23:27:48,470 - INFO: Solve time at step 900: 0.72ms
+2025-02-07 23:27:48,556 - INFO: Step 1000/2000 (t=10.000s)
+2025-02-07 23:27:48,556 - INFO: Solve time at step 1000: 0.57ms
+2025-02-07 23:27:48,666 - INFO: Step 1100/2000 (t=11.000s)
+2025-02-07 23:27:48,666 - INFO: Solve time at step 1100: 0.60ms
+2025-02-07 23:27:48,751 - INFO: Step 1200/2000 (t=12.000s)
+2025-02-07 23:27:48,752 - INFO: Solve time at step 1200: 0.85ms
+2025-02-07 23:27:48,835 - INFO: Step 1300/2000 (t=13.000s)
+2025-02-07 23:27:48,836 - INFO: Solve time at step 1300: 0.69ms
+2025-02-07 23:27:48,919 - INFO: Step 1400/2000 (t=14.000s)
+2025-02-07 23:27:48,920 - INFO: Solve time at step 1400: 0.69ms
+2025-02-07 23:27:49,007 - INFO: Step 1500/2000 (t=15.000s)
+2025-02-07 23:27:49,008 - INFO: Solve time at step 1500: 1.02ms

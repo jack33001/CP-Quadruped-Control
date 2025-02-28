@@ -36,13 +36,13 @@
 #include "acados_c/ocp_nlp_interface.h"
 #include "acados_c/external_function_interface.h"
 
-#define QUADRUPED_ODE_NX     12
+#define QUADRUPED_ODE_NX     25
 #define QUADRUPED_ODE_NZ     0
 #define QUADRUPED_ODE_NU     12
-#define QUADRUPED_ODE_NP     15
+#define QUADRUPED_ODE_NP     0
 #define QUADRUPED_ODE_NP_GLOBAL     0
-#define QUADRUPED_ODE_NBX    1
-#define QUADRUPED_ODE_NBX0   12
+#define QUADRUPED_ODE_NBX    0
+#define QUADRUPED_ODE_NBX0   25
 #define QUADRUPED_ODE_NBU    12
 #define QUADRUPED_ODE_NSBX   0
 #define QUADRUPED_ODE_NSBU   0
@@ -61,10 +61,10 @@
 #define QUADRUPED_ODE_NG     0
 #define QUADRUPED_ODE_NBXN   0
 #define QUADRUPED_ODE_NGN    0
-#define QUADRUPED_ODE_NY0    12
-#define QUADRUPED_ODE_NY     12
-#define QUADRUPED_ODE_NYN    12
-#define QUADRUPED_ODE_N      20
+#define QUADRUPED_ODE_NY0    13
+#define QUADRUPED_ODE_NY     13
+#define QUADRUPED_ODE_NYN    13
+#define QUADRUPED_ODE_N      50
 #define QUADRUPED_ODE_NH     0
 #define QUADRUPED_ODE_NHN    0
 #define QUADRUPED_ODE_NH0    0
@@ -149,8 +149,9 @@ ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_update_params_sparse(quadruped_ode
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_set_p_global_and_precompute_dependencies(quadruped_ode_solver_capsule* capsule, double* data, int data_len);
 
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_solve(quadruped_ode_solver_capsule * capsule);
+ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_setup_qp_matrices_and_factorize(quadruped_ode_solver_capsule* capsule);
 
-ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_solve(quadruped_ode_solver_capsule ** capsules, int N_batch);
+ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_solve(quadruped_ode_solver_capsule ** capsules, int * status_out, int N_batch);
 
 ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_set_flat(quadruped_ode_solver_capsule ** capsules, const char *field, double *data, int N_data, int N_batch);
 ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_batch_get_flat(quadruped_ode_solver_capsule ** capsules, const char *field, double *data, int N_data, int N_batch);

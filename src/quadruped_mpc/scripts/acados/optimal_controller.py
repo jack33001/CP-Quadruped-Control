@@ -1,4 +1,5 @@
 import numpy
+import yaml
 from acados_template import AcadosOcp, AcadosOcpSolver
 from quadruped_model import export_quadruped_ode_model
 import casadi as ca
@@ -8,10 +9,24 @@ import os
 logger = logging.getLogger(__name__)
 
 class QuadrupedOptimalController:
-    def __init__(self, N=20, T=0.2, code_export_dir=None):
+    def __init__(self, N, T, code_export_dir=None, param_file=None):
         logger.info(f"Initializing controller with N={N}, T={T}")
         self.N = N
         self.T = T
+
+        # Load parameters from yaml
+        if param_file is None:
+            # Default to package config directory
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            root_dir = os.path.dirname(os.path.dirname(script_dir))
+            param_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
+        
+        with open(param_file, 'r') as f:
+            params = yaml.safe_load(f)['optimal_controller']
+            self.mass = params.get('mass',.001)
+            self.inertia = params.get('inertia', .09)
+            
+        logger.info(f"Loaded parameters: mass={self.mass}kg, inertia={self.inertia}kg*m^2")
 
         # Get the quadruped_mpc root directory
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -25,16 +40,16 @@ class QuadrupedOptimalController:
         os.makedirs(code_export_dir, exist_ok=True)
         os.makedirs(os.path.join(code_export_dir, 'quadruped_ode_model'), exist_ok=True)
         
-        # Create and verify model
-        self.model = export_quadruped_ode_model()
+        # Create and verify model with loaded parameters
+        self.model = export_quadruped_ode_model(mass=self.mass, inertia=self.inertia)
         if self.model.x is None:
             raise ValueError("Model state is None after creation")
-        logger.debug(f"Created model with state type: {type(self.model.x)}")
+        logger.info(f"Created model with state type: {type(self.model.x)}")
         
         # Initialize OCP with model
         self.ocp = AcadosOcp()
         self.ocp.model = self.model  # Set model explicitly
-        logger.debug("Set model in OCP")
+        logger.info("Set model in OCP")
         
         # Setup OCP
         self.setup_ocp()
@@ -72,179 +87,128 @@ class QuadrupedOptimalController:
                 dst = os.path.join(dest_dir, item)
                 if os.path.isfile(src):
                     shutil.copy2(src, dst)
-                    logger.debug(f"Copied {item}")
+                    logger.info(f"Copied {item}")
                 elif os.path.isdir(src) and item == 'quadruped_ode_model':
                     if os.path.exists(dst):
                         shutil.rmtree(dst)
                     shutil.copytree(src, dst)
-                    logger.debug(f"Copied dir {item}")
+                    logger.info(f"Copied dir {item}")
             
             # Copy ACADOS types.h to proper location
             types_src = os.path.join(self.ocp.acados_include_dir, 'acados', 'utils', 'types.h')
             types_dst = os.path.join(dest_dir, 'acados', 'utils', 'types.h')
             if os.path.exists(types_src):
                 shutil.copy2(types_src, types_dst)
-                logger.debug(f"Copied types.h to {types_dst}")
+                logger.info(f"Copied types.h to {types_dst}")
             
             # Clean up
             shutil.rmtree(c_generated)
             logger.info(f"Generated code moved to: {dest_dir}")
         
     def setup_ocp(self):
-        logger.info("Setting up OCP...")
+        logger.info(" =========================== Setting up OCP  =========================== ")
         ocp = self.ocp
         model = self.model
         
         # Verify model attributes
-        logger.debug(f"Model state shape: {model.x.shape}")
-        logger.debug(f"Model control shape: {model.u.shape}")
+        logger.info(f"Model state shape: {model.x.shape}")
+        logger.info(f"Model control shape: {model.u.shape}")
         
         # Get dimensions from model
-        nx = model.x.shape[0]  # Should be 12
-        nu = model.u.shape[0]  # Should be 12
-        np = model.p.shape[0]  # Should be 15 (3 coords × 5 points: 4 feet + COM)
-        ny = nx               # Cost dimension should match state dimension
-        ny_e = nx            # Terminal cost dimension
-        
+        nx = model.x.shape[0]  # 25 (state dimension)
+        nu = model.u.shape[0]  # 12 (control dimension)
+        np = 0
+        ny = 13              # We only track 13 states in the cost
+        ny_e = 13           # Terminal cost tracks same states
+
         logger.info(f"Dimensions - nx: {nx}, nu: {nu}, np: {np}, ny: {ny}, ny_e: {ny_e}")
 
         # Set dimensions
         ocp.dims.nx = nx
         ocp.dims.nu = nu
-        ocp.dims.np = np  # Must be set before parameter_values
+        ocp.dims.np = 0
+        ocp.dims.ny = ny      # Track only 13 states
+        ocp.dims.ny_e = ny_e  # Same for terminal cost
         ocp.dims.N = self.N
 
-        # Initialize parameter values with correct size (must be after setting np)
-        p_init = numpy.zeros(np)  # 15 values for 5 points (4 feet + COM) × 3 coordinates each
-        ocp.parameter_values = p_init
-        logger.debug(f"Initialized parameters with shape: {p_init.shape}")
-
-        # Switch to LINEAR_LS cost type instead of EXTERNAL
-        ocp.cost.cost_type = 'LINEAR_LS'
-        ocp.cost.cost_type_e = 'LINEAR_LS'
-
-        # Define stage cost matrices
-        nx = model.x.shape[0]
-        nu = model.u.shape[0]
-
-        # Selection matrices (track position, orientation, and velocities)
-        ocp.cost.Vx = numpy.eye(nx)   # Track all states
-        ocp.cost.Vu = numpy.zeros((nx, nu))  # No direct control cost
-        ocp.cost.Vx_e = ocp.cost.Vx.copy()  # Terminal cost same structure
-
-        # Balanced weights for all state components
-        pos_weights = [10.0, 10.0, 20.0]    # Back to original weights
-        rot_weights = [10.0]*3              # Original rotation weights
-        vel_weights = [1.0, 1.0, 2.0]       # Original velocity weights
-        ang_weights = [1.0]*3               # Original angular weights
+        # Selection matrices - only select first 13 states
+        Vx = numpy.zeros((ny, nx))
+        Vx[:13, :13] = numpy.eye(13)  # Select only first 13 states
+        Vu = numpy.zeros((ny, nu))*.001 # for now, don't worry about policing the controller effort
         
-        # Combine all weights
-        ocp.cost.W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
-        ocp.cost.W_e = ocp.cost.W * 10.0  # Stronger terminal cost
+        ocp.cost.Vx = Vx
+        ocp.cost.Vu = Vu
+        ocp.cost.Vx_e = Vx  # Terminal cost same selection
+        logger.info("Set selection matrices to track only first 13 states")
 
-        # Reference vectors (will be updated in solve())
-        ocp.cost.yref = numpy.zeros(nx)    # Full state reference
-        ocp.cost.yref_e = numpy.zeros(nx)  # Terminal reference
+        # Weights for tracked states
+        pos_weights = [20]*3     # Position tracking
+        rot_weights = [200]*4      # Rotation tracking
+        vel_weights = [5]*3      # Linear velocity tracking
+        ang_weights = [.5]*3      # Angular velocity tracking
+        
+        # Combine weights into diagonal matrices
+        W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
+        W_e = W * 10.0  # Terminal cost higher to enforce convergence
+        
+        ocp.cost.W = W
+        ocp.cost.W_e = W_e
+        logger.info("Set weight matrices")
 
-        # Force bounds - adjusted for 1kg robot
-        min_force = numpy.array([-5.0, -5.0, 0.0] * 4)     # Reduced lateral forces
-        max_force = numpy.array([5.0, 5.0, 10.0] * 4)      # Max vertical ~2.5x robot weight
+        # References (only for tracked states)
+        ocp.cost.yref = numpy.zeros(ny)     # Reference for tracked states
+        ocp.cost.yref_e = numpy.zeros(ny_e) # Terminal reference
+        logger.info("Set zero references")
+
+        # Force constraints
+        # Constrain friction to below mu = .2, constrain force to positive values 4x what's necessary to lift the robot
+        min_force = numpy.array([-self.mass*9.81 / 4 * .2,-self.mass*9.81 / 4 * .2, 0] * 4)
+        max_force = numpy.array([self.mass*9.81 / 4 * .2, self.mass*9.81 / 4 * .2, self.mass*9.81] * 4)
         ocp.constraints.idxbu = numpy.arange(nu)
         ocp.constraints.lbu = min_force
         ocp.constraints.ubu = max_force
+        logger.info(f"Set force constraints: min={min_force[0]}, max={max_force[0]}")
 
-        # Tighter state bounds for better stabilization
-        ocp.constraints.idxbx = numpy.array([2])    # z-position index
-        ocp.constraints.lbx = numpy.array([0.14])   # Tighter minimum height
-        ocp.constraints.ubx = numpy.array([0.16])   # Tighter maximum height
-
-        # Initial state constraint setup - allow specified z height
-        ocp.constraints.x0 = numpy.zeros(nx)
-        ocp.constraints.idxbx_0 = numpy.arange(nx)
-        ocp.constraints.lbx_0 = numpy.zeros(nx)
-        ocp.constraints.ubx_0 = numpy.zeros(nx)
-        
-        # Allow z-position (index 2) to match our desired initial height
-        ocp.constraints.lbx_0[2] = 0.15  # Match initial z height
-        ocp.constraints.ubx_0[2] = 0.15  # Match initial z height
-
-        # set options
-        ocp.solver_options.qp_solver = 'FULL_CONDENSING_QPOASES'  # Changed solver
+        # Solver options
+        ocp.solver_options.qp_solver = 'PARTIAL_CONDENSING_HPIPM'
+        ocp.solver_options.hpipm_mode = 'BALANCE'
+        ocp.solver_options.qp_solver_cond_N = self.N
+        ocp.solver_options.qp_solver_warm_start = 2
         ocp.solver_options.hessian_approx = 'GAUSS_NEWTON'
         ocp.solver_options.integrator_type = 'ERK'
-        ocp.solver_options.nlp_solver_type = 'SQP_RTI'  # Changed to RTI
+        ocp.solver_options.nlp_solver_type = 'SQP_RTI'
+        ocp.solver_options.qp_solver_cond_ric_alg = 0
+        ocp.solver_options.qp_solver_ric_alg = 0
         ocp.solver_options.nlp_solver_max_iter = 200
         ocp.solver_options.qp_solver_iter_max = 100
+        logger.info("Set solver options")
         
-        # set prediction horizon
+        # Prediction horizon
         ocp.solver_options.tf = self.T
+        logger.info(f"Set prediction horizon to {self.T}s")
+
+        # Initial state bounds
+        ocp.dims.nbx_0 = nx
+        ocp.constraints.idxbx_0 = numpy.arange(nx)
+        ocp.constraints.x0 = numpy.zeros(nx)
+        logger.info("Set initial state constraints")
 
         logger.info("OCP setup completed")
-        
-    def update_foot_positions(self, p1, p2, p3, p4, com=None):
-        """Update foot positions and COM in the model
-        
-        Args:
-            p1, p2, p3, p4: np.array(3,) - foot positions
-            com: np.array(3,) - center of mass position (optional)
-        """
-        if com is None:
-            com = numpy.zeros(3)
-        
-        # Concatenate all parameters (15 total: 3 coords × 5 points)
-        p = numpy.concatenate([p1, p2, p3, p4, com])
-        logger.debug(f"Updating parameters with shape: {p.shape}")
-        
-        # Set parameter values in OCP
-        self.ocp.parameter_values = p
-        
-        # Update parameters for all nodes in the solver
-        try:
-            for i in range(self.N + 1):
-                self.solver.set(i, 'p', p)
-        except Exception as e:
-            logger.error(f"Failed to update parameters: {str(e)}")
-            raise
 
     def solve(self, x0, x_ref):
-        try:
-            # Change initial state setting
-            self.solver.set(0, 'x', x0)
-            
-            # set reference trajectory
-            yref = x_ref
-            
-            # set references for all nodes including terminal
+        try:         
+            self.solver.yref_0 = x0[:13]
+            # Set the reference trajectory
             for i in range(self.N):
-                self.solver.set(i, 'yref', yref)
-            self.solver.set(self.N, 'yref', yref)
+                self.solver.set(i, "yref", x_ref[:13])  # Only first 13 states as per cost setup
+            self.solver.set(self.N, "yref", x_ref[:13])  # Terminal reference
             
-            # Add parameter check before solving
-            if hasattr(self.solver, 'acados_ocp'):
-                param_size = self.solver.acados_ocp.dims.np
-                if param_size != 15:
-                    print(f"\nERROR: Incorrect parameter dimension: {param_size}, expected 15")
-                    raise ValueError(f"Incorrect parameter dimension: {param_size}, expected 15")
+            u0 = self.solver.solve_for_x0(x0)
+            status = 0
+            logger.debug(f"Got control solution with shape: {u0.shape}")
             
-            # solve OCP
-            status = self.solver.solve()
-            
-            # Interpret solver status
-            status_messages = {
-                0: "Success",
-                1: "Invalid number of iterations",
-                2: "Maximum number of iterations reached",
-                3: "Minimum step size in QP reached",
-                4: "QP solver failed"
-            }
-            if status != 0:
-                status_msg = status_messages.get(status, "Unknown error")
-                print(f"\nSOLVER WARNING: Status {status} - {status_msg}")
-            
-            # get solution
-            u0 = self.solver.get(0, 'u')
             return u0, status
             
         except Exception as e:
-            print(f"\nSOLVER ERROR: {str(e)}")
+            logger.error(f"Solver error: {str(e)}")
             raise

@@ -1,0 +1,115 @@
+2025-02-07 23:28:02,554 - INFO: Starting controller test...
+2025-02-07 23:28:02,554 - INFO: Loading config from: /home/ws/src/quadruped_mpc/config/optimal_controller.yaml
+2025-02-07 23:28:02,555 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-07 23:28:02,555 - INFO: Initializing controller with N=20, T=0.2
+2025-02-07 23:28:02,555 - INFO: Initializing controller with N=20, T=0.2
+2025-02-07 23:28:02,556 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-07 23:28:02,556 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-07 23:28:02,556 - INFO: Creating quadruped ODE model...
+2025-02-07 23:28:02,557 - INFO: Model creation completed successfully
+2025-02-07 23:28:02,559 - INFO: Setting up OCP...
+2025-02-07 23:28:02,559 - INFO: Dimensions - nx: 24, nu: 12, ny: 12, ny_e: 12
+2025-02-07 23:28:02,559 - INFO: OCP setup completed
+2025-02-07 23:28:02,559 - INFO: Creating solver...
+2025-02-07 23:28:04,237 - INFO: Moving generated files...
+2025-02-07 23:28:04,238 - INFO: Simulation parameters: dt=0.01s, t_final=20s, n_steps=2000
+2025-02-07 23:28:04,238 - INFO: Initializing state vectors...
+2025-02-07 23:28:04,239 - INFO: Initial state position: [0.075, 0.013, 0.144]
+2025-02-07 23:28:04,239 - INFO: Initial state orientation: [-0.243, -0.238, 0.232]
+2025-02-07 23:28:04,239 - INFO: Starting simulation loop...
+2025-02-07 23:28:04,239 - INFO: Step 0/2000 (t=0.000s)
+2025-02-07 23:28:04,242 - INFO: Solve time at step 0: 3.54ms
+2025-02-07 23:28:04,346 - INFO: Step 100/2000 (t=1.000s)
+2025-02-07 23:28:04,347 - INFO: Solve time at step 100: 0.79ms
+2025-02-07 23:28:04,433 - INFO: Step 200/2000 (t=2.000s)
+2025-02-07 23:28:04,434 - INFO: Solve time at step 200: 0.56ms
+2025-02-07 23:28:04,517 - INFO: Step 300/2000 (t=3.000s)
+2025-02-07 23:28:04,518 - INFO: Solve time at step 300: 0.64ms
+2025-02-07 23:28:04,601 - INFO: Step 400/2000 (t=4.000s)
+2025-02-07 23:28:04,601 - INFO: Solve time at step 400: 0.57ms
+2025-02-07 23:28:04,686 - INFO: Step 500/2000 (t=5.000s)
+2025-02-07 23:28:04,687 - INFO: Solve time at step 500: 0.57ms
+2025-02-07 23:28:04,772 - INFO: Step 600/2000 (t=6.000s)
+2025-02-07 23:28:04,773 - INFO: Solve time at step 600: 0.58ms
+2025-02-07 23:28:04,857 - INFO: Step 700/2000 (t=7.000s)
+2025-02-07 23:28:04,857 - INFO: Solve time at step 700: 0.60ms
+2025-02-07 23:28:04,939 - INFO: Step 800/2000 (t=8.000s)
+2025-02-07 23:28:04,940 - INFO: Solve time at step 800: 0.66ms
+2025-02-07 23:28:05,024 - INFO: Step 900/2000 (t=9.000s)
+2025-02-07 23:28:05,025 - INFO: Solve time at step 900: 0.63ms
+2025-02-07 23:28:05,105 - INFO: Step 1000/2000 (t=10.000s)
+2025-02-07 23:28:05,106 - INFO: Solve time at step 1000: 0.71ms
+2025-02-07 23:28:05,187 - INFO: Step 1100/2000 (t=11.000s)
+2025-02-07 23:28:05,188 - INFO: Solve time at step 1100: 0.54ms
+2025-02-07 23:28:05,267 - INFO: Step 1200/2000 (t=12.000s)
+2025-02-07 23:28:05,267 - INFO: Solve time at step 1200: 0.54ms
+2025-02-07 23:28:05,346 - INFO: Step 1300/2000 (t=13.000s)
+2025-02-07 23:28:05,347 - INFO: Solve time at step 1300: 0.57ms
+2025-02-07 23:28:05,429 - INFO: Step 1400/2000 (t=14.000s)
+2025-02-07 23:28:05,430 - INFO: Solve time at step 1400: 0.87ms
+2025-02-07 23:28:05,515 - INFO: Step 1500/2000 (t=15.000s)
+2025-02-07 23:28:05,516 - INFO: Solve time at step 1500: 0.77ms
+2025-02-07 23:28:05,627 - INFO: Step 1600/2000 (t=16.000s)
+2025-02-07 23:28:05,628 - INFO: Solve time at step 1600: 0.56ms
+2025-02-07 23:28:05,711 - INFO: Step 1700/2000 (t=17.000s)
+2025-02-07 23:28:05,711 - INFO: Solve time at step 1700: 0.56ms
+2025-02-07 23:28:05,796 - INFO: Step 1800/2000 (t=18.000s)
+2025-02-07 23:28:05,797 - INFO: Solve time at step 1800: 0.76ms
+2025-02-07 23:28:05,880 - INFO: Step 1900/2000 (t=19.000s)
+2025-02-07 23:28:05,881 - INFO: Solve time at step 1900: 0.75ms
+2025-02-07 23:28:05,968 - INFO: Simulation completed in 1.729 seconds
+2025-02-07 23:28:05,968 - INFO: Calculating metrics and generating plots...
+2025-02-07 23:28:05,972 - INFO: 
+============ Controller Performance Analysis ============
+2025-02-07 23:28:05,972 - INFO: 
+=== Timing Performance ===
+2025-02-07 23:28:05,972 - INFO: Total simulation time: 1.729 s
+2025-02-07 23:28:05,972 - INFO: Steps completed: 2000
+2025-02-07 23:28:05,972 - INFO: Average step time: 0.86 ms
+2025-02-07 23:28:05,972 - INFO: 
+=== Position Tracking ===
+2025-02-07 23:28:05,972 - INFO: RMS Error (x,y,z): [0.030, 0.005, 0.008] m
+2025-02-07 23:28:05,972 - INFO: Max Error (x,y,z): [0.080, 0.015, 0.036] m
+2025-02-07 23:28:05,972 - INFO: Position Drift: [-0.074, -0.013, 0.036] m
+2025-02-07 23:28:05,972 - INFO: 
+=== Orientation Tracking ===
+2025-02-07 23:28:05,972 - INFO: RMS Error (r,p,y): [0.098, 0.076, 0.084] rad
+2025-02-07 23:28:05,972 - INFO: Max Error (r,p,y): [0.264, 0.238, 0.232] rad
+2025-02-07 23:28:05,972 - INFO: Orientation Drift: [0.237, 0.234, -0.227] rad
+2025-02-07 23:28:05,972 - INFO: 
+=== Velocity Performance ===
+2025-02-07 23:28:05,972 - INFO: Mean Linear Velocity (x,y,z): [0.004, 0.001, 0.002] m/s
+2025-02-07 23:28:05,972 - INFO: Mean Angular Velocity (x,y,z): [0.014, 0.012, 0.011] rad/s
+2025-02-07 23:28:05,972 - INFO: 
+=== Force Performance ===
+2025-02-07 23:28:05,972 - INFO: 
+FR Foot:
+2025-02-07 23:28:05,972 - INFO: Max forces (x,y,z): [20.000, 20.000, 500.000] N
+2025-02-07 23:28:05,972 - INFO: Avg forces (x,y,z): [0.080, 0.080, 65.621] N
+2025-02-07 23:28:05,972 - INFO: Force std (x,y,z): [0.977, 0.971, 15.536] N
+2025-02-07 23:28:05,972 - INFO: 
+FL Foot:
+2025-02-07 23:28:05,972 - INFO: Max forces (x,y,z): [20.000, 20.000, 87.322] N
+2025-02-07 23:28:05,972 - INFO: Avg forces (x,y,z): [0.099, 0.080, 46.798] N
+2025-02-07 23:28:05,972 - INFO: Force std (x,y,z): [1.077, 0.971, 7.361] N
+2025-02-07 23:28:05,972 - INFO: 
+BR Foot:
+2025-02-07 23:28:05,972 - INFO: Max forces (x,y,z): [20.000, 20.000, 40.786] N
+2025-02-07 23:28:05,973 - INFO: Avg forces (x,y,z): [0.080, 0.083, 35.494] N
+2025-02-07 23:28:05,973 - INFO: Force std (x,y,z): [0.977, 1.043, 6.424] N
+2025-02-07 23:28:05,973 - INFO: 
+BL Foot:
+2025-02-07 23:28:05,973 - INFO: Max forces (x,y,z): [20.000, 20.000, 56.134] N
+2025-02-07 23:28:05,973 - INFO: Avg forces (x,y,z): [0.099, 0.083, 48.178] N
+2025-02-07 23:28:05,973 - INFO: Force std (x,y,z): [1.077, 1.043, 9.538] N
+2025-02-07 23:28:05,973 - INFO: 
+=== Energy Performance ===
+2025-02-07 23:28:05,973 - INFO: Total force magnitude: 392809.602 N
+2025-02-07 23:28:05,973 - INFO: Average power: 0.360 W
+2025-02-07 23:28:05,973 - INFO: 
+=== Stability Metrics ===
+2025-02-07 23:28:05,973 - INFO: Average height: 0.174 m
+2025-02-07 23:28:05,973 - INFO: Height variance: 0.006 m
+2025-02-07 23:28:05,973 - INFO: Roll variance: 0.069 rad
+2025-02-07 23:28:05,973 - INFO: Pitch variance: 0.054 rad
+2025-02-07 23:28:05,973 - INFO: Yaw variance: 0.060 rad

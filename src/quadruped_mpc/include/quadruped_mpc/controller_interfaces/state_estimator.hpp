@@ -14,9 +14,10 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "rosgraph_msgs/msg/clock.hpp"  // Add Clock message include
+#include <nav_msgs/msg/odometry.hpp>
 
 // Project headers
-#include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
 
 // Pinocchio headers
 #include <pinocchio/fwd.hpp>
@@ -24,12 +25,28 @@
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 
+// Simplify to just the essential tf2_ros includes
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_ros/transform_broadcaster.h"
+#include "nav_msgs/msg/odometry.hpp"  // Move after transform includes
+#include "quadruped_msgs/msg/quadruped_state.hpp"  // Add this line
+
+// Add realtime publisher includes
+#include "realtime_tools/realtime_publisher.hpp"
+#include "realtime_tools/realtime_buffer.hpp"
+
+// Remove MeshcatCpp includes
+// #include <MeshcatCpp/Meshcat.h>
+// #include <MeshcatCpp/Shape.h>
+
 namespace quadruped_mpc
 {
 
 class StateEstimator : public controller_interface::ControllerInterface
 {
 public:
+  // Move the type alias to the public section before any usage
+  using RTPublisher = realtime_tools::RealtimePublisher<quadruped_msgs::msg::QuadrupedState>;
   using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
   StateEstimator();
@@ -53,6 +70,25 @@ protected:
   std::vector<std::string> joint_names_;
   std::vector<std::string> state_interface_types_;
   
+  // Add IMU data storage
+  Eigen::Vector4d imu_orientation_;  // [x,y,z,w]
+  Eigen::Vector3d imu_angular_velocity_;
+  Eigen::Vector3d imu_linear_acceleration_;
+  
+  // Add foot state storage
+  struct FootState {
+    Eigen::Vector3d position;
+    bool in_contact;
+  };
+  std::array<FootState, 4> foot_states_;  // FL, FR, RL, RR
+
+  // Add Jacobian storage
+  using JacobianMatrix = Eigen::Matrix<double, 3, 2>;
+  struct LegJacobians {
+    JacobianMatrix J1, J2, J3, J4;  // FL, FR, RL, RR
+  };
+  LegJacobians leg_jacobians_;
+
   // Pinocchio model and data
   pinocchio::Model model_;
   std::unique_ptr<pinocchio::Data> data_;
@@ -89,20 +125,29 @@ protected:
   };
   std::vector<JointState> joint_states_;
 
-  // Returns true if successful, false if error
+  // These function declarations stay here but implementations move to state_estimation.hpp
   bool read_state_interfaces();
-  
-  // Returns true if successful, false if error
   bool update_model();
-  
-  // Returns true if successful, false if error
-  bool inverse_kinematics();
-
-  // Returns true if successful, false if error
+  bool foot_positions();
   bool detect_contact();
+  bool pin_kinematics();
+  bool estimate_base_position();
+  bool estimate_orientation();
+  bool update_odometry();
 
 private:
   // Removed hardware_height_
+  std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+  bool clock_connected_{false};
+  rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
+  rclcpp::Clock::SharedPtr sim_clock_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+  nav_msgs::msg::Odometry::SharedPtr latest_odom_;
+  // Replace regular publisher with realtime publisher
+  std::unique_ptr<RTPublisher> rt_state_pub_;  // Now RTPublisher is defined before use
+  std::shared_ptr<quadruped_msgs::msg::QuadrupedState> state_msg_;
+  // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
 
 }  // namespace quadruped_mpc

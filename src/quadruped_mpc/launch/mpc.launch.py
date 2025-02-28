@@ -20,14 +20,22 @@ def generate_launch_description():
         arguments=[
             'joint_state_broadcaster',
             'imu_sensor_controller',
-            'quadruped_broadcaster',
             'state_estimator',
-            'balance_controller',
+            'gait_pattern_generator',
+            'balance_controller'
         ],
         output='screen',
     )
 
+    # Add teleop node
+    teleop_node = Node(
+        package='quadruped_mpc',
+        executable='quadruped_teleop.py',
+        name='quadruped_teleop',
+        output='screen'
+    )
+
     return LaunchDescription([
-        generate_controller,  # Run this first
         controllers_spawner,
-    ])
+        teleop_node,
+    ])                          

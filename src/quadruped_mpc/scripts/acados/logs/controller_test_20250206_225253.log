@@ -1,0 +1,30 @@
+2025-02-06 22:52:53,466 - INFO: Starting controller test...
+2025-02-06 22:52:53,466 - INFO: Loading config from: /home/ws/src/quadruped_mpc/config/optimal_controller.yaml
+2025-02-06 22:52:53,467 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-06 22:52:53,467 - INFO: Initializing controller with N=20, T=0.2
+2025-02-06 22:52:53,467 - INFO: Initializing controller with N=20, T=0.2
+2025-02-06 22:52:53,467 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-06 22:52:53,468 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-06 22:52:53,468 - INFO: Creating quadruped ODE model...
+2025-02-06 22:52:53,468 - INFO: Model creation completed successfully
+2025-02-06 22:52:53,470 - INFO: Setting up OCP...
+2025-02-06 22:52:53,470 - INFO: Dimensions - nx: 24, nu: 12, ny: 12, ny_e: 12
+2025-02-06 22:52:53,470 - INFO: OCP setup completed
+2025-02-06 22:52:53,470 - INFO: Creating solver...
+2025-02-06 22:52:55,028 - INFO: Moving generated files...
+2025-02-06 22:52:55,028 - INFO: Simulation parameters: dt=0.01s, t_final=10s, n_steps=1000
+2025-02-06 22:52:55,028 - INFO: Initializing state vectors...
+2025-02-06 22:52:55,029 - INFO: Initial state position: [0.058, -0.070, 0.156]
+2025-02-06 22:52:55,029 - INFO: Initial state orientation: [0.092, 0.016, -0.163]
+2025-02-06 22:52:55,029 - INFO: Starting simulation loop...
+2025-02-06 22:52:55,029 - INFO: Step 0/1000 (t=0.000s)
+2025-02-06 22:52:55,032 - INFO: Solve time at step 0: 3.56ms
+2025-02-06 22:52:55,033 - ERROR: Simulation failed with exception: operands could not be broadcast together with shapes (24,) (12,) 
+Traceback (most recent call last):
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 272, in main
+    x = rk4_step(x, u, dt, m, I, p1, p2, p3, p4, com)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 112, in rk4_step
+    k2 = system_dynamics(x + dt/2 * k1, u, m, I, p1, p2, p3, p4, com)
+                         ~~^~~~~~~~~~~
+ValueError: operands could not be broadcast together with shapes (24,) (12,) 

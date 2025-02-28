@@ -9,11 +9,14 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
-#include "quadruped_mpc/utilities/shared_quadruped_info.hpp"
 #include "hardware_interface/handle.hpp"
 #include "acados/utils/types.h"
 #include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
+#include "geometry_msgs/msg/pose.hpp"
+#include "quadruped_msgs/msg/quadruped_state.hpp"
+#include "quadruped_msgs/msg/gait_pattern.hpp"  // Add this include with other message includes
+#include <mutex>
 
 namespace quadruped_mpc
 {
@@ -38,15 +41,41 @@ public:
 protected:
   std::vector<std::string> joint_names_;
   quadruped_ode_solver_capsule* solver_{nullptr};  // Fix type name to match generated code
-  std::array<double,12> current_state_;
-  std::array<double,12> desired_state_;
-  std::array<double,12> optimal_control_;
+  std::array<double,25> current_state_;
+  std::array<double,25> desired_state_;
+  std::array<double,25> optimal_control_;
   
   // Restore foot position storage
   std::array<double,3> p1_, p2_, p3_, p4_, com_;
 
 private:
-  // Remove logger_ member variable since we'll use get_node()->get_logger() directly
+  // Add command handling members
+  rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr cmd_sub_;
+  std::mutex cmd_mutex_;
+  geometry_msgs::msg::Pose::SharedPtr latest_cmd_;
+  bool new_cmd_received_{false};
+  
+  // Add state handling members
+  rclcpp::Subscription<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_sub_;
+  quadruped_msgs::msg::QuadrupedState::SharedPtr latest_state_;
+  std::mutex state_mutex_;
+  bool new_state_received_{false};
+  
+  // Add gait pattern subscription members
+  rclcpp::Subscription<quadruped_msgs::msg::GaitPattern>::SharedPtr gait_sub_;
+  std::shared_ptr<quadruped_msgs::msg::GaitPattern> latest_gait_;
+  std::mutex gait_mutex_;
+  bool new_gait_received_{false};
+  
+  // Add callback function declarations
+  void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
+  void state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
+  void gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
+
+  // Add new private methods
+  void update_state();
+  void update_control();
+  void update_commands();
 };
 
 }  // namespace quadruped_mpc
