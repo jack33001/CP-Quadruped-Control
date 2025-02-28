@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
+    update_rate: 10
       
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -109,11 +109,11 @@ joint_group_position_controller:
 
 zero_joints_controller:
   ros__parameters:
-    update_rate: 100
+    update_rate: 1
     test: 1
     effort_threshold: 0.3
       
-    zero_effort_lim: 0.3
+    zero_effort_lim: 0.5
 
 
     kp: 0.0
@@ -123,7 +123,15 @@ zero_joints_controller:
     joints_orientation: [-1.0]
 
     joints:
-      - fr_hip 
+      # - fr_hip 
+      # - fr_knee
+
+      - rr_hip
+      - rr_knee
+
+      - rl_hip
+      - rl_knee
+      
       
     command_interfaces:
       - position

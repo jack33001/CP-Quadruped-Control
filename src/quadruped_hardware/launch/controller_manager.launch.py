@@ -31,6 +31,7 @@ def generate_launch_description():
             parameters=[
                 yaml_path , # Load yaml
             ],
+            arguments=["controller_manager"],
 
         )
         # ,

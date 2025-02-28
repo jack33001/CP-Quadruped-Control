@@ -56,7 +56,7 @@ hardware_interface::CallbackReturn CANMotor::on_cleanup(const rclcpp_lifecycle::
 hardware_interface::CallbackReturn CANMotor::on_activate(const rclcpp_lifecycle::State& previous_state) {
     // Activation code
 
-    // auto start_state = motor_controller_->disableMotor(can_id);
+    motor_controller_->disableMotor(can_id);
     auto start_state = motor_controller_->enableMotor(can_id);
 
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -107,13 +107,15 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
 
 hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Read data from the hardware
+    // std::lock_guard<std::mutex> lock(read_write_mutex_);
     return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
+    // std::lock_guard<std::mutex> lock(read_write_mutex_);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     // if effort is over safe limits, drop kp kd to zero
     if (state_effort > 1)
@@ -203,27 +205,27 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
 
     // LOGGING
-    std::cout << "_COMMANDS_" << std::endl;
-    std::cout << "Commanded position: " << cmd_position << std::endl;
-    std::cout << "Commanded velocity: " << cmd_velocity << std::endl;
-    std::cout << "Commanded kp: " << cmd_kp << std::endl;
-    std::cout << "Commanded kd: " << cmd_kd << std::endl;
-    std::cout << "Commanded effort: " << cmd_effort << std::endl;
-    std::cout << "Commanded state: " << cmd_m_state << std::endl;
+    std::cout << "_COMMANDS MOTOR_" << can_id[0] << std::endl;
+    // std::cout << "Commanded position: " << cmd_position << std::endl;
+    // std::cout << "Commanded velocity: " << cmd_velocity << std::endl;
+    // std::cout << "Commanded kp: " << cmd_kp << std::endl;
+    // std::cout << "Commanded kd: " << cmd_kd << std::endl;
+    // std::cout << "Commanded effort: " << cmd_effort << std::endl;
+    // std::cout << "Commanded state: " << cmd_m_state << std::endl;
 
-    std::cout << "_STATES_" << std::endl;
-    std::cout << "State position: " << state_position << std::endl;
-    std::cout << "State velocity: " << state_velocity << std::endl;
-    std::cout << "State torque: " << state_effort << std::endl;
-    std::cout << "State kp: " << state_kp << std::endl;
-    std::cout << "State kd: " << state_kd << std::endl;
-    std::cout << "State m_state: " << state_m_state << std::endl;
+    // std::cout << "_STATES MOTOR_" << can_id[0] << std::endl;
+    // std::cout << "State position: " << state_position << std::endl;
+    // std::cout << "State velocity: " << state_velocity << std::endl;
+    // std::cout << "State torque: " << state_effort << std::endl;
+    // std::cout << "State kp: " << state_kp << std::endl;
+    // std::cout << "State kd: " << state_kd << std::endl;
+    // std::cout << "State m_state: " << state_m_state << std::endl;
 
 
 
     // motor_controller_->disableMotor(can_id);
 
-    sleep(1);
+    // sleep(1);
     return hardware_interface::return_type::OK;
 }
 

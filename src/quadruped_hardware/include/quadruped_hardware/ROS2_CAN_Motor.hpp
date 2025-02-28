@@ -63,7 +63,7 @@ private:
     // State data buffer (8-byte array for state information).
     std::vector<uint8_t> state_data_;
 
-
+    // std::mutex read_write_mutex_;
 
     std::vector<int> can_id;
     std::string joint_name;
