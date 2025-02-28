@@ -35,6 +35,8 @@ public:
 
     
 protected:
+    bool success;
+
     // Pramamter vectors
     std::vector<std::string> joint_names_;
     std::vector<std::string> command_interface_types_;
@@ -42,11 +44,19 @@ protected:
 
     std::vector<float> measured_state_values_;
 
+    double zero_effort_lim;
+    float kp;
+    float kd;
+
     // Command interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_position_command_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_velocity_command_interface_;
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+        joint_kp_command_interface_;
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+        joint_kd_command_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_m_state_command_interface_;
 
@@ -69,6 +79,8 @@ protected:
         command_interface_map_ = {
         {"position", &joint_position_command_interface_},
         {"velocity", &joint_velocity_command_interface_},
+        {"kp", &joint_kp_command_interface_},
+        {"kd", &joint_kd_command_interface_},
         {"m_state", &joint_m_state_command_interface_}};
 
     // std::unordered_map<

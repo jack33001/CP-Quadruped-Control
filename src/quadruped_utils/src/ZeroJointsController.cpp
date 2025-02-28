@@ -14,7 +14,34 @@ namespace quadruped_utils
 
 {
 
-       
+bool shutdown_control_node(
+    const std::shared_ptr<rclcpp::Node>& node,
+    const std::string& reason = "Requested by user") {
+  
+  if (!node) {
+    RCLCPP_ERROR(rclcpp::get_logger("node_shutdown"), "Cannot shut down null node");
+    return false;
+  }
+  
+  RCLCPP_INFO(
+    node->get_logger(), 
+    "Shutting down node '%s'. Reason: %s", 
+    node->get_name(), 
+    reason.c_str()
+  );
+  
+  // Cancel any active callbacks in the executor
+  rclcpp::Context::SharedPtr context = node->get_node_base_interface()->get_context();
+  if (context) {
+    context->shutdown("Control node shutdown requested");
+    return true;
+  } else {
+    RCLCPP_ERROR(node->get_logger(), "Failed to shut down node: could not get context");
+    return false;
+  }
+}
+
+
 void deactivate_controller(const std::string &controller_name)
     {
     auto node = rclcpp::Node::make_shared("deactivate_controller_node");
@@ -33,11 +60,14 @@ void deactivate_controller(const std::string &controller_name)
     request->strictness = controller_manager_msgs::srv::SwitchController::Request::STRICT;
 
     auto result = client->async_send_request(request);
-    if (rclcpp::spin_until_future_complete(node, result, std::chrono::seconds(5)) == rclcpp::FutureReturnCode::SUCCESS) {
-        RCLCPP_INFO(node->get_logger(), "Successfully deactivated controller: %s", controller_name.c_str());
-    } else {
-        RCLCPP_ERROR(node->get_logger(), "Failed to deactivate controller: %s", controller_name.c_str());
-    }
+
+    rclcpp::spin_until_future_complete(node, result, std::chrono::seconds(5));
+
+    // if (rclcpp::spin_until_future_complete(node, result, std::chrono::seconds(5)) == rclcpp::FutureReturnCode::SUCCESS) {
+    //     RCLCPP_INFO(node->get_logger(), "Successfully deactivated controller: %s", controller_name.c_str());
+    // } else {
+    //     RCLCPP_ERROR(node->get_logger(), "Failed to deactivate controller: %s", controller_name.c_str());
+    // }
     }
 
 
@@ -60,20 +90,14 @@ controller_interface::CallbackReturn ZeroJointController::on_init()
             command_interface_types_ = auto_declare<std::vector<std::string>>("command_interfaces", command_interface_types_);
             state_interface_types_ = auto_declare<std::vector<std::string>>("state_interfaces", state_interface_types_);
 
+            zero_effort_lim = auto_declare<double>("zero_effort_lim", zero_effort_lim);
+            kp = auto_declare<float>("kp", kp);
+            kd = auto_declare<float>("kd", kd);
+            
+
 
             // initialize zero status vector: 0 =zeroed, 1 = not zeroed
             zero_status = std::vector<int>(joint_names_.size(), 1);
-
-
-            // for (const auto & interface_type : command_interface_types_) {
-
-
-            //     std::string interface_name = interface_type;
-            //     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> command_interface_vector;
-
-            //     command_interface_map_[interface_name] = &command_interface_vector;
-            // }
-
 
 
 
@@ -159,6 +183,8 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
     // clear out vectors in case of restart
     joint_position_command_interface_.clear();
     joint_velocity_command_interface_.clear();
+    joint_kp_command_interface_.clear();
+    joint_kd_command_interface_.clear();
     joint_m_state_command_interface_.clear();
 
     joint_position_state_interface_.clear();
@@ -178,6 +204,8 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
         state_interface_map_[interface.get_interface_name()]->push_back(interface);
     }
 
+
+
     return CallbackReturn::SUCCESS;
     }
      
@@ -188,26 +216,40 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
     float pos = 10;
     float vel = 10;
 
+    // print all kp and kd joint cmd interfaces
+    for (size_t i = 0; i < joint_names_.size(); ++i) 
+        {
+            auto kp_s = joint_kp_command_interface_[i].get().get_name().c_str();
+            auto kd_s = joint_kd_command_interface_[i].get().get_name().c_str();
+            RCLCPP_INFO(get_node()->get_logger(), "JOINT %s KP: %s, KD: %s", joint_names_[i].c_str(), kp_s, kd_s);
+        }
+
 
     // if all elements of zero status are 0, then end the controller
     bool all_zero = true;
-    bool success;
+    
     // for all joints
     for (size_t i = 0; i < joint_names_.size(); ++i) 
         {
+
+            
             // if not zeroed
             if (zero_status[i] == 1)
             {
                 auto effort = joint_effort_state_interface_[i].get().get_value();
 
                 // check if run into limit
-                if (effort < 0.6)
+                if (effort > zero_effort_lim)
                 { 
                     RCLCPP_INFO(get_node()->get_logger(), "JOINT %s EFFORT LIMIT EXCEEDED IN ZERO: %f", joint_names_[i].c_str(),effort);
 
                     // set Velocity to zero
                     bool success = joint_velocity_command_interface_[i].get().set_value(0);
                     assert(success);
+                    success = joint_kp_command_interface_[i].get().set_value(0);
+                    assert(success);   
+                    success = joint_kd_command_interface_[i].get().set_value(0);
+                    assert(success);    
                     // Zero motor
                     success = joint_m_state_command_interface_[i].get().set_value(3);
                     assert(success);
@@ -220,14 +262,20 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
             {
                 all_zero = false;
                 
+                success = joint_kp_command_interface_[i].get().set_value(kp);
+                assert(success);   
+                success = joint_kd_command_interface_[i].get().set_value(kd);
+                assert(success);
                 bool success = joint_velocity_command_interface_[i].get().set_value(vel);
                 assert(success);
             }
         }
 
         if (all_zero)
-        {
-            deactivate_controller("zero_joints_controller"); 
+        { 
+            RCLCPP_INFO(get_node()->get_logger(), "All joints zeroed, waiting...");
+            
+            // deactivate_controller("zero_joints_controller"); 
         }
 
         
@@ -238,8 +286,13 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
  
 controller_interface::CallbackReturn ZeroJointController::on_deactivate(const rclcpp_lifecycle::State & previous_state)
     {
-
-
+    for (size_t i = 0; i < joint_names_.size(); ++i) 
+        {
+        success = joint_kp_command_interface_[i].get().set_value(0);
+        assert(success);   
+        success = joint_kd_command_interface_[i].get().set_value(0);
+        assert(success);
+        }
 
 
     return CallbackReturn::SUCCESS;

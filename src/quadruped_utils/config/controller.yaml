@@ -113,15 +113,24 @@ zero_joints_controller:
     test: 1
     effort_threshold: 0.3
       
+    zero_effort_lim: 0.3
+
+
+    kp: 0.0
+    kd: 4.0
+
+
+    joints_orientation: [-1.0]
+
     joints:
-      - fr_hip
+      - fr_hip 
       
     command_interfaces:
       - position
       - velocity
       - m_state
-      # - kp
-      # - kd
+      - kp
+      - kd
     # state_interfaces:
     #   -velocity
       # interface_name: position

@@ -87,6 +87,9 @@ private:
     motor_driver::motorCommand movecmd ;
 
     std::map<int, motor_driver::motorState> stateMap;
+
+
+    
     
 
 

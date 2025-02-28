@@ -166,10 +166,20 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
         // check if zeroing would cause the motor to jump
         if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
         {
+            movecmd = {static_cast<float>(0),
+                static_cast<float>(0),
+                static_cast<float>(0),
+                static_cast<float>(0),
+                    static_cast<float>(0)};
+
+            commandMap[can_id[0]] = movecmd;
+            
+            stateMap = motor_controller_->sendDegreeCommand( commandMap);
+            
             stateMap = motor_controller_->setZeroPosition(can_id);
             cmd_m_state = 0;
     
-            std::cout << "Motor: " << can_id[0] << "Zeroed"<< std::endl;
+            std::cout << "Motor: " << can_id[0] << " Zeroed"<< std::endl;
         }
 
     }
