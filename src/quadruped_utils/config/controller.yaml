@@ -123,11 +123,14 @@ zero_joints_controller:
     joints_orientation: [-1.0]
 
     joints:
-      # - fr_hip 
-      # - fr_knee
+      - fr_hip 
+      - fr_knee
 
       - rr_hip
       - rr_knee
+
+      - fl_hip 
+      - fl_knee
 
       - rl_hip
       - rl_knee
