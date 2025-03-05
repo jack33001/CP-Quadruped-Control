@@ -67,6 +67,10 @@ WORKDIR /home/acados/acados/build
 RUN cmake -DACADOS_WITH_QPOASES=ON ..
 RUN make install -j4
 
+
+# Install xhost
+RUN apt-get install -y x11-xserver-utils
+
 # Install CasADi
 RUN mkdir -p /home/casadi \
     && cd /home/casadi \
