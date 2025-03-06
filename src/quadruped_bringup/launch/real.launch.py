@@ -10,16 +10,16 @@ def generate_launch_description():
 
 
 
-    # Define the RViz2 node   
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen'
-    )
+    # # Define the RViz2 node   
+    # rviz_node = Node(
+    #     package='rviz2',
+    #     executable='rviz2',
+    #     name='rviz2',
+    #     output='screen'
+    # )
 
 
-    print('rvis_node complete')
+   
     
     # Define the package and launch file paths
     urdf_launch = IncludeLaunchDescription(
@@ -46,6 +46,22 @@ def generate_launch_description():
         ])
     )
     
+    # Define the joint state broadcaster spawner
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster'],
+        output='screen'
+    )
+    
+    # # Define the joint_state_publisher node
+    # joint_state_publisher_node = Node(
+    #     package='joint_state_publisher',
+    #     executable='joint_state_publisher',
+    #     name='joint_state_publisher',
+    #     output='screen'
+    # )
+    
     # # Define the package and launch file paths
     # hardware_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource([
@@ -65,7 +81,10 @@ def generate_launch_description():
     # Return launch description with timed execution
     return LaunchDescription([
         urdf_launch,
-        rviz_node,
-        hardware_launch
+        
+        hardware_launch,
+        
+        joint_state_broadcaster_spawner
+        # joint_state_publisher_node
         
     ])
