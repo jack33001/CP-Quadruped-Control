@@ -134,6 +134,8 @@ RUN pip3 install --break-system-packages -U colcon-common-extensions
 RUN pip3 install --break-system-packages -U vcstool
 RUN pip3 install --break-system-packages -U rosdep
 
+
+
 # Install testing packages without upgrading system packages
 RUN pip3 install --break-system-packages --ignore-installed pytest
 RUN apt-get install -y \
