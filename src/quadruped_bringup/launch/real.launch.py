@@ -47,12 +47,12 @@ def generate_launch_description():
     )
     
     # Define the joint state broadcaster spawner
-    joint_state_broadcaster_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_state_broadcaster'],
-        output='screen'
-    )
+    # joint_state_broadcaster_spawner = Node(
+    #     package='controller_manager',
+    #     executable='spawner',
+    #     arguments=['joint_state_broadcaster'],
+    #     output='screen'
+    # )
     
     # # Define the joint_state_publisher node
     # joint_state_publisher_node = Node(
@@ -82,9 +82,9 @@ def generate_launch_description():
     return LaunchDescription([
         urdf_launch,
         
-        hardware_launch,
+        hardware_launch
         
-        joint_state_broadcaster_spawner
+        # joint_state_broadcaster_spawner
         # joint_state_publisher_node
         
     ])

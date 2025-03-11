@@ -40,11 +40,15 @@ __________Zenoh Setup___________
 
 cd src
 git clone https://github.com/ros2/rmw_zenoh.git -b jazzy
-cd ~/ws
+cd ..
+rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro jazzy -y
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 
 source /opt/ros/jazzy/setup.bash
+colcon build --packages-select zenoh_cpp_vendor
+colcon build --packages-select rmw_zenoh_cpp
+source install/setup.bash
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 

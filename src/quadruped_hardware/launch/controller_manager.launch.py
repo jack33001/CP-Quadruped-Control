@@ -26,7 +26,7 @@ def generate_launch_description():
             name='controller_manager',
             output='screen',
             # prefix=['xterm -e gdb -ex run --args'],  # or 
-            prefix=['gdbserver localhost:3001'],
+            # prefix=['gdbserver localhost:3001'],
             # namespace= "quadruped_hardware",
             parameters=[
                 yaml_path , # Load yaml
@@ -34,17 +34,7 @@ def generate_launch_description():
             arguments=["controller_manager"],
 
         )
-        # ,
-        
-        # # Start the CANCommandController
-        # Node(
-        #     package='controller_manager',
-        #     executable='spawner',
-        #     arguments=['CANCommandController'],
-        #     parameters=[config_path],
-        #     output='screen'
-        # )
-
+   
 
 
     ])
