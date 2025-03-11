@@ -36,16 +36,21 @@ source /opt/ros/jazzy/setup.bash
 ros2 run rmw_zenoh_cpp rmw_zenohd 
 
 
-
+__________Zenoh Setup___________
 
 cd src
 git clone https://github.com/ros2/rmw_zenoh.git -b jazzy
 cd ~/ws
 rosdep install --from-paths src --ignore-src --rosdistro jazzy -y
+export RMW_IMPLEMENTATION=rmw_zenoh_cpp
+
 source /opt/ros/jazzy/setup.bash
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 
+
+export ZENOH_ROUTER_CONFIG_URI=$HOME/ws/routerconfig.json5 
+________________________________
 
 git clone https://github.com/ros2/rmw_zenoh.git -b jazzy
 rosdep install --from-paths src --ignore-src --rosdistro jazzy -y
