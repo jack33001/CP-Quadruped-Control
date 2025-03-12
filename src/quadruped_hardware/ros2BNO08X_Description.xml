@@ -1,0 +1,7 @@
+<library path="quadruped_hardware">
+  <class name="quadruped_hardware/ROS2_BNO08X" type="quadruped_hardware::ROS2_BNO08X" base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ROS2 CAN Interface for quadruped hardware.
+    </description>
+  </class>
+</library>
