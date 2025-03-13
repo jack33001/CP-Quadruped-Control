@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
+<!-- 
     <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system">
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
@@ -83,7 +83,7 @@
             <state_interface name="effort"/>
             <state_interface name="m_state"/>
         </joint>
-    </ros2_control>
+    </ros2_control> -->
 
     <ros2_control name="quadruped_hardware/CANMotorDriver_FLH" type="system">
         <hardware>
@@ -148,7 +148,7 @@
         </joint>
     </ros2_control> 
 
-
+<!-- 
     <ros2_control name="quadruped_hardware/CANMotorDriver_RLK" type="system">
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
@@ -168,7 +168,7 @@
             <state_interface name="effort"/>
             <state_interface name="m_state"/>
         </joint>
-    </ros2_control> 
+    </ros2_control>  -->
 
     
 </robot>

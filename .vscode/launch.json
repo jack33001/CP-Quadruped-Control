@@ -13,6 +13,7 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "/",
+            "miDebuggerPath": "/usr/bin/gdb",
             "miDebuggerServerAddress": "localhost:3001",
     
             

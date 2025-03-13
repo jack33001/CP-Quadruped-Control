@@ -29,7 +29,7 @@ def generate_launch_description():
 
     # Return launch description with timed execution
     return LaunchDescription([
-        urdf_launch,
+        # urdf_launch,
         rviz_node
         
     ])

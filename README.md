@@ -5,6 +5,7 @@ source /opt/ros/jazzy/setup.bash
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo
 source install/setup.bash
 
+export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 
@@ -53,10 +54,18 @@ colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 source install/setup.bash
 
 
+<<<<<<< HEAD
 export ZENOH_ROUTER_CONFIG_URI=$HOME/ws/routerconfig.json5 
+=======
+export ZENOH_ROUTER_CONFIG_URI=/home/ws/src/rmw_zenoh/rmw_zenoh_cpp/config/routerconfig.json5
+
+ros2 run rmw_zenoh_cpp rmw_zenohd 
+>>>>>>> fbd533b (some hardware interface issues Working on imu)
 ________________________________
 
 git clone https://github.com/ros2/rmw_zenoh.git -b jazzy
 rosdep install --from-paths src --ignore-src --rosdistro jazzy -y
 source /opt/ros/jazzy/setup.bash
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+sudo netstat -tupn | grep -e 205 -e 127.0.0.1

@@ -19,6 +19,8 @@ add_library(${PROJECT_NAME} SHARED
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
+  src/Adafruit_BNO08x.cpp
+  src/ROS2_BNO08x.cpp
 )
 
 
@@ -29,8 +31,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
-
-  
   controller_interface
   hardware_interface
   pluginlib
@@ -42,7 +42,7 @@ ament_target_dependencies(${PROJECT_NAME}
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
-
+pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
 
 # Install the plugin description file
 install(FILES ros2_Cantester.xml

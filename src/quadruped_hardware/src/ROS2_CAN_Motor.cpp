@@ -113,6 +113,7 @@ hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const r
 
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
+    std::cout << "_START WRITE MOTOR_" << can_id[0] << std::endl;
     // std::lock_guard<std::mutex> lock(read_write_mutex_);
 
     // std::this_thread::sleep_for(std::chrono::milliseconds(100));
