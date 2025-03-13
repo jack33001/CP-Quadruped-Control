@@ -15,7 +15,7 @@
 #include <rclcpp_lifecycle/state.hpp>
 
 
-#include "quadruped_hardware/Adafruit_BNO08x.hpp"
+#include "quadruped_hardware/bno08x.hpp"
 
 
 

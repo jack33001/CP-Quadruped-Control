@@ -18,29 +18,14 @@ def generate_launch_description():
 
 
     return LaunchDescription([
-
-        # Start the controller manager (ros2_control_node)
-        # Node(
-        #     package='controller_manager',
-        #     executable='ros2_control_node',
-        #     name='controller_manager',
-        #     output='screen',
-        #     # namespace= "quadruped_hardware",
-        #     parameters=[
-        #         yaml_path , # Load yaml
-        #     ],
-        #     arguments=["controller_manager"],
-
-        # )
         
-        # Debugger
+        # Debugger use prefix
            Node(
             package='controller_manager',
             executable='ros2_control_node',
             name='controller_manager',
             output='screen',
-            # prefix=['xterm -e gdb -ex run --args'],  # or 
-            # prefix=['gdbserver localhost:3001'],
+            prefix=['gdbserver localhost:3001'],
             # namespace= "quadruped_hardware",
             parameters=[
                 yaml_path , # Load yaml

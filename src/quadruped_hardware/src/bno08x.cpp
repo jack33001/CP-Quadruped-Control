@@ -39,7 +39,9 @@
   Thank you Adafruit and your developers for all your hard work put into your Library!
 */
 
-#include "bno08x.h"
+#include "quadruped_hardware/bno08x.hpp"
+
+// #include "bno08x.h"
 #include <cmath>
 #include <string.h>
 

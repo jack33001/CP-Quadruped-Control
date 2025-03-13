@@ -4,7 +4,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <vector>
 #include <memory>
-#include "quadruped_hardware/Adafruit_BNO08x.hpp"
+
+#include "quadruped_hardware/bno08x.hpp"
 
 #include "quadruped_hardware/ROS2_BNO08X.hpp"
 
