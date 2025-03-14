@@ -39,6 +39,7 @@ public:
     // hardware_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
     hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+    double address;
 
 private:
     
@@ -50,6 +51,6 @@ private:
 
 } // namespace quadruped_hardware
 
-PLUGINLIB_EXPORT_CLASS(quadruped_hardware::ROS2_BNO08X, hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(quadruped_hardware::BNO08X, hardware_interface::SystemInterface)
 
 #endif // QUADRUPED_HARDWARE_ROS2_CAN_INTERFACE_HPP_

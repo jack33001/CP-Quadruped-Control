@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-#include "quadruped_hardware/bno08x.hpp"
+// #include "quadruped_hardware/bno08x.hpp"
 
 #include "quadruped_hardware/ROS2_BNO08X.hpp"
 
@@ -13,7 +13,7 @@
 namespace quadruped_hardware {
 
 
-BNO08X::BNO08X()
+BNO08X::BNO08X():address(10){}
 
 hardware_interface::CallbackReturn BNO08X::on_init(const hardware_interface::HardwareInfo& info){
     // Initialization code
