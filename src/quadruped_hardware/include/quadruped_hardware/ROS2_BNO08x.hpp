@@ -15,7 +15,7 @@
 #include <rclcpp_lifecycle/state.hpp>
 
 
-#include "quadruped_hardware/bno08x.hpp"
+#include "quadruped_hardware/Adafruit_BNO08x.h"
 
 
 
@@ -38,6 +38,11 @@ public:
     hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
     // hardware_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
     hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+
+
+
+    bool setup();
+    void setReports();
 
     double address;
 
