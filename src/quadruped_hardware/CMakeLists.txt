@@ -24,6 +24,8 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 
+
+
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -38,6 +40,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rclcpp_lifecycle
   sensor_msgs
   std_msgs
+  
 )
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
@@ -52,13 +55,6 @@ install(FILES ros2_Cantester.xml
 pluginlib_export_plugin_description_file(controller_interface ros2_Cantester.xml)
 
 
-# # Install the shared library
-# install(TARGETS CAN_Tester
-#   EXPORT export_CAN_Tester
-#   ARCHIVE DESTINATION lib
-#   LIBRARY DESTINATION lib
-#   RUNTIME DESTINATION bin
-# )
 
 
 install(

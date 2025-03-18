@@ -15,7 +15,7 @@
 
 // #include "quadruped_hardware/bno08x.hpp"
 
-#include "quadruped_hardware/ROS2_BNO08X.hpp"
+#include "quadruped_hardware/ROS2_BNO08x.hpp"
 
 
 namespace quadruped_hardware {
