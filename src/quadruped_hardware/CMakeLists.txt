@@ -24,6 +24,12 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 
+include_directories(/usr/include)
+
+# add_executable(i2c_tools src/i2c_tools.cpp)
+
+# Add the include directory for this target
+# target_include_directories(i2c_tools PRIVATE /home/ws/include)
 
 
 target_include_directories(${PROJECT_NAME}
