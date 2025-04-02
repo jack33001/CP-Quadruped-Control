@@ -45,15 +45,22 @@ BalanceController::state_interface_configuration() const
 controller_interface::return_type
 BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  try {
-    update_state();
-    update_control();
-    update_commands();
-    return controller_interface::return_type::OK;
-  } catch (const std::exception& e) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Exception in balance control: %s", e.what());
+  if (!update_state()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to update state");
     return controller_interface::return_type::ERROR;
   }
+
+  if (!update_control()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to update control");
+    return controller_interface::return_type::ERROR;
+  }
+
+  if (!update_commands()) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to update commands");
+    return controller_interface::return_type::ERROR;
+  }
+
+  return controller_interface::return_type::OK;
 }
 
 BalanceController::CallbackReturn BalanceController::on_init()

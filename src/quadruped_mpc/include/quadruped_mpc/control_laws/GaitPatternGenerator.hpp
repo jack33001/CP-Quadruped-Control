@@ -77,20 +77,6 @@ inline bool GaitPatternGenerator::support_polygon()
       return false;
     }
 
-    // Log foot positions in a formatted table with unicode characters
-    std::stringstream ss;
-    ss << "\nFoot Positions:\n"
-       << "╭────┬────────────┬────────────╮\n"
-       << "│Foot│ X Position │ Y Position │\n"
-       << "├────┼────────────┼────────────┤\n";
-    for (size_t i = 0; i < 4; i++) {
-      ss << "│ " << i + 1 << "  │  "
-         << std::setw(8) << std::fixed << std::setprecision(3) << foot_info_[i].position[0] << "  │  "
-         << std::setw(8) << std::fixed << std::setprecision(3) << foot_info_[i].position[1] << "  │\n";
-    }
-    ss << "╰────┴────────────┴────────────╯";
-    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
-
     // Set the error function weigting - these determine when the weight starts to shift when a leg is about to make/break contact
     double sigmac0 = .2;
     double sigmac1 = .2;

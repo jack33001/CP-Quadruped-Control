@@ -125,6 +125,11 @@ inline bool StateEstimator::pin_kinematics()
     for (size_t i = 0; i < 4; ++i) {
       foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation();
       foot_states_[i].in_contact = true;  // Default to true for now
+
+      // Calculate and store foot frame velocity
+      auto frame_velocity = pinocchio::getFrameVelocity(model_, *data_, foot_frame_ids_[i], 
+                                                       pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
+      foot_states_[i].velocity = frame_velocity.linear();
     }
 
     // Compute full Jacobians in world frame
@@ -171,50 +176,113 @@ inline bool StateEstimator::estimate_base_position()
   try {
     // Define foot sphere radius
     constexpr double foot_radius = 0.015;  // meters
-
-    // Calculate average Z height only using contacting feet
-    double world_z = 0.0;
+    
+    // Count the contacts
     int contact_count = 0;
-
-    for (const auto& foot : foot_states_) {
-      if (foot.in_contact) {
-        world_z += foot.position.z();
+    for (size_t i = 0; i < foot_states_.size(); i++) {
+      if (foot_states_[i].in_contact) {
         contact_count++;
       }
     }
 
+    // We'll solve Ax = b for the COM velocity
+    Eigen::MatrixXd A = Eigen::MatrixXd::Zero(3*contact_count, 3);
+    Eigen::VectorXd b = Eigen::VectorXd::Zero(3*contact_count);
+
+    // Log COM position
+    RCLCPP_INFO(
+      get_node()->get_logger(),
+      "COM Position: [%.3f, %.3f, %.3f]",
+      current_positions_[0], current_positions_[1], current_positions_[2]
+    );
+    
+    // For each foot in contact
+    int contacting_foot_number = 0;
+    for (size_t i = 0; i < foot_states_.size(); i++) {
+      if (foot_states_[i].in_contact) {
+        // Log foot velocity and position for debugging
+        RCLCPP_INFO(
+          get_node()->get_logger(),
+          "Foot %zu - Position: [%.3f, %.3f, %.3f], Velocity: [%.3f, %.3f, %.3f]",
+          i,
+          foot_states_[i].position[0], foot_states_[i].position[1], foot_states_[i].position[2],
+          foot_states_[i].velocity[0], foot_states_[i].velocity[1], foot_states_[i].velocity[2]
+        );
+        
+        // Fill one 3x3 block of the A matrix with identity
+        A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
+        
+        // Fill the corresponding section of b with negative foot velocity
+        b.segment<3>(3*contacting_foot_number) = -foot_states_[i].velocity - imu_angular_velocity_.cross(foot_states_[i].position);
+        
+        contacting_foot_number++;
+      } 
+    }
+
+    // Log A and b matrices at info level
+    std::stringstream ss_A, ss_b;
+    ss_A << A.format(Eigen::IOFormat(4, 0, ", ", "\n", "[", "]"));
+    ss_b << b.format(Eigen::IOFormat(4, 0, ", ", "\n", "[", "]"));
+    
+    RCLCPP_INFO(
+      get_node()->get_logger(),
+      "Matrix A:\n%s",
+      ss_A.str().c_str()
+    );
+    RCLCPP_INFO(
+      get_node()->get_logger(), 
+      "Vector b:\n%s",
+      ss_b.str().c_str()
+    );
+
+    // Solve for COM velocity if we have contacts
+    Eigen::Vector3d v_com = Eigen::Vector3d::Zero();
     if (contact_count > 0) {
-      // Update with odometry if available
+      Eigen::IOFormat matFormat(4, 0, ", ", "\n", "[", "]");
+      
+      // Solve the system A*v_com = b using least squares
+      v_com = A.colPivHouseholderQr().solve(b);
+
       if (latest_odom_) {
         auto odom = latest_odom_;
         auto position = odom->pose.pose.position;
         auto velocity = odom->twist.twist.linear;
+      
+        // Update velocity in current state
+        current_velocities_[0] = v_com[0];//velocity.x;
+        current_velocities_[1] = v_com[1];//velocity.y;
+        current_velocities_[2] = v_com[2];//velocity.z;
 
-        // Update position in both current state and shared info
-        current_positions_[0] = position.x;
-        current_positions_[1] = position.y;
-        current_positions_[2] = position.z;
-
-        // Update velocity in both current state and shared info
-        current_velocities_[0] = velocity.x;
-        current_velocities_[1] = velocity.y;
-        current_velocities_[2] = velocity.z;
+        // Debug output
+        RCLCPP_INFO(
+          get_node()->get_logger(),
+         "Angular Velocity: [%.3f,%.3f,%.3f]\n\rEstimated COM velocity: [%.3f, %.3f, %.3f] m/s\n\rActual velocity:        [%3f, %3f, %3f] m/s\n\rError:                  [%3f, %3f, %3f] m/s",
+         imu_angular_velocity_.x(), imu_angular_velocity_.y(), imu_angular_velocity_.z(), 
+         v_com[0], v_com[1], v_com[2],
+          velocity.x, velocity.y, velocity.z,
+          v_com[0] - velocity.x, v_com[1] - velocity.y, v_com[2] - velocity.z
+        );
       }
       
-      RCLCPP_DEBUG(
-        get_node()->get_logger(), 
-        "Estimated body position: [%.3f, %.3f, %.3f] m", 
-        current_positions_[0],
-        current_positions_[1],
-        current_positions_[2]
-      );
+      // World z position - still compute from foot positions
+      double world_z = 0.0;
+      for (const auto& foot : foot_states_) {
+        if (foot.in_contact) {
+          world_z -= foot.position.z();
+        }
+      }
+      world_z /= contact_count;
+      world_z += foot_radius; // Adjust by foot radius
+      
+      // Update position
+      current_positions_[0] += 0; 
+      current_positions_[1] += 0;
+      current_positions_[2] = world_z; // Direct Z from contact
+      
     } else {
-      RCLCPP_WARN(
-        get_node()->get_logger(),
-        "No feet in contact with ground"
-      );
+      RCLCPP_WARN(get_node()->get_logger(), "No feet in contact with ground");
     }
-
+    
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in base position estimation: %s", e.what());
@@ -229,6 +297,13 @@ inline bool StateEstimator::estimate_orientation()
     current_positions_[4] = imu_orientation_[1];  // y
     current_positions_[5] = imu_orientation_[2];  // z
     current_positions_[6] = imu_orientation_[3];  // w
+
+    // Update the body's angular velocities
+    current_velocities_[3] = imu_angular_velocity_[0];
+    current_velocities_[4] = imu_angular_velocity_[1];
+    current_velocities_[5] = imu_angular_velocity_[2];
+
+    // Implement moving average filter if necessary
 
     return true;
   } catch (const std::exception& e) {
@@ -260,10 +335,10 @@ inline bool StateEstimator::update_odometry()
     transform.transform.translation.y = current_positions_[1];
     transform.transform.translation.z = current_positions_[2];
     
-    transform.transform.rotation.w = current_positions_[3];
-    transform.transform.rotation.x = current_positions_[4];
-    transform.transform.rotation.y = current_positions_[5];
-    transform.transform.rotation.z = current_positions_[6];
+    transform.transform.rotation.x = current_positions_[3];
+    transform.transform.rotation.y = current_positions_[4];
+    transform.transform.rotation.z = current_positions_[5];
+    transform.transform.rotation.w = current_positions_[6];
 
     odom.pose.pose.position.x = transform.transform.translation.x;
     odom.pose.pose.position.y = transform.transform.translation.y;

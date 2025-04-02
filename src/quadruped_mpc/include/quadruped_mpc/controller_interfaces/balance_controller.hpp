@@ -73,9 +73,9 @@ private:
   void gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
 
   // Add new private methods
-  void update_state();
-  void update_control();
-  void update_commands();
+  bool update_state();
+  bool update_control();
+  bool update_commands();
 };
 
 }  // namespace quadruped_mpc

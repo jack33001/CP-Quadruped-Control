@@ -78,6 +78,7 @@ protected:
   // Add foot state storage
   struct FootState {
     Eigen::Vector3d position;
+    Eigen::Vector3d velocity;
     bool in_contact;
   };
   std::array<FootState, 4> foot_states_;  // FL, FR, RL, RR

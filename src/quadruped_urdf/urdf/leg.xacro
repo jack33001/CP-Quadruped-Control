@@ -12,14 +12,14 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Thigh.STL"/>
+          <mesh filename="file://$(find quadruped_urdf)/urdf/meshes/Thigh.STL"/>
         </geometry>
         <material name="Magenta"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Thigh.STL"/>
+          <mesh filename="file://$(find quadruped_urdf)/urdf/meshes/Thigh.STL"/>
         </geometry>
       </collision>
     </link>
@@ -41,14 +41,14 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Shin.STL"/>
+          <mesh filename="file://$(find quadruped_urdf)/urdf/meshes/Shin.STL"/>
         </geometry>
         <material name="Orange"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="$(find quadruped_urdf)/urdf/meshes/Shin.STL"/>
+          <mesh filename="file://$(find quadruped_urdf)/urdf/meshes/Shin.STL"/>
         </geometry>
       </collision>
     </link>

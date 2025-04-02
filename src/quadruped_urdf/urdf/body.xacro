@@ -6,6 +6,7 @@
     <joint name="base_fixed" type="fixed">
       <parent link="base_link" />
       <child link="Body" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
     <link name="Body">
@@ -29,7 +30,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="$(find quadruped_urdf)/urdf/meshes/Body.STL" />
+            filename="file://$(find quadruped_urdf)/urdf/meshes/Body.STL" />
         </geometry>
         <material name="Green"/>
       </visual>
@@ -39,7 +40,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="$(find quadruped_urdf)/urdf/meshes/Body.STL" />
+            filename="file://$(find quadruped_urdf)/urdf/meshes/Body.STL" />
         </geometry>
       </collision>
     </link>
