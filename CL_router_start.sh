@@ -13,4 +13,4 @@ source install/setup.bash
 
 export ZENOH_ROUTER_CONFIG_URI=/home/ws/src/rmw_zenoh/rmw_zenoh_cpp/config/routerconfig.json5
 
-# ros2 run rmw_zenoh_cpp rmw_zenohd 
+ros2 run rmw_zenoh_cpp rmw_zenohd 

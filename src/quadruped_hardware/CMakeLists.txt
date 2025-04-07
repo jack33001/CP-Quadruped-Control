@@ -12,15 +12,12 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-
-  src/hex_utils.cpp
-  src/CANtester.cpp
   src/ROS2_CAN_Motor.cpp
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
-  src/bno08x.cpp
   src/ROS2_BNO08x.cpp
+  src/i2c_device.cpp
 )
 
 
@@ -53,12 +50,6 @@ pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Des
 pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
 
-# Install the plugin description file
-install(FILES ros2_Cantester.xml
-  DESTINATION share/${PROJECT_NAME}
-)
-
-pluginlib_export_plugin_description_file(controller_interface ros2_Cantester.xml)
 
 
 

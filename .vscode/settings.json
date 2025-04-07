@@ -85,6 +85,8 @@
         "forward_list": "cpp",
         "source_location": "cpp",
         "fstream": "cpp",
-        "stdfloat": "cpp"
+        "stdfloat": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp"
     }
 }
