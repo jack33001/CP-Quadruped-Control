@@ -162,18 +162,21 @@ controller_interface::return_type FootController::update(
     foot_forces_.foot3 = foot_forces_msg->foot3_force;
     foot_forces_.foot4 = foot_forces_msg->foot4_force;
     foot_forces_.has_data = true;
+    // Removed verbose logging
   }
   
   // Update state data - properly handle the shared pointer
   if (state_msg) {
     std::lock_guard<std::mutex> lock(state_mutex_);
-    latest_state_ = *state_msg; // Changed from latest_state_ = state_msg;
+    latest_state_ = *state_msg;
+    // Removed verbose logging
   }
   
   // Update gait pattern - properly handle the shared pointer
   if (gait_msg) {
     std::lock_guard<std::mutex> lock(gait_mutex_);
-    latest_gait_ = *gait_msg; // Changed from latest_gait_ = gait_msg;
+    latest_gait_ = *gait_msg;
+    // Removed verbose logging
   }
   
   // Execute the swing trajectory generation in its own try/catch block
@@ -185,6 +188,25 @@ controller_interface::return_type FootController::update(
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception in swing_trajectory: %s", e.what());
     // Continue execution even if swing trajectory throws an exception
+  }
+  
+  // Check if we have valid Jacobian data before applying Jacobians
+  bool have_jacobian_data = false;
+  {
+    std::lock_guard<std::mutex> lock(state_mutex_);
+    have_jacobian_data = !latest_state_.j1.empty() && 
+                         !latest_state_.j2.empty() && 
+                         !latest_state_.j3.empty() && 
+                         !latest_state_.j4.empty();
+  }
+  
+  if (!have_jacobian_data) {
+    // Log only once in a while (every 100 iterations)
+    static int missing_data_count = 0;
+    if (++missing_data_count % 100 == 0) {
+      RCLCPP_DEBUG(get_node()->get_logger(), "Waiting for Jacobian data");
+    }
+    return controller_interface::return_type::OK;  // Return OK to avoid controller deactivation
   }
   
   // Apply Jacobians to convert foot forces to joint torques in its own try/catch block
@@ -204,25 +226,26 @@ controller_interface::return_type FootController::update(
 
 void FootController::footForcesCallback(const quadruped_msgs::msg::FootForces::SharedPtr msg)
 {
+  // Remove verbose logging
   foot_forces_buffer_->writeFromNonRT(*msg);
 }
 
 void FootController::stateCallback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg)
 {
+  // Remove verbose logging
   state_buffer_->writeFromNonRT(*msg);
 }
 
 void FootController::gaitCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg)
 {
+  // Remove verbose logging
   gait_buffer_->writeFromNonRT(*msg);
 }
 
 bool FootController::reset()
 {
-  // Reset foot forces
+  // Reset foot forces commands to all joints
   foot_forces_.has_data = false;
-  
-  // Reset control-specific variables here
   
   // Send zero commands to all joints
   for (auto & interface : joint_command_interfaces_) {
