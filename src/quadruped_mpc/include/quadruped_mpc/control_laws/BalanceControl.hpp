@@ -128,65 +128,33 @@ inline bool BalanceController::update_control()
 inline bool BalanceController::update_commands()
 {
   try {
-    std::array<double, 8> computed_efforts{};
-    double scaler = 1;
-
-    std::lock_guard<std::mutex> lock(state_mutex_);
-    if (!latest_state_) {
-      RCLCPP_ERROR(get_node()->get_logger(), "No state data available for computing efforts");
-      return false;
+    // Publish foot forces - this is now the main function of update_commands
+    if (foot_forces_publisher_ && foot_forces_publisher_->trylock()) {
+      auto& msg = foot_forces_publisher_->msg_;
+      
+      // Set the foot forces from optimal control
+      msg.foot1_force.x = optimal_control_[0];
+      msg.foot1_force.y = optimal_control_[1];
+      msg.foot1_force.z = optimal_control_[2];
+      
+      msg.foot2_force.x = optimal_control_[3];
+      msg.foot2_force.y = optimal_control_[4];
+      msg.foot2_force.z = optimal_control_[5];
+      
+      msg.foot3_force.x = optimal_control_[6];
+      msg.foot3_force.y = optimal_control_[7];
+      msg.foot3_force.z = optimal_control_[8];
+      
+      msg.foot4_force.x = optimal_control_[9];
+      msg.foot4_force.y = optimal_control_[10];
+      msg.foot4_force.z = optimal_control_[11];
+      
+      foot_forces_publisher_->unlockAndPublish();
+      RCLCPP_DEBUG(get_node()->get_logger(), "Published foot forces");
     }
 
-    // Convert vector Jacobians back to Eigen matrices (3x2)
-    // Note: Reconstructing in column-major order to match Pinocchio's output
-    Eigen::Matrix<double, 3, 2> J1, J2, J3, J4;
-    
-    J1 << latest_state_->j1[0], latest_state_->j1[3],
-          latest_state_->j1[1], latest_state_->j1[4],
-          latest_state_->j1[2], latest_state_->j1[5];
-    
-    J2 << latest_state_->j2[0], latest_state_->j2[3],
-          latest_state_->j2[1], latest_state_->j2[4],
-          latest_state_->j2[2], latest_state_->j2[5];
-    
-    J3 << latest_state_->j3[0], latest_state_->j3[3],
-          latest_state_->j3[1], latest_state_->j3[4],
-          latest_state_->j3[2], latest_state_->j3[5];
-    
-    J4 << latest_state_->j4[0], latest_state_->j4[3],
-          latest_state_->j4[1], latest_state_->j4[4],
-          latest_state_->j4[2], latest_state_->j4[5];
-
-    // Compute joint efforts using the Jacobians
-    Eigen::Vector3d f1(optimal_control_[0], optimal_control_[1], optimal_control_[2]);
-    Eigen::Vector2d tau1 = J1.transpose() * -f1 * scaler;
-    computed_efforts[0] = tau1[0];
-    computed_efforts[1] = tau1[1];
-
-    Eigen::Vector3d f2(optimal_control_[3], optimal_control_[4], optimal_control_[5]);
-    Eigen::Vector2d tau2 = J2.transpose() * -f2 * scaler;
-    computed_efforts[2] = tau2[0];
-    computed_efforts[3] = tau2[1];
-    
-    Eigen::Vector3d f3(optimal_control_[6], optimal_control_[7], optimal_control_[8]);
-    Eigen::Vector2d tau3 = J3.transpose() * -f3 * scaler;
-    computed_efforts[4] = tau3[0];
-    computed_efforts[5] = tau3[1];
-    
-    Eigen::Vector3d f4(optimal_control_[9], optimal_control_[10], optimal_control_[11]);
-    Eigen::Vector2d tau4 = J4.transpose() * -f4 * scaler;
-    computed_efforts[6] = tau4[0];
-    computed_efforts[7] = tau4[1];
-
-    // Set computed efforts to command interfaces
-    for (size_t i = 0; i < joint_names_.size(); ++i) {
-      auto result = command_interfaces_[i].set_value(computed_efforts[i]);
-      if (!result) {
-        RCLCPP_WARN(get_node()->get_logger(), "Failed to set command for joint %zu", i);
-        return false;
-      }
-    }
-
+    // No longer calculate or send joint torques directly
+    // The foot_controller will do this based on the published foot forces
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in update_commands: %s", e.what());

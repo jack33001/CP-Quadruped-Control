@@ -18,8 +18,9 @@ controller_manager:
     balance_controller:
       type: quadruped_mpc/balance_controller
 
-    chained_controller:
-      type: quadruped_mpc/chained_controller
+    foot_controller:
+      type: quadruped_mpc/foot_controller
+
 
 # Individual controller configurations
 joint_state_broadcaster:
@@ -67,12 +68,8 @@ balance_controller:
       - rl_knee
       - rr_hip
       - rr_knee
-    command_interfaces:
-      - position
-      - velocity
-      - effort
 
-chained_controller:
+foot_controller:
   ros__parameters:
     joints:
       - fl_hip
@@ -83,4 +80,7 @@ chained_controller:
       - rl_knee
       - rr_hip
       - rr_knee
-
+    command_interfaces:
+      - position
+      - velocity
+      - effort

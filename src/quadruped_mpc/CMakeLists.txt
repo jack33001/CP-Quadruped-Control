@@ -115,6 +115,7 @@ add_library(quadruped_mpc_controllers SHARED
   src/controller_interfaces/balance_controller.cpp
   src/controller_interfaces/state_estimator.cpp
   src/controller_interfaces/gait_pattern_generator.cpp
+  src/controller_interfaces/foot_controller.cpp
 )
 
 # Single unified dependency and configuration section

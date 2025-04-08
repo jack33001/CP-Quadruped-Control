@@ -8,6 +8,11 @@ namespace quadruped_mpc
 inline bool StateEstimator::read_state_interfaces()
 {
   try {
+    //RCLCPP_INFO(
+    //  get_node()->get_logger(),
+    //  "\n------------------------------------------------------------------------------------------------------------------------------------------------\n New State\n------------------------------------------------------------------------------------------------------------------------------------------------\n"
+    //);
+
     // Resize joint states vector if needed
     if (joint_states_.size() != joint_names_.size()) {
       joint_states_.resize(joint_names_.size());
@@ -120,17 +125,48 @@ inline bool StateEstimator::pin_kinematics()
   try {
     pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
     pinocchio::updateFramePlacements(model_, *data_);
-
     // Update foot positions and set default contact states
+    std::stringstream foot_velocities_stream; // Add declaration for the stream
+    
     for (size_t i = 0; i < 4; ++i) {
       foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation();
       foot_states_[i].in_contact = true;  // Default to true for now
 
       // Calculate and store foot frame velocity
       auto frame_velocity = pinocchio::getFrameVelocity(model_, *data_, foot_frame_ids_[i], 
-                                                       pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
+                               pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
       foot_states_[i].velocity = frame_velocity.linear();
+
+      // Log velocity in different frames for debugging
+      auto local_velocity = pinocchio::getFrameVelocity(model_, *data_, foot_frame_ids_[i], 
+                  pinocchio::ReferenceFrame::LOCAL);
+      auto world_velocity = pinocchio::getFrameVelocity(model_, *data_, foot_frame_ids_[i], 
+                  pinocchio::ReferenceFrame::WORLD);
+
+      // Collect velocity information in a stringstream
+      if (i == 0) {  // Initialize the stringstream with headers on first foot only
+      foot_velocities_stream << "\n----- Foot Velocity Information -----\n";
+      }
+      
+      foot_velocities_stream << "Foot " << i << " Velocity:\n"
+          << "                 | X        | Y        | Z        |\n"
+          << "-----------------+----------+----------+----------|\n"
+          << "LOCAL Linear     | " << std::fixed << std::setprecision(3)
+          << std::setw(8) << local_velocity.linear()[0] << " | "
+          << std::setw(8) << local_velocity.linear()[1] << " | " 
+          << std::setw(8) << local_velocity.linear()[2] << " |\n"
+          << "L_W_A Linear     | " 
+          << std::setw(8) << frame_velocity.linear()[0] << " | "
+          << std::setw(8) << frame_velocity.linear()[1] << " | " 
+          << std::setw(8) << frame_velocity.linear()[2] << " |\n"
+          << "WORLD Linear     | " 
+          << std::setw(8) << world_velocity.linear()[0] << " | "
+          << std::setw(8) << world_velocity.linear()[1] << " | " 
+          << std::setw(8) << world_velocity.linear()[2] << " |\n";
     }
+    
+    // Change from DEBUG to INFO to make it show up in the terminal
+    //RCLCPP_INFO(get_node()->get_logger(), "%s", foot_velocities_stream.str().c_str());
 
     // Compute full Jacobians in world frame
     Eigen::MatrixXd J_temp(6, model_.nv);
@@ -155,13 +191,14 @@ inline bool StateEstimator::pin_kinematics()
                                    J_temp);
     leg_jacobians_.J4 = J_temp.block<3,2>(0, model_.joints[joint_mappings_[6].pinocchio_idx].idx_v());
 
-    RCLCPP_DEBUG(
-      get_node()->get_logger(), 
-      "FL Jacobian:\n%.3f %.3f\n%.3f %.3f\n%.3f %.3f",
-      leg_jacobians_.J1(0,0), leg_jacobians_.J1(0,1),
-      leg_jacobians_.J1(1,0), leg_jacobians_.J1(1,1),
-      leg_jacobians_.J1(2,0), leg_jacobians_.J1(2,1)
-    );
+    // Also change this to INFO to show the Jacobian matrices
+    //RCLCPP_INFO(
+    //  get_node()->get_logger(), 
+    //  "FL Jacobian:\n%.3f %.3f\n%.3f %.3f\n%.3f %.3f",
+    //  leg_jacobians_.J1(0,0), leg_jacobians_.J1(0,1),
+    //  leg_jacobians_.J1(1,0), leg_jacobians_.J1(1,1),
+    //  leg_jacobians_.J1(2,0), leg_jacobians_.J1(2,1)
+    //);
 
     return true;
 
@@ -174,6 +211,11 @@ inline bool StateEstimator::pin_kinematics()
 inline bool StateEstimator::estimate_base_position()
 {
   try {
+    if (latest_odom_) {
+      auto odom = latest_odom_;
+      auto position = odom->pose.pose.position;
+      auto velocity = odom->twist.twist.linear;
+      auto angular_velocity = odom->twist.twist.angular;
     // Define foot sphere radius
     constexpr double foot_radius = 0.015;  // meters
     
@@ -190,50 +232,62 @@ inline bool StateEstimator::estimate_base_position()
     Eigen::VectorXd b = Eigen::VectorXd::Zero(3*contact_count);
 
     // Log COM position
-    RCLCPP_INFO(
-      get_node()->get_logger(),
-      "COM Position: [%.3f, %.3f, %.3f]",
-      current_positions_[0], current_positions_[1], current_positions_[2]
-    );
+    //RCLCPP_INFO(
+    //  get_node()->get_logger(),
+    //  "COM Position: [%.3f, %.3f, %.3f]",
+    //  current_positions_[0], current_positions_[1], current_positions_[2]
+    //);
+
+    Eigen::Vector3d body_velocity = Eigen::Vector3d(velocity.x, velocity.y, velocity.z);
+    Eigen::Vector3d body_angular_velocity = Eigen::Vector3d(angular_velocity.x, angular_velocity.y, angular_velocity.z);
+    Eigen::Vector3d correct_foot_velocity;
     
     // For each foot in contact
     int contacting_foot_number = 0;
+    std::stringstream foot_info_stream;
+    foot_info_stream << "\nFoot | Position [m]                   | Velocity [m/s]\n"
+             << "-----+--------------------------------+-------------------------------\n";
+
     for (size_t i = 0; i < foot_states_.size(); i++) {
-      if (foot_states_[i].in_contact) {
-        // Log foot velocity and position for debugging
-        RCLCPP_INFO(
-          get_node()->get_logger(),
-          "Foot %zu - Position: [%.3f, %.3f, %.3f], Velocity: [%.3f, %.3f, %.3f]",
-          i,
-          foot_states_[i].position[0], foot_states_[i].position[1], foot_states_[i].position[2],
-          foot_states_[i].velocity[0], foot_states_[i].velocity[1], foot_states_[i].velocity[2]
-        );
-        
-        // Fill one 3x3 block of the A matrix with identity
-        A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
-        
-        // Fill the corresponding section of b with negative foot velocity
-        b.segment<3>(3*contacting_foot_number) = -foot_states_[i].velocity - imu_angular_velocity_.cross(foot_states_[i].position);
-        
-        contacting_foot_number++;
+      if (foot_states_[i].in_contact) {      
+      // Log the values used in the equation
+      //RCLCPP_INFO(
+      //  get_node()->get_logger(),
+      //  "Foot %zu equation values:\n"
+      //  "  body_angular_velocity: [%.3f, %.3f, %.3f]\n"
+      //  "  foot_position: [%.3f, %.3f, %.3f]\n"
+      //  "  cross product result: [%.3f, %.3f, %.3f]\n"
+      //  "  body_velocity: [%.3f, %.3f, %.3f]\n",
+      //  i,
+      //  body_angular_velocity.x(), body_angular_velocity.y(), body_angular_velocity.z(),
+      //  foot_states_[i].position.x(), foot_states_[i].position.y(), foot_states_[i].position.z(),
+      //  (-body_angular_velocity.cross(foot_states_[i].position)).x(),
+      //  (-body_angular_velocity.cross(foot_states_[i].position)).y(),
+      //  (-body_angular_velocity.cross(foot_states_[i].position)).z(),
+      //  body_velocity.x(), body_velocity.y(), body_velocity.z()
+      //);
+      
+      // Add foot information to the string stream
+      foot_info_stream << " " << i << "   | X: " << std::fixed << std::setprecision(3) 
+               << foot_states_[i].position[0] << " Y: " << foot_states_[i].position[1] 
+               << " Z: " << foot_states_[i].position[2] 
+               << " | X: " << foot_states_[i].velocity[0] << " Y: " << foot_states_[i].velocity[1] 
+               << " Z: " << foot_states_[i].velocity[2];
+      
+      // Fill one 3x3 block of the A matrix with identity
+      A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
+      
+      // Fill the corresponding section of b with negative foot velocity
+      b.segment<3>(3*contacting_foot_number) = -foot_states_[i].velocity - imu_angular_velocity_.cross(foot_states_[i].position);
+      
+      contacting_foot_number++;
       } 
     }
-
-    // Log A and b matrices at info level
-    std::stringstream ss_A, ss_b;
-    ss_A << A.format(Eigen::IOFormat(4, 0, ", ", "\n", "[", "]"));
-    ss_b << b.format(Eigen::IOFormat(4, 0, ", ", "\n", "[", "]"));
     
-    RCLCPP_INFO(
-      get_node()->get_logger(),
-      "Matrix A:\n%s",
-      ss_A.str().c_str()
-    );
-    RCLCPP_INFO(
-      get_node()->get_logger(), 
-      "Vector b:\n%s",
-      ss_b.str().c_str()
-    );
+    // Log all foot information at once after the loop
+    if (contact_count > 0) {
+      //RCLCPP_INFO(get_node()->get_logger(), "%s", foot_info_stream.str().c_str());
+    }
 
     // Solve for COM velocity if we have contacts
     Eigen::Vector3d v_com = Eigen::Vector3d::Zero();
@@ -242,26 +296,32 @@ inline bool StateEstimator::estimate_base_position()
       
       // Solve the system A*v_com = b using least squares
       v_com = A.colPivHouseholderQr().solve(b);
-
-      if (latest_odom_) {
-        auto odom = latest_odom_;
-        auto position = odom->pose.pose.position;
-        auto velocity = odom->twist.twist.linear;
       
         // Update velocity in current state
-        current_velocities_[0] = v_com[0];//velocity.x;
-        current_velocities_[1] = v_com[1];//velocity.y;
-        current_velocities_[2] = v_com[2];//velocity.z;
+        current_velocities_[0] = velocity.x;//v_com[0];//
+        current_velocities_[1] = velocity.y;//v_com[1];//
+        current_velocities_[2] = velocity.z;//v_com[2];//
 
-        // Debug output
-        RCLCPP_INFO(
-          get_node()->get_logger(),
-         "Angular Velocity: [%.3f,%.3f,%.3f]\n\rEstimated COM velocity: [%.3f, %.3f, %.3f] m/s\n\rActual velocity:        [%3f, %3f, %3f] m/s\n\rError:                  [%3f, %3f, %3f] m/s",
-         imu_angular_velocity_.x(), imu_angular_velocity_.y(), imu_angular_velocity_.z(), 
-         v_com[0], v_com[1], v_com[2],
-          velocity.x, velocity.y, velocity.z,
-          v_com[0] - velocity.x, v_com[1] - velocity.y, v_com[2] - velocity.z
-        );
+        // Debug output in a well-formatted table style
+        //RCLCPP_INFO(
+        //  get_node()->get_logger(),
+        //  "\nMeasurement  | X       | Y       | Z       | W       \n"
+        //  "-------------+---------+---------+---------+---------\n"
+        //  "IMU Orient   | %6.3f  | %6.3f  | %6.3f  | %6.3f \n"
+        //  "GT Orient    | %6.3f  | %6.3f  | %6.3f  | %6.3f \n"
+        //  "IMU Ang Vel  | %6.3f  | %6.3f  | %6.3f  | %6s \n"
+        //  "GT Ang Vel   | %6.3f  | %6.3f  | %6.3f  | %6s \n"
+        //  "Est COM Vel  | %6.3f  | %6.3f  | %6.3f  | %6s \n"
+        //  "Actual Vel   | %6.3f  | %6.3f  | %6.3f  | %6s \n"
+        //  "Vel Error    | %6.3f  | %6.3f  | %6.3f  | %6s",
+        //  imu_orientation_[0], imu_orientation_[1], imu_orientation_[2], imu_orientation_[3],
+        //  odom->pose.pose.orientation.x, odom->pose.pose.orientation.y, odom->pose.pose.orientation.z, odom->pose.pose.orientation.w,
+        //  imu_angular_velocity_.x(), imu_angular_velocity_.y(), imu_angular_velocity_.z(), "",
+        //  angular_velocity.x, angular_velocity.y, angular_velocity.z, "",
+        //  v_com[0], v_com[1], v_com[2], "",
+        //  velocity.x, velocity.y, velocity.z, "",
+        //  v_com[0] - velocity.x, v_com[1] - velocity.y, v_com[2] - velocity.z, ""
+        //);
       }
       
       // World z position - still compute from foot positions
@@ -315,6 +375,7 @@ inline bool StateEstimator::estimate_orientation()
 inline bool StateEstimator::update_odometry()
 {
   try {
+    // Publish tf data for RViz
     auto time_now = get_node()->get_clock()->now();
     geometry_msgs::msg::TransformStamped transform;
     nav_msgs::msg::Odometry odom;
@@ -353,7 +414,7 @@ inline bool StateEstimator::update_odometry()
     tf_broadcaster_->sendTransform(transform);
     odom_pub_->publish(odom);
 
-    // Add realtime state publishing here
+    // Publish the state estimate
     if (rt_state_pub_ && rt_state_pub_->trylock()) {
       auto& msg = rt_state_pub_->msg_;
 

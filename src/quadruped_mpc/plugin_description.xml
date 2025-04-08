@@ -15,4 +15,9 @@
          base_class_type="controller_interface::ControllerInterface">
     <description>State estimator for quadruped robot</description>
   </class>
+  <class name="quadruped_mpc/foot_controller"
+         type="quadruped_mpc::FootController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>State estimator for quadruped robot</description>
+  </class>
 </library>

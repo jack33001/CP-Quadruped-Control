@@ -22,14 +22,9 @@ BalanceController::BalanceController() : controller_interface::ControllerInterfa
 controller_interface::InterfaceConfiguration 
 BalanceController::command_interface_configuration() const
 {
+  // Change to NONE since balance_controller will no longer write to command interfaces directly
   controller_interface::InterfaceConfiguration config;
-  config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  
-  // Add command interfaces for each joint
-  for (const auto & joint : joint_names_) {
-    config.names.push_back(joint + "/effort");
-  }
-  
+  config.type = controller_interface::interface_configuration_type::NONE;
   return config;
 }
 
@@ -160,6 +155,12 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     "/quadruped/gait/gait_pattern", 10,
     std::bind(&BalanceController::gait_callback, this, std::placeholders::_1));
   RCLCPP_INFO(get_node()->get_logger(), "Subscribed to gait pattern topic");
+
+  // Set up foot forces publisher
+  foot_forces_pub_ = get_node()->create_publisher<quadruped_msgs::msg::FootForces>(
+    "/quadruped/commands/forces", rclcpp::SensorDataQoS());
+  foot_forces_publisher_ = std::make_unique<realtime_tools::RealtimePublisher<quadruped_msgs::msg::FootForces>>(foot_forces_pub_);
+  RCLCPP_INFO(get_node()->get_logger(), "Created foot forces publisher");
 
   return CallbackReturn::SUCCESS;
 }

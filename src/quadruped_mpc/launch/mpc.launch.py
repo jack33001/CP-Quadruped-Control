@@ -22,7 +22,8 @@ def generate_launch_description():
             'imu_sensor_controller',
             'state_estimator',
             'gait_pattern_generator',
-            'balance_controller'
+            'balance_controller',
+            'foot_controller'
         ],
         output='screen',
     )

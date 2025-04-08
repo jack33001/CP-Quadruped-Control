@@ -15,7 +15,9 @@
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
 #include "geometry_msgs/msg/pose.hpp"
 #include "quadruped_msgs/msg/quadruped_state.hpp"
-#include "quadruped_msgs/msg/gait_pattern.hpp"  // Add this include with other message includes
+#include "quadruped_msgs/msg/gait_pattern.hpp"
+#include "quadruped_msgs/msg/foot_forces.hpp"  // Add FootForces message include
+#include "realtime_tools/realtime_publisher.hpp"  // Add realtime publisher include
 #include <mutex>
 
 namespace quadruped_mpc
@@ -66,6 +68,10 @@ private:
   std::shared_ptr<quadruped_msgs::msg::GaitPattern> latest_gait_;
   std::mutex gait_mutex_;
   bool new_gait_received_{false};
+  
+  // Add FootForces publisher
+  std::unique_ptr<realtime_tools::RealtimePublisher<quadruped_msgs::msg::FootForces>> foot_forces_publisher_;
+  rclcpp::Publisher<quadruped_msgs::msg::FootForces>::SharedPtr foot_forces_pub_;
   
   // Add callback function declarations
   void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);

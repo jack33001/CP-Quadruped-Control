@@ -19,6 +19,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/QuadrupedState.msg"
   "msg/GaitPattern.msg"
   "msg/FootStates.msg"
+  "msg/FootForces.msg"
   # Add dependencies on other message packages
   DEPENDENCIES std_msgs geometry_msgs
 )
