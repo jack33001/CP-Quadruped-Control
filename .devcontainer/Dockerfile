@@ -45,6 +45,8 @@ RUN apt-get install -y \
 
 RUN addgroup realtime \
     && usermod -a -G realtime $USERNAME \
+
+    
     && echo "@realtime soft rtprio 99" >> /etc/security/limits.conf \
     && echo "@realtime soft priority 99" >> /etc/security/limits.conf \
     && echo "@realtime soft memlock 102400" >> /etc/security/limits.conf \

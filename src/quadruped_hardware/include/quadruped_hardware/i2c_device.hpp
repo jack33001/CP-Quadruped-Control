@@ -19,6 +19,8 @@ class I2CDevice {
   bool enable_feature(uint8_t feature_id, int freq);
   bool set_quaternion_euler_vector(uint8_t feature_id);
 
+  int i2c_write_array(const uint8_t* data, int length);
+
  
   bool trySelectDevice();
   bool tryWriteReg(uint8_t reg, uint8_t data);
@@ -31,7 +33,10 @@ class I2CDevice {
   uint8_t buf_[17]= {0x00};
   uint8_t set_feature_report[17] = {0x00};
 
-
+  int i2c_bus;
+  const char *filename = "/dev/i2c-7"; // Replace with your I2C bus device
+  int i2c_address = 0x4a; // Replace with the I2C address of your device
+  char buf[2] = {0};
 
   };
 

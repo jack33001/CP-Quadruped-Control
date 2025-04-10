@@ -1,472 +1,442 @@
-// /*
-//  * This file is part of the [rfmarkit-esp-node].
-//  *
-//  * Original code from esp32_BNO08x (https://github.com/myles-parfeniuk/esp32_BNO08x)
-//  * by Myles Parfeniuk, licensed under the MIT License.
-//  *
-//  * Modifications by [davidliyutong], [2024].
-//  */
+#include <cstdint>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/i2c-dev.h>
+#include <vector>
+#include <iostream>
 
-// #ifndef _BNO08X_DRIVER_H
-// #define _BNO08X_DRIVER_H
 
-// //esp-idf includes
-// #include <driver/gpio.h>
-// #include <driver/spi_common.h>
-// #include <driver/spi_master.h>
-// #include <esp_log.h>
-// #include <esp_rom_gpio.h>
-// #include <esp_timer.h>
-// #include <freertos/FreeRTOS.h>
-// #include <freertos/task.h>
-// #include <freertos/event_groups.h>
-// #include <freertos/queue.h>
-// #include <rom/ets_sys.h>
+// BNO08x constants
+#define BNO08X_I2C_ADDR 0x4A  // Default I2C address (some modules use 0x4B)
 
-// //std library includes
-// #include <inttypes.h>
-// #include <math.h>
-// #include <stdio.h>
-// #include <string.h>
+// SHTP Header size
+#define SHTP_HEADER_SIZE 4
 
-// /// @brief SHTP protocol channels
-// enum channels_t
-// {
-//     CHANNEL_COMMAND,
-//     CHANNEL_EXECUTABLE,
-//     CHANNEL_CONTROL,
-//     CHANNEL_REPORTS,
-//     CHANNEL_WAKE_REPORTS,
-//     CHANNEL_GYRO
-// };
+// Channel IDs
+#define CHANNEL_COMMAND 0
+#define CHANNEL_EXECUTABLE 1
+#define CHANNEL_CONTROL 2
+#define CHANNEL_REPORTS 3
+#define CHANNEL_WAKE_REPORTS 5
 
-// /// @brief Sensor accuracy returned during sensor calibration
-// typedef enum
-// {
-//     IMU_ACCURACY_LOW = 1,
-//     IMU_ACCURACY_MED,
-//     IMU_ACCURACY_HIGH
-// } IMUAccuracy;
+// Report IDs
+#define SENSOR_REPORTID_ROTATION_VECTOR 0x05
 
-// /// @brief SPI event group bits (indicates events in the sending and receiving process)
-// typedef enum
-// {
-//     EVT_GRP_SPI_RX_DONE_BIT = (1 << 0),
-//     EVT_GRP_SPI_RX_VALID_PACKET_BIT = (1 << 1),
-//     EVT_GRP_SPI_RX_INVALID_PACKET_BIT = (1 << 2),
-//     EVT_GRP_SPI_TX_DONE_BIT = (1 << 3)
-// } evt_grp_spi_bits_t;
+// Commands
+#define COMMAND_ME_CALIBRATE 0xF2
+#define COMMAND_PRODUCT_ID_REQ 0xF9
+#define COMMAND_FRS_WRITE 0xF7
+#define COMMAND_FRS_READ_REQ 0xF8
 
-// /// @brief Report enable event group bits (indicates which reports are active)
-// typedef enum
-// {
-//     // evt_grp_report_en bits
-//     EVT_GRP_RPT_ROTATION_VECTOR_BIT = (1 << 0),      ///< When set, rotation vector reports are active.
-//     EVT_GRP_RPT_GAME_ROTATION_VECTOR_BIT = (1 << 1), ///< When set, game rotation vector reports are active.
-//     EVT_GRP_RPT_ARVR_S_ROTATION_VECTOR_BIT =
-//         (1 << 2), ///< When set, ARVR stabilized rotation vector reports are active.
-//     EVT_GRP_RPT_ARVR_S_GAME_ROTATION_VECTOR_BIT =
-//         (1 << 3), ///< When set, ARVR stabilized game rotation vector reports are active.
-//     EVT_GRP_RPT_GYRO_ROTATION_VECTOR_BIT =
-//         (1 << 4),                                     ///< When set, gyro integrator rotation vector reports are active.
-//     EVT_GRP_RPT_ACCELEROMETER_BIT = (1 << 5),         ///< When set, accelerometer reports are active.
-//     EVT_GRP_RPT_LINEAR_ACCELEROMETER_BIT = (1 << 6),  ///< When set, linear accelerometer reports are active.
-//     EVT_GRP_RPT_GRAVITY_BIT = (1 << 7),               ///< When set, gravity reports are active.
-//     EVT_GRP_RPT_GYRO_BIT = (1 << 8),                  ///< When set, gyro reports are active.
-//     EVT_GRP_RPT_GYRO_UNCALIBRATED_BIT = (1 << 9),     ///< When set, uncalibrated gyro reports are active.
-//     EVT_GRP_RPT_MAGNETOMETER_BIT = (1 << 10),         ///< When set, magnetometer reports are active.
-//     EVT_GRP_RPT_TAP_DETECTOR_BIT = (1 << 11),         ///< When set, tap detector reports are active.
-//     EVT_GRP_RPT_STEP_COUNTER_BIT = (1 << 12),         ///< When set, step counter reports are active.
-//     EVT_GRP_RPT_STABILITY_CLASSIFIER_BIT = (1 << 13), ///< When set, stability classifier reports are active.
-//     EVT_GRP_RPT_ACTIVITY_CLASSIFIER_BIT = (1 << 14),  ///< When set, activity classifier reports are active.
-//     EVT_GRP_RPT_RAW_ACCELEROMETER_BIT = (1 << 15),    ///< When set, raw accelerometer reports are active.
-//     EVT_GRP_RPT_RAW_GYRO_BIT = (1 << 16),             ///< When set, raw gyro reports are active.
-//     EVT_GRP_RPT_RAW_MAGNETOMETER_BIT = (1 << 17),     ///< When set, raw magnetometer reports are active.
-
-//     EVT_GRP_RPT_ALL_BITS =
-//         EVT_GRP_RPT_ROTATION_VECTOR_BIT | EVT_GRP_RPT_GAME_ROTATION_VECTOR_BIT | EVT_GRP_RPT_ARVR_S_ROTATION_VECTOR_BIT |
-//         EVT_GRP_RPT_ARVR_S_GAME_ROTATION_VECTOR_BIT | EVT_GRP_RPT_GYRO_ROTATION_VECTOR_BIT | EVT_GRP_RPT_ACCELEROMETER_BIT |
-//         EVT_GRP_RPT_LINEAR_ACCELEROMETER_BIT | EVT_GRP_RPT_GRAVITY_BIT | EVT_GRP_RPT_GYRO_BIT | EVT_GRP_RPT_GYRO_UNCALIBRATED_BIT |
-//         EVT_GRP_RPT_MAGNETOMETER_BIT | EVT_GRP_RPT_TAP_DETECTOR_BIT | EVT_GRP_RPT_STEP_COUNTER_BIT | EVT_GRP_RPT_STABILITY_CLASSIFIER_BIT |
-//         EVT_GRP_RPT_ACTIVITY_CLASSIFIER_BIT | EVT_GRP_RPT_RAW_ACCELEROMETER_BIT | EVT_GRP_RPT_RAW_GYRO_BIT | EVT_GRP_RPT_RAW_MAGNETOMETER_BIT
-
-// } evt_grp_report_en_bits_t;
-
-// /// @brief IMU configuration settings passed into constructor
-// typedef struct
-// {
-//     spi_host_device_t spi_peripheral;
-//     gpio_num_t io_mosi;
-//     gpio_num_t io_miso;
-//     gpio_num_t io_sclk;
-//     gpio_num_t io_cs;
-//     gpio_num_t io_int;
-//     gpio_num_t io_rst;
-//     gpio_num_t io_wake;
-//     uint32_t sclk_speed;
-//     uint8_t cpu_spi_intr_affinity;
-// } BNO08x_config_t;
-
-// /// @brief Holds data that is sent over spi.
-// typedef struct bno08x_tx_packet_t
-// {
-//     uint8_t body[30]; ///< Body of SHTP the packet (header + body)
-//     uint16_t length;  ///< Packet length in bytes.
-// } bno08x_tx_packet_t;
-
-// /// @brief Holds data that is received over spi.
-// typedef struct bno08x_rx_packet_t
-// {
-//     uint8_t header[4]; ///< Header of SHTP packet.
-//     uint8_t body[300]; /// Body of SHTP packet.
-//     uint16_t length;   ///< Packet length in bytes.
-// } bno08x_rx_packet_t;
-
-// /// @brief Data callback function prototype, void my_fxn(void *arg), where arg is a pointer to the BNO08x structure.
-// typedef void (*bno08x_cb_fxn_t)(void *);
-
-// /// @brief Holds any registered callbacks to be executed
-// typedef struct bno08x_cb_list_t
-// {
-//     bno08x_cb_fxn_t *callbacks; ///< dynamically allocated storage for callback functions
-//     uint16_t length; ///< length of the list (total amount of registered callback functions)
-// } bno08x_cb_list_t;
-
-// // Default IMU configuration settings modifiable via menuconfig
-// #define DEFAULT_IMU_CONFIG {CONFIG_ESP32_BNO08x_SPI_HOST, CONFIG_ESP32_BNO08X_GPIO_DI, CONFIG_ESP32_BNO08X_GPIO_SDA, CONFIG_ESP32_BNO08X_GPIO_SCL, CONFIG_ESP32_BNO08X_GPIO_CS, CONFIG_ESP32_BNO08X_GPIO_HINT, CONFIG_ESP32_BNO08X_GPIO_RST, CONFIG_ESP32_BNO08X_GPIO_WAKE, CONFIG_ESP32_BNO08X_SCL_SPEED_HZ, CONFIG_ESP32_BNO08X_SPI_INTR_CPU_AFFINITY}
-
-// typedef struct
-// {
-
-//     BNO08x_config_t imu_config;
+class BNO08x {
+private:
+    int i2c_fd_;
+    uint8_t seq_number_[6] = {0, 0, 0, 0, 0, 0}; // Sequence number for each channel
     
-//     TaskHandle_t spi_task_hdl;
-//     TaskHandle_t data_proc_task_hdl;
-//     EventGroupHandle_t evt_grp_spi;
-//     EventGroupHandle_t evt_grp_report_en;
-//     QueueHandle_t queue_tx_data;
-//     QueueHandle_t queue_rx_data;
-//     QueueHandle_t queue_frs_read_data;
-//     QueueHandle_t queue_reset_reason;
+    // I2C write wrapper
+    bool i2c_write(const uint8_t* data, size_t length) {
+        if (::write(i2c_fd_, data, length) != static_cast<ssize_t>(length)) {
+            std::cerr << "I2C write error" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    
+    // I2C read wrapper
+    bool i2c_read(uint8_t* data, size_t length) {
+        int received_bytes = ::read(i2c_fd_, data, length);
+        if (received_bytes != static_cast<ssize_t>(length)) {
 
-//     bno08x_cb_list_t *cb_list;
+            std::cerr << "Length requested: "<< length <<"  Length received: " << received_bytes << std::endl;
+            std::cerr << "I2C read error" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    
+    bool sendPacket(uint8_t channel, const std::vector<uint8_t>& data) {
+    // Create a single buffer for both header and data
+    std::vector<uint8_t> complete_packet(SHTP_HEADER_SIZE + data.size());
+    uint16_t packet_size = data.size() + SHTP_HEADER_SIZE;
+    
+    // Construct the header directly in the packet buffer
+    complete_packet[0] = packet_size & 0xFF;
+    complete_packet[1] = (packet_size >> 8) & 0xFF;
+    complete_packet[2] = channel;
+    complete_packet[3] = seq_number_[channel]++;
+    
+    // Copy data to the packet buffer (after header)
+    std::copy(data.begin(), data.end(), complete_packet.begin() + SHTP_HEADER_SIZE);
+    
+    // Send the entire packet in a single I2C transaction
+    if (!i2c_write(complete_packet.data(), complete_packet.size())) {
+        std::cerr << "Failed to send SHTP packet" << std::endl;
+        return false;
+    }
+    
+    // Debug output
+    std::cout << "Sent packet: ch=" << (int)channel 
+              << " seq=" << (int)(seq_number_[channel]-1)
+              << " size=" << packet_size << " bytes" << std::endl;
+    
+    return true;
+}
+    
+    // Read available packet
+    bool receivePacket(uint8_t* channel, std::vector<uint8_t>& data) {
+        uint8_t header[SHTP_HEADER_SIZE];
+        
+        // Read header
+        if (!i2c_read(header, SHTP_HEADER_SIZE)) {
+            return false;
+        }
+        
+        // Parse header
+        uint16_t packet_size = ((uint16_t)header[1] << 8) | header[0];
+        packet_size -= SHTP_HEADER_SIZE; // Remove header size
+        *channel = header[2];
+        
+        // Read the actual data
+        data.resize(packet_size);
+        if (!i2c_read(data.data(), packet_size)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Enable quaternion reports
+    bool enableQuaternionReports(uint16_t interval_ms = 10) { // 10ms = 100Hz
+        std::vector<uint8_t> command = {
+            SENSOR_REPORTID_ROTATION_VECTOR, // Report ID
+            0,                               // Feature flags
+            0,                               // Change sensitivity LSB
+            0,                               // Change sensitivity MSB
+            (uint8_t)(interval_ms & 0xFF),   // Report interval LSB
+            (uint8_t)((interval_ms >> 8) & 0xFF), // Report interval MSB
+            0                                // Batch interval
+        };
+        
+        return sendPacket(CHANNEL_CONTROL, command);
+    }
+    
+public:
+    BNO08x() : i2c_fd_(-1) {}
+    
+    ~BNO08x() {
+        if (i2c_fd_ >= 0) {
+            close(i2c_fd_);
+        }
+    }
 
-//     uint8_t command_sequence_number;
-//     spi_bus_config_t bus_config;
-//     spi_device_interface_config_t imu_spi_config;
-//     spi_device_handle_t spi_hdl;
-//     spi_transaction_t spi_transaction;
+    // Report IDs for different features
+    #define SENSOR_REPORTID_ACCELEROMETER        0x01
+    #define SENSOR_REPORTID_GYROSCOPE            0x02
+    #define SENSOR_REPORTID_MAGNETIC_FIELD       0x03
+    #define SENSOR_REPORTID_LINEAR_ACCELERATION  0x04
+    #define SENSOR_REPORTID_ROTATION_VECTOR      0x05
+    #define SENSOR_REPORTID_GRAVITY              0x06
+    #define SENSOR_REPORTID_GAME_ROTATION_VECTOR 0x08
+    #define SENSOR_REPORTID_STEP_COUNTER         0x11
+    #define SENSOR_REPORTID_STABILITY_CLASSIFIER 0x13
+    #define SENSOR_REPORTID_PERSONAL_ACTIVITY_CLASSIFIER 0x1E
 
-//     // Raw sensor values
-//     uint32_t time_stamp;
-//     uint16_t raw_accel_X, raw_accel_Y, raw_accel_Z, accel_accuracy;
-//     uint16_t raw_lin_accel_X, raw_lin_accel_Y, raw_lin_accel_Z, accel_lin_accuracy;
-//     uint16_t raw_gyro_X, raw_gyro_Y, raw_gyro_Z, gyro_accuracy;
-//     uint16_t raw_quat_I, raw_quat_J, raw_quat_K, raw_quat_real, raw_quat_radian_accuracy, quat_accuracy;
-//     uint16_t raw_velocity_gyro_X, raw_velocity_gyro_Y, raw_velocity_gyro_Z;
-//     uint16_t gravity_X, gravity_Y, gravity_Z, gravity_accuracy;
-//     uint16_t raw_uncalib_gyro_X, raw_uncalib_gyro_Y, raw_uncalib_gyro_Z, raw_bias_X, raw_bias_Y, raw_bias_Z, uncalib_gyro_accuracy;
-//     uint16_t raw_magf_X, raw_magf_Y, raw_magf_Z, magf_accuracy;
-//     uint8_t tap_detector;
-//     uint16_t step_count;
-//     int8_t stability_classifier;
-//     uint8_t activity_classifier;
-//     uint8_t *activity_confidences;
-//     uint8_t calibration_status;
-//     uint16_t mems_raw_accel_X, mems_raw_accel_Y, mems_raw_accel_Z;
-//     uint16_t mems_raw_gyro_X, mems_raw_gyro_Y, mems_raw_gyro_Z;
-//     uint16_t mems_raw_magf_X, mems_raw_magf_Y, mems_raw_magf_Z;
-// } BNO08x;
+    // Channel definitions
+    #define CHANNEL_COMMAND  0
+    #define CHANNEL_CONTROL  2
+    #define CHANNEL_REPORTS  3
 
-// // Function prototypes
-// void BNO08x_init(BNO08x *device, BNO08x_config_t *imu_config);
-// bool BNO08x_initialize(BNO08x *device);
 
-// bool BNO08x_hard_reset(BNO08x *device);
-// bool BNO08x_soft_reset(BNO08x *device);
-// uint8_t BNO08x_get_reset_reason(BNO08x *device);
+    bool setBNO08xFastMode(uint16_t report_interval_ms = 5) {  // 5ms = 200Hz
+        // 1. Enable rotation vector reports at high speed
+        if (!enableFeature(SENSOR_REPORTID_ROTATION_VECTOR, report_interval_ms)) {
+            std::cerr << "Fuck" << std::endl;
+            return false;
+        }
+        
+        // 2. Enable accelerometer reports at high speed
+        if (!enableFeature(SENSOR_REPORTID_ACCELEROMETER, report_interval_ms)) {
+            return false;
+        }
+        
+        // 3. Enable gyroscope reports at high speed
+        if (!enableFeature(SENSOR_REPORTID_GYROSCOPE, report_interval_ms)) {
+            return false;
+        }
+        
+        // 4. Configure dynamic calibration for fast mode
+        if (!setDynamicCalibrationMode(true)) {
+            return false;
+        }
+        
+        // Success if we got here
+        std::cerr << "fast mode returning true" << std::endl;
+        return true;
+        
+    }
 
-// bool BNO08x_mode_sleep(BNO08x *device);
-// bool BNO08x_mode_on(BNO08x *device);
-// float BNO08x_q_to_float(int16_t fixed_point_value, uint8_t q_point);
+    /**
+     * Enable a specific feature report on the BNO08x
+     * @param feature_id The feature/report ID to enable
+     * @param interval_ms The report interval in milliseconds
+     * @return True if successful
+     */
+    bool enableFeature(uint8_t feature_id, uint16_t interval_ms) {
+        // Command to enable a sensor/feature
+        std::vector<uint8_t> command = {
+            0xFD,                          // Set Feature Command
+            feature_id,                    // Feature Report ID
+            0,                             // Feature flags (none)
+            0, 0,                          // Change sensitivity (not used)
+            (uint8_t)(interval_ms & 0xFF), // Report interval LSB
+            (uint8_t)((interval_ms >> 8) & 0xFF), // Report interval MSB
+            0                              // Maximum batch report interval (not used)
+        };
+        
+        // Send command packet
+        if (!sendPacket(CHANNEL_CONTROL, command)) {
+            std::cerr << "Failed to enable feature 0x" << std::hex << (int)feature_id << std::dec << std::endl;
+            return false;
+        }
+        
+        // Wait for the change to take effect
+        usleep(10000);  // 10ms
+        
+        return true;
+    }
 
-// bool BNO08x_run_full_calibration_routine(BNO08x *device);
-// void BNO08x_calibrate_all(BNO08x *device);
-// void BNO08x_calibrate_accelerometer(BNO08x *device);
-// void BNO08x_calibrate_gyro(BNO08x *device);
-// void BNO08x_calibrate_magnetometer(BNO08x *device);
-// void BNO08x_calibrate_planar_accelerometer(BNO08x *device);
-// void BNO08x_request_calibration_status(BNO08x *device);
-// bool BNO08x_calibration_complete(BNO08x *device);
-// void BNO08x_end_calibration(BNO08x *device);
-// void BNO08x_save_calibration(BNO08x *device);
+    /**
+     * Configure dynamic calibration for the BNO08x
+     * @param enable Whether to enable (true) or disable (false) dynamic calibration
+     * @return True if successful
+     */
+    bool setDynamicCalibrationMode(bool enable) {
+        // Dynamic calibration enables faster response to motion changes
+        std::vector<uint8_t> command = {
+            0xF2,                   // ME Calibrate command
+            0,                      // Subcommand: Set calibration
+            (uint8_t)(enable ? 1 : 0), // Enable/disable dynamic calibration
+            0                       // Reserved
+        };
+        
+        if (!sendPacket(CHANNEL_CONTROL, command)) {
+            std::cerr << "Failed to set dynamic calibration mode" << std::endl;
+            return false;
+        }
+        
+        // Wait for the change to take effect
+        usleep(50000);  // 50ms
+        
+        return true;
+    }
+        
+    bool begin(const char* i2c_device = "/dev/i2c-7") {
+        // Open I2C device
+        i2c_fd_ = open(i2c_device, O_RDWR);
+        if (i2c_fd_ < 0) {
+            std::cerr << "Failed to open I2C device" << std::endl;
+            return false;
+        }
 
-// void BNO08x_enable_rotation_vector(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_game_rotation_vector(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_ARVR_stabilized_rotation_vector(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_ARVR_stabilized_game_rotation_vector(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_gyro_integrated_rotation_vector(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_accelerometer(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_linear_accelerometer(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_gravity(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_gyro(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_uncalibrated_gyro(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_magnetometer(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_tap_detector(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_step_counter(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_stability_classifier(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_activity_classifier(BNO08x *device, uint32_t time_between_reports, uint32_t activities_to_enable, uint8_t activity_confidence_vals[9]);
-// void BNO08x_enable_raw_accelerometer(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_raw_gyro(BNO08x *device, uint32_t time_between_reports);
-// void BNO08x_enable_raw_magnetometer(BNO08x *device, uint32_t time_between_reports);
 
-// void BNO08x_disable_rotation_vector(BNO08x *device);
-// void BNO08x_disable_game_rotation_vector(BNO08x *device);
-// void BNO08x_disable_ARVR_stabilized_rotation_vector(BNO08x *device);
-// void BNO08x_disable_ARVR_stabilized_game_rotation_vector(BNO08x *device);
-// void BNO08x_disable_gyro_integrated_rotation_vector(BNO08x *device);
-// void BNO08x_disable_accelerometer(BNO08x *device);
-// void BNO08x_disable_linear_accelerometer(BNO08x *device);
-// void BNO08x_disable_gravity(BNO08x *device);
-// void BNO08x_disable_gyro(BNO08x *device);
-// void BNO08x_disable_uncalibrated_gyro(BNO08x *device);
-// void BNO08x_disable_magnetometer(BNO08x *device);
-// void BNO08x_disable_tap_detector(BNO08x *device);
-// void BNO08x_disable_step_counter(BNO08x *device);
-// void BNO08x_disable_stability_classifier(BNO08x *device);
-// void BNO08x_disable_activity_classifier(BNO08x *device);
-// void BNO08x_disable_raw_accelerometer(BNO08x *device);
-// void BNO08x_disable_raw_gyro(BNO08x *device);
-// void BNO08x_disable_raw_magnetometer(BNO08x *device);
+        // Get current I2C functionality
+        unsigned long funcs;
+        ioctl(i2c_fd_, I2C_FUNCS, &funcs);
+        
+        // Enable fast mode after initialization
+        if (!setBNO08xFastMode()) {
+            std::cerr << "Warning: Failed to set BNO08x to fast mode" << std::endl;
+            // Continue anyway, as we at least have basic functionality
+        } else {
+            std::cout << "BNO08x configured in fast mode" << std::endl;
+        }
+        
+        
 
-// void BNO08x_tare_now(BNO08x *device, uint8_t axis_sel, uint8_t rotation_vector_basis);
-// void BNO08x_save_tare(BNO08x *device);
-// void BNO08x_clear_tare(BNO08x *device);
+       
 
-// bool BNO08x_data_available(BNO08x *device);
-// bool BNO08x_register_cb(BNO08x *device, bno08x_cb_fxn_t cb_fxn);
+        
+        // Set I2C slave address
+        if (ioctl(i2c_fd_, I2C_SLAVE, BNO08X_I2C_ADDR) < 0) {
+            std::cerr << "Failed to set I2C slave address" << std::endl;
+            close(i2c_fd_);
+            i2c_fd_ = -1;
+            return false;
+        }
+        
+        // Reset sequence numbers
+        for (int i = 0; i < 6; i++) {
+            seq_number_[i] = 0;
+        }
+        
+        // Small delay for sensor to boot
+        usleep(100000); // 100ms
+        
+        // // Enable quaternion reports
+        // if (!enableQuaternionReports()) {
+        //     std::cerr << "Failed to enable quaternion reports" << std::endl;
+        //     return false;
+        // }
+        
 
-// uint32_t BNO08x_get_time_stamp(BNO08x *device);
+        // // Read the product ID, but first we need to send a request
+        // // The simplest approach is to just try to read and see if we get any response
+        // unsigned char buffer[10];
+        
+        // if (read(i2c_fd_, buffer, 4) < 0) {
+        //     printf("Failed to read from device\n");
+        // } else {
+        //     printf("Successfully read from device. First 4 bytes: %02X %02X %02X %02X\n", 
+        //         buffer[0], buffer[1], buffer[2], buffer[3]);
+        // }
 
-// void BNO08x_get_magf(BNO08x *device, float *x, float *y, float *z, uint8_t *accuracy);
-// float BNO08x_get_magf_X(BNO08x *device);
-// float BNO08x_get_magf_Y(BNO08x *device);
-// float BNO08x_get_magf_Z(BNO08x *device);
-// uint8_t BNO08x_get_magf_accuracy(BNO08x *device);
+        // std::vector<uint8_t> rawData;
+        // if (readData(rawData)) {
+        //     std::cout << "Successfully read raw data!" << std::endl;
+        // } else {
+        //     std::cout << "Failed to read raw data" << std::endl;
+        // }
+        
+        // // Try reading quaternions
+        // float quaternion[4]; // w, x, y, z
+        // if (readQuaternion(quaternion)) {
+        //     std::cout << "Quaternion: w=" << quaternion[0]
+        //             << ", x=" << quaternion[1]
+        //             << ", y=" << quaternion[2]
+        //             << ", z=" << quaternion[3] << std::endl;
+        // } else {
+        //     std::cout << "Failed to read quaternion" << std::endl;
+        // }
+            
+        // // close(i2c_device);
 
-// void BNO08x_get_gravity(BNO08x *device, float *x, float *y, float *z, uint8_t *accuracy);
-// float BNO08x_get_gravity_X(BNO08x *device);
-// float BNO08x_get_gravity_Y(BNO08x *device);
-// float BNO08x_get_gravity_Z(BNO08x *device);
-// uint8_t BNO08x_get_gravity_accuracy(BNO08x *device);
 
-// float BNO08x_get_roll(BNO08x *device);
-// float BNO08x_get_pitch(BNO08x *device);
-// float BNO08x_get_yaw(BNO08x *device);
+        return true;
+    }
 
-// float BNO08x_get_roll_deg(BNO08x *device);
-// float BNO08x_get_pitch_deg(BNO08x *device);
-// float BNO08x_get_yaw_deg(BNO08x *device);
+    // Simplified read quaternion method - just tries to read raw data
+    bool readData(std::vector<uint8_t>& data) {
+        uint8_t header[SHTP_HEADER_SIZE];
+        
+        // Read header
+        if (!i2c_read(header, sizeof(header))) {
+            std::cout << "Setting FALSE" <<std::endl;
+            return false;
+        }
+        
+        // Parse header
+        uint16_t packet_size = ((uint16_t)header[1] << 8) | header[0];
+        packet_size -= SHTP_HEADER_SIZE; // Remove header size
+        uint8_t channel = header[2];
+        
+        std::cout << "Got packet: size=" << packet_size << ", channel=" << (int)channel << std::endl;
+        
+        // Read the actual data
+        data.resize(packet_size);
+        if (packet_size > 0) {
+            bool read_success = i2c_read(data.data(), packet_size);
+            std::cout << "Read i2c success:" << read_success << std::endl;
 
-// void BNO08x_get_quat(BNO08x *device, float *i, float *j, float *k, float *real, float *rad_accuracy, uint8_t *accuracy);
-// float BNO08x_get_quat_I(BNO08x *device);
-// float BNO08x_get_quat_J(BNO08x *device);
-// float BNO08x_get_quat_K(BNO08x *device);
-// float BNO08x_get_quat_real(BNO08x *device);
-// float BNO08x_get_quat_radian_accuracy(BNO08x *device);
-// uint8_t BNO08x_get_quat_accuracy(BNO08x *device);
+            return read_success;
+        }
+        
+        return true;
+    }
+    
+    // Read quaternion data
+    bool readQuaternion(float* quat) {
+        uint8_t channel;
+        std::vector<uint8_t> data;
+        
+        // Try to read packets until we get quaternion data
+        for (int attempt = 0; attempt < 10; attempt++) {
+            if (receivePacket(&channel, data)) {
+                // Check if this is a report packet
+                if (channel == CHANNEL_REPORTS && data.size() >= 21) {
+                    // Check if this is a quaternion report
+                    if (data[0] == SENSOR_REPORTID_ROTATION_VECTOR) {
+                        // Extract quaternion components (Q point format)
+                        int16_t i = (int16_t)((data[2] << 8) | data[1]);
+                        int16_t j = (int16_t)((data[4] << 8) | data[3]);
+                        int16_t k = (int16_t)((data[6] << 8) | data[5]);
+                        int16_t real = (int16_t)((data[8] << 8) | data[7]);
+                        
+                        // Convert to float (Q point 14)
+                        const float qpoint_14_factor = 1.0f / (1 << 14);
+                        quat[0] = real * qpoint_14_factor;  // w
+                        quat[1] = i * qpoint_14_factor;     // x
+                        quat[2] = j * qpoint_14_factor;     // y
+                        quat[3] = k * qpoint_14_factor;     // z
+                        
+                        return true;
+                    }
+                }
+            }
+            
+            // Wait a bit before trying again
+            usleep(5000); // 5ms
+        }
+        
+        return false;
+    }
 
-// void BNO08x_get_accel(BNO08x *device, float *x, float *y, float *z, uint8_t *accuracy);
-// float BNO08x_get_accel_X(BNO08x *device);
-// float BNO08x_get_accel_Y(BNO08x *device);
-// float BNO08x_get_accel_Z(BNO08x *device);
-// uint8_t BNO08x_get_accel_accuracy(BNO08x *device);
+    int scan() {
+    int file;
+    char filename[20];
+    
+    snprintf(filename, 19, "/dev/i2c-7");
+    file = open(filename, O_RDWR);
+    if (file < 0) {
+        printf("Failed to open I2C bus\n");
+        return 1;
+    }
+    
+    printf("Scanning I2C bus...\n");
+    
+    for (int addr = 0x03; addr < 0x78; addr++) {
+        if (ioctl(file, I2C_SLAVE, addr) < 0) {
+            continue;
+        }
+        
+        // Try to read a byte from the device
+        char buf;
+        if (read(file, &buf, 1) >= 0) {
+            printf("Found device at address 0x%02X\n", addr);
+        }
+    }
+    
+    close(file);
+    return 0;
+}
+};
 
-// void BNO08x_get_linear_accel(BNO08x *device, float *x, float *y, float *z, uint8_t *accuracy);
-// float BNO08x_get_linear_accel_X(BNO08x *device);
-// float BNO08x_get_linear_accel_Y(BNO08x *device);
-// float BNO08x_get_linear_accel_Z(BNO08x *device);
-// uint8_t BNO08x_get_linear_accel_accuracy(BNO08x *device);
-
-// int16_t BNO08x_get_raw_accel_X(BNO08x *device);
-// int16_t BNO08x_get_raw_accel_Y(BNO08x *device);
-// int16_t BNO08x_get_raw_accel_Z(BNO08x *device);
-
-// int16_t BNO08x_get_raw_gyro_X(BNO08x *device);
-// int16_t BNO08x_get_raw_gyro_Y(BNO08x *device);
-// int16_t BNO08x_get_raw_gyro_Z(BNO08x *device);
-
-// int16_t BNO08x_get_raw_magf_X(BNO08x *device);
-// int16_t BNO08x_get_raw_magf_Y(BNO08x *device);
-// int16_t BNO08x_get_raw_magf_Z(BNO08x *device);
-
-// void BNO08x_get_gyro_calibrated_velocity(BNO08x *device, float *x, float *y, float *z, uint8_t *accuracy);
-// float BNO08x_get_gyro_calibrated_velocity_X(BNO08x *device);
-// float BNO08x_get_gyro_calibrated_velocity_Y(BNO08x *device);
-// float BNO08x_get_gyro_calibrated_velocity_Z(BNO08x *device);
-// uint8_t BNO08x_get_gyro_accuracy(BNO08x *device);
-
-// void BNO08x_get_uncalibrated_gyro(BNO08x *device, float *x, float *y, float *z, float *bx, float *by, float *bz, uint8_t *accuracy);
-// float BNO08x_get_uncalibrated_gyro_X(BNO08x *device);
-// float BNO08x_get_uncalibrated_gyro_Y(BNO08x *device);
-// float BNO08x_get_uncalibrated_gyro_Z(BNO08x *device);
-// float BNO08x_get_uncalibrated_gyro_bias_X(BNO08x *device);
-// float BNO08x_get_uncalibrated_gyro_bias_Y(BNO08x *device);
-// float BNO08x_get_uncalibrated_gyro_bias_Z(BNO08x *device);
-// uint8_t BNO08x_get_uncalibrated_gyro_accuracy(BNO08x *device);
-
-// void BNO08x_get_gyro_velocity(BNO08x *device, float *x, float *y, float *z);
-// float BNO08x_get_gyro_velocity_X(BNO08x *device);
-// float BNO08x_get_gyro_velocity_Y(BNO08x *device);
-// float BNO08x_get_gyro_velocity_Z(BNO08x *device);
-
-// uint8_t BNO08x_get_tap_detector(BNO08x *device);
-// uint16_t BNO08x_get_step_count(BNO08x *device);
-// int8_t BNO08x_get_stability_classifier(BNO08x *device);
-// uint8_t BNO08x_get_activity_classifier(BNO08x *device);
-
-// void BNO08x_print_header(BNO08x *device, bno08x_rx_packet_t *packet);
-// void BNO08x_print_packet(BNO08x *device, bno08x_rx_packet_t *packet);
-
-// // Metadata functions
-// int16_t BNO08x_get_Q1(BNO08x *device, uint16_t record_ID);
-// int16_t BNO08x_get_Q2(BNO08x *device, uint16_t record_ID);
-// int16_t BNO08x_get_Q3(BNO08x *device, uint16_t record_ID);
-// float BNO08x_get_resolution(BNO08x *device, uint16_t record_ID);
-// float BNO08x_get_range(BNO08x *device, uint16_t record_ID);
-// uint32_t BNO08x_FRS_read_word(BNO08x *device, uint16_t record_ID, uint8_t word_number);
-// bool BNO08x_FRS_read_request(BNO08x *device, uint16_t record_ID, uint16_t read_offset, uint16_t block_size);
-// bool BNO08x_FRS_read_data(BNO08x *device, uint16_t record_ID, uint8_t start_location, uint8_t words_to_read, uint32_t *meta_data);
-
-// // Private functions
-// bool BNO08x_wait_for_rx_done(BNO08x *device);
-// bool BNO08x_wait_for_tx_done(BNO08x *device);
-// bool BNO08x_wait_for_data(BNO08x *device);
-
-// bool BNO08x_receive_packet(BNO08x *device);
-// void BNO08x_send_packet(BNO08x *device, bno08x_tx_packet_t *packet);
-// void BNO08x_queue_packet(BNO08x *device, uint8_t channel_number, uint8_t data_length, uint8_t *commands);
-// void BNO08x_queue_command(BNO08x *device, uint8_t command, uint8_t *commands);
-// void BNO08x_queue_feature_command(BNO08x *device, uint8_t report_ID, uint32_t time_between_reports, uint32_t specific_config);
-// void BNO08x_queue_calibrate_command(BNO08x *device, uint8_t _to_calibrate);
-// void BNO08x_queue_tare_command(BNO08x *device, uint8_t command, uint8_t axis, uint8_t rotation_vector_basis);
-// void BNO08x_queue_request_product_id_command(BNO08x *device);
-
-// void BNO08x_enable_report(BNO08x *device, uint8_t report_ID, uint32_t time_between_reports, const EventBits_t report_evt_grp_bit, uint32_t specific_config);
-// void BNO08x_disable_report(BNO08x *device, uint8_t report_ID, const EventBits_t report_evt_grp_bit);
-// uint16_t BNO08x_parse_packet(BNO08x *device, bno08x_rx_packet_t *packet);
-// uint16_t BNO08x_parse_product_id_report(BNO08x *device, bno08x_rx_packet_t *packet);
-// uint16_t BNO08x_parse_frs_read_response_report(BNO08x *device, bno08x_rx_packet_t *packet);
-// uint16_t BNO08x_parse_input_report(BNO08x *device, bno08x_rx_packet_t *packet);
-// uint16_t BNO08x_parse_command_report(BNO08x *device, bno08x_rx_packet_t *packet);
-
-// // Max RX buffer space
-// #define RX_DATA_LENGTH 300
-
-// // Max meta-data length (from FRS reads)
-// #define MAX_METADATA_LENGTH 9
-
-// // Record IDs
-// #define FRS_RECORD_ID_ACCELEROMETER 0xE302
-// #define FRS_RECORD_ID_GYROSCOPE_CALIBRATED 0xE306
-// #define FRS_RECORD_ID_MAGNETIC_FIELD_CALIBRATED 0xE309
-// #define FRS_RECORD_ID_ROTATION_VECTOR 0xE30B
-
-// // Activity classifier enable bits
-// #define ACTIVITY_CLASSIFIER_UNKNOWN_EN (1 << 0)
-// #define ACTIVITY_CLASSIFIER_IN_VEHICLE_EN (1 << 1)
-// #define ACTIVITY_CLASSIFIER_ON_BICYCLE_EN (1 << 2)
-// #define ACTIVITY_CLASSIFIER_ON_FOOT_EN (1 << 3)
-// #define ACTIVITY_CLASSIFIER_STILL_EN (1 << 4)
-// #define ACTIVITY_CLASSIFIER_TILTING_EN (1 << 5)
-// #define ACTIVITY_CLASSIFIER_WALKING_EN (1 << 6)
-// #define ACTIVITY_CLASSIFIER_RUNNING_EN (1 << 7)
-// #define ACTIVITY_CLASSIFIER_ON_STAIRS_EN (1 << 8)
-// #define ACTIVITY_CLASSIFIER_ALL_EN 0x1F
-
-// // Tare commands
-// #define TARE_AXIS_ALL 0x07
-// #define TARE_AXIS_Z 0x04
-
-// #define TARE_ROTATION_VECTOR 0
-// #define TARE_GAME_ROTATION_VECTOR 1
-// #define TARE_GEOMAGNETIC_ROTATION_VECTOR 2
-// #define TARE_GYRO_INTEGRATED_ROTATION_VECTOR 3
-// #define TARE_ARVR_STABILIZED_ROTATION_VECTOR 4
-// #define TARE_ARVR_STABILIZED_GAME_ROTATION_VECTOR 5
-
-// #define ROTATION_VECTOR_Q1 14
-// #define ROTATION_VECTOR_ACCURACY_Q1 12
-// #define ACCELEROMETER_Q1 8
-// #define LINEAR_ACCELEROMETER_Q1 8
-// #define GYRO_Q1 9
-// #define MAGNETOMETER_Q1 4
-// #define ANGULAR_VELOCITY_Q1 10
-// #define GRAVITY_Q1 8
-
-// // Higher level calibration commands
-// #define CALIBRATE_ACCEL 0
-// #define CALIBRATE_GYRO 1
-// #define CALIBRATE_MAG 2
-// #define CALIBRATE_PLANAR_ACCEL 3
-// #define CALIBRATE_ACCEL_GYRO_MAG 4
-// #define CALIBRATE_STOP 5
-
-// // Command IDs
-// #define COMMAND_ERRORS 1
-// #define COMMAND_COUNTER 2
-// #define COMMAND_TARE 3
-// #define COMMAND_INITIALIZE 4
-// #define COMMAND_DCD 6
-// #define COMMAND_ME_CALIBRATE 7
-// #define COMMAND_DCD_PERIOD_SAVE 9
-// #define COMMAND_OSCILLATOR 10
-// #define COMMAND_CLEAR_DCD 11
-
-// // SHTP channel 2 control report IDs
-// #define SHTP_REPORT_COMMAND_RESPONSE 0xF1
-// #define SHTP_REPORT_COMMAND_REQUEST 0xF2
-// #define SHTP_REPORT_FRS_READ_RESPONSE 0xF3
-// #define SHTP_REPORT_FRS_READ_REQUEST 0xF4
-// #define SHTP_REPORT_PRODUCT_ID_RESPONSE 0xF8
-// #define SHTP_REPORT_PRODUCT_ID_REQUEST 0xF9
-// #define SHTP_REPORT_BASE_TIMESTAMP 0xFB
-// #define SHTP_REPORT_SET_FEATURE_COMMAND 0xFD
-
-// // Sensor report IDs
-// #define SENSOR_REPORT_ID_ACCELEROMETER 0x01
-// #define SENSOR_REPORT_ID_GYROSCOPE 0x02
-// #define SENSOR_REPORT_ID_MAGNETIC_FIELD 0x03
-// #define SENSOR_REPORT_ID_LINEAR_ACCELERATION 0x04
-// #define SENSOR_REPORT_ID_ROTATION_VECTOR 0x05
-// #define SENSOR_REPORT_ID_GRAVITY 0x06
-// #define SENSOR_REPORT_ID_UNCALIBRATED_GYRO 0x07
-// #define SENSOR_REPORT_ID_GAME_ROTATION_VECTOR 0x08
-// #define SENSOR_REPORT_ID_GEOMAGNETIC_ROTATION_VECTOR 0x09
-// #define SENSOR_REPORT_ID_GYRO_INTEGRATED_ROTATION_VECTOR 0x2A
-// #define SENSOR_REPORT_ID_TAP_DETECTOR 0x10
-// #define SENSOR_REPORT_ID_STEP_COUNTER 0x11
-// #define SENSOR_REPORT_ID_STABILITY_CLASSIFIER 0x13
-// #define SENSOR_REPORT_ID_RAW_ACCELEROMETER 0x14
-// #define SENSOR_REPORT_ID_RAW_GYROSCOPE 0x15
-// #define SENSOR_REPORT_ID_RAW_MAGNETOMETER 0x16
-// #define SENSOR_REPORT_ID_PERSONAL_ACTIVITY_CLASSIFIER 0x1E
-// #define SENSOR_REPORT_ID_ARVR_STABILIZED_ROTATION_VECTOR 0x28
-// #define SENSOR_REPORT_ID_ARVR_STABILIZED_GAME_ROTATION_VECTOR 0x29
-
-// // Tare commands
-// #define TARE_NOW 0
-// #define TARE_PERSIST 1
-// #define TARE_SET_REORIENTATION 2
-
-// #define HOST_INT_TIMEOUT_MS 300ULL
-
-// // ISR service installation flag
-// extern bool bno08x_isr_service_installed;
-
-// // Function prototypes for ISR and task handling
-// void IRAM_ATTR BNO08x_hint_handler(void *arg);
-// void BNO08x_spi_task(void *arg);
-// void BNO08x_data_proc_task(void *arg);
-
-// #endif
+// // Example usage
+// int main() {
+//     BNO08x sensor;
+    
+//     if (!sensor.begin()) {
+//         std::cerr << "Failed to initialize BNO08x" << std::endl;
+//         return 1;
+//     }
+    
+//     std::cout << "BNO08x initialized successfully" << std::endl;
+    
+//     // Main loop to read quaternion data
+//     while (true) {
+//         float quaternion[4]; // w, x, y, z
+        
+//         if (sensor.readQuaternion(quaternion)) {
+//             std::cout << "Quaternion: w=" << quaternion[0]
+//                       << ", x=" << quaternion[1]
+//                       << ", y=" << quaternion[2]
+//                       << ", z=" << quaternion[3] << std::endl;
+//         } else {
+//             std::cout << "Failed to read quaternion" << std::endl;
+//         }
+        
+//         usleep(100000); // 100ms
+//     }
+    
+//     return 0;
+// }

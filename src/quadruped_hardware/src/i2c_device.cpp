@@ -23,11 +23,36 @@ using namespace std::chrono_literals;
 namespace JetBotControl{
 
 I2CDevice::I2CDevice() {
-  i2c_fd_ = open("/dev/i2c-1", O_RDWR);
-  if (!i2c_fd_) {
-    throw std::runtime_error("Failed to open I2C interface!");
+  // i2c_fd_ = open("/dev/i2c-7", O_RDWR);
+  // if (i2c_fd_ < 0) {
+  //   throw std::runtime_error("Failed to open I2C interface!");
+  // }
+
+
+  // if(ioctl(i2c_fd_, I2C_SLAVE_FORCE, kDefaultDeviceAddress) < 0){
+  //   close(i2c_fd_);
+  //   throw std::runtime_error("Failed to set slave address!");
+    
+  // }
+
+  // int i2c_bus;
+  // const char *filename = "/dev/i2c-7"; // Replace with your I2C bus device
+  // int i2c_address = 0x4a; // Replace with the I2C address of your device
+  // char buf[2] = {0};
+
+  // 1. Open the I2C bus
+
+  if ((i2c_bus = open(filename, O_RDWR)) < 0) {
+      perror("Failed to open the i2c bus");
+      exit(1);
   }
-  
+
+  // 2. Set the I2C slave address
+  if (ioctl(i2c_bus, I2C_SLAVE, i2c_address) < 0) {
+      printf("Failed to acquire bus access and/or talk to slave.\n");
+      close(i2c_bus);
+      exit(1);
+  }
 
   // // Select the PWM device
   // if (!trySelectDevice()){
@@ -44,8 +69,8 @@ I2CDevice::I2CDevice() {
 
 I2CDevice::~I2CDevice() {
   tryReset();
-  if (i2c_fd_) {
-    close(i2c_fd_);
+  if (i2c_bus) {
+    close(i2c_bus);
   }
 }
 
@@ -55,7 +80,7 @@ bool I2CDevice::enable_feature(uint8_t feature_id,int freq) {
   set_feature_report[0] = bno_msgs::SET_FEATURE_COMMAND;
   set_feature_report[1] = feature_id;
 
-  return write(i2c_fd_, buf_, 17) == 17;
+  return write(i2c_bus, buf_, 17) == 17;
 }
 
 bool I2CDevice::tryEnableMotor(uint8_t pin) {
@@ -64,8 +89,26 @@ bool I2CDevice::tryEnableMotor(uint8_t pin) {
   buf_[2] = 0x10;
   buf_[3] = 0x00;
   buf_[4] = 0x00;
-  return write(i2c_fd_, buf_, 5) == 5;
+  return write(i2c_bus, buf_, 5) == 5;
 }
+
+int I2CDevice::i2c_write_array(const uint8_t* data, int length) {
+    // Ensure the data pointer is valid and length is positive
+    if (data == nullptr || length <= 0) {
+        throw std::invalid_argument("Invalid data pointer or length");
+    }
+
+    // Write the byte array to the I2C bus
+    int bytes_written = ::write(i2c_bus, data, length);
+
+    // Check if the number of bytes written matches the expected length
+    if (bytes_written != length) {
+        throw std::runtime_error("Failed to write the complete byte array to the I2C device");
+    }
+
+    return bytes_written;
+}
+
 
 bool I2CDevice::trySetDutyCycle(uint8_t pin, uint16_t duty_cycle) {
   buf_[0] = kPwmReg + 4 * pin;
@@ -91,20 +134,20 @@ bool I2CDevice::trySetDutyCycle(uint8_t pin, uint16_t duty_cycle) {
     buf_[4] = (value >> 8) & 0xFF;
   }
 
-  return write(i2c_fd_, buf_, 5) == 5;
+  return write(i2c_bus, buf_, 5) == 5;
 }
 
 bool I2CDevice::tryWriteReg(uint8_t reg, uint8_t data) {
   buf_[0] = reg;
   buf_[1] = data;
-  return write(i2c_fd_, buf_, 2) == 2;
+  return write(i2c_bus, buf_, 2) == 2;
 }
 std::optional<uint8_t> I2CDevice::tryReadReg(uint8_t reg) {
   buf_[0] = reg;
-  if (write(i2c_fd_, buf_, 1) != 1) {
+  if (write(i2c_bus, buf_, 1) != 1) {
     return std::nullopt;
   }
-  if (read(i2c_fd_, buf_, 1) != 1) {
+  if (read(i2c_bus, buf_, 1) != 1) {
     return std::nullopt;
   }
   return buf_[0];
@@ -137,7 +180,7 @@ bool I2CDevice::trySetClock() {
 bool I2CDevice::tryReset() { return tryWriteReg(kMode1Reg, 0x00); }
 
 bool I2CDevice::trySelectDevice() {
-  return ioctl(i2c_fd_, I2C_SLAVE, kDefaultDeviceAddress) >= 0;
+  return ioctl(i2c_bus, I2C_SLAVE, kDefaultDeviceAddress) >= 0;
 }
 
 

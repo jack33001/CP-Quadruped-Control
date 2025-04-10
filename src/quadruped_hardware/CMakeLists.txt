@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(quadruped_hardware)
 
+# find_library(SH2_LIBRARY sh2 REQUIRED)
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -18,6 +19,14 @@ add_library(${PROJECT_NAME} SHARED
   src/MotorDriver.cpp
   src/ROS2_BNO08x.cpp
   src/i2c_device.cpp
+  src/bno08x_driver.cpp
+
+  src/sh2.c
+  src/sh2_util.c
+  src/shtp.c
+  src/euler.c
+  include/quadruped_hardware/bno_HAL.hpp
+
 )
 
 
