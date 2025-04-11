@@ -12,6 +12,7 @@
 #include <string.h>
 #include "quadruped_hardware/sh2_err.h"
 #include "quadruped_hardware/sh2.h"
+
 #include "quadruped_hardware/sh2_hal.h"
 // #include "quadruped_hardware/bno08x_driver.h"
 

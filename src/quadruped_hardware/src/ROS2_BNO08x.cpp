@@ -1,8 +1,7 @@
 #include <hardware_interface/system_interface.hpp>
 #include "quadruped_hardware/bno08x_driver.h" // Include your BNO08x class from above
-
 #include "quadruped_hardware/bno_HAL.hpp" // Include your BNO08x class from above
-
+#include "quadruped_hardware/sh2.h"
 
 
 namespace quadruped_hardware {
@@ -17,7 +16,24 @@ public:
         //     RCLCPP_ERROR(rclcpp::get_logger("BNO08X"), "Failed to initialize BNO08x");
         //     return hardware_interface::CallbackReturn::ERROR;
         // }
-        bnostart();
+
+
+        static JetsonHal_t jetsonHalInstance;
+        static sh2_Hal_t hal = {
+            .open = jetsonOpen,
+            .close = jetsonClose,
+            .read = jetsonRead,
+            .write = jetsonWrite,
+            .getTimeUs = jetsonGetTimeUs,
+        };
+
+        // Initialize the SH2 sensor hub
+        if (sh2_open(&hal, NULL, NULL) == SH2_ERR) {
+            fprintf(stderr, "Failed to open SH2 sensor hub.\n");
+            
+        }
+            
+        // bnostart();
 
 
 

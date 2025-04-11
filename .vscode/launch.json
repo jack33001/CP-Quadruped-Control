@@ -11,7 +11,7 @@
             "request": "launch",
             "program": "/opt/ros/jazzy/lib/controller_manager/ros2_control_node",
             "args": [],
-            "stopAtEntry": false,
+            "stopAtEntry": true,
             "cwd": "/",
             "miDebuggerPath": "/usr/bin/gdb",
             "miDebuggerServerAddress": "localhost:3001",
