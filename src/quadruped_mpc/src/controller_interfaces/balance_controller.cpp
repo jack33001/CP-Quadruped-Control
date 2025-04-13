@@ -138,11 +138,16 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
 
   RCLCPP_INFO(get_node()->get_logger(), "Balance controller configuration completed successfully");
 
-  // Add subscriber initialization before returning
-  cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(
-    "quadruped/cmd/single_state", 10,
-    std::bind(&BalanceController::cmd_callback, this, std::placeholders::_1));
-  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to quadruped/cmd/single_state topic");
+  // Subscribe to separate pose and twist command topics
+  pose_cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(
+    "/quadruped/cmd/pose_cmd", 10,
+    std::bind(&BalanceController::pose_cmd_callback, this, std::placeholders::_1));
+  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to /quadruped/cmd/pose_cmd topic");
+  
+  twist_cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Twist>(
+    "/quadruped/cmd/twist_cmd", 10,
+    std::bind(&BalanceController::twist_cmd_callback, this, std::placeholders::_1));
+  RCLCPP_INFO(get_node()->get_logger(), "Subscribed to /quadruped/cmd/twist_cmd topic");
 
   // Set up state subscriber
   state_sub_ = get_node()->create_subscription<quadruped_msgs::msg::QuadrupedState>(
@@ -178,11 +183,18 @@ BalanceController::CallbackReturn BalanceController::on_deactivate(const rclcpp_
   return CallbackReturn::SUCCESS;
 }
 
-void BalanceController::cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg)
+void BalanceController::pose_cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg)
 {
   std::lock_guard<std::mutex> lock(cmd_mutex_);
-  latest_cmd_ = msg;
-  new_cmd_received_ = true;
+  latest_pose_cmd_ = msg;
+  new_pose_cmd_received_ = true;
+}
+
+void BalanceController::twist_cmd_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(cmd_mutex_);
+  latest_twist_cmd_ = msg;
+  new_twist_cmd_received_ = true;
 }
 
 void BalanceController::state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg)

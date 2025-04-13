@@ -79,18 +79,34 @@ inline bool BalanceController::update_state()
       current_state_[1] -= latest_gait_->com_position.y;
     }
 
-    // Handle desired state updates from commands
+    // Handle desired state updates from commands - updated for separate pose and twist
     {
       std::lock_guard<std::mutex> lock(cmd_mutex_);
-      if (new_cmd_received_ && latest_cmd_) {
-        desired_state_[0] = latest_cmd_->position.x;
-        desired_state_[1] = latest_cmd_->position.y;
-        desired_state_[2] = latest_cmd_->position.z;
-        desired_state_[3] = latest_cmd_->orientation.w;
-        desired_state_[4] = latest_cmd_->orientation.x;
-        desired_state_[5] = latest_cmd_->orientation.y;
-        desired_state_[6] = latest_cmd_->orientation.z;
-        new_cmd_received_ = false;
+      
+      // Handle pose commands
+      if (new_pose_cmd_received_ && latest_pose_cmd_) {
+        desired_state_[0] = latest_pose_cmd_->position.x;
+        desired_state_[1] = latest_pose_cmd_->position.y;
+        desired_state_[2] = latest_pose_cmd_->position.z;
+        desired_state_[3] = latest_pose_cmd_->orientation.w;
+        desired_state_[4] = latest_pose_cmd_->orientation.x;
+        desired_state_[5] = latest_pose_cmd_->orientation.y;
+        desired_state_[6] = latest_pose_cmd_->orientation.z;
+        new_pose_cmd_received_ = false;
+      }
+      
+      // Handle twist commands
+      if (new_twist_cmd_received_ && latest_twist_cmd_) {
+        // Update linear velocity setpoints
+        desired_state_[7] = latest_twist_cmd_->linear.x;
+        desired_state_[8] = latest_twist_cmd_->linear.y;
+        desired_state_[9] = latest_twist_cmd_->linear.z;
+        
+        // Update angular velocity setpoints
+        desired_state_[10] = latest_twist_cmd_->angular.x;
+        desired_state_[11] = latest_twist_cmd_->angular.y;
+        desired_state_[12] = latest_twist_cmd_->angular.z;
+        new_twist_cmd_received_ = false;
       }
     }
 

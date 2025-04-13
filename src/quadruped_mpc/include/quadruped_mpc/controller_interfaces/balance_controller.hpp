@@ -14,6 +14,7 @@
 #include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
 #include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/twist.hpp"  // Add Twist message include
 #include "quadruped_msgs/msg/quadruped_state.hpp"
 #include "quadruped_msgs/msg/gait_pattern.hpp"
 #include "quadruped_msgs/msg/foot_forces.hpp"  // Add FootForces message include
@@ -51,11 +52,14 @@ protected:
   std::array<double,3> p1_, p2_, p3_, p4_, com_;
 
 private:
-  // Add command handling members
-  rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr cmd_sub_;
+  // Replace cmd_sub_ with separate pose and twist subscriptions
+  rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr pose_cmd_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_cmd_sub_;
   std::mutex cmd_mutex_;
-  geometry_msgs::msg::Pose::SharedPtr latest_cmd_;
-  bool new_cmd_received_{false};
+  geometry_msgs::msg::Pose::SharedPtr latest_pose_cmd_;
+  geometry_msgs::msg::Twist::SharedPtr latest_twist_cmd_;
+  bool new_pose_cmd_received_{false};
+  bool new_twist_cmd_received_{false};
   
   // Add state handling members
   rclcpp::Subscription<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_sub_;
@@ -73,8 +77,9 @@ private:
   std::unique_ptr<realtime_tools::RealtimePublisher<quadruped_msgs::msg::FootForces>> foot_forces_publisher_;
   rclcpp::Publisher<quadruped_msgs::msg::FootForces>::SharedPtr foot_forces_pub_;
   
-  // Add callback function declarations
-  void cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
+  // Replace cmd_callback with separate callbacks for pose and twist
+  void pose_cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
+  void twist_cmd_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
   void state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
   void gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
 
