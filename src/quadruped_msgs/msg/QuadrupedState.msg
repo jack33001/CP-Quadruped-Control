@@ -5,6 +5,11 @@ geometry_msgs/Point p3  # Rear left foot position
 geometry_msgs/Point p4  # Rear right foot position
 geometry_msgs/Point pc  # Center of mass position
 
+geometry_msgs/Point h1  # Hip position 1
+geometry_msgs/Point h2  # Hip position 2
+geometry_msgs/Point h3  # Hip position 3
+geometry_msgs/Point h4  # Hip position 4
+
 # Joint states
 float64[] joint_positions  # Joint positions (8)
 float64[] joint_velocities # Joint velocities (8)

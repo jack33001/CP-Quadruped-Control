@@ -35,7 +35,7 @@ inline bool GaitPatternGenerator::unpack_state()
   }
 }
 
-inline bool GaitPatternGenerator::update_foot_phase()
+inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   try {
     if (!latest_state_) {
@@ -43,25 +43,93 @@ inline bool GaitPatternGenerator::update_foot_phase()
       return false;
     }
 
-    // For each foot, update phase and state based on contact
-    for (auto& foot : foot_info_) {
-        // Stance
-        if (foot.contact) {
-            foot.phase = 1.0;    // Add .0 for double
-            foot.state = 0;    // Stance state
-            foot.step_target = foot.position;  // Target is current position when in stance
+    // Get teleop commands if available
+    Eigen::Vector3d cmd_linear = Eigen::Vector3d::Zero();
+    Eigen::Vector3d cmd_angular = Eigen::Vector3d::Zero();
+    Eigen::Vector3d com_velocity = Eigen::Vector3d::Zero();
+    std::array<Eigen::Vector3d, 4> hip_positions;
 
-        } // Swing
-        else {
-            if (foot.phase == 1.0) {  // Add .0 for double
-                foot.phase = 0.0;      // Add .0 for double
-            } else {
-                foot.phase = foot.phase + 0.1;  // Add semicolon
-            }
-            foot.state = 1;    // Swing state
-        }
+    if (latest_cmd_) {
+      cmd_linear = Eigen::Vector3d(latest_cmd_->linear.x, latest_cmd_->linear.y, latest_cmd_->linear.z);
+      cmd_angular = Eigen::Vector3d(latest_cmd_->angular.x, latest_cmd_->angular.y, latest_cmd_->angular.z);
+      // Extract hip positions from state message
+      hip_positions[0] = Eigen::Vector3d(latest_state_->h1.x, latest_state_->h1.y, latest_state_->h1.z); // Front left hip
+      hip_positions[1] = Eigen::Vector3d(latest_state_->h2.x, latest_state_->h2.y, latest_state_->h2.z); // Front right hip
+      hip_positions[2] = Eigen::Vector3d(latest_state_->h3.x, latest_state_->h3.y, latest_state_->h3.z); // Rear left hip
+      hip_positions[3] = Eigen::Vector3d(latest_state_->h4.x, latest_state_->h4.y, latest_state_->h4.z); // Rear right hip
+      com_velocity = Eigen::Vector3d(
+        latest_state_->com_velocity.x,
+        latest_state_->com_velocity.y,
+        latest_state_->com_velocity.z
+      );
     }
-    
+
+    // Calculate period in seconds
+    double dt = period.seconds();
+    double current_time = time.seconds();
+
+    // Run the state machine for each state
+    for (int i = 0; i < 4; i++) {
+      auto& foot = foot_info_[i];
+
+      // Manage state transitions first
+      // Preinit -> init
+      if (foot.state == -2) {
+        foot.state = -1;
+        foot.phase = 0;
+        foot.state_start_time = current_time;
+        foot.state_end_time = current_time + foot.phase_offset;
+        foot.time_in_state = 0.0;
+      // Init -> Stance
+      } else if ((foot.state == -1) && (current_time >= foot.state_end_time)) {
+        foot.state = 0;
+        foot.phase = 0;
+        foot.state_start_time = current_time;
+        foot.state_end_time = current_time + stance_duration_;
+        foot.time_in_state = 0.0;
+      }
+      // Swing --> Stance
+      else if ((foot.state == 1) && (foot.contact || (foot.phase >= 1))){ 
+        // Reset the clock and the phase
+        foot.phase = 0;    
+        foot.state = 0;
+        foot.state_start_time = current_time;
+        foot.state_end_time = current_time + stance_duration_;
+        foot.time_in_state = 0.0;
+      }
+      // Stance --> Swing
+      else if ((foot.state == 0) && (foot.phase >= 1)){
+        // Reset the clock and the phase
+        foot.phase = 0.0;
+        foot.state = 1;
+        foot.state_start_time = current_time;
+        foot.state_start_time = current_time;
+        foot.state_end_time = current_time + swing_duration_;
+        foot.time_in_state = 0.0;
+        foot.state_end_time = current_time + swing_duration_;
+        
+        // Calculate and log each term separately
+        Eigen::Vector3d term1 = hip_positions[i]; // Current hip position (x-y)
+        Eigen::Vector3d term2 = swing_duration_/2 * cmd_linear; // Raibert hueristic
+        Eigen::Vector3d term3 = sqrt(step_height_/9.81) * (com_velocity-cmd_linear); // Step height term
+          
+        // Set the step target
+        foot.step_target = term1 + term2 + term3;
+      }
+
+      // Now run the state
+      // Stance
+      if (foot.state == 0) {
+        foot.time_in_state = current_time - foot.state_start_time;
+        foot.phase += dt / (stance_duration_);
+      } 
+      // Swing
+      else 
+      {
+        foot.time_in_state = current_time - foot.state_start_time;
+        foot.phase += dt / (swing_duration_);
+      }
+    }
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error updating foot phases: %s", e.what());
@@ -134,6 +202,12 @@ inline bool GaitPatternGenerator::support_polygon()
       support_center_ += vertex;
     }
     support_center_ /= 4.0;
+    RCLCPP_INFO(
+      get_node()->get_logger(), 
+      "Support polygon center: [%f, %f]", 
+      support_center_.x(), 
+      support_center_.y()
+    );
 
     return true;
   } catch (const std::exception& e) {
@@ -145,19 +219,15 @@ inline bool GaitPatternGenerator::support_polygon()
 inline bool GaitPatternGenerator::publish_pattern()
 {
   try {
-    // First publish foot states
-    if (rt_foot_state_pub_ && rt_foot_state_pub_->trylock()) {
-      auto& msg = rt_foot_state_pub_->msg_;
+    // Publish all data via the GaitPattern message
+    if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
+      auto& msg = rt_gait_pub_->msg_;
+
+      // Set foot states
       msg.foot1_state = foot_info_[0].state;
       msg.foot2_state = foot_info_[1].state;
       msg.foot3_state = foot_info_[2].state;
       msg.foot4_state = foot_info_[3].state;
-      rt_foot_state_pub_->unlockAndPublish();
-    }
-
-    // Then publish gait pattern
-    if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
-      auto& msg = rt_gait_pub_->msg_;
 
       // Set foot phases
       msg.foot1_phase = static_cast<float>(foot_info_[0].phase);

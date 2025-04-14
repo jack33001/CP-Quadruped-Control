@@ -14,7 +14,7 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "quadruped_msgs/msg/quadruped_state.hpp"
 #include "quadruped_msgs/msg/gait_pattern.hpp"
-#include "quadruped_msgs/msg/foot_states.hpp"
+#include "geometry_msgs/msg/twist.hpp"  // Add this for teleop commands
 #include "realtime_tools/realtime_publisher.hpp"
 
 namespace quadruped_mpc
@@ -25,7 +25,6 @@ class GaitPatternGenerator : public controller_interface::ControllerInterface
 public:
   using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
   using RTPublisher = realtime_tools::RealtimePublisher<quadruped_msgs::msg::GaitPattern>;
-  using RTFootStatePublisher = realtime_tools::RealtimePublisher<quadruped_msgs::msg::FootStates>;
 
   GaitPatternGenerator();
 
@@ -52,21 +51,36 @@ private:
   rclcpp::Subscription<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_sub_;
   std::shared_ptr<quadruped_msgs::msg::QuadrupedState> latest_state_;
   
+  // Subscriber for teleop commands
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
+  std::shared_ptr<geometry_msgs::msg::Twist> latest_cmd_;
+  
+  // Gait parameters from config
+  std::vector<int> gait_type_;
+  double stance_duration_;
+  double swing_duration_;
+  double duty_factor_;
+  double step_height_;
+  double step_length_;
+  double step_width_;
+  
   // Realtime publisher for gait patterns
   std::unique_ptr<RTPublisher> rt_gait_pub_;
   std::shared_ptr<quadruped_msgs::msg::GaitPattern> gait_msg_;
 
-  // Additional realtime publisher for foot states
-  std::unique_ptr<RTFootStatePublisher> rt_foot_state_pub_;
-  std::shared_ptr<quadruped_msgs::msg::FootStates> foot_state_msg_;
-
   // Detailed foot information
   struct FootInfo {
-    Eigen::Vector3d position;        // Position in world frame
-    Eigen::Vector3d step_target;     // Target position for next step
-    bool contact;                    // True if foot has hit the ground
-    double phase;                    // Progress through current step (0.0 to 1.0)
-    int16_t state;                   // FSM state (0 = stance, 1 = swing)
+    // Variable values
+    Eigen::Vector3d position{Eigen::Vector3d::Zero()};        // Position in world frame
+    Eigen::Vector3d step_target{Eigen::Vector3d::Zero()};     // Target position for next step
+    bool contact{false};                    // True if foot has hit the ground
+    double phase{0.0};                      // Progress through current step (0.0 to 1.0)
+    int16_t state{-2};                       // FSM state (-2 = preinit, -1 = init, 0 = stance, 1 = swing)
+    double state_start_time{0.0};           // Time when current state started
+    double state_end_time{0.0};             // Time when current state will end
+    double time_in_state{0.0};              // Time spent in current state
+    // Constant values
+    double phase_offset{0.0};               // Offset for phase calculation
   };
   std::array<FootInfo, 4> foot_info_;  // FL, FR, RL, RR
 
@@ -75,7 +89,7 @@ private:
 
   // Function declarations
   bool unpack_state();
-  bool update_foot_phase();
+  bool update_foot_phase(const rclcpp::Time & time, const rclcpp::Duration & period);
   bool support_polygon();
   bool publish_pattern();
 };
