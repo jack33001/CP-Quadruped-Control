@@ -201,13 +201,6 @@ inline bool GaitPatternGenerator::support_polygon()
     for (const auto& vertex : xi) {
       support_center_ += vertex;
     }
-    support_center_ /= 4.0;
-    RCLCPP_INFO(
-      get_node()->get_logger(), 
-      "Support polygon center: [%f, %f]", 
-      support_center_.x(), 
-      support_center_.y()
-    );
 
     return true;
   } catch (const std::exception& e) {
@@ -224,10 +217,10 @@ inline bool GaitPatternGenerator::publish_pattern()
       auto& msg = rt_gait_pub_->msg_;
 
       // Set foot states
-      msg.foot1_state = foot_info_[0].state;
-      msg.foot2_state = foot_info_[1].state;
-      msg.foot3_state = foot_info_[2].state;
-      msg.foot4_state = foot_info_[3].state;
+      msg.foot1_state = static_cast<int32_t>(foot_info_[0].state);
+      msg.foot2_state = static_cast<int32_t>(foot_info_[1].state);
+      msg.foot3_state = static_cast<int32_t>(foot_info_[2].state);
+      msg.foot4_state = static_cast<int32_t>(foot_info_[3].state);
 
       // Set foot phases
       msg.foot1_phase = static_cast<float>(foot_info_[0].phase);

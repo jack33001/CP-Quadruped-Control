@@ -14,7 +14,7 @@ float32 foot3_phase
 float32 foot4_phase
 
 # States for each foot
-float32 foot1_state
-float32 foot2_state
-float32 foot3_state
-float32 foot4_state
+int32 foot1_state
+int32 foot2_state
+int32 foot3_state
+int32 foot4_state

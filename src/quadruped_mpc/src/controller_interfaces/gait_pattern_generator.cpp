@@ -62,10 +62,10 @@ auto GaitPatternGenerator::on_init() -> CallbackReturn
     if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
       auto& msg = rt_gait_pub_->msg_;
       // Set initial states to stance
-      msg.foot1_state = 0;
-      msg.foot2_state = 0;
-      msg.foot3_state = 0;
-      msg.foot4_state = 0;
+      msg.foot1_state = static_cast<int32_t>(0);
+      msg.foot2_state = static_cast<int32_t>(0);
+      msg.foot3_state = static_cast<int32_t>(0);
+      msg.foot4_state = static_cast<int32_t>(0);
       // Initialize other fields with default values
       msg.foot1_phase = 0.0f;
       msg.foot2_phase = 0.0f;

@@ -50,6 +50,12 @@ protected:
   
   // Restore foot position storage
   std::array<double,3> p1_, p2_, p3_, p4_, com_;
+  
+  // Add foot state tracking
+  int foot1_state_{0};
+  int foot2_state_{0};
+  int foot3_state_{0};
+  int foot4_state_{0};
 
 private:
   // Replace cmd_sub_ with separate pose and twist subscriptions

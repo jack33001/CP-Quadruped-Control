@@ -64,7 +64,7 @@ inline bool BalanceController::update_state()
       current_state_[24] = latest_state_->p4.z;
     }
 
-    // Update gait pattern
+    // Update gait pattern and foot states
     {
       std::lock_guard<std::mutex> lock(gait_mutex_);
       if (!latest_gait_) {
@@ -74,9 +74,18 @@ inline bool BalanceController::update_state()
         return false;
       }
 
+      // Get foot states from gait pattern
+      foot1_state_ = latest_gait_->foot1_state;
+      foot2_state_ = latest_gait_->foot2_state;
+      foot3_state_ = latest_gait_->foot3_state;
+      foot4_state_ = latest_gait_->foot4_state;
+
       // Update contact flags in state vector
       current_state_[0] -= latest_gait_->com_position.x;
       current_state_[1] -= latest_gait_->com_position.y;
+      
+      RCLCPP_DEBUG(get_node()->get_logger(), "Foot states: %d, %d, %d, %d", 
+          foot1_state_, foot2_state_, foot3_state_, foot4_state_);
     }
 
     // Handle desired state updates from commands - updated for separate pose and twist
@@ -120,20 +129,147 @@ inline bool BalanceController::update_state()
 inline bool BalanceController::update_control()
 {
   try {
+    // Set reference trajectory for all prediction steps
     for (int stage = 0; stage <= solver_->nlp_solver_plan->N; stage++) {
       ocp_nlp_cost_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, stage, "yref", desired_state_.data());
     }
 
+    // Set state constraints
     ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "lbx", current_state_.data());
     ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "ubx", current_state_.data());
     
+    // Calculate robot mass parameters
+    double robot_mass = 15.0; // kg - replace with actual robot mass parameter
+    double gravity = 9.81; // m/s²
+    
+    // Create force constraint vectors
+    std::vector<double> min_force(12, 0.0);
+    std::vector<double> max_force(12, 0.0);
+    
+    // Default force constraints - lateral friction constraints and max vertical force
+    double friction_coef = 0.2; // friction coefficient
+    double max_vertical_force = robot_mass * gravity; // Maximum force robot can apply
+    
+    // Set foot-specific constraints based on state
+    // Foot 1 (indices 0,1,2 for x,y,z forces)
+    if (foot1_state_ == 1) { // Swing - zero force in ALL directions
+        min_force[0] = 0.0;
+        max_force[0] = 0.0;
+        min_force[1] = 0.0;
+        max_force[1] = 0.0;
+        min_force[2] = 0.0;
+        max_force[2] = 0.0;
+        RCLCPP_INFO(get_node()->get_logger(), "Foot 1 in swing - zero force in all directions");
+    } else { // Stance - apply friction cone constraints
+        min_force[0] = -max_vertical_force/4 * friction_coef;  // x min
+        max_force[0] =  max_vertical_force/4 * friction_coef;  // x max
+        min_force[1] = -max_vertical_force/4 * friction_coef;  // y min
+        max_force[1] =  max_vertical_force/4 * friction_coef;  // y max
+        min_force[2] = 0.0;                                   // z min (non-negative)
+        max_force[2] = max_vertical_force;                     // z max
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 1 in stance - applying friction cone constraint");
+    }
+    
+    // Foot 2 (indices 3,4,5 for x,y,z forces)
+    if (foot2_state_ == 1) { // Swing - zero force in ALL directions
+        min_force[3] = 0.0;
+        max_force[3] = 0.0;
+        min_force[4] = 0.0;
+        max_force[4] = 0.0;
+        min_force[5] = 0.0;
+        max_force[5] = 0.0;
+        RCLCPP_INFO(get_node()->get_logger(), "Foot 2 in swing - zero force in all directions");
+    } else { // Stance
+        min_force[3] = -max_vertical_force/4 * friction_coef;
+        max_force[3] =  max_vertical_force/4 * friction_coef;
+        min_force[4] = -max_vertical_force/4 * friction_coef;
+        max_force[4] =  max_vertical_force/4 * friction_coef;
+        min_force[5] = 0.0;
+        max_force[5] = max_vertical_force;
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 2 in stance - applying friction cone constraint");
+    }
+    
+    // Foot 3 (indices 6,7,8 for x,y,z forces)
+    if (foot3_state_ == 1) { // Swing - zero force in ALL directions
+        min_force[6] = 0.0;
+        max_force[6] = 0.0;
+        min_force[7] = 0.0;
+        max_force[7] = 0.0;
+        min_force[8] = 0.0;
+        max_force[8] = 0.0;
+        RCLCPP_INFO(get_node()->get_logger(), "Foot 3 in swing - zero force in all directions");
+    } else { // Stance
+        min_force[6] = -max_vertical_force/4 * friction_coef;
+        max_force[6] =  max_vertical_force/4 * friction_coef;
+        min_force[7] = -max_vertical_force/4 * friction_coef;
+        max_force[7] =  max_vertical_force/4 * friction_coef;
+        min_force[8] = 0.0;
+        max_force[8] = max_vertical_force;
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 3 in stance - applying friction cone constraint");
+    }
+    
+    // Foot 4 (indices 9,10,11 for x,y,z forces)
+    if (foot4_state_ == 1) { // Swing - zero force in ALL directions
+        min_force[9] = 0.0;
+        max_force[9] = 0.0;
+        min_force[10] = 0.0;
+        max_force[10] = 0.0;
+        min_force[11] = 0.0;
+        max_force[11] = 0.0;
+        RCLCPP_INFO(get_node()->get_logger(), "Foot 4 in swing - zero force in all directions");
+    } else { // Stance
+        min_force[9] = -max_vertical_force/4 * friction_coef;
+        max_force[9] =  max_vertical_force/4 * friction_coef;
+        min_force[10] = -max_vertical_force/4 * friction_coef;
+        max_force[10] =  max_vertical_force/4 * friction_coef;
+        min_force[11] = 0.0;
+        max_force[11] = max_vertical_force;
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 4 in stance - applying friction cone constraint");
+    }
+    
+    // Apply constraints to the ACADOS solver
+    ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "lbu", min_force.data());
+    ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "ubu", max_force.data());
+    
+    // Solve the optimal control problem
     int solve_status = quadruped_ode_acados_solve(solver_);
     if (solve_status != 0) {
       RCLCPP_ERROR(get_node()->get_logger(), "ACADOS solver failed with status %d", solve_status);
       return false;
     }
 
+    // Get the optimal control solution
+    // Get the optimal control solution
     ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
+    
+    // Log the optimal control solution and constraints in a tabular format for easier verification
+    RCLCPP_INFO(get_node()->get_logger(), 
+      "Foot Forces (Optimal / Min / Max):");
+    RCLCPP_INFO(get_node()->get_logger(), 
+      "Foot1 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
+      (foot1_state_ == 1) ? "SWING" : "STANCE",
+      optimal_control_[0], min_force[0], max_force[0],
+      optimal_control_[1], min_force[1], max_force[1],
+      optimal_control_[2], min_force[2], max_force[2]);
+    RCLCPP_INFO(get_node()->get_logger(), 
+      "Foot2 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
+      (foot2_state_ == 1) ? "SWING" : "STANCE",
+      optimal_control_[3], min_force[3], max_force[3],
+      optimal_control_[4], min_force[4], max_force[4],
+      optimal_control_[5], min_force[5], max_force[5]);
+    RCLCPP_INFO(get_node()->get_logger(), 
+      "Foot3 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
+      (foot3_state_ == 1) ? "SWING" : "STANCE",
+      optimal_control_[6], min_force[6], max_force[6],
+      optimal_control_[7], min_force[7], max_force[7],
+      optimal_control_[8], min_force[8], max_force[8]);
+    RCLCPP_INFO(get_node()->get_logger(), 
+      "Foot4 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
+      (foot4_state_ == 1) ? "SWING" : "STANCE",
+      optimal_control_[9], min_force[9], max_force[9],
+      optimal_control_[10], min_force[10], max_force[10],
+      optimal_control_[11], min_force[11], max_force[11]);
+
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in update_control: %s", e.what());
@@ -165,8 +301,15 @@ inline bool BalanceController::update_commands()
       msg.foot4_force.y = optimal_control_[10];
       msg.foot4_force.z = optimal_control_[11];
       
+      // Log foot forces at INFO level without throttling
+      RCLCPP_INFO(get_node()->get_logger(), 
+      "Foot1: [%f, %f, %f], Foot2: [%f, %f, %f], Foot3: [%f, %f, %f], Foot4: [%f, %f, %f]",
+      msg.foot1_force.x, msg.foot1_force.y, msg.foot1_force.z,
+      msg.foot2_force.x, msg.foot2_force.y, msg.foot2_force.z,
+      msg.foot3_force.x, msg.foot3_force.y, msg.foot3_force.z,
+      msg.foot4_force.x, msg.foot4_force.y, msg.foot4_force.z);
+      
       foot_forces_publisher_->unlockAndPublish();
-      RCLCPP_DEBUG(get_node()->get_logger(), "Published foot forces");
     }
 
     // No longer calculate or send joint torques directly

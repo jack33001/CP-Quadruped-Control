@@ -150,35 +150,16 @@ controller_interface::CallbackReturn FootController::on_deactivate(
 controller_interface::return_type FootController::update(
   const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
 {
-  // Get latest foot forces from the realtime buffer
-  auto foot_forces_msg = foot_forces_buffer_->readFromRT();
-  auto state_msg = state_buffer_->readFromRT();
-  auto gait_msg = gait_buffer_->readFromRT();
-  
-  // If we have data, update our local foot forces
-  if (foot_forces_msg) {
-    foot_forces_.foot1 = foot_forces_msg->foot1_force;
-    foot_forces_.foot2 = foot_forces_msg->foot2_force;
-    foot_forces_.foot3 = foot_forces_msg->foot3_force;
-    foot_forces_.foot4 = foot_forces_msg->foot4_force;
-    foot_forces_.has_data = true;
-    // Removed verbose logging
+  if (!read_topics(*this)) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to read topics");
+    return controller_interface::return_type::ERROR;
   }
-  
-  // Update state data - properly handle the shared pointer
-  if (state_msg) {
-    std::lock_guard<std::mutex> lock(state_mutex_);
-    latest_state_ = *state_msg;
-    // Removed verbose logging
+
+  if (!determine_forces(*this)) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to determine forces");
+    return controller_interface::return_type::ERROR;
   }
-  
-  // Update gait pattern - properly handle the shared pointer
-  if (gait_msg) {
-    std::lock_guard<std::mutex> lock(gait_mutex_);
-    latest_gait_ = *gait_msg;
-    // Removed verbose logging
-  }
-  
+
   // Execute the swing trajectory generation in its own try/catch block
   try {
     if (!swing_trajectory(*this, time)) {
@@ -188,25 +169,6 @@ controller_interface::return_type FootController::update(
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception in swing_trajectory: %s", e.what());
     // Continue execution even if swing trajectory throws an exception
-  }
-  
-  // Check if we have valid Jacobian data before applying Jacobians
-  bool have_jacobian_data = false;
-  {
-    std::lock_guard<std::mutex> lock(state_mutex_);
-    have_jacobian_data = !latest_state_.j1.empty() && 
-                         !latest_state_.j2.empty() && 
-                         !latest_state_.j3.empty() && 
-                         !latest_state_.j4.empty();
-  }
-  
-  if (!have_jacobian_data) {
-    // Log only once in a while (every 100 iterations)
-    static int missing_data_count = 0;
-    if (++missing_data_count % 100 == 0) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "Waiting for Jacobian data");
-    }
-    return controller_interface::return_type::OK;  // Return OK to avoid controller deactivation
   }
   
   // Apply Jacobians to convert foot forces to joint torques in its own try/catch block

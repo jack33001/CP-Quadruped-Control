@@ -26,6 +26,8 @@ namespace quadruped_mpc
 {
 
 // Forward declare the control law functions so they can be friends
+inline bool read_topics(class FootController& controller);
+inline bool determine_forces(class FootController& controller);
 inline bool swing_trajectory(class FootController& controller, const rclcpp::Time& current_time);
 inline bool apply_jacobians(class FootController& controller);
 
@@ -45,6 +47,8 @@ public:
   controller_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
   // Make control law functions friends so they can access private members
+  friend bool read_topics(FootController& controller);
+  friend bool determine_forces(FootController& controller);
   friend bool swing_trajectory(FootController& controller, const rclcpp::Time& current_time);
   friend bool apply_jacobians(FootController& controller);
   
@@ -61,9 +65,6 @@ private:
   
   // Control-related variables
   size_t num_joints_;
-  
-  // Helpers
-  bool reset();
   
   // Subscriber for foot force commands
   rclcpp::Subscription<quadruped_msgs::msg::FootForces>::SharedPtr foot_forces_subscription_;
@@ -97,6 +98,9 @@ private:
   // Add callback functions
   void stateCallback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
   void gaitCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
+
+  // Helper functions
+  bool reset();  // Add this declaration for the reset function
 };
 
 } // namespace quadruped_mpc
