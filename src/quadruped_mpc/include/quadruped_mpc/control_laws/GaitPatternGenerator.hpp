@@ -73,13 +73,14 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
       auto& foot = foot_info_[i];
 
       // Manage state transitions first
-      // Preinit -> init
-      if (foot.state == -2) {
+      // Preinit -> init (only if gait start command has been received)
+      if (foot.state == -2 && gait_start_received_) {
         foot.state = -1;
         foot.phase = 0;
         foot.state_start_time = current_time;
         foot.state_end_time = current_time + foot.phase_offset;
         foot.time_in_state = 0.0;
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d transitioning from preinit to init state", i+1);
       // Init -> Stance
       } else if ((foot.state == -1) && (current_time >= foot.state_end_time)) {
         foot.state = 0;
@@ -87,6 +88,7 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
         foot.state_start_time = current_time;
         foot.state_end_time = current_time + stance_duration_;
         foot.time_in_state = 0.0;
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d transitioning from init to stance state", i+1);
       }
       // Swing --> Stance
       else if ((foot.state == 1) && (foot.contact || (foot.phase >= 1))){ 
@@ -103,10 +105,8 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
         foot.phase = 0.0;
         foot.state = 1;
         foot.state_start_time = current_time;
-        foot.state_start_time = current_time;
         foot.state_end_time = current_time + swing_duration_;
         foot.time_in_state = 0.0;
-        foot.state_end_time = current_time + swing_duration_;
         
         // Calculate and log each term separately
         Eigen::Vector3d term1 = hip_positions[i]; // Current hip position (x-y)
@@ -124,11 +124,16 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
         foot.phase += dt / (stance_duration_);
       } 
       // Swing
-      else 
+      else if (foot.state == 1)
       {
         foot.time_in_state = current_time - foot.state_start_time;
         foot.phase += dt / (swing_duration_);
       }
+      // Init state - update time but don't advance phase
+      else if (foot.state == -1) {
+        foot.time_in_state = current_time - foot.state_start_time;
+      }
+      // Preinit state - don't update anything
     }
     return true;
   } catch (const std::exception& e) {
@@ -201,6 +206,11 @@ inline bool GaitPatternGenerator::support_polygon()
     for (const auto& vertex : xi) {
       support_center_ += vertex;
     }
+    support_center_ /= 4.0;  // Average the 4 vertices
+
+    // Replace INFO log with DEBUG log to avoid terminal clutter
+    RCLCPP_DEBUG(get_node()->get_logger(), "Support polygon center (COM): x=%f, y=%f", 
+                 support_center_.x(), support_center_.y());
 
     return true;
   } catch (const std::exception& e) {

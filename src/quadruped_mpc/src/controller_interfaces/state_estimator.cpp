@@ -286,6 +286,15 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
     );
 
     RCLCPP_INFO(get_node()->get_logger(), "Created odometry subscription");
+    
+    // Set up gait pattern subscription with sensor data QoS
+    gait_sub_ = get_node()->create_subscription<quadruped_msgs::msg::GaitPattern>(
+      "/quadruped/gait/gait_pattern", 
+      rclcpp::SensorDataQoS(),
+      std::bind(&StateEstimator::gaitPatternCallback, this, std::placeholders::_1)
+    );
+    
+    RCLCPP_INFO(get_node()->get_logger(), "Created gait pattern subscription");
 
     // Create a regular publisher first
     auto state_pub = get_node()->create_publisher<quadruped_msgs::msg::QuadrupedState>(
@@ -313,7 +322,11 @@ auto StateEstimator::on_deactivate(const rclcpp_lifecycle::State & /*previous_st
   return CallbackReturn::SUCCESS;
 }
 
-// Remove all the implementations that were moved to state_estimation.hpp
+void StateEstimator::gaitPatternCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg)
+{
+  // Store the gait pattern directly in the member variable rather than using a buffer
+  gait_pattern_ = *msg;
+}
 
 }  // namespace quadruped_mpc
 

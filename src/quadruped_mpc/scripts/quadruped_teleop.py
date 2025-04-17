@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Pose, Twist
+from std_msgs.msg import Bool
 from pynput import keyboard
 import math
 
@@ -12,6 +13,8 @@ class QuadrupedTeleop(Node):
         # Create publishers for separate pose and twist topics
         self.pose_publisher = self.create_publisher(Pose, '/quadruped/cmd/pose_cmd', 10)
         self.twist_publisher = self.create_publisher(Twist, '/quadruped/cmd/twist_cmd', 10)
+        # Add publisher for gait start command
+        self.gait_start_publisher = self.create_publisher(Bool, '/quadruped/cmd/gait_start', 10)
         
         # Initialize pose and twist messages
         self.pose = Pose()
@@ -42,6 +45,9 @@ class QuadrupedTeleop(Node):
         # Track shift key state
         self.shift_pressed = False
         
+        # Track gait start state
+        self.gait_started = False
+        
         # Initialize keyboard listener
         self.listener = keyboard.Listener(
             on_press=self.on_press,
@@ -55,6 +61,7 @@ class QuadrupedTeleop(Node):
         self.get_logger().info('Quadruped Teleop node started, publishing to topics:')
         self.get_logger().info('- /quadruped/cmd/pose_cmd (Pose)')
         self.get_logger().info('- /quadruped/cmd/twist_cmd (Twist)')
+        self.get_logger().info('- /quadruped/cmd/gait_start (Bool)')
         self.get_logger().info('Control Scheme:')
         self.get_logger().info('W/S: +/- X position')
         self.get_logger().info('A/D: +/- Y position')
@@ -64,6 +71,7 @@ class QuadrupedTeleop(Node):
         self.get_logger().info('Shift + W/S: +/- X velocity')
         self.get_logger().info('Shift + A/D: +/- Y velocity')
         self.get_logger().info('Shift + Q/E: +/- Yaw rate')
+        self.get_logger().info('SPACE: Start gait pattern')
         self.get_logger().info('ESC: Exit')
         
     def timer_callback(self):
@@ -75,6 +83,15 @@ class QuadrupedTeleop(Node):
         # Check if it's the shift key
         if key == keyboard.Key.shift:
             self.shift_pressed = True
+            return
+            
+        # Check if it's the space key (for starting gait)
+        if key == keyboard.Key.space:
+            self.gait_started = True
+            gait_start_msg = Bool()
+            gait_start_msg.data = True
+            self.gait_start_publisher.publish(gait_start_msg)
+            self.get_logger().info('Gait start command sent')
             return
             
         # Handle character keys

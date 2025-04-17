@@ -62,10 +62,10 @@ auto GaitPatternGenerator::on_init() -> CallbackReturn
     if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
       auto& msg = rt_gait_pub_->msg_;
       // Set initial states to stance
-      msg.foot1_state = static_cast<int32_t>(0);
-      msg.foot2_state = static_cast<int32_t>(0);
-      msg.foot3_state = static_cast<int32_t>(0);
-      msg.foot4_state = static_cast<int32_t>(0);
+      msg.foot1_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      msg.foot2_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      msg.foot3_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      msg.foot4_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
       // Initialize other fields with default values
       msg.foot1_phase = 0.0f;
       msg.foot2_phase = 0.0f;
@@ -133,6 +133,8 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
     for (int i = 0; i < 4; i++) {
       // Set up the phase offset per-foot
       foot_info_[i].phase_offset = static_cast<double>(gait_type_[i]-1) * (total_cycle_time_)/step_count_;
+      // Start all feet in the -2 (preinit) state
+      foot_info_[i].state = -2;
     }
     
     RCLCPP_INFO(node->get_logger(), "Loaded gait parameters:");
@@ -157,12 +159,24 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
 
     // Fix the lambda capture to include the node
     cmd_vel_sub_ = node->create_subscription<geometry_msgs::msg::Twist>(
-      "/quadruped/cmd/single_state",
+      "/quadruped/cmd/twist_cmd",
       rclcpp::QoS(1).reliable(),
       [this, node](const geometry_msgs::msg::Twist::SharedPtr msg) {
         latest_cmd_ = msg;
         RCLCPP_DEBUG(node->get_logger(), "Received teleop command: linear=(%f, %f, %f), angular=(%f, %f, %f)",
           msg->linear.x, msg->linear.y, msg->linear.z, msg->angular.x, msg->angular.y, msg->angular.z);
+      }
+    );
+
+    // Add subscription for gait start command
+    gait_start_sub_ = node->create_subscription<std_msgs::msg::Bool>(
+      "/quadruped/cmd/gait_start",
+      rclcpp::QoS(1).reliable(),
+      [this, node](const std_msgs::msg::Bool::SharedPtr msg) {
+        if (msg->data) {
+          gait_start_received_ = true;
+          RCLCPP_INFO(node->get_logger(), "Received gait start command");
+        }
       }
     );
 
@@ -175,6 +189,7 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
     gait_msg_ = std::make_shared<quadruped_msgs::msg::GaitPattern>();
 
     RCLCPP_INFO(node->get_logger(), "Gait pattern generator configured successfully");
+    RCLCPP_INFO(node->get_logger(), "Waiting for gait start command (SPACE key) to begin initialization sequence");
     return CallbackReturn::SUCCESS;
 
   } catch (const std::exception & e) {

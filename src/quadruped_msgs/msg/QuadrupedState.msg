@@ -5,6 +5,12 @@ geometry_msgs/Point p3  # Rear left foot position
 geometry_msgs/Point p4  # Rear right foot position
 geometry_msgs/Point pc  # Center of mass position
 
+# Foot velocities
+geometry_msgs/Vector3 v1  # Front left foot velocity
+geometry_msgs/Vector3 v2  # Front right foot velocity
+geometry_msgs/Vector3 v3  # Rear left foot velocity
+geometry_msgs/Vector3 v4  # Rear right foot velocity
+
 geometry_msgs/Point h1  # Hip position 1
 geometry_msgs/Point h2  # Hip position 2
 geometry_msgs/Point h3  # Hip position 3

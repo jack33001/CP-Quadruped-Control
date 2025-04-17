@@ -15,6 +15,7 @@
 #include "quadruped_msgs/msg/quadruped_state.hpp"
 #include "quadruped_msgs/msg/gait_pattern.hpp"
 #include "geometry_msgs/msg/twist.hpp"  // Add this for teleop commands
+#include "std_msgs/msg/bool.hpp"  // Add this for gait start command
 #include "realtime_tools/realtime_publisher.hpp"
 
 namespace quadruped_mpc
@@ -54,6 +55,10 @@ private:
   // Subscriber for teleop commands
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
   std::shared_ptr<geometry_msgs::msg::Twist> latest_cmd_;
+  
+  // Subscriber for gait start command
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr gait_start_sub_;
+  std::atomic<bool> gait_start_received_{false};
   
   // Gait parameters from config
   std::vector<int> gait_type_;

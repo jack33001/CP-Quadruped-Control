@@ -152,13 +152,13 @@ inline bool BalanceController::update_control()
     
     // Set foot-specific constraints based on state
     // Foot 1 (indices 0,1,2 for x,y,z forces)
-    if (foot1_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[0] = 0.0;
-        max_force[0] = 0.0;
-        min_force[1] = 0.0;
-        max_force[1] = 0.0;
-        min_force[2] = 0.0;
-        max_force[2] = 0.0;
+    if (foot1_state_ == 1) { // Swing - zero force in ALL directions (very small value to make solution feasible)
+        min_force[0] = 0.01;
+        max_force[0] = 0.01;
+        min_force[1] = 0.01;
+        max_force[1] = 0.01;
+        min_force[2] = 0.01;
+        max_force[2] = 0.01;
         RCLCPP_INFO(get_node()->get_logger(), "Foot 1 in swing - zero force in all directions");
     } else { // Stance - apply friction cone constraints
         min_force[0] = -max_vertical_force/4 * friction_coef;  // x min
@@ -171,13 +171,13 @@ inline bool BalanceController::update_control()
     }
     
     // Foot 2 (indices 3,4,5 for x,y,z forces)
-    if (foot2_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[3] = 0.0;
-        max_force[3] = 0.0;
-        min_force[4] = 0.0;
-        max_force[4] = 0.0;
-        min_force[5] = 0.0;
-        max_force[5] = 0.0;
+    if (foot2_state_ == 1) { // Swing - zero force in ALL directions (very small value to make solution feasible)
+        min_force[3] = 0.01;
+        max_force[3] = 0.011;
+        min_force[4] = 0.01;
+        max_force[4] = 0.01;
+        min_force[5] = 0.01;
+        max_force[5] = 0.01;
         RCLCPP_INFO(get_node()->get_logger(), "Foot 2 in swing - zero force in all directions");
     } else { // Stance
         min_force[3] = -max_vertical_force/4 * friction_coef;
@@ -190,13 +190,13 @@ inline bool BalanceController::update_control()
     }
     
     // Foot 3 (indices 6,7,8 for x,y,z forces)
-    if (foot3_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[6] = 0.0;
-        max_force[6] = 0.0;
-        min_force[7] = 0.0;
-        max_force[7] = 0.0;
-        min_force[8] = 0.0;
-        max_force[8] = 0.0;
+    if (foot3_state_ == 1) { // Swing - zero force in ALL directions (very small value to make solution feasible)
+        min_force[6] = 0.01;
+        max_force[6] = 0.01;
+        min_force[7] = 0.01;
+        max_force[7] = 0.01;
+        min_force[8] = 0.01;
+        max_force[8] = 0.01;
         RCLCPP_INFO(get_node()->get_logger(), "Foot 3 in swing - zero force in all directions");
     } else { // Stance
         min_force[6] = -max_vertical_force/4 * friction_coef;
@@ -209,13 +209,13 @@ inline bool BalanceController::update_control()
     }
     
     // Foot 4 (indices 9,10,11 for x,y,z forces)
-    if (foot4_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[9] = 0.0;
-        max_force[9] = 0.0;
-        min_force[10] = 0.0;
-        max_force[10] = 0.0;
-        min_force[11] = 0.0;
-        max_force[11] = 0.0;
+    if (foot4_state_ == 1) { // Swing - zero force in ALL directions (very small value to make solution feasible)
+        min_force[9] = 0.01;
+        max_force[9] = 0.01;
+        min_force[10] = 0.01;
+        max_force[10] = 0.01;
+        min_force[11] = 0.01;
+        max_force[11] = 0.01;
         RCLCPP_INFO(get_node()->get_logger(), "Foot 4 in swing - zero force in all directions");
     } else { // Stance
         min_force[9] = -max_vertical_force/4 * friction_coef;

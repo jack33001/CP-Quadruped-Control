@@ -16,6 +16,7 @@
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "rosgraph_msgs/msg/clock.hpp"  // Add Clock message include
 #include <nav_msgs/msg/odometry.hpp>
+#include "quadruped_msgs/msg/gait_pattern.hpp"  // Add gait pattern message include
 
 // Project headers
 
@@ -145,8 +146,14 @@ private:
   rclcpp::Clock::SharedPtr sim_clock_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   nav_msgs::msg::Odometry::SharedPtr latest_odom_;
+  
+  // Correct declaration - no buffer, just subscription and message variable
+  rclcpp::Subscription<quadruped_msgs::msg::GaitPattern>::SharedPtr gait_sub_;
+  quadruped_msgs::msg::GaitPattern gait_pattern_;
+  void gaitPatternCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
+  
   // Replace regular publisher with realtime publisher
-  std::unique_ptr<RTPublisher> rt_state_pub_;  // Now RTPublisher is defined before use
+  std::unique_ptr<RTPublisher> rt_state_pub_;
   std::shared_ptr<quadruped_msgs::msg::QuadrupedState> state_msg_;
   // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
