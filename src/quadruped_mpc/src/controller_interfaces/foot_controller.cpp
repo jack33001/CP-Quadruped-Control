@@ -215,13 +215,6 @@ namespace quadruped_mpc
   controller_interface::return_type FootController::update(
       const rclcpp::Time &time, const rclcpp::Duration &period)
   {
-    static int update_counter = 0;
-    bool verbose_debug = ((update_counter++ % 100) == 0);
-    
-    if (verbose_debug) {
-      RCLCPP_INFO(get_node()->get_logger(), "FootController::update() called - iteration %d", update_counter);
-    }
-
     if (!read_topics(*this))
     {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to read topics");
@@ -238,13 +231,6 @@ namespace quadruped_mpc
     {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to determine forces");
       return controller_interface::return_type::ERROR;
-    }
-
-    // Log at the same frequency as balance_controller (every 10 iterations)
-    static int log_counter = 0;
-    if ((log_counter++ % 10) == 0) {
-      RCLCPP_INFO(get_node()->get_logger(), 
-                "FOOT_CONTROLLER: Applying Jacobians for leg forces");
     }
     
     if (!apply_jacobians(*this))

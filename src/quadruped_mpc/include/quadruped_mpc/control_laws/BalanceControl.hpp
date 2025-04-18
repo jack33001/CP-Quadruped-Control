@@ -159,7 +159,7 @@ inline bool BalanceController::update_control()
         max_force[1] = 0.01;
         min_force[2] = 0.01;
         max_force[2] = 0.01;
-        RCLCPP_INFO(get_node()->get_logger(), "Foot 1 in swing - zero force in all directions");
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 1 in swing - zero force in all directions");
     } else { // Stance - apply friction cone constraints
         min_force[0] = -max_vertical_force/4 * friction_coef;  // x min
         max_force[0] =  max_vertical_force/4 * friction_coef;  // x max
@@ -178,7 +178,7 @@ inline bool BalanceController::update_control()
         max_force[4] = 0.01;
         min_force[5] = 0.01;
         max_force[5] = 0.01;
-        RCLCPP_INFO(get_node()->get_logger(), "Foot 2 in swing - zero force in all directions");
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 2 in swing - zero force in all directions");
     } else { // Stance
         min_force[3] = -max_vertical_force/4 * friction_coef;
         max_force[3] =  max_vertical_force/4 * friction_coef;
@@ -197,7 +197,7 @@ inline bool BalanceController::update_control()
         max_force[7] = 0.01;
         min_force[8] = 0.01;
         max_force[8] = 0.01;
-        RCLCPP_INFO(get_node()->get_logger(), "Foot 3 in swing - zero force in all directions");
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 3 in swing - zero force in all directions");
     } else { // Stance
         min_force[6] = -max_vertical_force/4 * friction_coef;
         max_force[6] =  max_vertical_force/4 * friction_coef;
@@ -216,7 +216,7 @@ inline bool BalanceController::update_control()
         max_force[10] = 0.01;
         min_force[11] = 0.01;
         max_force[11] = 0.01;
-        RCLCPP_INFO(get_node()->get_logger(), "Foot 4 in swing - zero force in all directions");
+        RCLCPP_DEBUG(get_node()->get_logger(), "Foot 4 in swing - zero force in all directions");
     } else { // Stance
         min_force[9] = -max_vertical_force/4 * friction_coef;
         max_force[9] =  max_vertical_force/4 * friction_coef;
@@ -239,31 +239,30 @@ inline bool BalanceController::update_control()
     }
 
     // Get the optimal control solution
-    // Get the optimal control solution
     ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
     
-    // Log the optimal control solution and constraints in a tabular format for easier verification
-    RCLCPP_INFO(get_node()->get_logger(), 
+    // Changed to DEBUG level to reduce terminal clutter
+    RCLCPP_DEBUG(get_node()->get_logger(), 
       "Foot Forces (Optimal / Min / Max):");
-    RCLCPP_INFO(get_node()->get_logger(), 
+    RCLCPP_DEBUG(get_node()->get_logger(), 
       "Foot1 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
       (foot1_state_ == 1) ? "SWING" : "STANCE",
       optimal_control_[0], min_force[0], max_force[0],
       optimal_control_[1], min_force[1], max_force[1],
       optimal_control_[2], min_force[2], max_force[2]);
-    RCLCPP_INFO(get_node()->get_logger(), 
+    RCLCPP_DEBUG(get_node()->get_logger(), 
       "Foot2 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
       (foot2_state_ == 1) ? "SWING" : "STANCE",
       optimal_control_[3], min_force[3], max_force[3],
       optimal_control_[4], min_force[4], max_force[4],
       optimal_control_[5], min_force[5], max_force[5]);
-    RCLCPP_INFO(get_node()->get_logger(), 
+    RCLCPP_DEBUG(get_node()->get_logger(), 
       "Foot3 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
       (foot3_state_ == 1) ? "SWING" : "STANCE",
       optimal_control_[6], min_force[6], max_force[6],
       optimal_control_[7], min_force[7], max_force[7],
       optimal_control_[8], min_force[8], max_force[8]);
-    RCLCPP_INFO(get_node()->get_logger(), 
+    RCLCPP_DEBUG(get_node()->get_logger(), 
       "Foot4 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
       (foot4_state_ == 1) ? "SWING" : "STANCE",
       optimal_control_[9], min_force[9], max_force[9],
@@ -301,8 +300,8 @@ inline bool BalanceController::update_commands()
       msg.foot4_force.y = optimal_control_[10];
       msg.foot4_force.z = optimal_control_[11];
       
-      // Log foot forces at INFO level without throttling
-      RCLCPP_INFO(get_node()->get_logger(), 
+      // Changed to DEBUG level to reduce terminal clutter
+      RCLCPP_DEBUG(get_node()->get_logger(), 
       "Foot1: [%f, %f, %f], Foot2: [%f, %f, %f], Foot3: [%f, %f, %f], Foot4: [%f, %f, %f]",
       msg.foot1_force.x, msg.foot1_force.y, msg.foot1_force.z,
       msg.foot2_force.x, msg.foot2_force.y, msg.foot2_force.z,
@@ -312,8 +311,6 @@ inline bool BalanceController::update_commands()
       foot_forces_publisher_->unlockAndPublish();
     }
 
-    // No longer calculate or send joint torques directly
-    // The foot_controller will do this based on the published foot forces
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in update_commands: %s", e.what());

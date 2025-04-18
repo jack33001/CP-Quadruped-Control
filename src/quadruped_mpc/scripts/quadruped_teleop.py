@@ -22,7 +22,7 @@ class QuadrupedTeleop(Node):
         
         # Initialize pose with position [0, 0, 0.2] and quaternion [1, 0, 0, 0] (identity)
         self.pose.position.x = 0.0
-        self.pose.position.y = 0.0
+        self.pose.position.y = 0.02
         self.pose.position.z = 0.1  # Set initial height to 0.2m
         self.pose.orientation.w = 1.0
         self.pose.orientation.x = 0.0

@@ -97,6 +97,7 @@ protected:
   
   // Frame IDs for feet and body
   std::array<pinocchio::FrameIndex, 4> foot_frame_ids_;
+  std::array<pinocchio::FrameIndex, 4> hip_frame_ids_;  // Add this properly typed
   pinocchio::FrameIndex body_frame_id_;
   
   // Robot description subscription
@@ -126,6 +127,9 @@ protected:
     double effort;
   };
   std::vector<JointState> joint_states_;
+
+  // Add this declaration for setup_frames()
+  bool setup_frames();
 
   // These function declarations stay here but implementations move to state_estimation.hpp
   bool read_state_interfaces();

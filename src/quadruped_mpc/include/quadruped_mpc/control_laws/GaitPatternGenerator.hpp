@@ -93,7 +93,7 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
       // Swing --> Stance
       else if ((foot.state == 1) && (foot.contact || (foot.phase >= 1))){ 
         // Reset the clock and the phase
-        foot.phase = 0;    
+        foot.phase = -dt / (stance_duration_); // pad the phase by one timestep, so after the fsm runs the phase starts at 0.0
         foot.state = 0;
         foot.state_start_time = current_time;
         foot.state_end_time = current_time + stance_duration_;
@@ -102,7 +102,7 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
       // Stance --> Swing
       else if ((foot.state == 0) && (foot.phase >= 1)){
         // Reset the clock and the phase
-        foot.phase = 0.0;
+        foot.phase = -dt / (swing_duration_); // pad the phase by one timestep, so after the fsm runs the phase starts at 0.0
         foot.state = 1;
         foot.state_start_time = current_time;
         foot.state_end_time = current_time + swing_duration_;

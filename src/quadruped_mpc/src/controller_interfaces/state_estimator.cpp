@@ -250,8 +250,13 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       current_velocities_.setZero();
 
       // Get foot frame IDs
-      const std::array<std::string, 6> foot_frame_names = {
+      const std::array<std::string, 4> foot_frame_names = {
         "fl_foot", "fr_foot", "rl_foot", "rr_foot"
+      };
+      
+      // Get hip frame IDs
+      const std::array<std::string, 4> hip_frame_names = {
+        "fl_hip", "fr_hip", "rl_hip", "rr_hip"
       };
       
       for (size_t i = 0; i < 4; ++i) {
@@ -260,14 +265,21 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
           RCLCPP_ERROR(get_node()->get_logger(), "Frame %s not found in model", foot_frame_names[i].c_str());
           return CallbackReturn::ERROR;
         }
+        
+        hip_frame_ids_[i] = model_.getFrameId(hip_frame_names[i]);
+        if (hip_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
+          RCLCPP_ERROR(get_node()->get_logger(), "Frame %s not found in model", hip_frame_names[i].c_str());
+          return CallbackReturn::ERROR;
+        }
       }
+      
+      // Log the frame IDs for debugging
+      RCLCPP_INFO(get_node()->get_logger(), 
+                "Frame IDs loaded - Feet: [%d, %d, %d, %d], Hips: [%d, %d, %d, %d]",
+                foot_frame_ids_[0], foot_frame_ids_[1], foot_frame_ids_[2], foot_frame_ids_[3],
+                hip_frame_ids_[0], hip_frame_ids_[1], hip_frame_ids_[2], hip_frame_ids_[3]);
 
-      // Get body frame ID
-      body_frame_id_ = model_.getFrameId("Body");
-      if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-        RCLCPP_ERROR(get_node()->get_logger(), "Frame 'Body' not found in model");
-        return CallbackReturn::ERROR;
-      }
+      RCLCPP_INFO(get_node()->get_logger(), "Frame IDs loaded successfully");
 
       RCLCPP_INFO(get_node()->get_logger(), "State estimator configured successfully");
 

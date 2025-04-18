@@ -29,16 +29,6 @@ namespace quadruped_mpc
     return ss.str();
   }
 
-  // Helper to log 3x2 matrix values
-  inline std::string mat32_to_string(const Eigen::Matrix<double, 3, 2> &mat)
-  {
-    std::stringstream ss;
-    ss << "[[" << mat(0, 0) << ", " << mat(0, 1) << "], ";
-    ss << "[" << mat(1, 0) << ", " << mat(1, 1) << "], ";
-    ss << "[" << mat(2, 0) << ", " << mat(2, 1) << "]]";
-    return ss.str();
-  }
-
   // Helper to log vector2d values
   inline std::string vec2_to_string(const Eigen::Vector2d &vec)
   {
@@ -200,46 +190,6 @@ namespace quadruped_mpc
         }
       }
 
-      static int force_log_counter = 0;
-      if ((force_log_counter++ % 500) == 0)
-      {
-        std::stringstream ss;
-        ss << "\n=== FOOT CONTROLLER FORCE DETERMINATION ===";
-        ss << "\nGait States: F1=" << controller.latest_gait_.foot1_state 
-           << " (phase " << controller.latest_gait_.foot1_phase << ")" 
-           << ", F2=" << controller.latest_gait_.foot2_state
-           << " (phase " << controller.latest_gait_.foot2_phase << ")" 
-           << ", F3=" << controller.latest_gait_.foot3_state
-           << " (phase " << controller.latest_gait_.foot3_phase << ")" 
-           << ", F4=" << controller.latest_gait_.foot4_state
-           << " (phase " << controller.latest_gait_.foot4_phase << ")";
-        
-        ss << "\nBalance Controller Forces:";
-        if (foot_forces_msg) {
-          ss << "\n  Foot 1 (FL): [" << foot_forces_msg->foot1_force.x << ", " << foot_forces_msg->foot1_force.y << ", " << foot_forces_msg->foot1_force.z << "]";
-          ss << "\n  Foot 2 (FR): [" << foot_forces_msg->foot2_force.x << ", " << foot_forces_msg->foot2_force.y << ", " << foot_forces_msg->foot2_force.z << "]";
-          ss << "\n  Foot 3 (RL): [" << foot_forces_msg->foot3_force.x << ", " << foot_forces_msg->foot3_force.y << ", " << foot_forces_msg->foot3_force.z << "]";
-          ss << "\n  Foot 4 (RR): [" << foot_forces_msg->foot4_force.x << ", " << foot_forces_msg->foot4_force.y << ", " << foot_forces_msg->foot4_force.z << "]";
-        } else {
-          ss << "\n  No balance controller forces available";
-        }
-        
-        ss << "\nSwing Trajectory Forces (active: " << (controller.swing_forces_.has_data ? "YES" : "NO") << "):";
-        ss << "\n  Foot 1 (FL): [" << controller.swing_forces_.foot1.x << ", " << controller.swing_forces_.foot1.y << ", " << controller.swing_forces_.foot1.z << "]";
-        ss << "\n  Foot 2 (FR): [" << controller.swing_forces_.foot2.x << ", " << controller.swing_forces_.foot2.y << ", " << controller.swing_forces_.foot2.z << "]";
-        ss << "\n  Foot 3 (RL): [" << controller.swing_forces_.foot3.x << ", " << controller.swing_forces_.foot3.y << ", " << controller.swing_forces_.foot3.z << "]";
-        ss << "\n  Foot 4 (RR): [" << controller.swing_forces_.foot4.x << ", " << controller.swing_forces_.foot4.y << ", " << controller.swing_forces_.foot4.z << "]";
-        
-        ss << "\nFinal Forces (after gait selection):";
-        ss << "\n  Foot 1 (FL): [" << controller.foot_forces_.foot1.x << ", " << controller.foot_forces_.foot1.y << ", " << controller.foot_forces_.foot1.z << "]";
-        ss << "\n  Foot 2 (FR): [" << controller.foot_forces_.foot2.x << ", " << controller.foot_forces_.foot2.y << ", " << controller.foot_forces_.foot2.z << "]";
-        ss << "\n  Foot 3 (RL): [" << controller.foot_forces_.foot3.x << ", " << controller.foot_forces_.foot3.y << ", " << controller.foot_forces_.foot3.z << "]";
-        ss << "\n  Foot 4 (RR): [" << controller.foot_forces_.foot4.x << ", " << controller.foot_forces_.foot4.y << ", " << controller.foot_forces_.foot4.z << "]";
-        ss << "\n===========================================\n";
-        
-        RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s", ss.str().c_str());
-      }
-
       return true;
     }
     catch (const std::exception &e)
@@ -257,18 +207,6 @@ namespace quadruped_mpc
       std::lock_guard<std::mutex> gait_lock(controller.gait_mutex_);
       std::lock_guard<std::mutex> state_lock(controller.state_mutex_);
 
-      // Check if we have valid gait data
-      bool have_gait_data = controller.latest_gait_.foot1_state != 0 &&
-                            controller.latest_gait_.foot2_state != 0 &&
-                            controller.latest_gait_.foot3_state != 0 &&
-                            controller.latest_gait_.foot4_state != 0;
-
-      if (!have_gait_data)
-      {
-        // No valid gait data, nothing to do
-        return true;
-      }
-
       // Default step height (this could be a parameter)
       const double step_height = 0.05; // 5cm step height
 
@@ -281,6 +219,8 @@ namespace quadruped_mpc
       // Foot 1 (Front left)
       if (controller.latest_gait_.foot1_state == 1)
       {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+                      "Entered foot 1 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot1_phase == 0.0)
         {
@@ -314,6 +254,26 @@ namespace quadruped_mpc
             controller.foot_trajectories_.foot1[i].y = trajectory[i][1];
             controller.foot_trajectories_.foot1[i].z = trajectory[i][2];
           }
+
+          // Log the entire trajectory at info level (unthrottled)
+          std::stringstream traj_ss;
+          traj_ss << "Foot 1 trajectory points:";
+          traj_ss << "\n  Hip Position: [" 
+                 << controller.latest_state_.h1.x << ", "
+                 << controller.latest_state_.h1.y << ", "
+                 << controller.latest_state_.h1.z << "]";
+          traj_ss << "\n  Control Points:";
+          traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
+          traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
+          traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
+          traj_ss << "\n  Trajectory:";
+          for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
+            traj_ss << "\n    [" << i << "]: [" 
+                   << controller.foot_trajectories_.foot1[i].x << ", "
+                   << controller.foot_trajectories_.foot1[i].y << ", "
+                   << controller.foot_trajectories_.foot1[i].z << "]";
+          }
+          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
                       "Generated trajectory for foot1: from %s through %s to %s",
@@ -358,22 +318,20 @@ namespace quadruped_mpc
         controller.swing_forces_.foot1.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        static int debug_counter1 = 0;
-        if ((debug_counter1++ % 200) == 0)
-        {
-          RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                       "Foot 1 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                       phase, trajectory_idx,
-                       vec3_to_string(target_pos).c_str(),
-                       vec3_to_string(current_pos).c_str(),
-                       vec3_to_string(pos_error).c_str(),
-                       vec3_to_string(pd_force).c_str());
-        }
+        RCLCPP_INFO(controller.get_node()->get_logger(),
+                      "Foot 1 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
+                      phase, trajectory_idx,
+                      vec3_to_string(target_pos).c_str(),
+                      vec3_to_string(current_pos).c_str(),
+                      vec3_to_string(pos_error).c_str(),
+                      vec3_to_string(pd_force).c_str());
       }
 
       // Foot 2 (Front right)
       if (controller.latest_gait_.foot2_state == 1)
       {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+                      "Entered foot 1 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot2_phase == 0.0)
         {
@@ -407,6 +365,26 @@ namespace quadruped_mpc
             controller.foot_trajectories_.foot2[i].y = trajectory[i][1];
             controller.foot_trajectories_.foot2[i].z = trajectory[i][2];
           }
+          
+          // Log the entire trajectory at info level (unthrottled)
+          std::stringstream traj_ss;
+          traj_ss << "Foot 2 trajectory points:";
+          traj_ss << "\n  Hip Position: [" 
+                 << controller.latest_state_.h2.x << ", "
+                 << controller.latest_state_.h2.y << ", "
+                 << controller.latest_state_.h2.z << "]";
+          traj_ss << "\n  Control Points:";
+          traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
+          traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
+          traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
+          traj_ss << "\n  Trajectory:";
+          for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
+            traj_ss << "\n    [" << i << "]: [" 
+                   << controller.foot_trajectories_.foot2[i].x << ", "
+                   << controller.foot_trajectories_.foot2[i].y << ", "
+                   << controller.foot_trajectories_.foot2[i].z << "]";
+          }
+          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
                       "Generated trajectory for foot2: from %s through %s to %s",
@@ -451,22 +429,20 @@ namespace quadruped_mpc
         controller.swing_forces_.foot2.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        static int debug_counter2 = 0;
-        if ((debug_counter2++ % 200) == 0)
-        {
-          RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                       "Foot 2 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                       phase, trajectory_idx,
-                       vec3_to_string(target_pos).c_str(),
-                       vec3_to_string(current_pos).c_str(),
-                       vec3_to_string(pos_error).c_str(),
-                       vec3_to_string(pd_force).c_str());
-        }
+        RCLCPP_INFO(controller.get_node()->get_logger(),
+                      "Foot 2 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
+                      phase, trajectory_idx,
+                      vec3_to_string(target_pos).c_str(),
+                      vec3_to_string(current_pos).c_str(),
+                      vec3_to_string(pos_error).c_str(),
+                      vec3_to_string(pd_force).c_str());
       }
 
       // Foot 3 (Rear left)
       if (controller.latest_gait_.foot3_state == 1)
       {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+                      "Entered foot 1 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot3_phase == 0.0)
         {
@@ -500,6 +476,26 @@ namespace quadruped_mpc
             controller.foot_trajectories_.foot3[i].y = trajectory[i][1];
             controller.foot_trajectories_.foot3[i].z = trajectory[i][2];
           }
+          
+          // Log the entire trajectory at info level (unthrottled)
+          std::stringstream traj_ss;
+          traj_ss << "Foot 3 trajectory points:";
+          traj_ss << "\n  Hip Position: [" 
+                 << controller.latest_state_.h3.x << ", "
+                 << controller.latest_state_.h3.y << ", "
+                 << controller.latest_state_.h3.z << "]";
+          traj_ss << "\n  Control Points:";
+          traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
+          traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
+          traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
+          traj_ss << "\n  Trajectory:";
+          for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
+            traj_ss << "\n    [" << i << "]: [" 
+                   << controller.foot_trajectories_.foot3[i].x << ", "
+                   << controller.foot_trajectories_.foot3[i].y << ", "
+                   << controller.foot_trajectories_.foot3[i].z << "]";
+          }
+          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
                       "Generated trajectory for foot3: from %s through %s to %s",
@@ -544,22 +540,20 @@ namespace quadruped_mpc
         controller.swing_forces_.foot3.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        static int debug_counter3 = 0;
-        if ((debug_counter3++ % 200) == 0)
-        {
-          RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                       "Foot 3 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                       phase, trajectory_idx,
-                       vec3_to_string(target_pos).c_str(),
-                       vec3_to_string(current_pos).c_str(),
-                       vec3_to_string(pos_error).c_str(),
-                       vec3_to_string(pd_force).c_str());
-        }
+        RCLCPP_INFO(controller.get_node()->get_logger(),
+                      "Foot 3 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
+                      phase, trajectory_idx,
+                      vec3_to_string(target_pos).c_str(),
+                      vec3_to_string(current_pos).c_str(),
+                      vec3_to_string(pos_error).c_str(),
+                      vec3_to_string(pd_force).c_str());
       }
 
       // Foot 4 (Rear right)
       if (controller.latest_gait_.foot4_state == 1)
       {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+                      "Entered foot 1 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot4_phase == 0.0)
         {
@@ -593,6 +587,26 @@ namespace quadruped_mpc
             controller.foot_trajectories_.foot4[i].y = trajectory[i][1];
             controller.foot_trajectories_.foot4[i].z = trajectory[i][2];
           }
+          
+          // Log the entire trajectory at info level (unthrottled)
+          std::stringstream traj_ss;
+          traj_ss << "Foot 4 trajectory points:";
+          traj_ss << "\n  Hip Position: [" 
+                 << controller.latest_state_.h4.x << ", "
+                 << controller.latest_state_.h4.y << ", "
+                 << controller.latest_state_.h4.z << "]";
+          traj_ss << "\n  Control Points:";
+          traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
+          traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
+          traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
+          traj_ss << "\n  Trajectory:";
+          for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
+            traj_ss << "\n    [" << i << "]: [" 
+                   << controller.foot_trajectories_.foot4[i].x << ", "
+                   << controller.foot_trajectories_.foot4[i].y << ", "
+                   << controller.foot_trajectories_.foot4[i].z << "]";
+          }
+          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
                       "Generated trajectory for foot4: from %s through %s to %s",
@@ -637,17 +651,13 @@ namespace quadruped_mpc
         controller.swing_forces_.foot4.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        static int debug_counter4 = 0;
-        if ((debug_counter4++ % 200) == 0)
-        {
-          RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                       "Foot 4 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                       phase, trajectory_idx,
-                       vec3_to_string(target_pos).c_str(),
-                       vec3_to_string(current_pos).c_str(),
-                       vec3_to_string(pos_error).c_str(),
-                       vec3_to_string(pd_force).c_str());
-        }
+        RCLCPP_INFO(controller.get_node()->get_logger(),
+                      "Foot 4 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
+                      phase, trajectory_idx,
+                      vec3_to_string(target_pos).c_str(),
+                      vec3_to_string(current_pos).c_str(),
+                      vec3_to_string(pos_error).c_str(),
+                      vec3_to_string(pd_force).c_str());
       }
 
       // Periodic overall debug
@@ -818,6 +828,37 @@ namespace quadruped_mpc
       Eigen::Vector2d torque2 = J2.transpose() * -force2;
       Eigen::Vector2d torque3 = J3.transpose() * -force3;
       Eigen::Vector2d torque4 = J4.transpose() * -force4;
+
+      // Check if any torque exceeds the limit (8 Nm)
+      const double torque_limit = 8.0;  // 8 Newton-meters
+      
+      // Check and warn for torque1
+      if (std::abs(torque1(0)) >= torque_limit || std::abs(torque1(1)) >= torque_limit) {
+        RCLCPP_WARN(controller.get_node()->get_logger(), 
+                   "FL torque exceeds limit: [%.2f, %.2f] Nm (limit: %.2f Nm)",
+                   torque1(0), torque1(1), torque_limit);
+      }
+      
+      // Check and warn for torque2
+      if (std::abs(torque2(0)) >= torque_limit || std::abs(torque2(1)) >= torque_limit) {
+        RCLCPP_WARN(controller.get_node()->get_logger(), 
+                   "FR torque exceeds limit: [%.2f, %.2f] Nm (limit: %.2f Nm)",
+                   torque2(0), torque2(1), torque_limit);
+      }
+      
+      // Check and warn for torque3
+      if (std::abs(torque3(0)) >= torque_limit || std::abs(torque3(1)) >= torque_limit) {
+        RCLCPP_WARN(controller.get_node()->get_logger(), 
+                   "RL torque exceeds limit: [%.2f, %.2f] Nm (limit: %.2f Nm)",
+                   torque3(0), torque3(1), torque_limit);
+      }
+      
+      // Check and warn for torque4
+      if (std::abs(torque4(0)) >= torque_limit || std::abs(torque4(1)) >= torque_limit) {
+        RCLCPP_WARN(controller.get_node()->get_logger(), 
+                   "RR torque exceeds limit: [%.2f, %.2f] Nm (limit: %.2f Nm)",
+                   torque4(0), torque4(1), torque_limit);
+      }
 
       // Log the computed torques to verify correct calculation
       if (detailed_log) {
