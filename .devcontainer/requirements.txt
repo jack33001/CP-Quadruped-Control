@@ -1,0 +1,2 @@
+numpy
+# adafruit-circuitpython-bno08x

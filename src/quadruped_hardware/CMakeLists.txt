@@ -12,7 +12,20 @@ find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
+
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/quadruped_hardware")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/sh2")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 add_library(${PROJECT_NAME} SHARED
+
+  include/sh2/sh2.c
+  include/sh2/sh2_util.c
+  include/sh2/sh2_SensorValue.c
+  include/sh2/shtp.c
+  include/sh2/euler.c
+  
   src/ROS2_CAN_Motor.cpp
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
@@ -20,17 +33,26 @@ add_library(${PROJECT_NAME} SHARED
   src/ROS2_BNO08x.cpp
   src/i2c_device.cpp
   src/bno08x_driver.cpp
+)
 
-  src/sh2.c
-  src/sh2_util.c
-  src/shtp.c
-  src/euler.c
-  include/quadruped_hardware/bno_HAL.hpp
-
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/quadruped_hardware>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sh2>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:src>
+    $<INSTALL_INTERFACE:/include/sh2>
+    $<INSTALL_INTERFACE:/include/quadruped_hardware>
+    
 )
 
 
+# target_link_libraries( ${PROJECT_NAME} sh2)
+
 include_directories(/usr/include)
+include_directories(/usr/include/quadruped_hardware)
 
 # add_executable(i2c_tools src/i2c_tools.cpp)
 
@@ -38,11 +60,7 @@ include_directories(/usr/include)
 # target_include_directories(i2c_tools PRIVATE /home/ws/include)
 
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
+
 
 ament_target_dependencies(${PROJECT_NAME}
   controller_interface
@@ -58,9 +76,6 @@ ament_target_dependencies(${PROJECT_NAME}
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
-
-
-
 
 
 install(
@@ -83,7 +98,7 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
-# #
+
 # install(TARGETS ros2_control_node 
 #   RUNTIME DESTINATION lib/${PROJECT_NAME}
 # )

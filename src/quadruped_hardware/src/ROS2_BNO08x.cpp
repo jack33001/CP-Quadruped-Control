@@ -1,13 +1,15 @@
 #include <hardware_interface/system_interface.hpp>
-#include "quadruped_hardware/bno08x_driver.h" // Include your BNO08x class from above
-#include "quadruped_hardware/bno_HAL.hpp" // Include your BNO08x class from above
-#include "quadruped_hardware/sh2.h"
+// #include "quadruped_hardware/bno08x_driver.h" // Include your BNO08x class from above
+#include <bno_HAL.hpp> // Include your BNO08x class from above
+#include <sh2.h>
+#include <sh2_err.h>
+#include <sh2_hal.h>
 
 
 namespace quadruped_hardware {
 class BNO08X : public hardware_interface::SystemInterface {
 private:
-    BNO08x sensor_;
+    // BNO08x sensor_;
     double quaternion_[4] = {0.0, 0.0, 0.0, 0.0};
     
 public:
@@ -18,26 +20,27 @@ public:
         // }
 
 
-        static JetsonHal_t jetsonHalInstance;
-        static sh2_Hal_t hal = {
-            .open = jetsonOpen,
-            .close = jetsonClose,
-            .read = jetsonRead,
-            .write = jetsonWrite,
-            .getTimeUs = jetsonGetTimeUs,
-        };
+        // static JetsonHal_t jetsonHalInstance;
 
-        // Initialize the SH2 sensor hub
-        if (sh2_open(&hal, NULL, NULL) == SH2_ERR) {
-            fprintf(stderr, "Failed to open SH2 sensor hub.\n");
+        // static sh2_Hal_t hal = {
+        //     .open = jetsonOpen,
+        //     .close = jetsonClose,
+        //     .read = jetsonRead,
+        //     .write = jetsonWrite,
+        //     .getTimeUs = jetsonGetTimeUs,
+        // };
+
+        // // Initialize the SH2 sensor hub
+        // if (sh2_open(&hal, NULL, NULL) == SH2_ERR) {
+        //     fprintf(stderr, "Failed to open SH2 sensor hub.\n");
             
-        }
+        // }
             
         // bnostart();
 
 
 
-
+        bnostart();
 
         RCLCPP_INFO(rclcpp::get_logger("BNO08X"), "BNO08x initialized successfully");
 
@@ -62,6 +65,8 @@ public:
     
     hardware_interface::return_type read(
         const rclcpp::Time& time, const rclcpp::Duration& period) override {
+
+            
         // float quat[4];
         // if (sensor_.readQuaternion(quat)) {
         //     quaternion_[0] = quat[0];

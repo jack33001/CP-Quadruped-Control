@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 #include <unistd.h>
 #include <fcntl.h>
@@ -8,12 +10,13 @@
 
 
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
-#include "quadruped_hardware/sh2_err.h"
-#include "quadruped_hardware/sh2.h"
 
-#include "quadruped_hardware/sh2_hal.h"
+#include <sh2_err.h>
+#include <sh2.h>
+#include <sh2_hal.h>
 // #include "quadruped_hardware/bno08x_driver.h"
 
 
@@ -28,10 +31,10 @@ int jetsonOpen(sh2_Hal_t *self) {
     // Initialize Jetson I2C or SPI communication
 
 
-    // int i2c_fd_;
-    // const char* i2c_device = "/dev/i2c-7"; // Replace with your I2C device path
-    // //  Open I2C device
-    // i2c_fd_ = open(i2c_device, O_RDWR);
+    int i2c_fd_;
+    const char* i2c_device = "/dev/i2c-7"; // Replace with your I2C device path
+    //  Open I2C device
+    i2c_fd_ = open(i2c_device, O_RDWR);
     // if (i2c_fd_ < 0) {
     //     std::cerr << "Failed to open I2C device" << std::endl;
     //     return false;
@@ -56,7 +59,7 @@ int jetsonOpen(sh2_Hal_t *self) {
     // printf("Jetson-specific HAL open called.\n");
 
     // Add your Jetson-specific initialization here
-    return 0; // Replace with error codes if needed
+    return SH2_OK; // Replace with error codes if needed
 }
 
 void jetsonClose(sh2_Hal_t *self) {
@@ -83,7 +86,7 @@ uint32_t jetsonGetTimeUs(sh2_Hal_t *self) {
 
 
 bool bnostart() {
-
+    std::cout << "BNO Start." << std::endl;
     // Create a HAL instance
     static JetsonHal_t jetsonHalInstance;
     static sh2_Hal_t hal = {
@@ -94,13 +97,15 @@ bool bnostart() {
         .getTimeUs = jetsonGetTimeUs,
     };
 
+    std::cout << "Jetson HAL instance created." << std::endl;
+    
     // Initialize the SH2 sensor hub
-    if (sh2_open(&hal, NULL, NULL) == SH2_ERR) {
+    if (my_sh2_open(&hal, NULL, NULL) == SH2_ERR) {
         fprintf(stderr, "Failed to open SH2 sensor hub.\n");
         return EXIT_FAILURE;
     }
-
-    printf("SH2 sensor hub initialized successfully.\n");
+    std::cout << "SH2 sensor hub initialized successfully." << std::endl;
+    
 
     // Example: Enable a sensor (e.g., accelerometer) and read its data
     sh2_SensorConfig_t config = {

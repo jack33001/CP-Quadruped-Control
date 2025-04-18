@@ -4,6 +4,7 @@
 import time
 import board
 import busio
+import digitalio
 from adafruit_bno08x import (
     BNO_REPORT_ACCELEROMETER,
     BNO_REPORT_GYROSCOPE,
