@@ -14,19 +14,15 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 
-#include "quadruped_hardware/bno08x_driver.h" // Include the BNO08x driver header for the actual implementation
+
+#include <chrono>
+#include "std_msgs/msg/string.hpp"
 
 
-#include <fcntl.h>
-#include <linux/i2c-dev.h>
-#include <linux/i2c.h>
-#include <linux/types.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+#include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp> // Include the JSON library 
 
-#include "quadruped_hardware/i2c_device.hpp"
-// #include "quadruped_hardware/Adafruit_BNO08x.h"
-// #include "quadruped_hardware/BNO08x/Adafruit_BNO08x.h"
 
 
 
@@ -43,20 +39,26 @@ class BNO08X : public hardware_interface::SystemInterface {
         // hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
         // // hardware_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state) override;
 
-        // std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+        std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
         // std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
         hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
         // hardware_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
         hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+        // std::ifstream usbPort("/dev/ttyACM0");
+    
+        std::string jsonString;
+            // BNO08x sensor_;
+        double quaternion_[4] = {0.0, 0.0, 0.0, 0.0};
+        std::ifstream usbPort;
+        
+
 
 
         // bool setup();
         // void setReports();
-        std::unique_ptr< JetBotControl::I2CDevice> bno08x_; 
-        double address;
-        std::optional<uint8_t> var;
+        
 
     // private:
 

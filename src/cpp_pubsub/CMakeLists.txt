@@ -19,25 +19,21 @@ find_package(controller_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+# find_package(nlohmann_json REQUIRED)
 
+include(FetchContent)
 
-
-
-add_library(${PROJECT_NAME} SHARED
-  src/readUSB.cpp
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2 # Replace with the desired version
   
 )
+# set(BUILD_EXAMPLES OFF CACHE INTERNAL "" )
+FetchContent_MakeAvailable(nlohmann_json)
 
-ament_target_dependencies(${PROJECT_NAME}
-  controller_interface
-  hardware_interface
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-  sensor_msgs
-  std_msgs
-  
-)
+
+
 
 add_executable(talker src/publisher_lambda_function.cpp)
 ament_target_dependencies(talker rclcpp std_msgs)
@@ -47,6 +43,9 @@ ament_target_dependencies(listener rclcpp std_msgs)
 
 add_executable(readUSB src/readUSB.cpp)
 ament_target_dependencies(readUSB rclcpp std_msgs)
+target_link_libraries(readUSB nlohmann_json::nlohmann_json)
+
+
 
 
 # JSON library dependency____________

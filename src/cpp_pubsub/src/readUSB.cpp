@@ -23,9 +23,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-// #include <nlohmann/json.hpp> // Include the JSON library (https://github.com/nlohmann/json)
+#include <nlohmann/json.hpp> // Include the JSON library (https://github.com/nlohmann/json)
 
-// using json = nlohmann::json;
+using json = nlohmann::json;
 
 
 
@@ -66,8 +66,8 @@ int main(int argc, char * argv[])
   // rclcpp::shutdown();
 
     // Open the USB port (adjust the path as needed for your platform)
-    // std::ifstream usbPort("/dev/ttyUSB0"); // Replace with "COMx" for Windows
-    std::ifstream usbPort("COM5");
+    std::ifstream usbPort("/dev/ttyACM0"); // Replace with "COMx" for Windows
+    // std::ifstream usbPort("COM5");
     if (!usbPort.is_open()) {
         std::cerr << "Failed to open USB port!" << std::endl;
         return 1;
@@ -79,14 +79,16 @@ int main(int argc, char * argv[])
         if (std::getline(usbPort, jsonString)) {
             try {
                 // Parse the JSON string
-                // json jsonData = json::parse(jsonString);
-                std::cout << jsonString<< std::endl;
+                json jsonData = json::parse(jsonString);
+                std::cout << "json string: "<< jsonString<< std::endl;
 
                 // Print the parsed JSON data
-                // std::cout << "Temperature: " << jsonData["temperature"] << "°C" << std::endl;
-                // std::cout << "Humidity: " << jsonData["humidity"] << "%" << std::endl;
-                // std::cout << "Status: " << jsonData["status"] << std::endl;
-                // std::cout << "---------------------------------" << std::endl;
+                std::cout << "status: " << jsonData["status"] << std::endl;
+                std::cout << "yaw: " << jsonData["yaw"] << "°" << std::endl;
+                std::cout << "pitch: " << jsonData["pitch"] << "°" << std::endl;
+                std::cout << "roll: " << jsonData["roll"] << "°" << std::endl;
+  
+                std::cout << "---------------------------------" << std::endl;
             } catch (const std::exception& e) {
                 std::cerr << "Failed to parse JSON: " << e.what() << std::endl;
             }

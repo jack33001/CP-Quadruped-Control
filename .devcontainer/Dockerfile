@@ -19,6 +19,8 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip wget
 ENV SHELL /bin/bash
 
+# RUN RUN usermod -aG dialout $USERNAME
+
 # ********************************************************
 # * Anything else you want to do like clean up goes here *
 # ********************************************************

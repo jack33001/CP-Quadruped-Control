@@ -2,15 +2,16 @@
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 
-    <ros2_control name="quadruped_hardware/BNO08X" type="system"  >
+    <ros2_control name="quadruped_hardware/BNO08X" type="system" is_async="true">
             <hardware>
                 <plugin>quadruped_hardware/BNO08X</plugin>
         
             </hardware>
         
     </ros2_control> 
+<!-- setting async true here might cause a bug later -->
 <!-- 
-    <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system">
+    <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" is_async="true"> 
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
             <param name="joint_name">fr_hip</param> 

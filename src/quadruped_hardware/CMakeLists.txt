@@ -35,6 +35,22 @@ add_library(${PROJECT_NAME} SHARED
   src/bno08x_driver.cpp
 )
 
+# JSON library dependency____________
+include(FetchContent)
+
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2 # Replace with the desired version
+  
+)
+# set(BUILD_EXAMPLES OFF CACHE INTERNAL "" )
+FetchContent_MakeAvailable(nlohmann_json)
+
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+# end JSON library dependency__________
+
+
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -62,6 +78,7 @@ include_directories(/usr/include/quadruped_hardware)
 
 
 
+
 ament_target_dependencies(${PROJECT_NAME}
   controller_interface
   hardware_interface
@@ -70,7 +87,6 @@ ament_target_dependencies(${PROJECT_NAME}
   rclcpp_lifecycle
   sensor_msgs
   std_msgs
-  
 )
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)

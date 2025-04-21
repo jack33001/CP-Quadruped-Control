@@ -37,10 +37,11 @@
         "--volume",
         "/tmp/.X11-unix:/tmp/.X11-unix",  // X11 socket for GUI rendering
         "--device",
-        "/dev/dri:/dev/dri"  // Device for GPU access
+        "/dev/dri:/dev/dri",  // Device for GPU access
+        "--device=/dev/ttyACM0:/dev/ttyACM0" // forward serial communication
     ],
     "mounts": [
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
     ],
-    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3"
+    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3 && sudo usermod -aG dialout jack"
 }
