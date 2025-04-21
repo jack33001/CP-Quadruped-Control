@@ -12,10 +12,10 @@
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
 
-  <depend> Jetson </depend>
-  <depend> board </depend>
-  <depend> digitalio </depend>
-  <depend> busio </depend>
+  <!-- <depend> Jetson </depend> -->
+  <!-- <depend> board </depend> -->
+  <!-- <depend> digitalio </depend> -->
+  <!-- <depend> busio </depend> -->
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 

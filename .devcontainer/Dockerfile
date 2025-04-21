@@ -159,6 +159,10 @@ RUN pip3 install --break-system-packages --ignore-installed -U \
     adafruit-circuitpython-bno08x\
     Adafruit-Blinka\
     Jetson.GPIO
+
+RUN echo "deb [trusted=yes] https://download.eclipse.org/zenoh/debian-repo/ /" | sudo tee -a /etc/apt/sources.list > /dev/null \
+    sudo apt update \
+    sudo apt install zenoh-plugin-ros2dds
     
    
     
