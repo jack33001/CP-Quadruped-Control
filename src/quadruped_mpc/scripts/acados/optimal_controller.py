@@ -142,10 +142,10 @@ class QuadrupedOptimalController:
         logger.info("Set selection matrices to track only first 13 states")
 
         # Weights for tracked states
-        pos_weights = [20]*3     # Position tracking
+        pos_weights = [100]*3     # Position tracking
         rot_weights = [200]*4      # Rotation tracking
         vel_weights = [5]*3      # Linear velocity tracking
-        ang_weights = [.5]*3      # Angular velocity tracking
+        ang_weights = [2]*3      # Angular velocity tracking
         
         # Combine weights into diagonal matrices
         W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)

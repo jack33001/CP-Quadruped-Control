@@ -137,12 +137,6 @@ namespace quadruped_mpc
       // Acquire locks for accessing state and gait data
       std::lock_guard<std::mutex> gait_lock(controller.gait_mutex_);
 
-      // Check if we have valid gait data
-      bool have_gait_data = controller.latest_gait_.foot1_state != 0 &&
-                            controller.latest_gait_.foot2_state != 0 &&
-                            controller.latest_gait_.foot3_state != 0 &&
-                            controller.latest_gait_.foot4_state != 0;
-
       // If we have forces data from balance controller, update our local foot forces
       if (foot_forces_msg)
       {
@@ -165,30 +159,266 @@ namespace quadruped_mpc
         return false; // No forces to apply
       }
 
-      // If we have gait data, decide which forces to apply based on foot states
-      if (have_gait_data)
+      // Log all relevant condition values in debug level instead of info
+      RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+         "Gait and swing conditions: swing_forces.has_data=%d, "
+         "foot1_state=%d, foot2_state=%d, foot3_state=%d, foot4_state=%d",
+         controller.swing_forces_.has_data,
+         controller.latest_gait_.foot1_state,
+         controller.latest_gait_.foot2_state, 
+         controller.latest_gait_.foot3_state,
+         controller.latest_gait_.foot4_state);
+
+      // For feet in swing state (state == 1), use the forces from swing trajectory
+      if (controller.latest_gait_.foot1_state == 1 && controller.swing_forces_.has_data)
       {
-        // For feet in swing state (state == 1), use the forces from swing trajectory
-        if (controller.latest_gait_.foot1_state == 1 && controller.swing_forces_.has_data)
-        {
-          controller.foot_forces_.foot1 = controller.swing_forces_.foot1;
-        }
+        controller.foot_forces_.foot1 = controller.swing_forces_.foot1;
+        RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+          "Foot 1 using swing force: [%.2f, %.2f, %.2f]",
+          controller.swing_forces_.foot1.x,
+          controller.swing_forces_.foot1.y,
+          controller.swing_forces_.foot1.z);
+      }
+      else
+      {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+           "Foot 1 not using swing force: state=%d, has_data=%d",
+           controller.latest_gait_.foot1_state, controller.swing_forces_.has_data);
+      }
 
-        if (controller.latest_gait_.foot2_state == 1 && controller.swing_forces_.has_data)
-        {
-          controller.foot_forces_.foot2 = controller.swing_forces_.foot2;
-        }
+      if (controller.latest_gait_.foot2_state == 1 && controller.swing_forces_.has_data)
+      {
+        controller.foot_forces_.foot2 = controller.swing_forces_.foot2;
+        RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+          "Foot 2 using swing force: [%.2f, %.2f, %.2f]",
+          controller.swing_forces_.foot2.x,
+          controller.swing_forces_.foot2.y,
+          controller.swing_forces_.foot2.z);
+      }
+      else
+      {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+           "Foot 2 not using swing force: state=%d, has_data=%d",
+           controller.latest_gait_.foot2_state, controller.swing_forces_.has_data);
+      }
 
-        if (controller.latest_gait_.foot3_state == 1 && controller.swing_forces_.has_data)
-        {
-          controller.foot_forces_.foot3 = controller.swing_forces_.foot3;
-        }
+      if (controller.latest_gait_.foot3_state == 1 && controller.swing_forces_.has_data)
+      {
+        controller.foot_forces_.foot3 = controller.swing_forces_.foot3;
+        RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+          "Foot 3 using swing force: [%.2f, %.2f, %.2f]",
+          controller.swing_forces_.foot3.x,
+          controller.swing_forces_.foot3.y,
+          controller.swing_forces_.foot3.z);
+      }
+      else
+      {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+           "Foot 3 not using swing force: state=%d, has_data=%d",
+           controller.latest_gait_.foot3_state, controller.swing_forces_.has_data);
+      }
 
-        if (controller.latest_gait_.foot4_state == 1 && controller.swing_forces_.has_data)
-        {
-          controller.foot_forces_.foot4 = controller.swing_forces_.foot4;
+      if (controller.latest_gait_.foot4_state == 1 && controller.swing_forces_.has_data)
+      {
+        controller.foot_forces_.foot4 = controller.swing_forces_.foot4;
+        RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+          "Foot 4 using swing force: [%.2f, %.2f, %.2f]",
+          controller.swing_forces_.foot4.x,
+          controller.swing_forces_.foot4.y,
+          controller.swing_forces_.foot4.z);
+      }
+      else
+      {
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
+           "Foot 4 not using swing force: state=%d, has_data=%d",
+           controller.latest_gait_.foot4_state, controller.swing_forces_.has_data);
+      }
+
+      // Generate consolidated force table with all feet
+      std::lock_guard<std::mutex> state_lock(controller.state_mutex_);
+      std::stringstream table;
+      table << "\n╔═════╦══════╦═══════╦══════════════════════════╦══════════════════════════╦══════════════════════════╦══════════════════════════╗";
+      table << "\n║FOOT ║STATE ║ PHASE ║          TARGET          ║        CURRENT           ║      TRAJECTORY ENDPT    ║           FORCE          ║";
+      table << "\n╠═════╬══════╬═══════╬══════════════════════════╬══════════════════════════╬══════════════════════════╬══════════════════════════╣";
+      
+      // Array of references to make the code more compact
+      const std::array<std::string, 4> foot_names = {"FL", "FR", "RL", "RR"};
+      const std::array<int, 4> foot_states = {
+          controller.latest_gait_.foot1_state,
+          controller.latest_gait_.foot2_state,
+          controller.latest_gait_.foot3_state,
+          controller.latest_gait_.foot4_state
+      };
+      const std::array<double, 4> foot_phases = {
+          controller.latest_gait_.foot1_phase,
+          controller.latest_gait_.foot2_phase,
+          controller.latest_gait_.foot3_phase,
+          controller.latest_gait_.foot4_phase
+      };
+      
+      // Access current positions
+      const std::array<Eigen::Vector3d, 4> current_positions = {
+          Eigen::Vector3d(controller.latest_state_.p1.x, controller.latest_state_.p1.y, controller.latest_state_.p1.z),
+          Eigen::Vector3d(controller.latest_state_.p2.x, controller.latest_state_.p2.y, controller.latest_state_.p2.z),
+          Eigen::Vector3d(controller.latest_state_.p3.x, controller.latest_state_.p3.y, controller.latest_state_.p3.z),
+          Eigen::Vector3d(controller.latest_state_.p4.x, controller.latest_state_.p4.y, controller.latest_state_.p4.z)
+      };
+      
+      // Access target positions for feet in swing phase
+      std::array<Eigen::Vector3d, 4> target_positions;
+      std::array<bool, 4> has_target_position = {false, false, false, false};
+      // Keep track of trajectory endpoints for each foot
+      std::array<Eigen::Vector3d, 4> trajectory_endpoints;
+      for (int i = 0; i < 4; ++i) {
+        if (foot_states[i] == 1 && foot_phases[i] >= 0.0 && foot_phases[i] <= 1.0) {
+          int trajectory_idx = static_cast<int>(foot_phases[i] * 49);
+          trajectory_idx = std::min(49, std::max(0, trajectory_idx));
+          
+          // Store the final trajectory point (endpoint) based on foot number
+          switch (i) {
+            case 0: // FL
+              target_positions[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot1[trajectory_idx].x,
+                controller.foot_trajectories_.foot1[trajectory_idx].y,
+                controller.foot_trajectories_.foot1[trajectory_idx].z);
+              trajectory_endpoints[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot1[49].x,
+                controller.foot_trajectories_.foot1[49].y,
+                controller.foot_trajectories_.foot1[49].z);
+              has_target_position[i] = true;
+              break;
+            case 1: // FR
+              target_positions[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot2[trajectory_idx].x,
+                controller.foot_trajectories_.foot2[trajectory_idx].y,
+                controller.foot_trajectories_.foot2[trajectory_idx].z);
+              trajectory_endpoints[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot2[49].x,
+                controller.foot_trajectories_.foot2[49].y,
+                controller.foot_trajectories_.foot2[49].z);
+              has_target_position[i] = true;
+              break;
+            case 2: // RL
+              target_positions[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot3[trajectory_idx].x,
+                controller.foot_trajectories_.foot3[trajectory_idx].y,
+                controller.foot_trajectories_.foot3[trajectory_idx].z);
+              trajectory_endpoints[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot3[49].x,
+                controller.foot_trajectories_.foot3[49].y,
+                controller.foot_trajectories_.foot3[49].z);
+              has_target_position[i] = true;
+              break;
+            case 3: // RR
+              target_positions[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot4[trajectory_idx].x,
+                controller.foot_trajectories_.foot4[trajectory_idx].y,
+                controller.foot_trajectories_.foot4[trajectory_idx].z);
+              trajectory_endpoints[i] = Eigen::Vector3d(
+                controller.foot_trajectories_.foot4[49].x,
+                controller.foot_trajectories_.foot4[49].y,
+                controller.foot_trajectories_.foot4[49].z);
+              has_target_position[i] = true;
+              break;
+          }
+        } else {
+          // For feet in stance phase, just initialize with zeros
+          trajectory_endpoints[i] = Eigen::Vector3d::Zero();
         }
       }
+      
+      // Access forces
+      const std::array<Eigen::Vector3d, 4> forces = {
+          Eigen::Vector3d(controller.foot_forces_.foot1.x, controller.foot_forces_.foot1.y, controller.foot_forces_.foot1.z),
+          Eigen::Vector3d(controller.foot_forces_.foot2.x, controller.foot_forces_.foot2.y, controller.foot_forces_.foot2.z),
+          Eigen::Vector3d(controller.foot_forces_.foot3.x, controller.foot_forces_.foot3.y, controller.foot_forces_.foot3.z),
+          Eigen::Vector3d(controller.foot_forces_.foot4.x, controller.foot_forces_.foot4.y, controller.foot_forces_.foot4.z)
+      };
+
+      // Format and add each foot's data to the table
+      for (int i = 0; i < 4; ++i) {
+        std::string state_str = (foot_states[i] == 1) ? "SWING " : "STANCE";
+        
+        // Format position vectors with consistent width
+        std::stringstream target_ss, current_ss, endpoint_ss, force_ss;
+        
+        // For target position, ensure consistent formatting regardless of stance/swing
+        target_ss << std::fixed << std::setprecision(3);
+        if (has_target_position[i]) {
+          target_ss << "["
+                  << std::setw(7) << target_positions[i].x() << ","
+                  << std::setw(7) << target_positions[i].y() << ","
+                  << std::setw(7) << target_positions[i].z() << "]";
+        } else {
+          // Format N/A with exact same width as the vector representation
+          target_ss << "[      N/A              ]";
+        }
+        
+        // Always show current position with consistent formatting
+        current_ss << std::fixed << std::setprecision(3);
+        current_ss << "["
+                << std::setw(7) << current_positions[i].x() << ","
+                << std::setw(7) << current_positions[i].y() << ","
+                << std::setw(7) << current_positions[i].z() << "]";
+
+        // Show trajectory endpoint data if target position exists
+        endpoint_ss << std::fixed << std::setprecision(3);
+        if (has_target_position[i]) {
+          // Display the trajectory endpoint instead of the error
+          endpoint_ss << "["
+                 << std::setw(7) << trajectory_endpoints[i].x() << ","
+                 << std::setw(7) << trajectory_endpoints[i].y() << ","
+                 << std::setw(7) << trajectory_endpoints[i].z() << "]";
+        } else {
+          // Format N/A with exact same width as the vector representation
+          endpoint_ss << "[      N/A              ]";
+        }
+        
+        // Always show forces with consistent formatting - adjust precision and width for better alignment
+        force_ss << std::fixed << std::setprecision(2);  // Increased precision for better formatting
+        force_ss << "["
+               << std::setw(7) << forces[i].x() << ","   // Increased width from 6 to 7 to match other columns
+               << std::setw(7) << forces[i].y() << ","   // Increased width from 6 to 7 to match other columns
+               << std::setw(7) << forces[i].z() << "]";  // Increased width from 6 to 7 to match other columns
+        
+        // Format the table row with consistent width columns
+        table << "\n║ " << std::left << std::setw(3) << foot_names[i] << " ║"
+              << std::setw(6) << state_str << "║" 
+              << std::fixed << std::setprecision(2) << std::right << std::setw(7) << foot_phases[i] << "║"
+              << std::setw(22) << target_ss.str() << " ║" 
+              << std::setw(22) << current_ss.str() << " ║" 
+              << std::setw(22) << endpoint_ss.str() << " ║" 
+              << std::setw(22) << force_ss.str() << " ║";
+      }
+      
+      // Calculate total stance forces
+      Eigen::Vector3d total_stance_force = Eigen::Vector3d::Zero();
+      int stance_foot_count = 0;
+      
+      for (int i = 0; i < 4; ++i) {
+        if (foot_states[i] != 1) {  // If foot is in stance phase
+          total_stance_force += forces[i];
+          stance_foot_count++;
+        }
+      }
+      
+      // Add separator line and total stance force row
+      table << "\n╠═════╩══════╩═══════╩══════════════════════════╩══════════════════════════╩══════════════════════════╬══════════════════════════╣";
+      
+      // Format the total stance force with consistent styling
+      std::stringstream total_force_ss;
+      total_force_ss << std::fixed << std::setprecision(2);
+      total_force_ss << "["
+                   << std::setw(7) << total_stance_force.x() << ","
+                   << std::setw(7) << total_stance_force.y() << ","
+                   << std::setw(7) << total_stance_force.z() << "]";
+      
+      // Add total stance force row (spanning multiple columns)
+      table << "\n║ TOTAL STANCE FORCE (" << stance_foot_count << " feet)                                                                            ║ "
+            << std::setw(22) << total_force_ss.str() << " ║";
+      
+      table << "\n╚═════════════════════════════════════════════════════════════════════════════════════════════════════╩══════════════════════════╝";
+      RCLCPP_INFO(controller.get_node()->get_logger(), "Foot Forces and Trajectories: %s", table.str().c_str());
 
       return true;
     }
@@ -212,15 +442,27 @@ namespace quadruped_mpc
 
       // PD control gains - these could be parameters
       const double kp = 500.0; // Position gain
-      const double kd = 20.0;  // Velocity damping gain
+      const double kd = 10.0;  // Velocity damping gain
 
       // Generate trajectories if needed and apply PD control for swing feet
+
+      // Initialize a simple tracking structure for state info
+      struct TrajectoryInfo {
+        bool active = false;
+        double phase = 0.0;
+        int trajectory_idx = 0;
+        Eigen::Vector3d target_pos = Eigen::Vector3d::Zero();
+        Eigen::Vector3d current_pos = Eigen::Vector3d::Zero();
+        Eigen::Vector3d pos_error = Eigen::Vector3d::Zero();
+        Eigen::Vector3d pd_force = Eigen::Vector3d::Zero();
+      };
+      TrajectoryInfo foot_info[4]; // Data for all 4 feet
 
       // Foot 1 (Front left)
       if (controller.latest_gait_.foot1_state == 1)
       {
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Entered foot 1 pd control if statement");
+              "Entered foot 1 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot1_phase == 0.0)
         {
@@ -228,21 +470,21 @@ namespace quadruped_mpc
 
           // Extract current position (p0) from the state message
           Eigen::Vector3d p0(
-              controller.latest_state_.p1.x,
-              controller.latest_state_.p1.y,
-              controller.latest_state_.p1.z);
+          controller.latest_state_.p1.x,
+          controller.latest_state_.p1.y,
+          controller.latest_state_.p1.z);
 
           // Create middle control point (p1): same x,y as hip but raised by step_height
           Eigen::Vector3d p1(
-              controller.latest_state_.h1.x,
-              controller.latest_state_.h1.y,
-              controller.latest_state_.h1.z + step_height);
+          controller.latest_state_.h1.x,
+          controller.latest_state_.h1.y,
+          controller.latest_state_.h1.z + step_height);
 
           // Target position (p2) from gait pattern
           Eigen::Vector3d p2(
-              controller.latest_gait_.foot1_step_position.x,
-              controller.latest_gait_.foot1_step_position.y,
-              controller.latest_gait_.foot1_step_position.z);
+          controller.latest_gait_.foot1_step_position.x,
+          controller.latest_gait_.foot1_step_position.y,
+          controller.latest_gait_.foot1_step_position.z);
 
           // Generate the trajectory using our helper function
           auto trajectory = generate_bezier_path(p0, p1, p2, 50);
@@ -250,34 +492,34 @@ namespace quadruped_mpc
           // Store the trajectory
           for (size_t i = 0; i < trajectory.size() && i < 50; ++i)
           {
-            controller.foot_trajectories_.foot1[i].x = trajectory[i][0];
-            controller.foot_trajectories_.foot1[i].y = trajectory[i][1];
-            controller.foot_trajectories_.foot1[i].z = trajectory[i][2];
+        controller.foot_trajectories_.foot1[i].x = trajectory[i][0];
+        controller.foot_trajectories_.foot1[i].y = trajectory[i][1];
+        controller.foot_trajectories_.foot1[i].z = trajectory[i][2];
           }
 
-          // Log the entire trajectory at info level (unthrottled)
+          // Log the entire trajectory at debug level
           std::stringstream traj_ss;
           traj_ss << "Foot 1 trajectory points:";
           traj_ss << "\n  Hip Position: [" 
-                 << controller.latest_state_.h1.x << ", "
-                 << controller.latest_state_.h1.y << ", "
-                 << controller.latest_state_.h1.z << "]";
+             << controller.latest_state_.h1.x << ", "
+             << controller.latest_state_.h1.y << ", "
+             << controller.latest_state_.h1.z << "]";
           traj_ss << "\n  Control Points:";
           traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
           traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
           traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
           traj_ss << "\n  Trajectory:";
           for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
-            traj_ss << "\n    [" << i << "]: [" 
-                   << controller.foot_trajectories_.foot1[i].x << ", "
-                   << controller.foot_trajectories_.foot1[i].y << ", "
-                   << controller.foot_trajectories_.foot1[i].z << "]";
+        traj_ss << "\n    [" << i << "]: [" 
+           << controller.foot_trajectories_.foot1[i].x << ", "
+           << controller.foot_trajectories_.foot1[i].y << ", "
+           << controller.foot_trajectories_.foot1[i].z << "]";
           }
-          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
+          RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Generated trajectory for foot1: from %s through %s to %s",
-                      vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
+              "Generated trajectory for foot1: from %s through %s to %s",
+              vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
         }
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
@@ -287,25 +529,25 @@ namespace quadruped_mpc
 
         // Get current and desired positions
         Eigen::Vector3d current_pos(
-            controller.latest_state_.p1.x,
-            controller.latest_state_.p1.y,
-            controller.latest_state_.p1.z);
+        controller.latest_state_.p1.x,
+        controller.latest_state_.p1.y,
+        controller.latest_state_.p1.z);
 
         Eigen::Vector3d target_pos(
-            controller.foot_trajectories_.foot1[trajectory_idx].x,
-            controller.foot_trajectories_.foot1[trajectory_idx].y,
-            controller.foot_trajectories_.foot1[trajectory_idx].z);
+        controller.foot_trajectories_.foot1[trajectory_idx].x,
+        controller.foot_trajectories_.foot1[trajectory_idx].y,
+        controller.foot_trajectories_.foot1[trajectory_idx].z);
 
         // Get current velocity (zeros if not available)
         Eigen::Vector3d current_vel = Eigen::Vector3d::Zero();
         if (controller.latest_state_.v1.x != 0.0 || 
-            controller.latest_state_.v1.y != 0.0 || 
-            controller.latest_state_.v1.z != 0.0) {
+        controller.latest_state_.v1.y != 0.0 || 
+        controller.latest_state_.v1.z != 0.0) {
           // Only use velocity feedback if it's non-zero (available)
           current_vel = Eigen::Vector3d(
-              controller.latest_state_.v1.x,
-              controller.latest_state_.v1.y,
-              controller.latest_state_.v1.z);
+          controller.latest_state_.v1.x,
+          controller.latest_state_.v1.y,
+          controller.latest_state_.v1.z);
         }
 
         // Calculate position error and PD control force
@@ -318,20 +560,21 @@ namespace quadruped_mpc
         controller.swing_forces_.foot1.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        RCLCPP_INFO(controller.get_node()->get_logger(),
-                      "Foot 1 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                      phase, trajectory_idx,
-                      vec3_to_string(target_pos).c_str(),
-                      vec3_to_string(current_pos).c_str(),
-                      vec3_to_string(pos_error).c_str(),
-                      vec3_to_string(pd_force).c_str());
+        // Store info for reference (formerly for tabular logging)
+        foot_info[0].active = true;
+        foot_info[0].phase = phase;
+        foot_info[0].trajectory_idx = trajectory_idx;
+        foot_info[0].target_pos = target_pos;
+        foot_info[0].current_pos = current_pos;
+        foot_info[0].pos_error = pos_error;
+        foot_info[0].pd_force = pd_force;
       }
 
       // Foot 2 (Front right)
       if (controller.latest_gait_.foot2_state == 1)
       {
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Entered foot 1 pd control if statement");
+              "Entered foot 2 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot2_phase == 0.0)
         {
@@ -339,21 +582,21 @@ namespace quadruped_mpc
 
           // Extract current position (p0) from the state message
           Eigen::Vector3d p0(
-              controller.latest_state_.p2.x,
-              controller.latest_state_.p2.y,
-              controller.latest_state_.p2.z);
+          controller.latest_state_.p2.x,
+          controller.latest_state_.p2.y,
+          controller.latest_state_.p2.z);
 
           // Create middle control point (p1): same x,y as hip but raised by step_height
           Eigen::Vector3d p1(
-              controller.latest_state_.h2.x,
-              controller.latest_state_.h2.y,
-              controller.latest_state_.h2.z + step_height);
+          controller.latest_state_.h2.x,
+          controller.latest_state_.h2.y,
+          controller.latest_state_.h2.z + step_height);
 
           // Target position (p2) from gait pattern
           Eigen::Vector3d p2(
-              controller.latest_gait_.foot2_step_position.x,
-              controller.latest_gait_.foot2_step_position.y,
-              controller.latest_gait_.foot2_step_position.z);
+          controller.latest_gait_.foot2_step_position.x,
+          controller.latest_gait_.foot2_step_position.y,
+          controller.latest_gait_.foot2_step_position.z);
 
           // Generate the trajectory using the helper function
           auto trajectory = generate_bezier_path(p0, p1, p2, 50);
@@ -361,34 +604,34 @@ namespace quadruped_mpc
           // Store the trajectory
           for (size_t i = 0; i < trajectory.size() && i < 50; ++i)
           {
-            controller.foot_trajectories_.foot2[i].x = trajectory[i][0];
-            controller.foot_trajectories_.foot2[i].y = trajectory[i][1];
-            controller.foot_trajectories_.foot2[i].z = trajectory[i][2];
+        controller.foot_trajectories_.foot2[i].x = trajectory[i][0];
+        controller.foot_trajectories_.foot2[i].y = trajectory[i][1];
+        controller.foot_trajectories_.foot2[i].z = trajectory[i][2];
           }
           
-          // Log the entire trajectory at info level (unthrottled)
+          // Log the entire trajectory at debug level
           std::stringstream traj_ss;
           traj_ss << "Foot 2 trajectory points:";
           traj_ss << "\n  Hip Position: [" 
-                 << controller.latest_state_.h2.x << ", "
-                 << controller.latest_state_.h2.y << ", "
-                 << controller.latest_state_.h2.z << "]";
+             << controller.latest_state_.h2.x << ", "
+             << controller.latest_state_.h2.y << ", "
+             << controller.latest_state_.h2.z << "]";
           traj_ss << "\n  Control Points:";
           traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
           traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
           traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
           traj_ss << "\n  Trajectory:";
           for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
-            traj_ss << "\n    [" << i << "]: [" 
-                   << controller.foot_trajectories_.foot2[i].x << ", "
-                   << controller.foot_trajectories_.foot2[i].y << ", "
-                   << controller.foot_trajectories_.foot2[i].z << "]";
+        traj_ss << "\n    [" << i << "]: [" 
+           << controller.foot_trajectories_.foot2[i].x << ", "
+           << controller.foot_trajectories_.foot2[i].y << ", "
+           << controller.foot_trajectories_.foot2[i].z << "]";
           }
-          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
+          RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Generated trajectory for foot2: from %s through %s to %s",
-                      vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
+              "Generated trajectory for foot2: from %s through %s to %s",
+              vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
         }
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
@@ -398,25 +641,25 @@ namespace quadruped_mpc
 
         // Get current and desired positions
         Eigen::Vector3d current_pos(
-            controller.latest_state_.p2.x,
-            controller.latest_state_.p2.y,
-            controller.latest_state_.p2.z);
+        controller.latest_state_.p2.x,
+        controller.latest_state_.p2.y,
+        controller.latest_state_.p2.z);
 
         Eigen::Vector3d target_pos(
-            controller.foot_trajectories_.foot2[trajectory_idx].x,
-            controller.foot_trajectories_.foot2[trajectory_idx].y,
-            controller.foot_trajectories_.foot2[trajectory_idx].z);
+        controller.foot_trajectories_.foot2[trajectory_idx].x,
+        controller.foot_trajectories_.foot2[trajectory_idx].y,
+        controller.foot_trajectories_.foot2[trajectory_idx].z);
 
         // Get current velocity (zeros if not available)
         Eigen::Vector3d current_vel = Eigen::Vector3d::Zero();
         if (controller.latest_state_.v2.x != 0.0 || 
-            controller.latest_state_.v2.y != 0.0 || 
-            controller.latest_state_.v2.z != 0.0) {
+        controller.latest_state_.v2.y != 0.0 || 
+        controller.latest_state_.v2.z != 0.0) {
           // Only use velocity feedback if it's non-zero (available)
           current_vel = Eigen::Vector3d(
-              controller.latest_state_.v2.x,
-              controller.latest_state_.v2.y,
-              controller.latest_state_.v2.z);
+          controller.latest_state_.v2.x,
+          controller.latest_state_.v2.y,
+          controller.latest_state_.v2.z);
         }
 
         // Calculate position error and PD control force
@@ -429,20 +672,21 @@ namespace quadruped_mpc
         controller.swing_forces_.foot2.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        RCLCPP_INFO(controller.get_node()->get_logger(),
-                      "Foot 2 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                      phase, trajectory_idx,
-                      vec3_to_string(target_pos).c_str(),
-                      vec3_to_string(current_pos).c_str(),
-                      vec3_to_string(pos_error).c_str(),
-                      vec3_to_string(pd_force).c_str());
+        // Store info for reference (formerly for tabular logging)
+        foot_info[1].active = true;
+        foot_info[1].phase = phase;
+        foot_info[1].trajectory_idx = trajectory_idx;
+        foot_info[1].target_pos = target_pos;
+        foot_info[1].current_pos = current_pos;
+        foot_info[1].pos_error = pos_error;
+        foot_info[1].pd_force = pd_force;
       }
 
       // Foot 3 (Rear left)
       if (controller.latest_gait_.foot3_state == 1)
       {
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Entered foot 1 pd control if statement");
+              "Entered foot 3 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot3_phase == 0.0)
         {
@@ -450,21 +694,21 @@ namespace quadruped_mpc
 
           // Extract current position (p0) from the state message
           Eigen::Vector3d p0(
-              controller.latest_state_.p3.x,
-              controller.latest_state_.p3.y,
-              controller.latest_state_.p3.z);
+          controller.latest_state_.p3.x,
+          controller.latest_state_.p3.y,
+          controller.latest_state_.p3.z);
 
           // Create middle control point (p1): same x,y as hip but raised by step_height
           Eigen::Vector3d p1(
-              controller.latest_state_.h3.x,
-              controller.latest_state_.h3.y,
-              controller.latest_state_.h3.z + step_height);
+          controller.latest_state_.h3.x,
+          controller.latest_state_.h3.y,
+          controller.latest_state_.h3.z + step_height);
 
           // Target position (p2) from gait pattern
           Eigen::Vector3d p2(
-              controller.latest_gait_.foot3_step_position.x,
-              controller.latest_gait_.foot3_step_position.y,
-              controller.latest_gait_.foot3_step_position.z);
+          controller.latest_gait_.foot3_step_position.x,
+          controller.latest_gait_.foot3_step_position.y,
+          controller.latest_gait_.foot3_step_position.z);
 
           // Generate the trajectory using the helper function
           auto trajectory = generate_bezier_path(p0, p1, p2, 50);
@@ -472,34 +716,34 @@ namespace quadruped_mpc
           // Store the trajectory
           for (size_t i = 0; i < trajectory.size() && i < 50; ++i)
           {
-            controller.foot_trajectories_.foot3[i].x = trajectory[i][0];
-            controller.foot_trajectories_.foot3[i].y = trajectory[i][1];
-            controller.foot_trajectories_.foot3[i].z = trajectory[i][2];
+        controller.foot_trajectories_.foot3[i].x = trajectory[i][0];
+        controller.foot_trajectories_.foot3[i].y = trajectory[i][1];
+        controller.foot_trajectories_.foot3[i].z = trajectory[i][2];
           }
           
-          // Log the entire trajectory at info level (unthrottled)
+          // Log the entire trajectory at debug level
           std::stringstream traj_ss;
           traj_ss << "Foot 3 trajectory points:";
           traj_ss << "\n  Hip Position: [" 
-                 << controller.latest_state_.h3.x << ", "
-                 << controller.latest_state_.h3.y << ", "
-                 << controller.latest_state_.h3.z << "]";
+             << controller.latest_state_.h3.x << ", "
+             << controller.latest_state_.h3.y << ", "
+             << controller.latest_state_.h3.z << "]";
           traj_ss << "\n  Control Points:";
           traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
           traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
           traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
           traj_ss << "\n  Trajectory:";
           for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
-            traj_ss << "\n    [" << i << "]: [" 
-                   << controller.foot_trajectories_.foot3[i].x << ", "
-                   << controller.foot_trajectories_.foot3[i].y << ", "
-                   << controller.foot_trajectories_.foot3[i].z << "]";
+        traj_ss << "\n    [" << i << "]: [" 
+           << controller.foot_trajectories_.foot3[i].x << ", "
+           << controller.foot_trajectories_.foot3[i].y << ", "
+           << controller.foot_trajectories_.foot3[i].z << "]";
           }
-          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
+          RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Generated trajectory for foot3: from %s through %s to %s",
-                      vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
+              "Generated trajectory for foot3: from %s through %s to %s",
+              vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
         }
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
@@ -509,25 +753,25 @@ namespace quadruped_mpc
 
         // Get current and desired positions
         Eigen::Vector3d current_pos(
-            controller.latest_state_.p3.x,
-            controller.latest_state_.p3.y,
-            controller.latest_state_.p3.z);
+        controller.latest_state_.p3.x,
+        controller.latest_state_.p3.y,
+        controller.latest_state_.p3.z);
 
         Eigen::Vector3d target_pos(
-            controller.foot_trajectories_.foot3[trajectory_idx].x,
-            controller.foot_trajectories_.foot3[trajectory_idx].y,
-            controller.foot_trajectories_.foot3[trajectory_idx].z);
+        controller.foot_trajectories_.foot3[trajectory_idx].x,
+        controller.foot_trajectories_.foot3[trajectory_idx].y,
+        controller.foot_trajectories_.foot3[trajectory_idx].z);
 
         // Get current velocity (zeros if not available)
         Eigen::Vector3d current_vel = Eigen::Vector3d::Zero();
         if (controller.latest_state_.v3.x != 0.0 || 
-            controller.latest_state_.v3.y != 0.0 || 
-            controller.latest_state_.v3.z != 0.0) {
+        controller.latest_state_.v3.y != 0.0 || 
+        controller.latest_state_.v3.z != 0.0) {
           // Only use velocity feedback if it's non-zero (available)
           current_vel = Eigen::Vector3d(
-              controller.latest_state_.v3.x,
-              controller.latest_state_.v3.y,
-              controller.latest_state_.v3.z);
+          controller.latest_state_.v3.x,
+          controller.latest_state_.v3.y,
+          controller.latest_state_.v3.z);
         }
 
         // Calculate position error and PD control force
@@ -540,20 +784,21 @@ namespace quadruped_mpc
         controller.swing_forces_.foot3.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        RCLCPP_INFO(controller.get_node()->get_logger(),
-                      "Foot 3 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                      phase, trajectory_idx,
-                      vec3_to_string(target_pos).c_str(),
-                      vec3_to_string(current_pos).c_str(),
-                      vec3_to_string(pos_error).c_str(),
-                      vec3_to_string(pd_force).c_str());
+        // Store info for reference (formerly for tabular logging)
+        foot_info[2].active = true;
+        foot_info[2].phase = phase;
+        foot_info[2].trajectory_idx = trajectory_idx;
+        foot_info[2].target_pos = target_pos;
+        foot_info[2].current_pos = current_pos;
+        foot_info[2].pos_error = pos_error;
+        foot_info[2].pd_force = pd_force;
       }
 
       // Foot 4 (Rear right)
       if (controller.latest_gait_.foot4_state == 1)
       {
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Entered foot 1 pd control if statement");
+              "Entered foot 4 pd control if statement");
         // Generate trajectory at the beginning of swing phase
         if (controller.latest_gait_.foot4_phase == 0.0)
         {
@@ -561,21 +806,21 @@ namespace quadruped_mpc
 
           // Extract current position (p0) from the state message
           Eigen::Vector3d p0(
-              controller.latest_state_.p4.x,
-              controller.latest_state_.p4.y,
-              controller.latest_state_.p4.z);
+          controller.latest_state_.p4.x,
+          controller.latest_state_.p4.y,
+          controller.latest_state_.p4.z);
 
           // Create middle control point (p1): same x,y as hip but raised by step_height
           Eigen::Vector3d p1(
-              controller.latest_state_.h4.x,
-              controller.latest_state_.h4.y,
-              controller.latest_state_.h4.z + step_height);
+          controller.latest_state_.h4.x,
+          controller.latest_state_.h4.y,
+          controller.latest_state_.h4.z + step_height);
 
           // Target position (p2) from gait pattern
           Eigen::Vector3d p2(
-              controller.latest_gait_.foot4_step_position.x,
-              controller.latest_gait_.foot4_step_position.y,
-              controller.latest_gait_.foot4_step_position.z);
+          controller.latest_gait_.foot4_step_position.x,
+          controller.latest_gait_.foot4_step_position.y,
+          controller.latest_gait_.foot4_step_position.z);
 
           // Generate the trajectory using the helper function
           auto trajectory = generate_bezier_path(p0, p1, p2, 50);
@@ -583,34 +828,34 @@ namespace quadruped_mpc
           // Store the trajectory
           for (size_t i = 0; i < trajectory.size() && i < 50; ++i)
           {
-            controller.foot_trajectories_.foot4[i].x = trajectory[i][0];
-            controller.foot_trajectories_.foot4[i].y = trajectory[i][1];
-            controller.foot_trajectories_.foot4[i].z = trajectory[i][2];
+        controller.foot_trajectories_.foot4[i].x = trajectory[i][0];
+        controller.foot_trajectories_.foot4[i].y = trajectory[i][1];
+        controller.foot_trajectories_.foot4[i].z = trajectory[i][2];
           }
           
-          // Log the entire trajectory at info level (unthrottled)
+          // Log the entire trajectory at debug level
           std::stringstream traj_ss;
           traj_ss << "Foot 4 trajectory points:";
           traj_ss << "\n  Hip Position: [" 
-                 << controller.latest_state_.h4.x << ", "
-                 << controller.latest_state_.h4.y << ", "
-                 << controller.latest_state_.h4.z << "]";
+             << controller.latest_state_.h4.x << ", "
+             << controller.latest_state_.h4.y << ", "
+             << controller.latest_state_.h4.z << "]";
           traj_ss << "\n  Control Points:";
           traj_ss << "\n    p0 (start): [" << p0.x() << ", " << p0.y() << ", " << p0.z() << "]";
           traj_ss << "\n    p1 (mid)  : [" << p1.x() << ", " << p1.y() << ", " << p1.z() << "]";
           traj_ss << "\n    p2 (end)  : [" << p2.x() << ", " << p2.y() << ", " << p2.z() << "]";
           traj_ss << "\n  Trajectory:";
           for (size_t i = 0; i < std::min(trajectory.size(), static_cast<size_t>(50)); ++i) {
-            traj_ss << "\n    [" << i << "]: [" 
-                   << controller.foot_trajectories_.foot4[i].x << ", "
-                   << controller.foot_trajectories_.foot4[i].y << ", "
-                   << controller.foot_trajectories_.foot4[i].z << "]";
+        traj_ss << "\n    [" << i << "]: [" 
+           << controller.foot_trajectories_.foot4[i].x << ", "
+           << controller.foot_trajectories_.foot4[i].y << ", "
+           << controller.foot_trajectories_.foot4[i].z << "]";
           }
-          RCLCPP_INFO(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
+          RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s\n\n", traj_ss.str().c_str());
 
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                      "Generated trajectory for foot4: from %s through %s to %s",
-                      vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
+              "Generated trajectory for foot4: from %s through %s to %s",
+              vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(), vec3_to_string(p2).c_str());
         }
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
@@ -620,25 +865,25 @@ namespace quadruped_mpc
 
         // Get current and desired positions
         Eigen::Vector3d current_pos(
-            controller.latest_state_.p4.x,
-            controller.latest_state_.p4.y,
-            controller.latest_state_.p4.z);
+        controller.latest_state_.p4.x,
+        controller.latest_state_.p4.y,
+        controller.latest_state_.p4.z);
 
         Eigen::Vector3d target_pos(
-            controller.foot_trajectories_.foot4[trajectory_idx].x,
-            controller.foot_trajectories_.foot4[trajectory_idx].y,
-            controller.foot_trajectories_.foot4[trajectory_idx].z);
+        controller.foot_trajectories_.foot4[trajectory_idx].x,
+        controller.foot_trajectories_.foot4[trajectory_idx].y,
+        controller.foot_trajectories_.foot4[trajectory_idx].z);
 
         // Get current velocity (zeros if not available)
         Eigen::Vector3d current_vel = Eigen::Vector3d::Zero();
         if (controller.latest_state_.v4.x != 0.0 || 
-            controller.latest_state_.v4.y != 0.0 || 
-            controller.latest_state_.v4.z != 0.0) {
+        controller.latest_state_.v4.y != 0.0 || 
+        controller.latest_state_.v4.z != 0.0) {
           // Only use velocity feedback if it's non-zero (available)
           current_vel = Eigen::Vector3d(
-              controller.latest_state_.v4.x,
-              controller.latest_state_.v4.y,
-              controller.latest_state_.v4.z);
+          controller.latest_state_.v4.x,
+          controller.latest_state_.v4.y,
+          controller.latest_state_.v4.z);
         }
 
         // Calculate position error and PD control force
@@ -651,25 +896,26 @@ namespace quadruped_mpc
         controller.swing_forces_.foot4.z = pd_force(2);
         controller.swing_forces_.has_data = true;
 
-        RCLCPP_INFO(controller.get_node()->get_logger(),
-                      "Foot 4 trajectory: phase=%.2f, idx=%d, target=%s, current=%s, error=%s, force=%s",
-                      phase, trajectory_idx,
-                      vec3_to_string(target_pos).c_str(),
-                      vec3_to_string(current_pos).c_str(),
-                      vec3_to_string(pos_error).c_str(),
-                      vec3_to_string(pd_force).c_str());
+        // Store info for reference (formerly for tabular logging)
+        foot_info[3].active = true;
+        foot_info[3].phase = phase;
+        foot_info[3].trajectory_idx = trajectory_idx;
+        foot_info[3].target_pos = target_pos;
+        foot_info[3].current_pos = current_pos;
+        foot_info[3].pos_error = pos_error;
+        foot_info[3].pd_force = pd_force;
       }
-
+      
       // Periodic overall debug
       static int swing_counter = 0;
       if ((swing_counter++ % 500) == 0)
       {
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                     "Swing trajectory states: F1=%d(%.2f), F2=%d(%.2f), F3=%d(%.2f), F4=%d(%.2f)",
-                     controller.latest_gait_.foot1_state, controller.latest_gait_.foot1_phase,
-                     controller.latest_gait_.foot2_state, controller.latest_gait_.foot2_phase,
-                     controller.latest_gait_.foot3_state, controller.latest_gait_.foot3_phase,
-                     controller.latest_gait_.foot4_state, controller.latest_gait_.foot4_phase);
+             "Swing trajectory states: F1=%d(%.2f), F2=%d(%.2f), F3=%d(%.2f), F4=%d(%.2f)",
+             controller.latest_gait_.foot1_state, controller.latest_gait_.foot1_phase,
+             controller.latest_gait_.foot2_state, controller.latest_gait_.foot2_phase,
+             controller.latest_gait_.foot3_state, controller.latest_gait_.foot3_phase,
+             controller.latest_gait_.foot4_state, controller.latest_gait_.foot4_phase);
       }
 
       return true;
@@ -824,10 +1070,78 @@ namespace quadruped_mpc
           controller.latest_state_.j4[2], controller.latest_state_.j4[5];
 
       // Calculate torques using the negative of forces (action-reaction principle)
-      Eigen::Vector2d torque1 = J1.transpose() * -force1;
-      Eigen::Vector2d torque2 = J2.transpose() * -force2;
-      Eigen::Vector2d torque3 = J3.transpose() * -force3;
-      Eigen::Vector2d torque4 = J4.transpose() * -force4;
+      Eigen::Vector2d torque1 = J1.transpose() * force1;
+      Eigen::Vector2d torque2 = J2.transpose() * force2;
+      Eigen::Vector2d torque3 = J3.transpose() * force3;
+      Eigen::Vector2d torque4 = J4.transpose() * force4;
+
+      // Create a table to log the current state
+      if (detailed_log) {
+        std::stringstream desired_state_table;
+        desired_state_table << "\nCurrent Body State:";
+        desired_state_table << "\n╔═════╦══════════════════════════╦══════════════════════════════════╦══════════════════════════╦══════════════════════════╗";
+        desired_state_table << "\n║STAGE║     POSITION (XYZ)       ║     ORIENTATION (WXYZ)           ║    COM VEL (XYZ)         ║    ANGULAR VEL (XYZ)     ║";
+        desired_state_table << "\n╠═════╬══════════════════════════╬══════════════════════════════════╬══════════════════════════╬══════════════════════════╣";
+        
+        // Get current state from latest state using fields that exist in the message
+        Eigen::Vector3d position(
+            controller.latest_state_.pc.x,
+            controller.latest_state_.pc.y,
+            controller.latest_state_.pc.z);
+        
+        Eigen::Vector4d orientation(
+            controller.latest_state_.orientation.w,
+            controller.latest_state_.orientation.x,
+            controller.latest_state_.orientation.y,
+            controller.latest_state_.orientation.z);
+        
+        // Use COM velocity (center of mass velocity)
+        Eigen::Vector3d com_velocity(
+            controller.latest_state_.com_velocity.x,
+            controller.latest_state_.com_velocity.y,
+            controller.latest_state_.com_velocity.z);
+        
+        // Use IMU angular velocity
+        Eigen::Vector3d angular_velocity(
+            controller.latest_state_.angular_velocity.x,
+            controller.latest_state_.angular_velocity.y,
+            controller.latest_state_.angular_velocity.z);
+        
+        // Format the state data for the table
+        std::stringstream pos_ss, quat_ss, lin_vel_ss, ang_vel_ss;
+        
+        pos_ss << std::fixed << std::setprecision(3);
+        pos_ss << "[" << std::setw(6) << position.x() 
+               << "," << std::setw(6) << position.y() 
+               << "," << std::setw(6) << position.z() << "]";
+        
+        quat_ss << std::fixed << std::setprecision(3);
+        quat_ss << "[" << std::setw(6) << orientation.w() 
+                << "," << std::setw(6) << orientation.x() 
+                << "," << std::setw(6) << orientation.y() 
+                << "," << std::setw(6) << orientation.z() << "]";
+        
+        lin_vel_ss << std::fixed << std::setprecision(3);
+        lin_vel_ss << "[" << std::setw(6) << com_velocity.x() 
+                  << "," << std::setw(6) << com_velocity.y() 
+                  << "," << std::setw(6) << com_velocity.z() << "]";
+        
+        ang_vel_ss << std::fixed << std::setprecision(3);
+        ang_vel_ss << "[" << std::setw(6) << angular_velocity.x() 
+                  << "," << std::setw(6) << angular_velocity.y() 
+                  << "," << std::setw(6) << angular_velocity.z() << "]";
+        
+        // Add a single row with current state
+        desired_state_table << "\n║   0 ║ " << std::setw(26) << pos_ss.str() 
+                           << " ║ " << std::setw(30) << quat_ss.str() 
+                           << " ║ " << std::setw(26) << lin_vel_ss.str() 
+                           << " ║ " << std::setw(26) << ang_vel_ss.str() << " ║";
+        
+        // Add closing line for the table
+        desired_state_table << "\n╚═════╩══════════════════════════╩══════════════════════════════════╩══════════════════════════╩══════════════════════════╝";
+        
+        RCLCPP_INFO(controller.get_node()->get_logger(), "Current Body State: %s", desired_state_table.str().c_str());
+      }
 
       // Check if any torque exceeds the limit (8 Nm)
       const double torque_limit = 8.0;  // 8 Newton-meters

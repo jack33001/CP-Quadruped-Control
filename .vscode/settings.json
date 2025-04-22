@@ -85,6 +85,25 @@
         "forward_list": "cpp",
         "source_location": "cpp",
         "fstream": "cpp",
-        "stdfloat": "cpp"
+        "stdfloat": "cpp",
+        "csetjmp": "cpp",
+        "*.ipp": "cpp",
+        "any": "cpp",
+        "barrier": "cpp",
+        "coroutine": "cpp",
+        "cuchar": "cpp",
+        "netfwd": "cpp",
+        "regex": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "latch": "cpp",
+        "ranges": "cpp",
+        "scoped_allocator": "cpp",
+        "spanstream": "cpp",
+        "stacktrace": "cpp",
+        "syncstream": "cpp",
+        "valarray": "cpp"
     }
 }

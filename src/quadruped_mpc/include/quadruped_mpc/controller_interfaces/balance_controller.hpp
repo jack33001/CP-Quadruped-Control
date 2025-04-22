@@ -93,6 +93,10 @@ private:
   bool update_state();
   bool update_control();
   bool update_commands();
+  
+  // Add method to print controller output in a formatted table
+  void print_controller_output_table();
+  void print_state_vector_table();  // Add this declaration
 };
 
 }  // namespace quadruped_mpc
