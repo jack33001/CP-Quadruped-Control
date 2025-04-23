@@ -45,6 +45,9 @@ add_executable(readUSB src/readUSB.cpp)
 ament_target_dependencies(readUSB rclcpp std_msgs)
 target_link_libraries(readUSB nlohmann_json::nlohmann_json)
 
+add_executable(imu_node src/imu_node.cpp)
+ament_target_dependencies(imu_node rclcpp std_msgs)
+target_link_libraries(imu_node nlohmann_json::nlohmann_json)
 
 
 
@@ -67,6 +70,7 @@ install(TARGETS
   talker
   listener
   readUSB
+  imu_node
   DESTINATION lib/${PROJECT_NAME})
 
 
