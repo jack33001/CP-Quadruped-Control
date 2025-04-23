@@ -76,8 +76,37 @@ inline void BalanceController::print_state_vector_table()
     ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][12] << "] ║\n";
   }
   
+  // Add a separator line before desired state
+  ss << "╠═════╩══════════════════════════╩══════════════════════════════════╩══════════════════════════╩══════════════════════════╣\n";
+  
+  // Add the desired state row
+  ss << "║ DESIRED STATE                                                                                                           ║\n";
+  ss << "╠═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣\n";
+  
+  // Position, orientation, linear and angular velocity
+  ss << "║ Position: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[0] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[1] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[2] << "]  ";
+  
+  ss << "Orientation: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[3] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[4] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[5] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[6] << "]                                       ║\n";
+  
+  ss << "║ Lin Vel: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[7] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[8] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[9] << "]  ";
+  
+  ss << "Ang Vel: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[10] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[11] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[12] << "]                                                    ║\n";
+  
   // Print footer line
-  ss << "╚═════╩══════════════════════════╩══════════════════════════════════╩══════════════════════════╩══════════════════════════╝";
+  ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝";
   
   // Log the table
   RCLCPP_INFO(get_node()->get_logger(), "State Vector Prediction:\n%s", ss.str().c_str());
@@ -177,19 +206,44 @@ inline void BalanceController::print_controller_output_table()
   double total_z = stage_controls[0][2] + stage_controls[0][5] + stage_controls[0][8] + stage_controls[0][11];
   
   // Add a separator line before the totals
-  ss << "╠═════╩═══════════════════════════════════════════════════════════════════════════════════════════════════════════╦═══════════════════════════╣\n";
+  ss << "╠═════╩══════════════════════════╩══════════════════════════╩══════════════════════════╩══════════════════════════╬═══════════════════════════╣\n";
   
-  // Add the totals row
+  // Add the totals row for forces
   ss << "║ TOTAL FORCE (4 feet)                                                                                            ║ [";
   ss << std::setw(6) << std::fixed << std::setprecision(2) << total_x << ", ";
   ss << std::setw(6) << std::fixed << std::setprecision(2) << total_y << ", ";
   ss << std::setw(6) << std::fixed << std::setprecision(2) << total_z << "] ║\n";
   
+  // Add a row for foot positions (only for current state)
+  ss << "╠═════════════════════════════════════════════════════════════════════════════════════════════════════════════════╩═══════════════════════════╣\n";
+  ss << "║ FOOT POSITIONS [" << (foot1_state_ == 1 ? "SWING" : "STANCE") << "|" << (foot2_state_ == 1 ? "SWING" : "STANCE") << "|" << (foot3_state_ == 1 ? "SWING" : "STANCE") << "|" << (foot4_state_ == 1 ? "SWING" : "STANCE") << "]                                                                                                ║\n";
+  
+  // Add lines for each foot position
+  ss << "║ Foot1: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[13] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[14] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[15] << "]  ";
+  
+  ss << "Foot2: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[16] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[17] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[18] << "]  ";
+  
+  ss << "Foot3: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[19] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[20] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[21] << "]  ";
+  
+  ss << "Foot4: [";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[22] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[23] << ", ";
+  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[24] << "]          ║\n";
+  
   // Print footer line
-  ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════╩═══════════════════════════╝";
+  ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝";
   
   // Log the table
-  RCLCPP_INFO(get_node()->get_logger(), "Balance Controller Output (Foot Forces X, Y, Z):\n%s", ss.str().c_str());
+  RCLCPP_INFO(get_node()->get_logger(), "Balance Controller Output (Foot Forces and Positions):\n%s", ss.str().c_str());
 }
 
 inline bool BalanceController::update_state()

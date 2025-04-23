@@ -39,6 +39,87 @@
     </sensor>
   </gazebo>
 
+  <!-- Contact sensors for feet -->
+  <gazebo reference="fr_foot">
+    <sensor name="fr_foot_contact" type="contact">
+      <contact>
+        <collision>fr_foot_collision</collision>
+      </contact>
+      <plugin filename="libgz-sim-contact-system.so" 
+              name="gz::sim::systems::Contact">
+        <topic>fr_foot_contacts</topic>
+      </plugin>
+      <update_rate>100.0</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+    </sensor>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+  <gazebo reference="fl_foot">
+    <sensor name="fl_foot_contact" type="contact">
+      <contact>
+        <collision>fl_foot_collision</collision>
+      </contact>
+      <plugin filename="libgz-sim-contact-system.so" 
+              name="gz::sim::systems::Contact">
+        <topic>fl_foot_contacts</topic>
+      </plugin>
+      <update_rate>100.0</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+    </sensor>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+  <gazebo reference="rr_foot">
+    <sensor name="rr_foot_contact" type="contact">
+      <contact>
+        <collision>rr_foot_collision</collision>
+      </contact>
+      <plugin filename="libgz-sim-contact-system.so" 
+              name="gz::sim::systems::Contact">
+        <topic>rr_foot_contacts</topic>
+      </plugin>
+      <update_rate>100.0</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+    </sensor>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+  <gazebo reference="rl_foot">
+    <sensor name="rl_foot_contact" type="contact">
+      <contact>
+        <collision>rl_foot_collision</collision>
+      </contact>
+      <plugin filename="libgz-sim-contact-system.so" 
+              name="gz::sim::systems::Contact">
+        <topic>rl_foot_contacts</topic>
+      </plugin>
+      <update_rate>100.0</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+    </sensor>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
   <!-- ros2_control configuration -->
   <ros2_control name="GazeboSystem" type="system">
 
@@ -47,98 +128,127 @@
     </hardware>
 
     <!-- fr_hip Joint -->
-  <joint name="fr_hip">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <joint name="fr_hip">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- fr_knee Joint -->
-  <joint name="fr_knee">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- fr_knee Joint -->
+    <joint name="fr_knee">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- fl_hip Joint -->
-  <joint name="fl_hip">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- fl_hip Joint -->
+    <joint name="fl_hip">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- fl_knee Joint -->
-  <joint name="fl_knee">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- fl_knee Joint -->
+    <joint name="fl_knee">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- rr_hip Joint -->
-  <joint name="rr_hip">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- rr_hip Joint -->
+    <joint name="rr_hip">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- rr_knee Joint -->
-  <joint name="rr_knee">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- rr_knee Joint -->
+    <joint name="rr_knee">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- rl_hip Joint -->
-  <joint name="rl_hip">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- rl_hip Joint -->
+    <joint name="rl_hip">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- rl_knee Joint -->
-  <joint name="rl_knee">
-    <command_interface name="position"/>
-    <command_interface name="velocity"/>
-    <command_interface name="effort"/>
-    <state_interface name="position"/>
-    <state_interface name="velocity"/>
-    <state_interface name="effort"/>
-  </joint>
+    <!-- rl_knee Joint -->
+    <joint name="rl_knee">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
 
-  <!-- IMU sensor -->
-  <sensor name="imu_sensor">
-    <state_interface name="orientation.x"/>
-    <state_interface name="orientation.y"/>
-    <state_interface name="orientation.z"/>
-    <state_interface name="orientation.w"/>
-    <state_interface name="angular_velocity.x"/>
-    <state_interface name="angular_velocity.y"/>
-    <state_interface name="angular_velocity.z"/>
-    <state_interface name="linear_acceleration.x"/>
-    <state_interface name="linear_acceleration.y"/>
-    <state_interface name="linear_acceleration.z"/>
-    <param name="frame_id">imu_link</param>
-  </sensor>
-</ros2_control>
+    <!-- IMU sensor -->
+    <sensor name="imu_sensor">
+      <state_interface name="orientation.x"/>
+      <state_interface name="orientation.y"/>
+      <state_interface name="orientation.z"/>
+      <state_interface name="orientation.w"/>
+      <state_interface name="angular_velocity.x"/>
+      <state_interface name="angular_velocity.y"/>
+      <state_interface name="angular_velocity.z"/>
+      <state_interface name="linear_acceleration.x"/>
+      <state_interface name="linear_acceleration.y"/>
+      <state_interface name="linear_acceleration.z"/>
+      <param name="frame_id">imu_link</param>
+    </sensor>
+    
+    <!-- Contact sensors for feet -->
+    <sensor name="fr_contact_sensor">
+      <state_interface name="normal_force.x"/>
+      <state_interface name="normal_force.y"/>
+      <state_interface name="normal_force.z"/>
+      <param name="frame_id">fr_foot</param>
+    </sensor>
+    
+    <sensor name="fl_contact_sensor">
+      <state_interface name="normal_force.x"/>
+      <state_interface name="normal_force.y"/>
+      <state_interface name="normal_force.z"/>
+      <param name="frame_id">fl_foot</param>
+    </sensor>
+    
+    <sensor name="rr_contact_sensor">
+      <state_interface name="normal_force.x"/>
+      <state_interface name="normal_force.y"/>
+      <state_interface name="normal_force.z"/>
+      <param name="frame_id">rr_foot</param>
+    </sensor>
+    
+    <sensor name="rl_contact_sensor">
+      <state_interface name="normal_force.x"/>
+      <state_interface name="normal_force.y"/>
+      <state_interface name="normal_force.z"/>
+      <param name="frame_id">rl_foot</param>
+    </sensor>
+  </ros2_control>
 </robot>

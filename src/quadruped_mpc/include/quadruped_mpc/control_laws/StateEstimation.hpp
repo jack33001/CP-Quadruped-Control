@@ -277,7 +277,8 @@ inline bool StateEstimator::detect_contact()
 
 inline bool StateEstimator::pin_kinematics()
 {
-  try {
+  try
+  {
     static int call_count = 0;
     call_count++;
     bool should_log = (call_count % 10 == 0); // Changed from 50 to 10
@@ -345,6 +346,35 @@ inline bool StateEstimator::pin_kinematics()
     if (should_log) {
       RCLCPP_DEBUG(get_node()->get_logger(), "%s", foot_states_log.str().c_str());
     }
+
+    // Log the frame names before computing Jacobians
+    std::stringstream frame_names_log;
+    frame_names_log << "\n--- JACOBIAN FRAME INFORMATION ---\n";
+    frame_names_log << "Foot | Frame ID | Frame Name\n";
+    frame_names_log << "-----+----------+------------\n";
+
+    // Add frame names for each foot's frame_id
+    for (size_t i = 0; i < 4; ++i) {
+      std::string frame_name = model_.frames[foot_frame_ids_[i]].name;
+      frame_names_log << "  " << i << "  | " << foot_frame_ids_[i] << " | " << frame_name << "\n";
+    }
+
+    // Add joint names for the corresponding joints used in Jacobians
+    frame_names_log << "\nJoint Mappings for Jacobian Computation:\n";
+    frame_names_log << "Leg | Joint 1 | Joint 2\n";
+    frame_names_log << "----+---------+--------\n";
+
+    // For FL leg (J1)
+    frame_names_log << " FL | " << joint_mappings_[0].name << " | " << joint_mappings_[1].name << "\n";
+    // For FR leg (J2)
+    frame_names_log << " FR | " << joint_mappings_[2].name << " | " << joint_mappings_[3].name << "\n";
+    // For RL leg (J3)
+    frame_names_log << " RL | " << joint_mappings_[4].name << " | " << joint_mappings_[5].name << "\n";
+    // For RR leg (J4)
+    frame_names_log << " RR | " << joint_mappings_[6].name << " | " << joint_mappings_[7].name << "\n";
+
+    // Always log this information to help debug the issue
+    RCLCPP_INFO(get_node()->get_logger(), "%s", frame_names_log.str().c_str());
 
     // Compute full Jacobians in world frame
     Eigen::MatrixXd J_temp(6, model_.nv);

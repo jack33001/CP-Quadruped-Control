@@ -73,7 +73,7 @@
         </geometry>
         <material name="Orange"/>
       </visual>
-      <collision>
+      <collision name="${prefix}_foot_collision">
         <geometry>
           <sphere radius="0.03"/>
         </geometry>
@@ -84,6 +84,7 @@
       <parent link="${prefix}_shin"/>
       <child link="${prefix}_foot"/>
       <origin xyz="${knee_offset} -0.0075 0" rpy="0 0 0"/>
+      <dynamics damping="0.0" friction="0.0"/>
     </joint>
 
   </xacro:macro>
