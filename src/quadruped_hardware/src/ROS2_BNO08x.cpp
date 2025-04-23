@@ -72,39 +72,49 @@ BNO08X::BNO08X (): usbPort("/dev/ttyACM0") {}
         
         // Read a line of JSON from the USB port
         if (std::getline(usbPort, jsonString)) {
-            try {
-                // Parse the JSON string
-                json jsonData = json::parse(jsonString);
-                std::cout << "json string: "<< jsonString<< std::endl;
+            // try {
+            //     // Parse the JSON string
+            //     jsonData = json::parse(jsonString);
 
-                // Print the parsed JSON data
-                std::cout << "status: " << jsonData["status"] << std::endl;
-                std::cout << "yaw: "    << jsonData["yaw"] << "°" << std::endl;
-                std::cout << "pitch: "  << jsonData["pitch"] << "°" << std::endl;
-                std::cout << "roll: "   << jsonData["roll"] << "°" << std::endl;
+            //     // // Print the parsed JSON data
+            //     // std::cout << "status: " << jsonData["status"] << std::endl;
+            //     // std::cout << "yaw: "    << jsonData["yaw"] << "°" << std::endl;
+            //     // std::cout << "pitch: "  << jsonData["pitch"] << "°" << std::endl;
+            //     // std::cout << "roll: "   << jsonData["roll"] << "°" << std::endl;
   
-                std::cout << "---------------------------------" << std::endl;
+            //     // std::cout << "---------------------------------" << std::endl;
 
 
-                quaternion_[0] = jsonData["status"];
-                quaternion_[1] = jsonData["yaw"];
-                quaternion_[2] = jsonData["pitch"];
-                quaternion_[3] = jsonData["roll"];
+                
 
-                std::cout << "jobs done" << std::endl;
 
-            } catch (const std::exception& e) {
-                std::cerr << "Failed to parse JSON: " << e.what() << std::endl;
-            }
+            // } catch (const std::exception& e) {
+            //     // std::cerr << "Failed to parse JSON: " << e.what() << std::endl;
+            // }
         }
+        // else {
+        //     pass;
+        // }
             
  
 
         return hardware_interface::return_type::OK;
     }
+
+    hardware_interface::return_type BNO08X::update(const rclcpp::Time & time, const rclcpp::Duration & period) {
+        // Nothing to update for this sensor
+        jsonData = json::parse(jsonString);
+
+        return hardware_interface::return_type::OK;
+    }
+        
     
     hardware_interface::return_type BNO08X::write(const rclcpp::Time& time, const rclcpp::Duration& period)  {
-        // Nothing to write for this sensor
+        
+        quaternion_[0] = jsonData["status"];
+        quaternion_[1] = jsonData["yaw"];
+        quaternion_[2] = jsonData["pitch"];
+        quaternion_[3] = jsonData["roll"];
 
 
         return hardware_interface::return_type::OK;

@@ -2,7 +2,7 @@
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 
-    <ros2_control name="quadruped_hardware/BNO08X" type="system" is_async="true">
+    <ros2_control name="quadruped_hardware/BNO08X" type="system" >
             <hardware>
                 <plugin>quadruped_hardware/BNO08X</plugin>
         

@@ -24,7 +24,8 @@
 #include <nlohmann/json.hpp> // Include the JSON library 
 
 
-
+using json = nlohmann::json;
+using namespace std::chrono_literals;
 
 namespace quadruped_hardware {
 
@@ -43,11 +44,11 @@ class BNO08X : public hardware_interface::SystemInterface {
         // std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
         hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
-        // hardware_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+        hardware_interface::return_type update(const rclcpp::Time & time, const rclcpp::Duration & period) ;
         hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
         // std::ifstream usbPort("/dev/ttyACM0");
-    
+        json jsonData;
         std::string jsonString;
             // BNO08x sensor_;
         double quaternion_[4] = {0.0, 0.0, 0.0, 0.0};
