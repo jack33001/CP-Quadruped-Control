@@ -37,6 +37,8 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     const char* can_bus = info.hardware_parameters.at("can_bus").c_str();
     can_id = parseCanId(info.hardware_parameters.at("can_id"));
 
+    RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
+
     if (info.hardware_parameters.at("flip").c_str()== "true") //if flip is true, set cmd_flip to -1
     {
         cmd_flip = -1;
@@ -45,8 +47,7 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     {
         cmd_flip = 1;
     }
-    else
-    {
+    else if (info.hardware_parameters.at("flip") != "true" && info.hardware_parameters.at("flip") != "false")    {
         RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Set motor flip to true or false in the motor hardware interface URDF");
         RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Motor will not be flipped!");
         // return hardware_interface::CallbackReturn::ERROR;}
