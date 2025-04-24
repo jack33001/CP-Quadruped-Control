@@ -164,10 +164,16 @@ RUN pip3 install --break-system-packages --ignore-installed -U \
 
 RUN echo "deb [trusted=yes] https://download.eclipse.org/zenoh/debian-repo/ /" | sudo tee -a /etc/apt/sources.list > /dev/null \
     sudo apt update \
-    sudo apt install zenoh-plugin-ros2dds
+    sudo apt install zenoh-plugin-ros2dds\
+    sudo apt-get install ros-jazzy-ament-cmake
     
-   
-    
+
+RUN apt-get update && apt-get install -y \
+    gdb \
+    gdbserver 
+
+ 
+
 
 
 

@@ -105,5 +105,11 @@
         "spanstream": "cpp",
         "stacktrace": "cpp",
         "syncstream": "cpp"
+    },
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
     }
 }

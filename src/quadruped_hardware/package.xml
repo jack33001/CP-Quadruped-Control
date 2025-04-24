@@ -11,7 +11,7 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-  <depend> adafruit-circuitpython-bno08x </depend>
+  <!-- <depend> adafruit-circuitpython-bno08x </depend> -->
 
   <export>
     <build_type>ament_cmake</build_type>
