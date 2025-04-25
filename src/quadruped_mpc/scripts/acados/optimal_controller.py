@@ -143,7 +143,7 @@ class QuadrupedOptimalController:
 
         # Weights for tracked states
         pos_weights = [2000]*3     # Position tracking
-        rot_weights = [200]*4      # Rotation tracking
+        rot_weights = [2000]*4      # Rotation tracking
         vel_weights = [10]*3      # Linear velocity tracking
         ang_weights = [10]*3      # Angular velocity tracking
         

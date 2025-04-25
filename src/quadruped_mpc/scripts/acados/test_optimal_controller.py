@@ -261,6 +261,7 @@ def main():
 
     # Target state - include all states including foot positions
     x_ref = np.zeros(25)  # Reference for all states
+    x_ref[1] = .03  # Target y position
     x_ref[2] = 0.18  # Target height matches initial height
     x_ref[3] = 1.0   # Quaternion w = 1 for [0 0 0] Euler angles
     x_ref[12:] = x0_full[12:]  # Keep foot positions constant

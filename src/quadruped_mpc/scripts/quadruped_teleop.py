@@ -42,9 +42,6 @@ class QuadrupedTeleop(Node):
         self.rotation_step = 0.01  # rad
         self.velocity_step = 0.01  # m/s or rad/s
         
-        # Track shift key state
-        self.shift_pressed = False
-        
         # Track gait start state
         self.gait_started = False
         
@@ -68,9 +65,9 @@ class QuadrupedTeleop(Node):
         self.get_logger().info('Q/E: +/- Yaw')
         self.get_logger().info('Up/Down: +/- Z position')
         self.get_logger().info('Left/Right: +/- Roll')
-        self.get_logger().info('Shift + W/S: +/- X velocity')
-        self.get_logger().info('Shift + A/D: +/- Y velocity')
-        self.get_logger().info('Shift + Q/E: +/- Yaw rate')
+        self.get_logger().info('I/K: +/- X velocity')
+        self.get_logger().info('J/L: +/- Y velocity')
+        self.get_logger().info('U/O: +/- Yaw rate')
         self.get_logger().info('SPACE: Start gait pattern')
         self.get_logger().info('ESC: Exit')
         
@@ -80,11 +77,6 @@ class QuadrupedTeleop(Node):
         self.twist_publisher.publish(self.twist)
         
     def on_press(self, key):
-        # Check if it's the shift key
-        if key == keyboard.Key.shift:
-            self.shift_pressed = True
-            return
-            
         # Check if it's the space key (for starting gait)
         if key == keyboard.Key.space:
             self.gait_started = True
@@ -103,46 +95,44 @@ class QuadrupedTeleop(Node):
             # Make sure key_char is lowercase for consistent comparisons
             key_char = key_char.lower()
             
-            if self.shift_pressed:
-                # Velocity control (Twist)
-                if key_char == 'w':
-                    self.twist.linear.x += self.velocity_step
-                    self.get_logger().info(f'X velocity: {self.twist.linear.x:.3f}')
-                elif key_char == 's':
-                    self.twist.linear.x -= self.velocity_step
-                    self.get_logger().info(f'X velocity: {self.twist.linear.x:.3f}')
-                elif key_char == 'a':
-                    self.twist.linear.y += self.velocity_step
-                    self.get_logger().info(f'Y velocity: {self.twist.linear.y:.3f}')
-                elif key_char == 'd':
-                    self.twist.linear.y -= self.velocity_step
-                    self.get_logger().info(f'Y velocity: {self.twist.linear.y:.3f}')
-                elif key_char == 'q':
-                    self.twist.angular.z += self.velocity_step
-                    self.get_logger().info(f'Yaw rate: {self.twist.angular.z:.3f}')
-                elif key_char == 'e':
-                    self.twist.angular.z -= self.velocity_step
-                    self.get_logger().info(f'Yaw rate: {self.twist.angular.z:.3f}')
-            else:
-                # Position control (Pose)
-                if key_char == 'w':
-                    self.pose.position.x += self.position_step
-                    self.get_logger().info(f'X position: {self.pose.position.x:.3f}')
-                elif key_char == 's':
-                    self.pose.position.x -= self.position_step
-                    self.get_logger().info(f'X position: {self.pose.position.x:.3f}')
-                elif key_char == 'a':
-                    self.pose.position.y += self.position_step
-                    self.get_logger().info(f'Y position: {self.pose.position.y:.3f}')
-                elif key_char == 'd':
-                    self.pose.position.y -= self.position_step
-                    self.get_logger().info(f'Y position: {self.pose.position.y:.3f}')
-                elif key_char == 'q':
-                    self.apply_yaw_rotation(self.rotation_step)
-                    self.get_logger().info(f'Yaw: increased by {self.rotation_step:.3f}')
-                elif key_char == 'e':
-                    self.apply_yaw_rotation(-self.rotation_step)
-                    self.get_logger().info(f'Yaw: decreased by {self.rotation_step:.3f}')
+            # Position control keys (WASDQE)
+            if key_char == 'w':
+                self.pose.position.x += self.position_step
+                self.get_logger().info(f'X position: {self.pose.position.x:.3f}')
+            elif key_char == 's':
+                self.pose.position.x -= self.position_step
+                self.get_logger().info(f'X position: {self.pose.position.x:.3f}')
+            elif key_char == 'a':
+                self.pose.position.y += self.position_step
+                self.get_logger().info(f'Y position: {self.pose.position.y:.3f}')
+            elif key_char == 'd':
+                self.pose.position.y -= self.position_step
+                self.get_logger().info(f'Y position: {self.pose.position.y:.3f}')
+            elif key_char == 'q':
+                self.apply_yaw_rotation(self.rotation_step)
+                self.get_logger().info(f'Yaw: increased by {self.rotation_step:.3f}')
+            elif key_char == 'e':
+                self.apply_yaw_rotation(-self.rotation_step)
+                self.get_logger().info(f'Yaw: decreased by {self.rotation_step:.3f}')
+            # Velocity control keys (IJKLUO)
+            elif key_char == 'i':
+                self.twist.linear.x += self.velocity_step
+                self.get_logger().info(f'X velocity: {self.twist.linear.x:.3f}')
+            elif key_char == 'k':
+                self.twist.linear.x -= self.velocity_step
+                self.get_logger().info(f'X velocity: {self.twist.linear.x:.3f}')
+            elif key_char == 'j':
+                self.twist.linear.y += self.velocity_step
+                self.get_logger().info(f'Y velocity: {self.twist.linear.y:.3f}')
+            elif key_char == 'l':
+                self.twist.linear.y -= self.velocity_step
+                self.get_logger().info(f'Y velocity: {self.twist.linear.y:.3f}')
+            elif key_char == 'u':
+                self.twist.angular.z += self.velocity_step
+                self.get_logger().info(f'Yaw rate: {self.twist.angular.z:.3f}')
+            elif key_char == 'o':
+                self.twist.angular.z -= self.velocity_step
+                self.get_logger().info(f'Yaw rate: {self.twist.angular.z:.3f}')
         # Handle special keys
         else:
             if key == keyboard.Key.up:
@@ -159,9 +149,7 @@ class QuadrupedTeleop(Node):
                 self.get_logger().info(f'Roll: decreased by {self.rotation_step:.3f}')
                 
     def on_release(self, key):
-        if key == keyboard.Key.shift:
-            self.shift_pressed = False
-        elif key == keyboard.Key.esc:
+        if key == keyboard.Key.esc:
             # Stop the listener
             return False
 
