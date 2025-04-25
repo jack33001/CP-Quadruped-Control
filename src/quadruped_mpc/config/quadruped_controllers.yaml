@@ -52,13 +52,10 @@ gait_pattern_generator:
     # Gait type is determining the order of steps. The legs are numbered clockwise from the top left like this:
     # |1 2|
     # |4 3|
-    gait_type: [1,3,2,4]  # Walk
-    stance_duration: 0.3
+    gait_type: [2,1,1,2] #[1,3,2,4]  # Walk
+    stance_duration: 0.9
     swing_duration: 0.1
-    duty_factor: 0.5
-    step_height: 0.05
-    step_length: 0.1
-    step_width: 0.1
+    step_height: 0.1
 
 balance_controller:
   ros__parameters:

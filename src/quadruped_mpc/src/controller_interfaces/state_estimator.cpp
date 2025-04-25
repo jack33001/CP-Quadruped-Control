@@ -254,32 +254,42 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
         "fl_foot", "fr_foot", "rl_foot", "rr_foot"
       };
       
-      // Get hip frame IDs
-      const std::array<std::string, 4> hip_frame_names = {
-        "fl_hip", "fr_hip", "rl_hip", "rr_hip"
-      };
-      
+      // Initialize foot_frame_ids_
       for (size_t i = 0; i < 4; ++i) {
         foot_frame_ids_[i] = model_.getFrameId(foot_frame_names[i]);
         if (foot_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
           RCLCPP_ERROR(get_node()->get_logger(), "Frame %s not found in model", foot_frame_names[i].c_str());
           return CallbackReturn::ERROR;
         }
-        
+      }
+      
+      // Get hip frame IDs
+      const std::array<std::string, 4> hip_frame_names = {
+        "fl_hip", "fr_hip", "rl_hip", "rr_hip"
+      };
+
+      for (size_t i = 0; i < 4; ++i) {
         hip_frame_ids_[i] = model_.getFrameId(hip_frame_names[i]);
         if (hip_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
-          RCLCPP_ERROR(get_node()->get_logger(), "Frame %s not found in model", hip_frame_names[i].c_str());
+          RCLCPP_ERROR(get_node()->get_logger(), "Hip frame %s not found in model", hip_frame_names[i].c_str());
           return CallbackReturn::ERROR;
         }
       }
       
-      // Log the frame IDs for debugging
-      RCLCPP_INFO(get_node()->get_logger(), 
-                "Frame IDs loaded - Feet: [%d, %d, %d, %d], Hips: [%d, %d, %d, %d]",
-                foot_frame_ids_[0], foot_frame_ids_[1], foot_frame_ids_[2], foot_frame_ids_[3],
-                hip_frame_ids_[0], hip_frame_ids_[1], hip_frame_ids_[2], hip_frame_ids_[3]);
-
-      RCLCPP_INFO(get_node()->get_logger(), "Frame IDs loaded successfully");
+      // Find body frame id - try different case variations
+      body_frame_id_ = model_.getFrameId("body");
+      if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
+        // Try with capital B
+        body_frame_id_ = model_.getFrameId("Body");
+        if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
+          // Try with base_link as fallback
+          body_frame_id_ = model_.getFrameId("base_link");
+          if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
+            RCLCPP_ERROR(get_node()->get_logger(), "Body frame not found in model (tried 'body', 'Body', 'base_link')");
+            return CallbackReturn::ERROR;
+          }
+        }
+      }
 
       RCLCPP_INFO(get_node()->get_logger(), "State estimator configured successfully");
 

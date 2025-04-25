@@ -192,152 +192,6 @@ namespace quadruped_mpc
                        feet[i].name, *feet[i].state, controller.swing_forces_.has_data);
         }
       }
-
-      // Generate consolidated force table with all feet (keeping original table format)
-      std::lock_guard<std::mutex> state_lock(controller.state_mutex_);
-      std::stringstream table;
-      table << "\n╔═════╦══════╦═══════╦══════════════════════════╦══════════════════════════╦══════════════════════════╦══════════════════════════╗";
-      table << "\n║FOOT ║STATE ║ PHASE ║          TARGET          ║        CURRENT           ║      TRAJECTORY ENDPT    ║           FORCE          ║";
-      table << "\n╠═════╬══════╬═══════╬══════════════════════════╬══════════════════════════╬══════════════════════════╬══════════════════════════╣";
-
-      // Array of references to make the code more compact
-      const std::array<std::string, 4> foot_names = {"FL", "FR", "RL", "RR"};
-      const std::array<int, 4> foot_states = {
-          controller.latest_gait_.foot1_state,
-          controller.latest_gait_.foot2_state,
-          controller.latest_gait_.foot3_state,
-          controller.latest_gait_.foot4_state};
-      const std::array<double, 4> foot_phases = {
-          controller.latest_gait_.foot1_phase,
-          controller.latest_gait_.foot2_phase,
-          controller.latest_gait_.foot3_phase,
-          controller.latest_gait_.foot4_phase};
-
-      // Access current positions
-      const std::array<Eigen::Vector3d, 4> current_positions = {
-          Eigen::Vector3d(controller.latest_state_.p1.x, controller.latest_state_.p1.y, controller.latest_state_.p1.z),
-          Eigen::Vector3d(controller.latest_state_.p2.x, controller.latest_state_.p2.y, controller.latest_state_.p2.z),
-          Eigen::Vector3d(controller.latest_state_.p3.x, controller.latest_state_.p3.y, controller.latest_state_.p3.z),
-          Eigen::Vector3d(controller.latest_state_.p4.x, controller.latest_state_.p4.y, controller.latest_state_.p4.z)};
-
-      // Function to get trajectory data for a specific foot
-      auto get_foot_trajectory = [&controller](int idx, int foot_num)
-      {
-        idx = std::min(49, std::max(0, idx));
-        const auto &traj = (foot_num == 0) ? controller.foot_trajectories_.foot1 : (foot_num == 1) ? controller.foot_trajectories_.foot2
-                                                                               : (foot_num == 2)   ? controller.foot_trajectories_.foot3
-                                                                                                   : controller.foot_trajectories_.foot4;
-        return Eigen::Vector3d(traj[idx].x, traj[idx].y, traj[idx].z);
-      };
-
-      // Process trajectory data and generate the table rows
-      std::array<Eigen::Vector3d, 4> forces_eigen = {
-          Eigen::Vector3d(controller.foot_forces_.foot1.x, controller.foot_forces_.foot1.y, controller.foot_forces_.foot1.z),
-          Eigen::Vector3d(controller.foot_forces_.foot2.x, controller.foot_forces_.foot2.y, controller.foot_forces_.foot2.z),
-          Eigen::Vector3d(controller.foot_forces_.foot3.x, controller.foot_forces_.foot3.y, controller.foot_forces_.foot3.z),
-          Eigen::Vector3d(controller.foot_forces_.foot4.x, controller.foot_forces_.foot4.y, controller.foot_forces_.foot4.z)};
-
-      // Calculate total stance force and generate table
-      Eigen::Vector3d total_stance_force = Eigen::Vector3d::Zero();
-      int stance_foot_count = 0;
-
-      for (int i = 0; i < 4; ++i)
-      {
-        // Determine if foot is in swing phase and has valid trajectory
-        bool is_swing = foot_states[i] == 1 && foot_phases[i] >= 0.0 && foot_phases[i] <= 1.0;
-
-        // Get target/trajectory data
-        Eigen::Vector3d target_pos = Eigen::Vector3d::Zero();
-        Eigen::Vector3d end_pos = Eigen::Vector3d::Zero();
-        if (is_swing)
-        {
-          int trajectory_idx = static_cast<int>(foot_phases[i] * 49);
-          target_pos = get_foot_trajectory(trajectory_idx, i);
-          end_pos = get_foot_trajectory(49, i); // Endpoint
-        }
-        else
-        {
-          // Track stance feet for total force
-          total_stance_force += forces_eigen[i];
-          stance_foot_count++;
-        }
-
-        // Format all position data for display
-        std::string state_str = is_swing ? "SWING " : "STANCE";
-
-        // Format position vectors with consistent width
-        std::stringstream target_ss, current_ss, endpoint_ss, force_ss;
-
-        // Format target position
-        target_ss << std::fixed << std::setprecision(3);
-        if (is_swing)
-        {
-          target_ss << "["
-                    << std::setw(7) << target_pos.x() << ","
-                    << std::setw(7) << target_pos.y() << ","
-                    << std::setw(7) << target_pos.z() << "]";
-        }
-        else
-        {
-          target_ss << "[      N/A              ]";
-        }
-
-        // Format current position
-        current_ss << std::fixed << std::setprecision(3);
-        current_ss << "["
-                   << std::setw(7) << current_positions[i].x() << ","
-                   << std::setw(7) << current_positions[i].y() << ","
-                   << std::setw(7) << current_positions[i].z() << "]";
-
-        // Format trajectory endpoint
-        endpoint_ss << std::fixed << std::setprecision(3);
-        if (is_swing)
-        {
-          endpoint_ss << "["
-                      << std::setw(7) << end_pos.x() << ","
-                      << std::setw(7) << end_pos.y() << ","
-                      << std::setw(7) << end_pos.z() << "]";
-        }
-        else
-        {
-          endpoint_ss << "[      N/A              ]";
-        }
-
-        // Format force data
-        force_ss << std::fixed << std::setprecision(2);
-        force_ss << "["
-                 << std::setw(7) << forces_eigen[i].x() << ","
-                 << std::setw(7) << forces_eigen[i].y() << ","
-                 << std::setw(7) << forces_eigen[i].z() << "]";
-
-        // Add the formatted row to the table
-        table << "\n║ " << std::left << std::setw(3) << foot_names[i] << " ║"
-              << std::setw(6) << state_str << "║"
-              << std::fixed << std::setprecision(2) << std::right << std::setw(7) << foot_phases[i] << "║"
-              << std::setw(22) << target_ss.str() << " ║"
-              << std::setw(22) << current_ss.str() << " ║"
-              << std::setw(22) << endpoint_ss.str() << " ║"
-              << std::setw(22) << force_ss.str() << " ║";
-      }
-
-      // Add separator line and total stance force row
-      table << "\n╠═════╩══════╩═══════╩══════════════════════════╩══════════════════════════╩══════════════════════════╬══════════════════════════╣";
-
-      // Format the total stance force
-      std::stringstream total_force_ss;
-      total_force_ss << std::fixed << std::setprecision(2);
-      total_force_ss << "["
-                     << std::setw(7) << total_stance_force.x() << ","
-                     << std::setw(7) << total_stance_force.y() << ","
-                     << std::setw(7) << total_stance_force.z() << "]";
-
-      // Add total stance force row
-      table << "\n║ TOTAL STANCE FORCE (" << stance_foot_count << " feet)                                                                         ║ "
-            << std::setw(22) << total_force_ss.str() << "║";
-
-      table << "\n╚═════════════════════════════════════════════════════════════════════════════════════════════════════╩══════════════════════════╝";
-      RCLCPP_INFO(controller.get_node()->get_logger(), "Foot Forces and Trajectories: %s", table.str().c_str());
-
       return true;
     }
     catch (const std::exception &e)
@@ -355,8 +209,27 @@ namespace quadruped_mpc
       std::lock_guard<std::mutex> gait_lock(controller.gait_mutex_);
       std::lock_guard<std::mutex> state_lock(controller.state_mutex_);
 
-      // Default step height and PD control gains
-      const double step_height = 0.05; // 5cm step height
+      // Get step height from gait pattern message
+      double step_height = 0.05; // Default 5cm step height as fallback
+      if (controller.latest_gait_.step_height > 0.0) {
+        step_height = controller.latest_gait_.step_height;
+        // Log when we use step height from message
+        static double last_logged_step_height = 0.0;
+        if (std::abs(step_height - last_logged_step_height) > 0.001) {
+          RCLCPP_INFO(controller.get_node()->get_logger(),
+                     "Using step height from gait pattern: %.3f m", step_height);
+          last_logged_step_height = step_height;
+        }
+      } else {
+        // Log when using default value
+        static bool logged_default = false;
+        if (!logged_default) {
+          RCLCPP_INFO(controller.get_node()->get_logger(),
+                     "Using default step height: %.3f m", step_height);
+          logged_default = true;
+        }
+      }
+
       const double kp = 500.0;         // Position gain
       const double kd = 10.0;          // Velocity damping gain
 
@@ -435,9 +308,10 @@ namespace quadruped_mpc
                                         foot_names[3]}}};
 
       // Helper function to generate and store trajectory
-      auto generate_trajectory = [&](const FootData &foot)
+      auto generate_trajectory = [&](const FootData &foot, int foot_idx)
       {
         Eigen::Vector3d p0 = foot.current_pos;
+        // Use the step_height parameter for trajectory generation
         Eigen::Vector3d p1(foot.hip_pos.x(), foot.hip_pos.y(), foot.hip_pos.z() + step_height);
         auto trajectory = generate_bezier_path(p0, p1, foot.target_pos, 50);
 
@@ -448,6 +322,12 @@ namespace quadruped_mpc
           foot.trajectories[i].y = trajectory[i][1];
           foot.trajectories[i].z = trajectory[i][2];
         }
+
+        // Add INFO level logging for control points with foot number
+        RCLCPP_INFO(controller.get_node()->get_logger(),
+                   "Foot %d (%s) trajectory control points: start=%s, mid=%s, end=%s",
+                   foot_idx + 1, foot.name, vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(),
+                   vec3_to_string(foot.target_pos).c_str());
 
         // Log trajectory details at debug level
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
@@ -510,7 +390,7 @@ namespace quadruped_mpc
         if (feet[i].phase == 0.0)
         {
           RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s generating new trajectory", feet[i].name);
-          generate_trajectory(feet[i]);
+          generate_trajectory(feet[i], i);
         }
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
@@ -644,28 +524,22 @@ namespace quadruped_mpc
           controller.latest_state_.j4[1], controller.latest_state_.j4[4],
           controller.latest_state_.j4[2], controller.latest_state_.j4[5];
 
-      // Calculate total vertical force before any transformations
+      // Calculate total vertical force before any transformations (if available from the state message)
       double total_vertical_force = 0.0;
       for (int i = 0; i < 4; i++) {
         total_vertical_force += forces[i].z();
       }
 
-      // Create a log string for detailed force and torque analysis
-      std::stringstream force_debug;
-      force_debug << "\n===== FORCE TO TORQUE ANALYSIS =====";
-      force_debug << "\nTOTAL VERTICAL FORCE: " << total_vertical_force << " N";
-      force_debug << "\nExpected force for weight balance: " << (14.65 * 9.81) << " N"; // Robot mass * gravity
-
-      // Compute torques and log the calculation
+      // Compute torques
       std::array<Eigen::Vector2d, 4> torques;
       std::array<const char*, 4> leg_names = {"FL", "FR", "RL", "RR"};
-      
-      // Also calculate power to see if energy conservation is violated
+
+      // Calculate power
       double total_power = 0.0;
       
       for (int i = 0; i < 4; i++)
       {
-        // Get joint velocities (if available from the state message)
+        // Get joint velocities (if available from the state message) 
         double v1 = 0.0, v2 = 0.0;
         
         // Calculate indices for this leg's joints from the joint_states array
@@ -677,90 +551,14 @@ namespace quadruped_mpc
           v1 = controller.latest_state_.joint_velocities[joint_idx1];
           v2 = controller.latest_state_.joint_velocities[joint_idx2];
         }
-        
+
         // Calculate torques using the jacobian transpose
         torques[i] = jacobians[i].transpose() * forces[i];
         
         // Calculate power (torque * angular velocity)
         double power = torques[i](0) * v1 + torques[i](1) * v2;
         total_power += power;
-        
-        // Log the Jacobian matrix details for this leg
-        force_debug << "\n\n" << leg_names[i] << " LEG:";
-        force_debug << "\n  Applied Force: [" << forces[i].x() << ", " << forces[i].y() << ", " << forces[i].z() << "] N";
-        force_debug << "\n  Jacobian Matrix:";
-        force_debug << "\n    [" << std::fixed << std::setprecision(4) << jacobians[i](0,0) << ", " << jacobians[i](0,1) << "]";
-        force_debug << "\n    [" << std::fixed << std::setprecision(4) << jacobians[i](1,0) << ", " << jacobians[i](1,1) << "]";
-        force_debug << "\n    [" << std::fixed << std::setprecision(4) << jacobians[i](2,0) << ", " << jacobians[i](2,1) << "]";
-        
-        // Calculate and log the force-torque relationship
-        Eigen::Vector2d tau_j = jacobians[i].transpose() * forces[i];
-        force_debug << "\n  Resulting Torques: [" << tau_j(0) << ", " << tau_j(1) << "] Nm";
-        force_debug << "\n  Joint Velocities: [" << v1 << ", " << v2 << "] rad/s";
-        force_debug << "\n  Power: " << power << " W";
-        
-        // Also log condition number of the Jacobian to check for numerical issues
-        // A high condition number could indicate the Jacobian is nearly singular
-        Eigen::JacobiSVD<Eigen::Matrix<double, 3, 2>> svd(jacobians[i]);
-        double cond = svd.singularValues()(0) / svd.singularValues()(svd.singularValues().size()-1);
-        force_debug << "\n  Jacobian Condition Number: " << cond;
-        
-        // Calculate expected foot velocity from joint velocities
-        Eigen::Vector3d expected_foot_vel = jacobians[i] * Eigen::Vector2d(v1, v2);
-        force_debug << "\n  Expected Foot Velocity: [" << expected_foot_vel.x() << ", " 
-                    << expected_foot_vel.y() << ", " << expected_foot_vel.z() << "] m/s";
-        
-        // If available, compare with actual foot velocity
-        Eigen::Vector3d actual_foot_vel;
-        if (i == 0) actual_foot_vel = Eigen::Vector3d(controller.latest_state_.v1.x, controller.latest_state_.v1.y, controller.latest_state_.v1.z);
-        else if (i == 1) actual_foot_vel = Eigen::Vector3d(controller.latest_state_.v2.x, controller.latest_state_.v2.y, controller.latest_state_.v2.z);
-        else if (i == 2) actual_foot_vel = Eigen::Vector3d(controller.latest_state_.v3.x, controller.latest_state_.v3.y, controller.latest_state_.v3.z);
-        else actual_foot_vel = Eigen::Vector3d(controller.latest_state_.v4.x, controller.latest_state_.v4.y, controller.latest_state_.v4.z);
-        
-        force_debug << "\n  Actual Foot Velocity: [" << actual_foot_vel.x() << ", " 
-                    << actual_foot_vel.y() << ", " << actual_foot_vel.z() << "] m/s";
-        
-        // Calculate virtual work - this should be conserved (F·v = τ·ω)
-        double virtual_work_foot = forces[i].dot(actual_foot_vel);
-        double virtual_work_joint = torques[i](0) * v1 + torques[i](1) * v2;
-        force_debug << "\n  Virtual Work (F·v): " << virtual_work_foot << " W";
-        force_debug << "\n  Virtual Work (τ·ω): " << virtual_work_joint << " W";
-        force_debug << "\n  Work Difference: " << (virtual_work_foot - virtual_work_joint) << " W";
       }
-      
-      force_debug << "\n\nTOTAL POWER: " << total_power << " W";
-      
-      // Check work conservation across all legs
-      force_debug << "\n\nVERIFICATION OF TOTAL SYSTEM:";
-      
-      // Compare normal forces vs weight
-      double robot_weight = 14.65 * 9.81; // mass * gravity
-      double weight_ratio = total_vertical_force / robot_weight;
-      force_debug << "\n  Total Vertical Force: " << total_vertical_force << " N";
-      force_debug << "\n  Robot Weight: " << robot_weight << " N";
-      force_debug << "\n  Force/Weight Ratio: " << weight_ratio;
-      
-      if (std::abs(weight_ratio - 1.0) > 0.2) { // More than 20% difference
-        force_debug << "\n  WARNING: Force/weight ratio significantly different from 1.0";
-      }
-      
-      // Get joint command interfaces (post-transformation)
-      std::vector<double> applied_torques;
-      for (auto &interface : controller.joint_command_interfaces_) {
-        applied_torques.push_back(interface.get_value());
-      }
-      
-      force_debug << "\n\nJOINT TORQUE ANALYSIS:";
-      for (int i = 0; i < std::min(8, static_cast<int>(applied_torques.size())); i++) {
-        int leg_idx = i / 2;
-        int joint_idx = i % 2;
-        force_debug << "\n  " << leg_names[leg_idx] << " Joint " << joint_idx 
-                   << ": Computed=" << torques[leg_idx][joint_idx] 
-                   << ", Applied=" << applied_torques[i];
-      }
-      
-      // Log the detailed force analysis on every cycle (removed counter-based logging)
-      RCLCPP_INFO(controller.get_node()->get_logger(), "%s", force_debug.str().c_str());
 
       // Check all torques against limits
       const double torque_limit = 8.0; // 8 Newton-meters
@@ -779,6 +577,53 @@ namespace quadruped_mpc
       {
         controller.joint_command_interfaces_[i * 2].set_value(torques[i][0]);
         controller.joint_command_interfaces_[i * 2 + 1].set_value(torques[i][1]);
+      }
+
+      // Log foot forces and states in a formatted table with Unicode borders on every cycle
+      {
+        // Get foot states for the table
+        std::array<int, 4> foot_states = {
+          controller.latest_gait_.foot1_state,
+          controller.latest_gait_.foot2_state,
+          controller.latest_gait_.foot3_state,
+          controller.latest_gait_.foot4_state
+        };
+
+        // Create table header and separator with Unicode borders
+        std::stringstream ss;
+        ss << "\nFoot Forces and States:\n";
+        ss << "┌──────┬─────────────┬─────────────┬─────────────┬───────┐\n";
+        ss << "│ Foot │   Force X   │   Force Y   │   Force Z   │ State │\n";
+        ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┤\n";
+
+        // Add each foot's data
+        for (int i = 0; i < 4; i++) {
+          ss << "│ " << std::setw(4) << std::left << leg_names[i] << " │ ";
+          ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) << forces[i].x() << " │ ";
+          ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) << forces[i].y() << " │ ";
+          ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) << forces[i].z() << " │ ";
+          
+          // State: 0=stance, 1=swing
+          std::string state_str = (foot_states[i] == 1) ? "SWING" : "STANCE";
+          ss << std::setw(5) << std::left << state_str << " │";
+          ss << "\n";
+        }
+
+        // Add table footer with summary
+        ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┤\n";
+        ss << "│ SUM  │ " << std::setw(11) << std::right << std::fixed << std::setprecision(3)
+           << (forces[0].x() + forces[1].x() + forces[2].x() + forces[3].x()) << " │ ";
+        ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) 
+           << (forces[0].y() + forces[1].y() + forces[2].y() + forces[3].y()) << " │ ";
+        ss << std::setw(11) << std::right << std::fixed << std::setprecision(3)
+           << total_vertical_force << " │       │\n";
+        ss << "└──────┴─────────────┴─────────────┴─────────────┴───────┘\n";
+        
+        // Add power information
+        ss << "Total Mechanical Power: " << std::fixed << std::setprecision(3) << total_power << " W\n";
+
+        // Log the entire table at once on every cycle
+        RCLCPP_INFO(controller.get_node()->get_logger(), "%s", ss.str().c_str());
       }
 
       return true;
@@ -822,13 +667,11 @@ namespace quadruped_mpc
   {
     std::vector<Eigen::Vector3d> path;
     path.reserve(num_points);
-
     for (int i = 0; i < num_points; i++)
     {
       double t = static_cast<double>(i) / (num_points - 1);
       path.push_back(bezier_quadratic(p0, p1, p2, t));
     }
-
     return path;
   }
 

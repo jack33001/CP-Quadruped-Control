@@ -88,6 +88,8 @@ auto GaitPatternGenerator::on_init() -> CallbackReturn
       msg.com_position.x = 0.0;
       msg.com_position.y = 0.0;
       msg.com_position.z = 0.0;
+      // Initialize step height
+      msg.step_height = 0.05f;  // Default 5cm
       
       rt_gait_pub_->unlockAndPublish();
     }

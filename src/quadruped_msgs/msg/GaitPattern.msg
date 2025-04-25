@@ -18,3 +18,6 @@ int32 foot1_state
 int32 foot2_state
 int32 foot3_state
 int32 foot4_state
+
+# Step height parameter
+float32 step_height

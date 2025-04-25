@@ -108,10 +108,18 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
         foot.state_end_time = current_time + swing_duration_;
         foot.time_in_state = 0.0;
         
-        // Calculate and log each term separately
+        // Calculate each term separately
         Eigen::Vector3d term1 = hip_positions[i]; // Current hip position (x-y)
         Eigen::Vector3d term2 = swing_duration_/2 * cmd_linear; // Raibert hueristic
         Eigen::Vector3d term3 = sqrt(step_height_/9.81) * (com_velocity-cmd_linear); // Step height term
+        
+        // Log the terms at INFO level
+        RCLCPP_INFO(get_node()->get_logger(), 
+              "Foot %d step planning: term1=[%f, %f, %f], term2=[%f, %f, %f], term3=[%f, %f, %f]",
+              i+1, 
+              term1.x(), term1.y(), term1.z(),
+              term2.x(), term2.y(), term2.z(),
+              term3.x(), term3.y(), term3.z());
           
         // Set the step target
         foot.step_target = term1 + term2 + term3;
@@ -259,6 +267,9 @@ inline bool GaitPatternGenerator::publish_pattern()
       msg.com_position.x = support_center_.x();
       msg.com_position.y = support_center_.y();
       msg.com_position.z = 0.0;  // We only compute 2D support polygon
+      
+      // Add step height to the message
+      msg.step_height = static_cast<float>(step_height_);
 
       rt_gait_pub_->unlockAndPublish();
     }

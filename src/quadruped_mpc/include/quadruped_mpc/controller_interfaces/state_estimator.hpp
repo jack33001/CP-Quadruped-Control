@@ -83,6 +83,9 @@ protected:
     bool in_contact;
   };
   std::array<FootState, 4> foot_states_;  // FL, FR, RL, RR
+  
+  // Add hip positions storage
+  std::array<Eigen::Vector3d, 4> hip_positions_;  // FL, FR, RL, RR
 
   // Add Jacobian storage
   using JacobianMatrix = Eigen::Matrix<double, 3, 2>;

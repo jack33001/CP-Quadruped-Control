@@ -106,7 +106,7 @@ inline void BalanceController::print_state_vector_table()
   ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[12] << "]                                                    ║\n";
   
   // Print footer line
-  ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝";
+  ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
   
   // Log the table
   RCLCPP_INFO(get_node()->get_logger(), "State Vector Prediction:\n%s", ss.str().c_str());
@@ -249,7 +249,7 @@ inline void BalanceController::print_controller_output_table()
 inline bool BalanceController::update_state()
 {
   try {
-    RCLCPP_INFO(get_node()->get_logger(), "\n\n\n -------------------------------------------------- NEW STATE --------------------------------------------------");
+    RCLCPP_INFO(get_node()->get_logger(), "\n\n\n -------------------------------------------------- NEW STATE --------------------------------------------------\n\n");
     static bool first_update = true;
     static int update_count = 0;
     update_count++;
