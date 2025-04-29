@@ -4,6 +4,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <vector>
 #include <memory>
+
 #include "quadruped_hardware/MotorDriver.hpp"
 
 
@@ -24,8 +25,8 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 
 
-CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1), cmd_m_state(0),
-                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0) {}
+CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
+                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1) {}
 
 
 hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::HardwareInfo& info){
@@ -35,6 +36,22 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     joint_name = info.hardware_parameters.at("joint_name");
     const char* can_bus = info.hardware_parameters.at("can_bus").c_str();
     can_id = parseCanId(info.hardware_parameters.at("can_id"));
+
+    RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
+
+    if (info.hardware_parameters.at("flip").c_str()== "true") //if flip is true, set cmd_flip to -1
+    {
+        cmd_flip = -1;
+    }
+    else if (info.hardware_parameters.at("flip").c_str()== "false") //if flip is false, set cmd_flip to 1
+    {
+        cmd_flip = 1;
+    }
+    else if (info.hardware_parameters.at("flip") != "true" && info.hardware_parameters.at("flip") != "false")    {
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Set motor flip to true or false in the motor hardware interface URDF");
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Motor will not be flipped!");
+        // return hardware_interface::CallbackReturn::ERROR;}
+    }
 
     motor_controller_ = std::make_unique<motor_driver::MotorDriver>(
         can_id, can_bus, motor_driver::MotorType::GIM8108
@@ -82,6 +99,10 @@ std::vector<hardware_interface::StateInterface> CANMotor::export_state_interface
         hardware_interface::StateInterface(joint_name,  "kd", &state_kd));
     state_interfaces_.emplace_back(
         hardware_interface::StateInterface(joint_name,  "m_state", &state_m_state));
+    state_interfaces_.emplace_back(
+        hardware_interface::StateInterface(joint_name,  "flip", &state_flip));
+    
+    
 
 
     return std::move(state_interfaces_);
@@ -101,6 +122,8 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
         hardware_interface::CommandInterface(joint_name,  "kd", &cmd_kd));
     command_interfaces_.emplace_back(
         hardware_interface::CommandInterface(joint_name,  "m_state", &cmd_m_state));
+    command_interfaces_.emplace_back(
+        hardware_interface::CommandInterface(joint_name,  "flip", &cmd_flip));
 
     return std::move(command_interfaces_);
 }
@@ -125,26 +148,18 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
         cmd_kp  = 0;
         cmd_kd = 0;
-
-        movecmd = {static_cast<float>(cmd_position),
-     static_cast<float>(cmd_velocity),
-      static_cast<float>(cmd_kp),
-       static_cast<float>(cmd_kd),
-        static_cast<float>(cmd_effort)};
-
-        commandMap[can_id[0]] = movecmd;
-    }
-    else
-    {
     
-    movecmd = {static_cast<float>(cmd_position),
-     static_cast<float>(cmd_velocity),
-      static_cast<float>(cmd_kp),
-       static_cast<float>(cmd_kd),
-        static_cast<float>(cmd_effort)};
+    }
+    
+    
+    movecmd = {static_cast<float>(cmd_position*cmd_flip),
+        static_cast<float>(cmd_velocity*cmd_flip),
+        static_cast<float>(cmd_kp),
+        static_cast<float>(cmd_kd),
+        static_cast<float>(cmd_effort*cmd_flip)};
 
     commandMap[can_id[0]] = movecmd;
-    }
+    
 
 
     if(cmd_m_state == 0)
@@ -169,11 +184,12 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
         // check if zeroing would cause the motor to jump
         if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
         {
+            // stop motor exert 0 effort
             movecmd = {static_cast<float>(0),
-                static_cast<float>(0),
-                static_cast<float>(0),
-                static_cast<float>(0),
-                    static_cast<float>(0)};
+                        static_cast<float>(0),
+                        static_cast<float>(0),
+                        static_cast<float>(0),
+                        static_cast<float>(0)};
 
             commandMap[can_id[0]] = movecmd;
             
@@ -194,12 +210,13 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
 
     //update state variables AFTER sending command
-    state_position = stateMap[can_id[0]].position;
-    state_velocity = stateMap[can_id[0]].velocity;
-    state_effort = stateMap[can_id[0]].torque;
+    state_position = stateMap[can_id[0]].position * cmd_flip;
+    state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
+    state_effort = stateMap[can_id[0]].torque * cmd_flip;
     state_kp = cmd_kp;
     state_kd = cmd_kd;
     state_m_state = cmd_m_state;
+    state_flip = cmd_flip;
 
 
 

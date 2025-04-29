@@ -142,6 +142,7 @@ zero_joints_controller:
       - m_state
       - kp
       - kd
+      - flip
     # state_interfaces:
     #   -velocity
       # interface_name: position
