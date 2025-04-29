@@ -12,19 +12,19 @@
     <!-- setting async true here might cause a bug later -->
 
 
-    <xacro:macro name="imu_ros2_control" params="name">
-        <ros2_control name="${name}" type="sensor">
-            <hardware>
-            <plugin>quadruped_hardware/WitImuHardwareInterface</plugin>
-            <param name="device">/dev/ttyUSB0</param>
-            <param name="baud">9600</param>
-            <param name="gravity">9.797673</param>
-            <param name="product">1</param> <!-- WT901C = 1 -->
-            <param name="frame_id">imu_link</param>
-            </hardware>
-        </ros2_control>
-    </xacro:macro>
-
+    
+    <ros2_control name="imu" type="sensor">
+        <hardware>
+        <plugin>quadruped_hardware/WitImuHardwareInterface</plugin>
+        <param name="device">/dev/ttyUSB0</param>
+        <param name="baud">9600</param>
+        <param name="gravity">9.797673</param>
+        <param name="product">1</param> <!-- WT901C = 1 -->
+        <param name="frame_id">imu_link</param>
+        </hardware>
+    </ros2_control>
+    
+<!-- 
     <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" is_async="true"> 
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
@@ -73,7 +73,7 @@
         </joint>
     </ros2_control> 
 
-    <!-- <ros2_control name="quadruped_hardware/CANMotorDriver_RRH" type="system" >
+    <ros2_control name="quadruped_hardware/CANMotorDriver_RRH" type="system" >
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
             <param name="joint_name">rr_hip</param> 
@@ -119,7 +119,7 @@
             <state_interface   name="m_state"/>
             <state_interface   name="flip"/>
         </joint>
-    </ros2_control> -->
+    </ros2_control>
 
     <ros2_control name="quadruped_hardware/CANMotorDriver_FLH" type="system">
         <hardware>
@@ -193,7 +193,7 @@
         </joint>
     </ros2_control> 
 
-<!-- 
+
     <ros2_control name="quadruped_hardware/CANMotorDriver_RLK" type="system">
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>

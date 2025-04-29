@@ -38,7 +38,8 @@
         "/tmp/.X11-unix:/tmp/.X11-unix",  // X11 socket for GUI rendering
         "--device",
         "/dev/dri:/dev/dri",  // Device for GPU access
-        "--device=/dev/ttyACM0:/dev/ttyACM0" // forward serial communication
+        "--device=/dev/ttyACM0:/dev/ttyACM0", // forward serial communication
+        "--device=/dev/ttyUSB0:/dev/ttyUSB0"
     ],
     "mounts": [
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"

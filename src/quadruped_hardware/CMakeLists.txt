@@ -30,9 +30,9 @@ add_library(${PROJECT_NAME} SHARED
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
-  src/ROS2_BNO08x.cpp
+  # src/ROS2_BNO08x.cpp
   src/i2c_device.cpp
-  src/bno08x_driver.cpp
+  # src/bno08x_driver.cpp
 )
 
 # JSON library dependency____________
@@ -91,7 +91,7 @@ ament_target_dependencies(${PROJECT_NAME}
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
-pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
+# pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
 
 
 install(

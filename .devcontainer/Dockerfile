@@ -170,9 +170,9 @@ RUN echo "deb [trusted=yes] https://download.eclipse.org/zenoh/debian-repo/ /" |
 
 RUN apt-get update && apt-get install -y \
     gdb \
-    gdbserver 
-
- 
+    gdbserver \
+    ros-jazzy-tf2 ros-jazzy-tf2-ros \
+    ros-jazzy-tf2-geometry-msgs
 
 
 
