@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-
-    <!-- <ros2_control name="quadruped_hardware/BNO08X" type="system" >
-            <hardware>
-                <plugin>quadruped_hardware/BNO08X</plugin>
-        
-            </hardware>
-        
-    </ros2_control>  -->
-    <!-- setting async true here might cause a bug later -->
-
-
-    
+<!-- 
     <ros2_control name="imu" type="sensor">
         <hardware>
         <plugin>quadruped_hardware/WitImuHardwareInterface</plugin>
         <param name="device">/dev/ttyUSB0</param>
         <param name="baud">9600</param>
         <param name="gravity">9.797673</param>
-        <param name="product">1</param> <!-- WT901C = 1 -->
+        <param name="product">1</param> 
         <param name="frame_id">imu_link</param>
         </hardware>
-    </ros2_control>
+    </ros2_control> -->
+
     
-<!-- 
-    <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" is_async="true"> 
+
+    
+
+    <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" > 
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
             <param name="joint_name">fr_hip</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >10</param>
-            <param name="flip" >true</param>
+            <param name="flip" >false</param>
         </hardware>
         <joint name="fr_hip">
             <command_interface name="position"/>
@@ -103,7 +94,7 @@
             <param name="joint_name">rr_knee</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >13</param>
-             <param name="flip" >true</param>
+             <param name="flip" >false</param>
         </hardware>
         <joint name="rr_knee">
             <command_interface name="position"/>
@@ -151,7 +142,7 @@
             <param name="joint_name">fl_knee</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >15</param>
-             <param name="flip" >true</param>
+             <param name="flip" >false</param>
         </hardware>
         <joint name="fl_knee">
             <command_interface name="position"/>
@@ -175,7 +166,7 @@
             <param name="joint_name">rl_hip</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >16</param>
-             <param name="flip" >true</param>
+             <param name="flip" >false</param>
         </hardware>
         <joint name="rl_hip">
             <command_interface name="position"/>
@@ -216,7 +207,7 @@
             <state_interface   name="m_state"/>
             <state_interface   name="flip"/>
         </joint>
-    </ros2_control>  -->
+    </ros2_control> 
 
     
 </robot>

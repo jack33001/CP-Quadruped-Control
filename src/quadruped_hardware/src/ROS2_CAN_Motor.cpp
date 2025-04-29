@@ -37,21 +37,9 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     const char* can_bus = info.hardware_parameters.at("can_bus").c_str();
     can_id = parseCanId(info.hardware_parameters.at("can_id"));
 
-    RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
+    // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
 
-    if (info.hardware_parameters.at("flip").c_str()== "true") //if flip is true, set cmd_flip to -1
-    {
-        cmd_flip = -1;
-    }
-    else if (info.hardware_parameters.at("flip").c_str()== "false") //if flip is false, set cmd_flip to 1
-    {
-        cmd_flip = 1;
-    }
-    else if (info.hardware_parameters.at("flip") != "true" && info.hardware_parameters.at("flip") != "false")    {
-        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Set motor flip to true or false in the motor hardware interface URDF");
-        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Motor will not be flipped!");
-        // return hardware_interface::CallbackReturn::ERROR;}
-    }
+    
 
     motor_controller_ = std::make_unique<motor_driver::MotorDriver>(
         can_id, can_bus, motor_driver::MotorType::GIM8108
@@ -62,6 +50,19 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
 
 hardware_interface::CallbackReturn CANMotor::on_configure(const rclcpp_lifecycle::State& previous_state){
     // Configuration code
+    if (info_.hardware_parameters.at("flip")== "true") //if flip is true, set cmd_flip to -1
+    {
+        cmd_flip = -1;
+    }
+    else if (info_.hardware_parameters.at("flip")== "false") //if flip is false, set cmd_flip to 1
+    {
+        cmd_flip = 1;
+    }
+    else if (info_.hardware_parameters.at("flip") != "true" && info_.hardware_parameters.at("flip") != "false")    {
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Set motor flip to true or false in the motor hardware interface URDF");
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Motor will not be flipped!");
+        // return hardware_interface::CallbackReturn::ERROR;}
+    }
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -136,7 +137,7 @@ hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const r
 
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
-    std::cout << "_START WRITE MOTOR_" << can_id[0] << std::endl;
+    // std::cout << "_START WRITE MOTOR_" << can_id[0] << std::endl;
     // std::lock_guard<std::mutex> lock(read_write_mutex_);
 
     // std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -223,7 +224,7 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
 
     // LOGGING
-    std::cout << "_COMMANDS MOTOR_" << can_id[0] << std::endl;
+    // std::cout << "_COMMANDS MOTOR_" << can_id[0] << std::endl;
     // std::cout << "Commanded position: " << cmd_position << std::endl;
     // std::cout << "Commanded velocity: " << cmd_velocity << std::endl;
     // std::cout << "Commanded kp: " << cmd_kp << std::endl;

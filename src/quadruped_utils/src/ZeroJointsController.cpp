@@ -186,6 +186,7 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
     joint_kp_command_interface_.clear();
     joint_kd_command_interface_.clear();
     joint_m_state_command_interface_.clear();
+    joint_flip_command_interface_.clear();
 
     joint_position_state_interface_.clear();
     joint_velocity_state_interface_.clear();
