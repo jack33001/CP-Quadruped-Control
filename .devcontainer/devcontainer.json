@@ -39,7 +39,8 @@
         "--device",
         "/dev/dri:/dev/dri",  // Device for GPU access
         "--device=/dev/ttyACM0:/dev/ttyACM0", // forward serial communication
-        "--device=/dev/ttyUSB0:/dev/ttyUSB0"
+        "--device=/dev/ttyUSB0:/dev/ttyUSB0",
+        "--device=/dev/ttyCH341USB0:/dev/ttyUSB0"
     ],
     "mounts": [
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <ros2_control name="imu" type="sensor">
+    <ros2_control name="imu" type="system">
         <hardware>
         <plugin>ROS2C_WITIMU/WitImuHardwareInterface</plugin>
         <param name="device">/dev/ttyUSB0</param>
-        <param name="baud">115200</param>
+        <param name="baud">9600</param>
         <param name="gravity">9.797673</param>
-        <param name="product">1</param> 
+        <!-- <param name="product">1</param>  -->
         <param name="frame_id">imu_link</param>
         </hardware>
     </ros2_control>

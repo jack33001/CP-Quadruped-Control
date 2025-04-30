@@ -172,7 +172,8 @@ RUN apt-get update && apt-get install -y \
     gdb \
     gdbserver \
     ros-jazzy-tf2 ros-jazzy-tf2-ros \
-    ros-jazzy-tf2-geometry-msgs
+    ros-jazzy-tf2-geometry-msgs \
+    usbutils
 
 
 
