@@ -173,7 +173,8 @@ RUN apt-get update && apt-get install -y \
     gdbserver \
     ros-jazzy-tf2 ros-jazzy-tf2-ros \
     ros-jazzy-tf2-geometry-msgs \
-    usbutils
+    usbutils \
+    libqt5serialport5-dev
 
 
 
