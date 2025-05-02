@@ -8,37 +8,13 @@ namespace quadruped_mpc
 inline bool StateEstimator::read_state_interfaces()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from 50 to 10 to match other controllers
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::read_state_interfaces() - Call #%d", call_count
-    );
-
     // Resize joint states vector if needed
     if (joint_states_.size() != joint_names_.size()) {
       joint_states_.resize(joint_names_.size());
-      RCLCPP_DEBUG(
-        get_node()->get_logger(),
-        "Resized joint_states_ vector to size %zu", joint_states_.size()
-      );
     }
 
     // Read all interfaces for each joint
     const size_t interfaces_per_joint = state_interface_types_.size();
-    
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), 
-                 "Reading %zu joints with %zu interfaces per joint", 
-                 joint_names_.size(), interfaces_per_joint);
-    }
-    
-    std::stringstream joint_data_log;
-    joint_data_log << "\n\n\n----------------------------------- NEW TIMESTEP -----------------------------------\n\n--- JOINT STATE READINGS ---\n";
-    joint_data_log << "Joint | Position | Velocity | Effort\n";
-    joint_data_log << "------+----------+----------+--------\n";
     
     for (size_t i = 0; i < joint_names_.size(); ++i) {
       size_t base_idx = i * interfaces_per_joint;
@@ -46,17 +22,8 @@ inline bool StateEstimator::read_state_interfaces()
       joint_states_[i].position = state_interfaces_[base_idx].get_value();      // position
       joint_states_[i].velocity = state_interfaces_[base_idx + 1].get_value();  // velocity
       joint_states_[i].effort = state_interfaces_[base_idx + 2].get_value();    // effort
-
-      joint_data_log << std::setw(5) << joint_names_[i] << " | " 
-                    << std::fixed << std::setprecision(4) << std::setw(8) << joint_states_[i].position << " | "
-                    << std::setw(8) << joint_states_[i].velocity << " | "
-                    << std::setw(8) << joint_states_[i].effort << std::endl;
     }
     
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", joint_data_log.str().c_str());
-    }
-
     // Read IMU data - assuming they're after all joint interfaces
     const size_t imu_start_idx = joint_names_.size() * interfaces_per_joint;
     // Store quaternion in Pinocchio's order [x,y,z,w]
@@ -81,19 +48,6 @@ inline bool StateEstimator::read_state_interfaces()
       state_interfaces_[imu_start_idx + 9].get_value()   // az
     );
 
-    if (should_log) {
-      RCLCPP_DEBUG(
-        get_node()->get_logger(),
-        "\n--- IMU READINGS ---\n"
-        "Orientation [x,y,z,w]: [%.4f, %.4f, %.4f, %.4f]\n"
-        "Angular Velocity [x,y,z]: [%.4f, %.4f, %.4f]\n"
-        "Linear Acceleration [x,y,z]: [%.4f, %.4f, %.4f]",
-        imu_orientation_[0], imu_orientation_[1], imu_orientation_[2], imu_orientation_[3],
-        imu_angular_velocity_[0], imu_angular_velocity_[1], imu_angular_velocity_[2],
-        imu_linear_acceleration_[0], imu_linear_acceleration_[1], imu_linear_acceleration_[2]
-      );
-    }
-
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error reading state interfaces: %s", e.what());
@@ -104,23 +58,9 @@ inline bool StateEstimator::read_state_interfaces()
 inline bool StateEstimator::update_model()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from 50 to 10
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::update_model() - Call #%d", call_count
-    );
-
     // Clear position and velocity vectors
     current_positions_.setZero();
     current_velocities_.setZero();
-
-    std::stringstream mapping_log;
-    mapping_log << "\n--- JOINT TO PINOCCHIO STATE MAPPING ---\n";
-    mapping_log << "Joint | Pinocchio Model Position | Pinocchio Model Velocity\n";
-    mapping_log << "------+-------------------------+-------------------------\n";
 
     // Map joint states to Pinocchio model states
     for (size_t i = 0; i < joint_mappings_.size(); ++i) {
@@ -132,44 +72,12 @@ inline bool StateEstimator::update_model()
       if (joint.nq() == 2) {  // Revolute joints in Pinocchio use sin/cos
         current_positions_[joint.idx_q()] = std::cos(state.position);
         current_positions_[joint.idx_q() + 1] = std::sin(state.position);
-        
-        mapping_log << std::setw(5) << joint_names_[i] << " | "
-                    << "q[" << joint.idx_q() << "] = cos(" << state.position << ") = " << std::cos(state.position) << ", "
-                    << "q[" << joint.idx_q()+1 << "] = sin(" << state.position << ") = " << std::sin(state.position) << " | "
-                    << "v[" << joint.idx_v() << "] = " << state.velocity << std::endl;
       } else {
         current_positions_[joint.idx_q()] = state.position;
-        
-        mapping_log << std::setw(5) << joint_names_[i] << " | "
-                    << "q[" << joint.idx_q() << "] = " << state.position << " | "
-                    << "v[" << joint.idx_v() << "] = " << state.velocity << std::endl;
       }
       current_velocities_[joint.idx_v()] = state.velocity;
     }
     
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", mapping_log.str().c_str());
-      
-      // Log the full state vectors for debugging
-      std::stringstream state_log;
-      state_log << "\n--- FULL STATE VECTORS AFTER MAPPING ---\n";
-      state_log << "Positions (q): [";
-      for (int i = 0; i < current_positions_.size(); i++) {
-        state_log << current_positions_[i];
-        if (i < current_positions_.size() - 1) state_log << ", ";
-      }
-      state_log << "]\n";
-      
-      state_log << "Velocities (v): [";
-      for (int i = 0; i < current_velocities_.size(); i++) {
-        state_log << current_velocities_[i];
-        if (i < current_velocities_.size() - 1) state_log << ", ";
-      }
-      state_log << "]\n";
-      
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", state_log.str().c_str());
-    }
-
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error updating model: %s", e.what());
@@ -180,36 +88,13 @@ inline bool StateEstimator::update_model()
 inline bool StateEstimator::foot_positions()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from 50 to 10
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::foot_positions() - Call #%d", call_count
-    );
-
     // Update foot states with positions relative to center of mass
-    std::stringstream foot_log;
-    foot_log << "\n--- FOOT POSITIONS RELATIVE TO COM ---\n";
-    foot_log << "Foot | Position (X, Y, Z)\n";
-    foot_log << "-----+-------------------\n";
-    
     for (size_t i = 0; i < 4; ++i) {
       Eigen::Vector3d raw_position = data_->oMf[foot_frame_ids_[i]].translation();
       Eigen::Vector3d com_offset(current_positions_[0], current_positions_[1], current_positions_[2]);
       foot_states_[i].position = raw_position + com_offset;
-      
-      foot_log << "  " << i << "  | (" 
-              << std::fixed << std::setprecision(4) << foot_states_[i].position.x() << ", "
-              << std::fixed << std::setprecision(4) << foot_states_[i].position.y() << ", "
-              << std::fixed << std::setprecision(4) << foot_states_[i].position.z() << ")\n";
     }
     
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", foot_log.str().c_str());
-    }
-
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in foot position calculation: %s", e.what());
@@ -220,27 +105,6 @@ inline bool StateEstimator::foot_positions()
 inline bool StateEstimator::detect_contact()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from 50 to 10
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::detect_contact() - Call #%d", call_count
-    );
-
-    // Log the input gait pattern data
-    std::stringstream gait_log;
-    gait_log << "\n--- GAIT PATTERN DATA ---\n";
-    if (gait_pattern_.foot1_state >= 0) {
-      gait_log << "Foot1: " << (gait_pattern_.foot1_state == 1 ? "SWING" : "STANCE") << " (" << gait_pattern_.foot1_state << ")\n"
-              << "Foot2: " << (gait_pattern_.foot2_state == 1 ? "SWING" : "STANCE") << " (" << gait_pattern_.foot2_state << ")\n"
-              << "Foot3: " << (gait_pattern_.foot3_state == 1 ? "SWING" : "STANCE") << " (" << gait_pattern_.foot3_state << ")\n"
-              << "Foot4: " << (gait_pattern_.foot4_state == 1 ? "SWING" : "STANCE") << " (" << gait_pattern_.foot4_state << ")\n";
-    } else {
-      gait_log << "No valid gait pattern data available (all values < 0)\n";
-    }
-    
     // Use gait pattern information directly from member variable
     // Check if we have valid gait pattern data (foot1_state is at least 0)
     if (gait_pattern_.foot1_state >= 0) {
@@ -249,25 +113,13 @@ inline bool StateEstimator::detect_contact()
       foot_states_[1].in_contact = (gait_pattern_.foot2_state != 1);
       foot_states_[2].in_contact = (gait_pattern_.foot3_state != 1);
       foot_states_[3].in_contact = (gait_pattern_.foot4_state != 1);
-      
-      gait_log << "\n--- RESULTING FOOT CONTACT STATES ---\n";
-      gait_log << "Foot1: " << (foot_states_[0].in_contact ? "CONTACT" : "NO CONTACT") << "\n"
-              << "Foot2: " << (foot_states_[1].in_contact ? "CONTACT" : "NO CONTACT") << "\n" 
-              << "Foot3: " << (foot_states_[2].in_contact ? "CONTACT" : "NO CONTACT") << "\n"
-              << "Foot4: " << (foot_states_[3].in_contact ? "CONTACT" : "NO CONTACT") << "\n";
     } else {
       // Default to all contacts true if no gait pattern is available
       for (auto& foot : foot_states_) {
         foot.in_contact = true;
       }
-      gait_log << "\n--- RESULTING FOOT CONTACT STATES ---\n";
-      gait_log << "All feet in CONTACT (default due to no gait pattern)\n";
     }
     
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", gait_log.str().c_str());
-    }
-
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in contact detection: %s", e.what());
@@ -279,57 +131,35 @@ inline bool StateEstimator::pin_kinematics()
 {
   try
   {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0);
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::pin_kinematics() - Call #%d", call_count
-    );
-
-    RCLCPP_DEBUG(get_node()->get_logger(), "Running forward kinematics with positions size: %ld, velocities size: %ld", 
-                current_positions_.size(), current_velocities_.size());
-                
     // Forward kinematics
     pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
     pinocchio::updateFramePlacements(model_, *data_);
     
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "Forward kinematics computed successfully");
-    }
-    
     // Update foot positions and set default contact states
-    std::stringstream foot_states_log;
-    foot_states_log << "\n--- FOOT STATES AFTER KINEMATICS ---\n";
-    foot_states_log << "Foot | Position (X, Y, Z)        | Velocity (X, Y, Z)       | Contact\n";
-    foot_states_log << "-----+--------------------------+-------------------------+---------\n";
-    
     for (size_t i = 0; i < 4; ++i) {
       foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation();
       foot_states_[i].in_contact = true;  // Default to true for now
 
-      // Calculate and store foot frame velocity
-      auto frame_velocity = pinocchio::getFrameVelocity(model_, *data_, foot_frame_ids_[i], 
-                               pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
-      foot_states_[i].velocity = frame_velocity.linear();
+      // … inside the loop over feet …
+      auto frame_velocity = pinocchio::getFrameVelocity(
+        model_, *data_, foot_frame_ids_[i], pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
+
+      // 1) get world‑frame foot vel
+      Eigen::Vector3d v_world = frame_velocity.linear();
+
+      // 2) build base‑to‑world rotation from your current base quaternion
+      Eigen::Quaterniond q_base(
+        current_positions_[6],   // w
+        current_positions_[3],   // x
+        current_positions_[4],   // y
+        current_positions_[5]);  // z
+      Eigen::Matrix3d R_wb = q_base.toRotationMatrix().transpose();  // world→body
+
+      // 3) express foot velocity in body frame
+      foot_states_[i].velocity = R_wb * v_world;
 
       // Get hip positions from oMf (frame placement in world frame)
-      // Fix: Use oMf instead of oMi since we're dealing with frames
       hip_positions_[i] = data_->oMf[hip_frame_ids_[i]].translation();
-
-      foot_states_log << "  " << i << "  | ("
-                     << std::fixed << std::setprecision(4) << foot_states_[i].position.x() << ", "
-                     << std::fixed << std::setprecision(4) << foot_states_[i].position.y() << ", "
-                     << std::fixed << std::setprecision(4) << foot_states_[i].position.z() << ") | ("
-                     << std::fixed << std::setprecision(4) << foot_states_[i].velocity.x() << ", "
-                     << std::fixed << std::setprecision(4) << foot_states_[i].velocity.y() << ", "
-                     << std::fixed << std::setprecision(4) << foot_states_[i].velocity.z() << ") | "
-                     << (foot_states_[i].in_contact ? "TRUE" : "FALSE") << "\n";
-    }
-    
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", foot_states_log.str().c_str());
     }
 
     // Compute leg Jacobians
@@ -369,32 +199,42 @@ inline bool StateEstimator::pin_kinematics()
 inline bool StateEstimator::estimate_base_position()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from 50 to 10
+    // Initialize odom velocity values to zero
+    double odom_vel_x = 0.0, odom_vel_y = 0.0, odom_vel_z = 0.0;
+    Eigen::Vector3d v_com = Eigen::Vector3d::Zero();
     
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::estimate_base_position() - Call #%d", call_count
-    );
-
-    std::stringstream base_pos_log;
-    base_pos_log << "\n--- BASE POSITION ESTIMATION ---\n";
+    // Get current time for velocity calculation
+    auto current_time = get_node()->get_clock()->now();
+    double dt = 0.0;
+    
+    // Calculate time difference
+    if (prev_update_time_.nanoseconds() > 0) {
+      dt = (current_time - prev_update_time_).seconds();
+    }
+    
+    // Store current foot positions for next iteration
+    for (size_t i = 0; i < 4; ++i) {
+      if (i < prev_foot_positions_.size()) {
+        prev_foot_positions_[i] = foot_states_[i].position;
+      } else {
+        prev_foot_positions_.push_back(foot_states_[i].position);
+      }
+    }
+    
+    // Store current time for next iteration
+    prev_update_time_ = current_time;
+    
     if (latest_odom_) {
       auto odom = latest_odom_;
       auto position = odom->pose.pose.position;
-      auto orientation = odom->pose.pose.orientation;
       auto velocity = odom->twist.twist.linear;
       auto angular_velocity = odom->twist.twist.angular;
       
-      base_pos_log << "Ground Truth Odometry:\n";
-      base_pos_log << "  Position: (" << position.x << ", " << position.y << ", " << position.z << ")\n";
-      base_pos_log << "  Orientation: [" << orientation.x << ", " << orientation.y << ", " 
-                  << orientation.z << ", " << orientation.w << "]\n";
-      base_pos_log << "  Linear Velocity: (" << velocity.x << ", " << velocity.y << ", " << velocity.z << ")\n";
-      base_pos_log << "  Angular Velocity: (" << angular_velocity.x << ", " << angular_velocity.y << ", " 
-                  << angular_velocity.z << ")\n";
-    
+      // Store odom velocity values for comparison
+      odom_vel_x = velocity.x;
+      odom_vel_y = velocity.y;
+      odom_vel_z = velocity.z;
+      
       // Define foot sphere radius
       constexpr double foot_radius = 0.015;  // meters
       
@@ -405,67 +245,73 @@ inline bool StateEstimator::estimate_base_position()
           contact_count++;
         }
       }
-      
-      base_pos_log << "\nContacting feet count: " << contact_count << "\n";
-      base_pos_log << "Current COM Position before update: [" << current_positions_[0] << ", " 
-                  << current_positions_[1] << ", " << current_positions_[2] << "]\n";
 
       Eigen::Vector3d body_velocity = Eigen::Vector3d(velocity.x, velocity.y, velocity.z);
       Eigen::Vector3d body_angular_velocity = Eigen::Vector3d(angular_velocity.x, angular_velocity.y, angular_velocity.z);
       
       // For each foot in contact
       int contacting_foot_number = 0;
-      base_pos_log << "\nFoot contact data for velocity estimation:\n";
-      base_pos_log << "Foot | In Contact | Position               | Velocity              | Angular Cross-Term\n";
-      base_pos_log << "-----+-----------+-----------------------+----------------------+------------------\n";
 
       Eigen::MatrixXd A = Eigen::MatrixXd::Zero(3*contact_count, 3);
       Eigen::VectorXd b = Eigen::VectorXd::Zero(3*contact_count);
 
+      //for (size_t i = 0; i < foot_states_.size(); i++) {
+      //  if (foot_states_[i].in_contact) {
+      //    // Fill one 3x3 block of the A matrix with identity
+      //    A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
+      //    
+      //    // Fill the corresponding section of b with negative foot velocity
+      //    b.segment<3>(3*contacting_foot_number) = -foot_states_[i].velocity - body_angular_velocity.cross(foot_states_[i].position);
+      //    contacting_foot_number++;
+//
+      //    RCLCPP_INFO(get_node()->get_logger(),
+      //      "contact %zu: foot_pos = [%.5f, %.5f, %.5f], com = [%.5f, %.5f, %.5f], foot_vel = [%.5f, %.5f, %.5f]",
+      //      i,
+      //      foot_states_[i].position.x(),
+      //      foot_states_[i].position.y(),
+      //      foot_states_[i].position.z(),
+      //      current_positions_[0],
+      //      current_positions_[1],
+      //      current_positions_[2],
+      //      foot_states_[i].velocity.x(),
+      //      foot_states_[i].velocity.y(),
+      //      foot_states_[i].velocity.z());
+      //  }
+      //}
+
+      // … inside estimate_base_position(), right after you set body_velocity/body_angular_velocity …
+      Eigen::Quaterniond q_base(
+        current_positions_[6],   // w
+        current_positions_[3],   // x
+        current_positions_[4],   // y
+        current_positions_[5]);  // z
+      Eigen::Matrix3d R_wb = q_base.toRotationMatrix().transpose();  // world → body
+
+      // Replace your contact‐loop fill of b with:
       for (size_t i = 0; i < foot_states_.size(); i++) {
         if (foot_states_[i].in_contact) {
-          Eigen::Vector3d cross_term = -body_angular_velocity.cross(foot_states_[i].position);
-          
-          base_pos_log << "  " << i << "  | " 
-                      << (foot_states_[i].in_contact ? "YES" : "NO ") << "       | ("
-                      << std::fixed << std::setprecision(3) << foot_states_[i].position.x() << ", "
-                      << std::fixed << std::setprecision(3) << foot_states_[i].position.y() << ", "
-                      << std::fixed << std::setprecision(3) << foot_states_[i].position.z() << ") | ("
-                      << std::fixed << std::setprecision(3) << foot_states_[i].velocity.x() << ", "
-                      << std::fixed << std::setprecision(3) << foot_states_[i].velocity.y() << ", "
-                      << std::fixed << std::setprecision(3) << foot_states_[i].velocity.z() << ") | ("
-                      << std::fixed << std::setprecision(3) << cross_term.x() << ", "
-                      << std::fixed << std::setprecision(3) << cross_term.y() << ", "
-                      << std::fixed << std::setprecision(3) << cross_term.z() << ")\n";
-          
-          // Fill one 3x3 block of the A matrix with identity
           A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
-          
-          // Fill the corresponding section of b with negative foot velocity
-          b.segment<3>(3*contacting_foot_number) = -foot_states_[i].velocity - body_angular_velocity.cross(foot_states_[i].position);
+          // express position & ω in body:
+          Eigen::Vector3d p_body = R_wb * foot_states_[i].position;     
+          Eigen::Vector3d w_body = R_wb * body_angular_velocity;          
+          // foot_states_[i].velocity is already in body from pin_kinematics()
+          b.segment<3>(3*contacting_foot_number) 
+            = -foot_states_[i].velocity 
+              - w_body.cross(p_body);
           contacting_foot_number++;
-        } else {
-          base_pos_log << "  " << i << "  | NO        | (--skipped non-contact foot--)\n";
+          // … your logging …
         }
       }
 
       // Solve for COM velocity if we have contacts
-      Eigen::Vector3d v_com = Eigen::Vector3d::Zero();
       if (contact_count > 0) {
         // Solve the system A*v_com = b using least squares
         v_com = A.colPivHouseholderQr().solve(b);
         
-        base_pos_log << "\nLinear velocity estimation:\n";
-        base_pos_log << "  Estimated v_com: (" << v_com[0] << ", " << v_com[1] << ", " << v_com[2] << ")\n";
-        base_pos_log << "  Odom velocity: (" << velocity.x << ", " << velocity.y << ", " << velocity.z << ")\n";
-        base_pos_log << "  Difference: (" << v_com[0]-velocity.x << ", " << v_com[1]-velocity.y << ", " << v_com[2]-velocity.z << ")\n";
         // Update velocity in current state
         current_velocities_[0] = velocity.x;  // Using odom velocity instead of estimated
         current_velocities_[1] = velocity.y;  // Using odom velocity instead of estimated
         current_velocities_[2] = velocity.z;  // Using odom velocity instead of estimated
-        base_pos_log << "  Using odom velocities for state update\n";
-      } else {
-        base_pos_log << "\nNo feet in contact with ground - cannot estimate velocity\n";
       }
       
       // World z position - still compute from foot positions
@@ -478,29 +324,36 @@ inline bool StateEstimator::estimate_base_position()
         }
         world_z /= contact_count;
         world_z += foot_radius; // Adjust by foot radius
-        // Update position
-        base_pos_log << "\nZ position calculation from contacts:\n";
-        base_pos_log << "  Average negative foot z: " << -world_z << " + foot radius " << foot_radius << " = " << world_z << "\n";
       } else {
         world_z = position.z;  // Use odom if no contacts
-        base_pos_log << "\nNo feet in contact, using odom Z: " << world_z << "\n";
       }
       
       // Update position
-      base_pos_log << "\nPosition update:\n";
-      base_pos_log << "  Before: (" << current_positions_[0] << ", " << current_positions_[1] << ", " << current_positions_[2] << ")\n";
       current_positions_[0] += 0;  // No update to X
       current_positions_[1] += 0;  // No update to Y
       current_positions_[2] = world_z; // Direct Z from contact
-      base_pos_log << "  After: (" << current_positions_[0] << ", " << current_positions_[1] << ", " << current_positions_[2] << ")\n";
-      
-    } else {
-      base_pos_log << "No odometry data available\n";
     }
+
+    // Create a table comparing odom velocity and calculated v_com
+    std::stringstream vel_table;
+    vel_table << "\n┌───────────────────────────────────────────────────────────────────────────┐\n";
+    vel_table << "│                          VELOCITY COMPARISON                              │\n";
+    vel_table << "├───────────────┬───────────────────────┬───────────────────────┬───────────┤\n";
+    vel_table << "│ Axis          │ Odom Velocity (m/s)   │ Pinocchio v_com (m/s) │ Error     │\n";
+    vel_table << "├───────────────┼───────────────────────┼───────────────────────┼───────────┤\n";
+    vel_table << "│ X             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_x 
+          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.x() 
+          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_x - v_com.x()) << " │\n";
+    vel_table << "│ Y             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_y 
+          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.y() 
+          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_y - v_com.y()) << " │\n";
+    vel_table << "│ Z             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_z 
+          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.z() 
+          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_z - v_com.z()) << " │\n";
+    vel_table << "└───────────────┴───────────────────────┴───────────────────────┴───────────┘";
     
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", base_pos_log.str().c_str());
-    }
+    RCLCPP_INFO(get_node()->get_logger(), "%s", vel_table.str().c_str());
+
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in base position estimation: %s", e.what());
@@ -511,34 +364,6 @@ inline bool StateEstimator::estimate_base_position()
 inline bool StateEstimator::estimate_orientation()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from 50 to 10
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::estimate_orientation() - Call #%d", call_count
-    );
-
-    std::stringstream orient_log;
-    orient_log << "\n--- ORIENTATION ESTIMATION ---\n";
-    orient_log << "IMU quaternion [x,y,z,w]: [" 
-               << imu_orientation_[0] << ", " 
-               << imu_orientation_[1] << ", " 
-               << imu_orientation_[2] << ", " 
-               << imu_orientation_[3] << "]\n";
-    
-    orient_log << "Angular velocity [x,y,z]: [" 
-               << imu_angular_velocity_[0] << ", " 
-               << imu_angular_velocity_[1] << ", " 
-               << imu_angular_velocity_[2] << "]\n";
-
-    orient_log << "Previous state quaternion [x,y,z,w]: [" 
-               << current_positions_[3] << ", " 
-               << current_positions_[4] << ", " 
-               << current_positions_[5] << ", " 
-               << current_positions_[6] << "]\n";
-
     // Copy IMU quaternion to state - note the different ordering in imu_orientation_
     current_positions_[3] = imu_orientation_[0];  // x
     current_positions_[4] = imu_orientation_[1];  // y
@@ -550,20 +375,6 @@ inline bool StateEstimator::estimate_orientation()
     current_velocities_[4] = imu_angular_velocity_[1];
     current_velocities_[5] = imu_angular_velocity_[2];
 
-    orient_log << "Updated state quaternion [x,y,z,w]: [" 
-               << current_positions_[3] << ", " 
-               << current_positions_[4] << ", " 
-               << current_positions_[5] << ", " 
-               << current_positions_[6] << "]\n";
-               
-    orient_log << "Updated angular velocity [x,y,z]: [" 
-               << current_velocities_[3] << ", " 
-               << current_velocities_[4] << ", " 
-               << current_velocities_[5] << "]\n";
-
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", orient_log.str().c_str());
-    }
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error in orientation estimation: %s", e.what());
@@ -574,35 +385,6 @@ inline bool StateEstimator::estimate_orientation()
 inline bool StateEstimator::update_odometry()
 {
   try {
-    static int call_count = 0;
-    call_count++;
-    bool should_log = (call_count % 10 == 0); // Changed from "more frequently than other methods" to match other controllers
-    
-    RCLCPP_DEBUG(
-      get_node()->get_logger(),
-      "StateEstimator::update_odometry() - Call #%d", call_count
-    );
-
-    std::stringstream odom_log;
-    odom_log << "\n--- ODOMETRY UPDATE ---\n";
-
-    // Log ground truth data if available
-    if (latest_odom_) {
-      auto position = latest_odom_->pose.pose.position;
-      auto orientation = latest_odom_->pose.pose.orientation;
-      auto linear_vel = latest_odom_->twist.twist.linear;
-      auto angular_vel = latest_odom_->twist.twist.angular;
-      
-      odom_log << "GROUND TRUTH ODOMETRY:\n";
-      odom_log << "  Position: (" << position.x << ", " << position.y << ", " << position.z << ")\n";
-      odom_log << "  Orientation: [" << orientation.x << ", " << orientation.y << ", " 
-               << orientation.z << ", " << orientation.w << "]\n";
-      odom_log << "  Linear Velocity: (" << linear_vel.x << ", " << linear_vel.y << ", " << linear_vel.z << ")\n";
-      odom_log << "  Angular Velocity: (" << angular_vel.x << ", " << angular_vel.y << ", " << angular_vel.z << ")\n\n";
-    } else {
-      odom_log << "GROUND TRUTH: No data available\n\n";
-    };
-
     // Publish tf data for RViz
     auto time_now = get_node()->get_clock()->now();
     geometry_msgs::msg::TransformStamped transform;
@@ -617,16 +399,6 @@ inline bool StateEstimator::update_odometry()
 
     const auto& body_placement = model_.frames[body_frame_id_].placement;
     Eigen::Vector3d base_position = pc - body_placement.translation();
-    
-    odom_log << "Center of Mass Position: (" << pc.x() << ", " << pc.y() << ", " << pc.z() << ")\n";
-    odom_log << "Body placement translation: (" 
-             << body_placement.translation().x() << ", " 
-             << body_placement.translation().y() << ", " 
-             << body_placement.translation().z() << ")\n";
-    odom_log << "Base position (COM - body): (" 
-             << base_position.x() << ", " 
-             << base_position.y() << ", " 
-             << base_position.z() << ")\n";
 
     transform.transform.translation.x = current_positions_[0];
     transform.transform.translation.y = current_positions_[1];
@@ -650,25 +422,6 @@ inline bool StateEstimator::update_odometry()
     odom.twist.twist.angular.z = imu_angular_velocity_[2];
 
     odom_pub_->publish(odom);
-    
-    odom_log << "\nPublished Transform and Odometry:\n";
-    odom_log << "  Position: (" 
-             << transform.transform.translation.x << ", " 
-             << transform.transform.translation.y << ", " 
-             << transform.transform.translation.z << ")\n";
-    odom_log << "  Orientation: [" 
-             << transform.transform.rotation.x << ", "
-             << transform.transform.rotation.y << ", "
-             << transform.transform.rotation.z << ", "
-             << transform.transform.rotation.w << "]\n";
-    odom_log << "  Linear Velocity: (" 
-             << odom.twist.twist.linear.x << ", " 
-             << odom.twist.twist.linear.y << ", " 
-             << odom.twist.twist.linear.z << ")\n";
-    odom_log << "  Angular Velocity: (" 
-             << odom.twist.twist.angular.x << ", " 
-             << odom.twist.twist.angular.y << ", " 
-             << odom.twist.twist.angular.z << ")\n";
 
     // Publish the state estimate
     bool state_published = false;
@@ -764,60 +517,8 @@ inline bool StateEstimator::update_odometry()
 
       rt_state_pub_->unlockAndPublish();
       state_published = true;
-      
-      odom_log << "\nPublished QuadrupedState message with data:\n";
-      odom_log << "  COM: (" << msg.pc.x << ", " << msg.pc.y << ", " << msg.pc.z << ")\n";
-      odom_log << "  COM Velocity: (" << msg.com_velocity.x << ", " << msg.com_velocity.y << ", " << msg.com_velocity.z << ")\n";
-      odom_log << "  Orientation: [" << msg.orientation.x << ", " << msg.orientation.y << ", " << msg.orientation.z << ", " << msg.orientation.w << "]\n";
-      odom_log << "  Foot Contacts: [" << msg.contact_1 << ", " << msg.contact_2 << ", " << msg.contact_3 << ", " << msg.contact_4 << "]\n";
-      odom_log << "  Foot Positions:\n";
-      odom_log << "    p1: (" << msg.p1.x << ", " << msg.p1.y << ", " << msg.p1.z << ")\n";
-      odom_log << "    p2: (" << msg.p2.x << ", " << msg.p2.y << ", " << msg.p2.z << ")\n";
-      odom_log << "    p3: (" << msg.p3.x << ", " << msg.p3.y << ", " << msg.p3.z << ")\n";
-      odom_log << "    p4: (" << msg.p4.x << ", " << msg.p4.y << ", " << msg.p4.z << ")\n";
-      odom_log << "  Hip Positions:\n";
-      odom_log << "    h1: (" << msg.h1.x << ", " << msg.h1.y << ", " << msg.h1.z << ")\n";
-      odom_log << "    h2: (" << msg.h2.x << ", " << msg.h2.y << ", " << msg.h2.z << ")\n";
-      odom_log << "    h3: (" << msg.h3.x << ", " << msg.h3.y << ", " << msg.h3.z << ")\n";
-      odom_log << "    h4: (" << msg.h4.x << ", " << msg.h4.y << ", " << msg.h4.z << ")\n";
-    } else {
-      odom_log << "\nFailed to acquire lock for QuadrupedState publication\n";
     }
 
-    if (should_log) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "%s", odom_log.str().c_str());
-      
-      // Log a simple summary of the entire state estimation pipeline
-      RCLCPP_DEBUG(get_node()->get_logger(), 
-                 "\n=== STATE ESTIMATION PIPELINE SUMMARY ===\n"
-                 "COM Position: (%.4f, %.4f, %.4f)\n"
-                 "COM Velocity: (%.4f, %.4f, %.4f)\n"
-                 "Orientation: [%.4f, %.4f, %.4f, %.4f]\n"
-                 "Angular Velocity: (%.4f, %.4f, %.4f)\n"
-                 "State published: %s\n"
-                 "Contacts: [%s, %s, %s, %s]",
-                 current_positions_[0], current_positions_[1], current_positions_[2],
-                 current_velocities_[0], current_velocities_[1], current_velocities_[2],
-                 current_positions_[3], current_positions_[4], current_positions_[5], current_positions_[6],
-                 current_velocities_[3], current_velocities_[4], current_velocities_[5],
-                 state_published ? "YES" : "NO",
-                 foot_states_[0].in_contact ? "TRUE" : "FALSE",
-                 foot_states_[1].in_contact ? "TRUE" : "FALSE",
-                 foot_states_[2].in_contact ? "TRUE" : "FALSE",
-                 foot_states_[3].in_contact ? "TRUE" : "FALSE");
-      
-      // Keep one minimal version of hip position logging for debugging purposes
-      RCLCPP_DEBUG(get_node()->get_logger(), 
-                 "\n=== HIP POSITIONS SUMMARY ===\n"
-                 "Hip1 (FL): (%.4f, %.4f, %.4f)\n"
-                 "Hip2 (FR): (%.4f, %.4f, %.4f)\n"
-                 "Hip3 (RL): (%.4f, %.4f, %.4f)\n"
-                 "Hip4 (RR): (%.4f, %.4f, %.4f)",
-                 hip_positions_[0].x(), hip_positions_[0].y(), hip_positions_[0].z(),
-                 hip_positions_[1].x(), hip_positions_[1].y(), hip_positions_[1].z(),
-                 hip_positions_[2].x(), hip_positions_[2].y(), hip_positions_[2].z(),
-                 hip_positions_[3].x(), hip_positions_[3].y(), hip_positions_[3].z());
-    }
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error updating odometry: %s", e.what());

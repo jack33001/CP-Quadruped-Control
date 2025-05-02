@@ -249,7 +249,7 @@ inline void BalanceController::print_controller_output_table()
 inline bool BalanceController::update_state()
 {
   try {
-    RCLCPP_INFO(get_node()->get_logger(), "\n\n\n -------------------------------------------------- NEW STATE --------------------------------------------------\n\n");
+    //RCLCPP_INFO(get_node()->get_logger(), "\n\n\n -------------------------------------------------- NEW STATE --------------------------------------------------\n\n");
     static bool first_update = true;
     static int update_count = 0;
     update_count++;
@@ -584,8 +584,8 @@ inline bool BalanceController::update_control()
     }
     
     // Print nicely formatted tables with controller output and state vectors
-    print_controller_output_table();
-    print_state_vector_table();
+    //print_controller_output_table();
+    //print_state_vector_table();
     
     // Changed to DEBUG level to reduce terminal clutter
     RCLCPP_DEBUG(get_node()->get_logger(), 

@@ -87,6 +87,10 @@ protected:
   // Add hip positions storage
   std::array<Eigen::Vector3d, 4> hip_positions_;  // FL, FR, RL, RR
 
+  // Add position differencing variables for velocity calculation
+  std::vector<Eigen::Vector3d> prev_foot_positions_;
+  rclcpp::Time prev_update_time_{0};
+
   // Add Jacobian storage
   using JacobianMatrix = Eigen::Matrix<double, 3, 2>;
   struct LegJacobians {

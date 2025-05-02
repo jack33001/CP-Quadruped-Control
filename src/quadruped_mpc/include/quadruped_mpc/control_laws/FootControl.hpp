@@ -623,7 +623,7 @@ namespace quadruped_mpc
         ss << "Total Mechanical Power: " << std::fixed << std::setprecision(3) << total_power << " W\n";
 
         // Log the entire table at once on every cycle
-        RCLCPP_INFO(controller.get_node()->get_logger(), "%s", ss.str().c_str());
+        //RCLCPP_INFO(controller.get_node()->get_logger(), "%s", ss.str().c_str());
       }
 
       return true;
