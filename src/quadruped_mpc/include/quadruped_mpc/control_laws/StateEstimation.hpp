@@ -339,7 +339,7 @@ inline bool StateEstimator::estimate_base_position()
     vel_table << "\n┌───────────────────────────────────────────────────────────────────────────┐\n";
     vel_table << "│                          VELOCITY COMPARISON                              │\n";
     vel_table << "├───────────────┬───────────────────────┬───────────────────────┬───────────┤\n";
-    vel_table << "│ Axis          │ Odom Velocity (m/s)   │ Pinocchio v_com (m/s) │ Error     │\n";
+    vel_table << "│ Axis          │ Ground Truth Velocity │ Pinocchio v_com (m/s) │ Error     │\n";
     vel_table << "├───────────────┼───────────────────────┼───────────────────────┼───────────┤\n";
     vel_table << "│ X             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_x 
           << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.x() 
