@@ -4,22 +4,21 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <mutex>
 
 #include "controller_interface/controller_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
-#include "hardware_interface/handle.hpp"
 #include "acados/utils/types.h"
 #include "quadruped_mpc/acados_generated/quadruped_ode_model/quadruped_ode_model.h"
 #include "quadruped_mpc/acados_generated/acados_solver_quadruped_ode.h"
 #include "geometry_msgs/msg/pose.hpp"
-#include "geometry_msgs/msg/twist.hpp"  // Add Twist message include
+#include "geometry_msgs/msg/twist.hpp"
 #include "quadruped_msgs/msg/quadruped_state.hpp"
 #include "quadruped_msgs/msg/gait_pattern.hpp"
-#include "quadruped_msgs/msg/foot_forces.hpp"  // Add FootForces message include
-#include "realtime_tools/realtime_publisher.hpp"  // Add realtime publisher include
-#include <mutex>
+#include "quadruped_msgs/msg/foot_forces.hpp"
+#include "realtime_tools/realtime_publisher.hpp"
 
 namespace quadruped_mpc
 {
@@ -27,7 +26,7 @@ namespace quadruped_mpc
 class BalanceController : public controller_interface::ControllerInterface
 {
 public:
-  using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;  // Add this using declaration
+  using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
   BalanceController();
   
@@ -43,22 +42,19 @@ public:
 
 protected:
   std::vector<std::string> joint_names_;
-  quadruped_ode_solver_capsule* solver_{nullptr};  // Fix type name to match generated code
+  quadruped_ode_solver_capsule* solver_{nullptr};
   std::array<double,25> current_state_;
   std::array<double,25> desired_state_;
   std::array<double,25> optimal_control_;
   
-  // Restore foot position storage
-  std::array<double,3> p1_, p2_, p3_, p4_, com_;
+  // Foot position storage - convert to a 2D array for more efficient access
+  std::array<std::array<double,3>, 5> foot_positions_; // 4 feet + COM at index 4
   
-  // Add foot state tracking
-  int foot1_state_{0};
-  int foot2_state_{0};
-  int foot3_state_{0};
-  int foot4_state_{0};
+  // Foot state tracking - use an array for more consistent access
+  std::array<int, 4> foot_states_{0, 0, 0, 0};
 
 private:
-  // Replace cmd_sub_ with separate pose and twist subscriptions
+  // Command subscriptions
   rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr pose_cmd_sub_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_cmd_sub_;
   std::mutex cmd_mutex_;
@@ -67,36 +63,36 @@ private:
   bool new_pose_cmd_received_{false};
   bool new_twist_cmd_received_{false};
   
-  // Add state handling members
+  // State handling
   rclcpp::Subscription<quadruped_msgs::msg::QuadrupedState>::SharedPtr state_sub_;
   quadruped_msgs::msg::QuadrupedState::SharedPtr latest_state_;
   std::mutex state_mutex_;
   bool new_state_received_{false};
   
-  // Add gait pattern subscription members
+  // Gait pattern subscription
   rclcpp::Subscription<quadruped_msgs::msg::GaitPattern>::SharedPtr gait_sub_;
   std::shared_ptr<quadruped_msgs::msg::GaitPattern> latest_gait_;
   std::mutex gait_mutex_;
   bool new_gait_received_{false};
   
-  // Add FootForces publisher
+  // FootForces publisher
   std::unique_ptr<realtime_tools::RealtimePublisher<quadruped_msgs::msg::FootForces>> foot_forces_publisher_;
   rclcpp::Publisher<quadruped_msgs::msg::FootForces>::SharedPtr foot_forces_pub_;
   
-  // Replace cmd_callback with separate callbacks for pose and twist
+  // Subscription callbacks
   void pose_cmd_callback(const geometry_msgs::msg::Pose::SharedPtr msg);
   void twist_cmd_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
   void state_callback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
   void gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
 
-  // Add new private methods
+  // Controller methods
   bool update_state();
   bool update_control();
   bool update_commands();
   
-  // Add method to print controller output in a formatted table
+  // Debug/logging methods
   void print_controller_output_table();
-  void print_state_vector_table();  // Add this declaration
+  void print_state_vector_table();
 };
 
 }  // namespace quadruped_mpc

@@ -2,8 +2,8 @@
 #define QUADRUPED_MPC_CONTROL_LAWS_BALANCE_CONTROL_HPP_
 
 #include "quadruped_mpc/controller_interfaces/balance_controller.hpp"
-#include <Eigen/Dense>  // Add this include for Eigen matrices
-#include <iomanip>      // Add this include for std::setw, std::setprecision
+#include <Eigen/Dense>
+#include <iomanip>
 
 namespace quadruped_mpc
 {
@@ -109,7 +109,7 @@ inline void BalanceController::print_state_vector_table()
   ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
   
   // Log the table
-  RCLCPP_INFO(get_node()->get_logger(), "State Vector Prediction:\n%s", ss.str().c_str());
+  RCLCPP_DEBUG(get_node()->get_logger(), "State Vector Prediction:\n%s", ss.str().c_str());
 }
 
 inline void BalanceController::print_controller_output_table()
@@ -147,7 +147,7 @@ inline void BalanceController::print_controller_output_table()
   ss << "╠═════╬══════════════════════════╬══════════════════════════╬══════════════════════════╬══════════════════════════╬═══════════════════════════╣\n";
   
   // Print rows for each stage
-  for (int stage = 0; stage < std::min(5, prediction_horizon); stage++) {  // Limit to first 5 stages for readability
+  for (int stage = 0; stage < std::min(5, prediction_horizon); stage++) {
     // Calculate total force for this stage
     double total_x = stage_controls[stage][0] + stage_controls[stage][3] + stage_controls[stage][6] + stage_controls[stage][9];
     double total_y = stage_controls[stage][1] + stage_controls[stage][4] + stage_controls[stage][7] + stage_controls[stage][10];
@@ -216,40 +216,37 @@ inline void BalanceController::print_controller_output_table()
   
   // Add a row for foot positions (only for current state)
   ss << "╠═════════════════════════════════════════════════════════════════════════════════════════════════════════════════╩═══════════════════════════╣\n";
-  ss << "║ FOOT POSITIONS [" << (foot1_state_ == 1 ? "SWING" : "STANCE") << "|" << (foot2_state_ == 1 ? "SWING" : "STANCE") << "|" << (foot3_state_ == 1 ? "SWING" : "STANCE") << "|" << (foot4_state_ == 1 ? "SWING" : "STANCE") << "]                                                                                                ║\n";
   
-  // Add lines for each foot position
-  ss << "║ Foot1: [";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[13] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[14] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[15] << "]  ";
+  // Use the new foot_states_ array for displaying foot states
+  ss << "║ FOOT POSITIONS [";
+  for (int i = 0; i < 4; i++) {
+    ss << (foot_states_[i] == 1 ? "SWING" : "STANCE");
+    if (i < 3) ss << "|";
+  }
+  ss << "]                                                                                                ║\n";
   
-  ss << "Foot2: [";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[16] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[17] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[18] << "]  ";
-  
-  ss << "Foot3: [";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[19] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[20] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[21] << "]  ";
-  
-  ss << "Foot4: [";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[22] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[23] << ", ";
-  ss << std::setw(6) << std::fixed << std::setprecision(3) << current_state_[24] << "]          ║\n";
+  // Add lines for each foot position using foot_positions_ array
+  for (int foot = 0; foot < 4; foot++) {
+    ss << "║ Foot" << (foot + 1) << ": [";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << foot_positions_[foot][0] << ", ";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << foot_positions_[foot][1] << ", ";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << foot_positions_[foot][2] << "]  ";
+    
+    if (foot == 3) {
+      ss << "         ║\n";
+    }
+  }
   
   // Print footer line
   ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝";
   
   // Log the table
-  RCLCPP_INFO(get_node()->get_logger(), "Balance Controller Output (Foot Forces and Positions):\n%s", ss.str().c_str());
+  RCLCPP_DEBUG(get_node()->get_logger(), "Balance Controller Output (Foot Forces and Positions):\n%s", ss.str().c_str());
 }
 
 inline bool BalanceController::update_state()
 {
   try {
-    //RCLCPP_INFO(get_node()->get_logger(), "\n\n\n -------------------------------------------------- NEW STATE --------------------------------------------------\n\n");
     static bool first_update = true;
     static int update_count = 0;
     update_count++;
@@ -269,12 +266,13 @@ inline bool BalanceController::update_state()
         return false;
       }
 
-      // Fill current state vector
+      // Fill current state vector using more structured approach
+      // Position and orientation
       current_state_[0] = latest_state_->pc.x;
       current_state_[1] = latest_state_->pc.y;
       current_state_[2] = latest_state_->pc.z;
 
-      // Orientation quaternion is already in the correct order in the message
+      // Orientation quaternion
       current_state_[3] = latest_state_->orientation.w;
       current_state_[4] = latest_state_->orientation.x;
       current_state_[5] = latest_state_->orientation.y;
@@ -289,19 +287,33 @@ inline bool BalanceController::update_state()
       current_state_[11] = latest_state_->angular_velocity.y;
       current_state_[12] = latest_state_->angular_velocity.z;
 
-      // Foot positions
-      current_state_[13] = latest_state_->p1.x;
-      current_state_[14] = latest_state_->p1.y;
-      current_state_[15] = latest_state_->p1.z;
-      current_state_[16] = latest_state_->p2.x;
-      current_state_[17] = latest_state_->p2.y;
-      current_state_[18] = latest_state_->p2.z;
-      current_state_[19] = latest_state_->p3.x;
-      current_state_[20] = latest_state_->p3.y;
-      current_state_[21] = latest_state_->p3.z;
-      current_state_[22] = latest_state_->p4.x;
-      current_state_[23] = latest_state_->p4.y;
-      current_state_[24] = latest_state_->p4.z;
+      // Map foot positions into arrays more efficiently
+      geometry_msgs::msg::Point const* foot_msgs[] = {
+        &latest_state_->p1, 
+        &latest_state_->p2,
+        &latest_state_->p3, 
+        &latest_state_->p4
+      };
+      
+      // Update foot positions in both arrays
+      for (int foot = 0; foot < 4; foot++) {
+        int state_idx = 13 + (foot * 3);
+        
+        // Update current_state_ array
+        current_state_[state_idx] = foot_msgs[foot]->x;
+        current_state_[state_idx + 1] = foot_msgs[foot]->y;
+        current_state_[state_idx + 2] = foot_msgs[foot]->z;
+        
+        // Update foot_positions_ array
+        foot_positions_[foot][0] = foot_msgs[foot]->x;
+        foot_positions_[foot][1] = foot_msgs[foot]->y;
+        foot_positions_[foot][2] = foot_msgs[foot]->z;
+      }
+      
+      // Store COM position separately
+      foot_positions_[4][0] = latest_state_->pc.x;
+      foot_positions_[4][1] = latest_state_->pc.y;
+      foot_positions_[4][2] = latest_state_->pc.z;
     }
 
     // Update gait pattern and foot states
@@ -314,21 +326,22 @@ inline bool BalanceController::update_state()
         return false;
       }
 
-      // Get foot states from gait pattern
-      foot1_state_ = latest_gait_->foot1_state;
-      foot2_state_ = latest_gait_->foot2_state;
-      foot3_state_ = latest_gait_->foot3_state;
-      foot4_state_ = latest_gait_->foot4_state;
+      // Update foot states array with more compact code
+      foot_states_[0] = latest_gait_->foot1_state;
+      foot_states_[1] = latest_gait_->foot2_state;
+      foot_states_[2] = latest_gait_->foot3_state;
+      foot_states_[3] = latest_gait_->foot4_state;
 
-      // Update contact flags in state vector
+      // Update COM offset from gait pattern
       current_state_[0] -= latest_gait_->com_position.x;
       current_state_[1] -= latest_gait_->com_position.y;
       
-      RCLCPP_DEBUG(get_node()->get_logger(), "Foot states: %d, %d, %d, %d", 
-          foot1_state_, foot2_state_, foot3_state_, foot4_state_);
+      // Use more concise logging for foot states
+      RCLCPP_DEBUG(get_node()->get_logger(), "Foot states: [%d, %d, %d, %d]", 
+          foot_states_[0], foot_states_[1], foot_states_[2], foot_states_[3]);
     }
 
-    // Handle desired state updates from commands - updated for separate pose and twist
+    // Handle desired state updates from commands
     {
       std::lock_guard<std::mutex> lock(cmd_mutex_);
       
@@ -375,23 +388,23 @@ inline bool BalanceController::update_control()
     }
     
     // Calculate robot mass parameters
-    double robot_mass = 15.0; // kg - replace with actual robot mass parameter
-    double gravity = 9.81; // m/s²
+    double robot_mass = 15.0;  // kg - replace with actual robot mass parameter
+    double gravity = 9.81;     // m/s²
     
     // Create force constraint vectors
     std::vector<double> min_force(12, 0.0);
     std::vector<double> max_force(12, 0.0);
+    std::vector<double> initial_guess(12, 0.0);
     
     // Default force constraints - lateral friction constraints and max vertical force
-    double friction_coef = 0.2; // friction coefficient
-    double max_vertical_force = robot_mass * gravity; // Maximum force robot can apply
+    double friction_coef = 0.2;  // friction coefficient
+    double max_vertical_force = robot_mass * gravity;  // Maximum force robot can apply
     
     // Count the number of stance feet to distribute weight
     int num_stance_feet = 0;
-    if (foot1_state_ == 0) num_stance_feet++;
-    if (foot2_state_ == 0) num_stance_feet++;
-    if (foot3_state_ == 0) num_stance_feet++;
-    if (foot4_state_ == 0) num_stance_feet++;
+    for (int state : foot_states_) {
+      if (state == 0) num_stance_feet++;
+    }
     
     // Safety check to avoid division by zero
     if (num_stance_feet == 0) num_stance_feet = 1;
@@ -399,167 +412,72 @@ inline bool BalanceController::update_control()
     // Calculate the vertical force per stance foot to support the robot's weight
     double vertical_force_per_foot = robot_mass * gravity / num_stance_feet;
     
-    // Initialize control initial guess vector - will be populated based on foot state
-    std::vector<double> initial_guess(12, 0.0);
-    
-    // Set foot-specific constraints based on current state
-    // Foot 1 (indices 0,1,2 for x,y,z forces)
-    if (foot1_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[0] = -0.01;
-        max_force[0] = 0.01;
-        min_force[1] = -0.01;
-        max_force[1] = 0.01;
-        min_force[2] = -0.01;
-        max_force[2] = 0.01;
-        // Initial guess for swing foot - zero force
-        initial_guess[0] = 0.0;
-        initial_guess[1] = 0.0;
-        initial_guess[2] = 0.0;
-    } else { // Stance - apply friction cone constraints
-        min_force[0] = -max_vertical_force/4 * friction_coef;  // x min
-        max_force[0] =  max_vertical_force/4 * friction_coef;  // x max
-        min_force[1] = -max_vertical_force/4 * friction_coef;  // y min
-        max_force[1] =  max_vertical_force/4 * friction_coef;  // y max
-        min_force[2] = 0.0;                                    // z min (non-negative)
-        max_force[2] = max_vertical_force;                     // z max
+    // Set foot-specific constraints based on current state using a loop
+    for (int foot = 0; foot < 4; foot++) {
+      int base_idx = foot * 3;  // Each foot has 3 force components (x,y,z)
+      int foot_state = foot_states_[foot];
+      
+      if (foot_state == 1) {  // Swing - zero force in ALL directions
+        for (int axis = 0; axis < 3; axis++) {
+          min_force[base_idx + axis] = -0.01;
+          max_force[base_idx + axis] = 0.01;
+          initial_guess[base_idx + axis] = 0.0;
+        }
+      } else {  // Stance - apply friction cone constraints
+        // X and Y bounds (limited by friction cone)
+        min_force[base_idx] = -max_vertical_force/4 * friction_coef;
+        max_force[base_idx] = max_vertical_force/4 * friction_coef;
+        min_force[base_idx + 1] = -max_vertical_force/4 * friction_coef;
+        max_force[base_idx + 1] = max_vertical_force/4 * friction_coef;
+        
+        // Z bounds (non-negative vertical force)
+        min_force[base_idx + 2] = 0.0;
+        max_force[base_idx + 2] = max_vertical_force;
+        
         // Initial guess for stance foot - share weight
-        initial_guess[0] = 0.0; // no lateral force initially
-        initial_guess[1] = 0.0; // no lateral force initially
-        initial_guess[2] = vertical_force_per_foot; // negative because GRF is opposite to joint force
-    }
-    
-    // Foot 2 (indices 3,4,5 for x,y,z forces)
-    if (foot2_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[3] = -0.01;
-        max_force[3] = 0.01;
-        min_force[4] = -0.01;
-        max_force[4] = 0.01;
-        min_force[5] = -0.01;
-        max_force[5] = 0.01;
-        // Initial guess for swing foot - zero force
-        initial_guess[3] = 0.0;
-        initial_guess[4] = 0.0;
-        initial_guess[5] = 0.0;
-    } else { // Stance
-        min_force[3] = -max_vertical_force/4 * friction_coef;
-        max_force[3] =  max_vertical_force/4 * friction_coef;
-        min_force[4] = -max_vertical_force/4 * friction_coef;
-        max_force[4] =  max_vertical_force/4 * friction_coef;
-        min_force[5] = 0.0;
-        max_force[5] = max_vertical_force;
-        // Initial guess for stance foot - share weight
-        initial_guess[3] = 0.0; // no lateral force initially
-        initial_guess[4] = 0.0; // no lateral force initially
-        initial_guess[5] = vertical_force_per_foot; // negative because GRF is opposite to joint force
-    }
-    
-    // Foot 3 (indices 6,7,8 for x,y,z forces)
-    if (foot3_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[6] = -0.01;
-        max_force[6] = 0.01;
-        min_force[7] = -0.01;
-        max_force[7] = 0.01;
-        min_force[8] = -0.01;
-        max_force[8] = 0.01;
-        // Initial guess for swing foot - zero force
-        initial_guess[6] = 0.0;
-        initial_guess[7] = 0.0;
-        initial_guess[8] = 0.0;
-    } else { // Stance
-        min_force[6] = -max_vertical_force/4 * friction_coef;
-        max_force[6] =  max_vertical_force/4 * friction_coef;
-        min_force[7] = -max_vertical_force/4 * friction_coef;
-        max_force[7] =  max_vertical_force/4 * friction_coef;
-        min_force[8] = 0.0;
-        max_force[8] = max_vertical_force;
-        // Initial guess for stance foot - share weight
-        initial_guess[6] = 0.0; // no lateral force initially
-        initial_guess[7] = 0.0; // no lateral force initially
-        initial_guess[8] = vertical_force_per_foot; // negative because GRF is opposite to joint force
-    }
-    
-    // Foot 4 (indices 9,10,11 for x,y,z forces)
-    if (foot4_state_ == 1) { // Swing - zero force in ALL directions
-        min_force[9] = -0.01;
-        max_force[9] = 0.01;
-        min_force[10] = -0.01;
-        max_force[10] = 0.01;
-        min_force[11] = -0.01;
-        max_force[11] = 0.01;
-        // Initial guess for swing foot - zero force
-        initial_guess[9] = 0.0;
-        initial_guess[10] = 0.0;
-        initial_guess[11] = 0.0;
-    } else { // Stance
-        min_force[9] = -max_vertical_force/4 * friction_coef;
-        max_force[9] =  max_vertical_force/4 * friction_coef;
-        min_force[10] = -max_vertical_force/4 * friction_coef;
-        max_force[10] =  max_vertical_force/4 * friction_coef;
-        min_force[11] = 0.0;
-        max_force[11] = max_vertical_force;
-        // Initial guess for stance foot - share weight
-        initial_guess[9] = 0.0; // no lateral force initially
-        initial_guess[10] = 0.0; // no lateral force initially
-        initial_guess[11] = vertical_force_per_foot; // negative because GRF is opposite to joint force
+        initial_guess[base_idx] = 0.0;     // no lateral force initially
+        initial_guess[base_idx + 1] = 0.0; // no lateral force initially
+        initial_guess[base_idx + 2] = vertical_force_per_foot;
+      }
     }
 
+    // Create and set state bounds vectors more efficiently
     std::vector<double> lowest_state(12, 0.0);
     std::vector<double> highest_state(12, 0.0);
 
-    // Set position constraints with reasonable bounds
-    lowest_state[0] = -0.75;  // Set reasonable x and y bounds - the robot's body can't extend beyond the feet
-    lowest_state[1] = -0.75;   
-    lowest_state[2] = 0.05;    // Set z bounds - don't let the body get too close to the ground
+    // Position bounds
+    for (int i = 0; i < 2; i++) {
+      lowest_state[i] = -0.75;
+      highest_state[i] = 0.75;
+    }
+    lowest_state[2] = 0.05;
+    highest_state[2] = 0.25;
     
-    // Use non-constraining bounds for orientation and velocities
-    lowest_state[3] = -1.0;    // Quaternion w (actual range is -1 to 1)
-    lowest_state[4] = -1.0;    // Quaternion x
-    lowest_state[5] = -1.0;    // Quaternion y
-    lowest_state[6] = -1.0;    // Quaternion z
+    // Orientation bounds (quaternion)
+    for (int i = 3; i <= 6; i++) {
+      lowest_state[i] = -1.0;
+      highest_state[i] = 1.0;
+    }
     
-    // Set very loose bounds on velocities
-    lowest_state[7] = -10.0;   // Linear velocity x
-    lowest_state[8] = -10.0;   // Linear velocity y
-    lowest_state[9] = -10.0;   // Linear velocity z
-    lowest_state[10] = -10.0;  // Angular velocity x
-    lowest_state[11] = -10.0;  // Angular velocity y
-    lowest_state[12] = -10.0;  // Angular velocity z
-
-    // Set position constraints with reasonable bounds
-    highest_state[0] = 0.75;   // Upper bound for x position
-    highest_state[1] = 0.75;   // Upper bound for y position
-    highest_state[2] = 0.25;    // Upper bound for z position - don't let the body go too high
-    
-    // Use non-constraining bounds for orientation
-    highest_state[3] = 1.0;    // Quaternion w (actual range is -1 to 1)
-    highest_state[4] = 1.0;    // Quaternion x
-    highest_state[5] = 1.0;    // Quaternion y
-    highest_state[6] = 1.0;    // Quaternion z
-    
-    // Set very loose bounds on velocities
-    highest_state[7] = 10.0;   // Linear velocity x
-    highest_state[8] = 10.0;   // Linear velocity y
-    highest_state[9] = 10.0;   // Linear velocity z
-    highest_state[10] = 10.0;  // Angular velocity x
-    highest_state[11] = 10.0;  // Angular velocity y
-    highest_state[12] = 10.0;  // Angular velocity z
+    // Velocity bounds
+    for (int i = 7; i <= 12; i++) {
+      lowest_state[i] = -10.0;
+      highest_state[i] = 10.0;
+    }
 
     // Apply constraints to ALL stages in the optimization horizon
     int horizon_length = solver_->nlp_solver_plan->N;
     for (int stage = 0; stage < horizon_length; stage++) {
-        // Apply force constraints to the current stage in the ACADOS solver
-        ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
-                                     stage, "lbu", min_force.data());
-        ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
-                                     stage, "ubu", max_force.data());
-        // Set the height constraints
-        ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
-                                     stage, "lbx", lowest_state.data());
-        ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
-                                     stage, "ubx", highest_state.data());
-        // Set the initial guess for the control input
-        //ocp_nlp_out_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 
-        //                             stage, "u", initial_guess.data());   
+      // Apply force constraints to the current stage in the ACADOS solver
+      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
+                                   stage, "lbu", min_force.data());
+      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
+                                   stage, "ubu", max_force.data());
+      // Set the height constraints
+      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
+                                   stage, "lbx", lowest_state.data());
+      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 
+                                   stage, "ubx", highest_state.data());
     }
 
     // Set initial state constraints
@@ -577,43 +495,28 @@ inline bool BalanceController::update_control()
     // Get the optimal control solution
     ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "u", optimal_control_.data());
     
-    // Negate the optimal control solution - the solver returns ground reaction forces,
-    // but the legs need to exert the opposite forces
-    for (int i = 0; i < optimal_control_.size(); i++) {
-      optimal_control_[i] = -optimal_control_[i];
+    // Negate the optimal control solution - the solver returns ground reaction forces
+    for (auto& force : optimal_control_) {
+      force = -force;
     }
     
-    // Print nicely formatted tables with controller output and state vectors
-    //print_controller_output_table();
-    //print_state_vector_table();
+    // Uncomment these lines for detailed debug output when needed
+    print_controller_output_table();
+    print_state_vector_table();
     
-    // Changed to DEBUG level to reduce terminal clutter
-    RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Foot Forces (Optimal / Min / Max):");
-    RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Foot1 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
-      (foot1_state_ == 1) ? "SWING" : "STANCE",
-      optimal_control_[0], min_force[0], max_force[0],
-      optimal_control_[1], min_force[1], max_force[1],
-      optimal_control_[2], min_force[2], max_force[2]);
-    RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Foot2 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
-      (foot2_state_ == 1) ? "SWING" : "STANCE",
-      optimal_control_[3], min_force[3], max_force[3],
-      optimal_control_[4], min_force[4], max_force[4],
-      optimal_control_[5], min_force[5], max_force[5]);
-    RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Foot3 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
-      (foot3_state_ == 1) ? "SWING" : "STANCE",
-      optimal_control_[6], min_force[6], max_force[6],
-      optimal_control_[7], min_force[7], max_force[7],
-      optimal_control_[8], min_force[8], max_force[8]);
-    RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Foot4 [%s]: X: %6.2f / %6.2f / %6.2f | Y: %6.2f / %6.2f / %6.2f | Z: %6.2f / %6.2f / %6.2f",
-      (foot4_state_ == 1) ? "SWING" : "STANCE",
-      optimal_control_[9], min_force[9], max_force[9],
-      optimal_control_[10], min_force[10], max_force[10],
-      optimal_control_[11], min_force[11], max_force[11]);
+    // Log debug info about foot forces more efficiently
+    const char* foot_names[] = {"Foot1", "Foot2", "Foot3", "Foot4"};
+    
+    for (int foot = 0; foot < 4; foot++) {
+      int base_idx = foot * 3;
+      RCLCPP_DEBUG(get_node()->get_logger(), 
+        "%s [%s]: X: %.2f, Y: %.2f, Z: %.2f",
+        foot_names[foot],
+        (foot_states_[foot] == 1) ? "SWING" : "STANCE",
+        optimal_control_[base_idx], 
+        optimal_control_[base_idx + 1], 
+        optimal_control_[base_idx + 2]);
+    }
 
     return true;
   } catch (const std::exception& e) {
@@ -625,34 +528,29 @@ inline bool BalanceController::update_control()
 inline bool BalanceController::update_commands()
 {
   try {
-    // Publish foot forces - this is now the main function of update_commands
+    // Publish foot forces
     if (foot_forces_publisher_ && foot_forces_publisher_->trylock()) {
       auto& msg = foot_forces_publisher_->msg_;
       
-      // Set the foot forces from optimal control
-      msg.foot1_force.x = optimal_control_[0];
-      msg.foot1_force.y = optimal_control_[1];
-      msg.foot1_force.z = optimal_control_[2];
+      // Set the foot forces more efficiently with a loop
+      struct {
+        double& x;
+        double& y;
+        double& z;
+      } foot_forces[] = {
+        {msg.foot1_force.x, msg.foot1_force.y, msg.foot1_force.z},
+        {msg.foot2_force.x, msg.foot2_force.y, msg.foot2_force.z},
+        {msg.foot3_force.x, msg.foot3_force.y, msg.foot3_force.z},
+        {msg.foot4_force.x, msg.foot4_force.y, msg.foot4_force.z}
+      };
       
-      msg.foot2_force.x = optimal_control_[3];
-      msg.foot2_force.y = optimal_control_[4];
-      msg.foot2_force.z = optimal_control_[5];
-      
-      msg.foot3_force.x = optimal_control_[6];
-      msg.foot3_force.y = optimal_control_[7];
-      msg.foot3_force.z = optimal_control_[8];
-      
-      msg.foot4_force.x = optimal_control_[9];
-      msg.foot4_force.y = optimal_control_[10];
-      msg.foot4_force.z = optimal_control_[11];
-      
-      // Changed to DEBUG level to reduce terminal clutter
-      RCLCPP_DEBUG(get_node()->get_logger(), 
-      "Foot1: [%f, %f, %f], Foot2: [%f, %f, %f], Foot3: [%f, %f, %f], Foot4: [%f, %f, %f]",
-      msg.foot1_force.x, msg.foot1_force.y, msg.foot1_force.z,
-      msg.foot2_force.x, msg.foot2_force.y, msg.foot2_force.z,
-      msg.foot3_force.x, msg.foot3_force.y, msg.foot3_force.z,
-      msg.foot4_force.x, msg.foot4_force.y, msg.foot4_force.z);
+      // Update all foot forces in a single loop
+      for (int foot = 0; foot < 4; foot++) {
+        int base_idx = foot * 3;
+        foot_forces[foot].x = optimal_control_[base_idx];
+        foot_forces[foot].y = optimal_control_[base_idx + 1];
+        foot_forces[foot].z = optimal_control_[base_idx + 2];
+      }
       
       foot_forces_publisher_->unlockAndPublish();
     }
