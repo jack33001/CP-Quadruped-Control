@@ -1,3 +1,20 @@
+/**
+ * @file GaitPatternGenerator.hpp
+ * @brief Implementation of the quadruped gait pattern generator
+ * 
+ * This file contains the implementation of the core functions that manage the
+ * gait pattern generation for the quadruped robot. The system:
+ * 
+ * 1. Processes state information from sensors and external commands
+ * 2. Manages a state machine for each foot (preinit -> init -> stance <-> swing)
+ * 3. Calculates support polygons for stability 
+ * 4. Generates step targets using Raibert-inspired heuristics
+ * 5. Publishes all gait information for other controllers to use
+ * 
+ * The pattern generator uses a phase-based approach where each foot progresses
+ * through its gait cycle based on timing and contact events.
+ */
+
 #ifndef QUADRUPED_MPC_CONTROL_LAWS_GAIT_PATTERN_GENERATOR_HPP_
 #define QUADRUPED_MPC_CONTROL_LAWS_GAIT_PATTERN_GENERATOR_HPP_
 
@@ -53,10 +70,10 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
       cmd_linear = Eigen::Vector3d(latest_cmd_->linear.x, latest_cmd_->linear.y, latest_cmd_->linear.z);
       cmd_angular = Eigen::Vector3d(latest_cmd_->angular.x, latest_cmd_->angular.y, latest_cmd_->angular.z);
       // Extract hip positions from state message
-      hip_positions[0] = Eigen::Vector3d(latest_state_->h1.x, latest_state_->h1.y, latest_state_->h1.z); // Front left hip
-      hip_positions[1] = Eigen::Vector3d(latest_state_->h2.x, latest_state_->h2.y, latest_state_->h2.z); // Front right hip
-      hip_positions[2] = Eigen::Vector3d(latest_state_->h3.x, latest_state_->h3.y, latest_state_->h3.z); // Rear left hip
-      hip_positions[3] = Eigen::Vector3d(latest_state_->h4.x, latest_state_->h4.y, latest_state_->h4.z); // Rear right hip
+      hip_positions[0] = Eigen::Vector3d(latest_state_->h1.x, latest_state_->h1.y, latest_state_->h1.z);
+      hip_positions[1] = Eigen::Vector3d(latest_state_->h2.x, latest_state_->h2.y, latest_state_->h2.z);
+      hip_positions[2] = Eigen::Vector3d(latest_state_->h3.x, latest_state_->h3.y, latest_state_->h3.z);
+      hip_positions[3] = Eigen::Vector3d(latest_state_->h4.x, latest_state_->h4.y, latest_state_->h4.z);
       com_velocity = Eigen::Vector3d(
         latest_state_->com_velocity.x,
         latest_state_->com_velocity.y,
@@ -64,90 +81,80 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
       );
     }
 
-    // Calculate period in seconds
     double dt = period.seconds();
     double current_time = time.seconds();
 
-    // Run the state machine for each state
+    // Run the state machine for each foot
     for (int i = 0; i < 4; i++) {
       auto& foot = foot_info_[i];
 
-      // Manage state transitions first
-      // Preinit -> init (only if gait start command has been received)
-      if (foot.state == -2 && gait_start_received_) {
-        foot.state = -1;
-        foot.phase = 0;
-        foot.state_start_time = current_time;
-        foot.state_end_time = current_time + foot.phase_offset;
-        foot.time_in_state = 0.0;
-        RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d transitioning from preinit to init state", i+1);
-      // Init -> Stance
-      } else if ((foot.state == -1) && (current_time >= foot.state_end_time)) {
-        foot.state = 0;
-        foot.phase = 0;
-        foot.state_start_time = current_time;
-        foot.state_end_time = current_time + stance_duration_;
-        foot.time_in_state = 0.0;
-        RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d transitioning from init to stance state", i+1);
-      }
-      // Swing --> Stance
-      else if ((foot.state == 1) && (foot.contact || (foot.phase >= 1))){ 
-        // Reset the clock and the phase
-        foot.phase = -dt / (stance_duration_); // pad the phase by one timestep, so after the fsm runs the phase starts at 0.0
-        foot.state = 0;
-        foot.state_start_time = current_time;
-        foot.state_end_time = current_time + stance_duration_;
-        foot.time_in_state = 0.0;
-      }
-      // Stance --> Swing
-      else if ((foot.state == 0) && (foot.phase >= 1)){
-        // Reset the clock and the phase
-        foot.phase = -dt / (swing_duration_); // pad the phase by one timestep, so after the fsm runs the phase starts at 0.0
-        foot.state = 1;
-        foot.state_start_time = current_time;
-        foot.state_end_time = current_time + swing_duration_;
-        foot.time_in_state = 0.0;
-        
-        // Calculate each term separately
-        Eigen::Vector3d term1 = hip_positions[i]; // Current hip position (x-y)
-        Eigen::Vector3d term2 = swing_duration_/2 * cmd_linear; // Raibert hueristic
-        Eigen::Vector3d term3 = sqrt(step_height_/9.81) * (com_velocity-cmd_linear); // Step height term
-        
-        // Log the terms at INFO level
-        RCLCPP_INFO(get_node()->get_logger(), 
-              "Foot %d step planning: term1=[%f, %f, %f], term2=[%f, %f, %f], term3=[%f, %f, %f]",
-              i+1, 
-              term1.x(), term1.y(), term1.z(),
-              term2.x(), term2.y(), term2.z(),
-              term3.x(), term3.y(), term3.z());
-          
-        // Set the step target
-        foot.step_target = term1 + term2 + term3;
+      // Update time in current state for all states except preinit
+      if (foot.state > -2) {
+        foot.time_in_state = current_time - foot.state_start_time;
       }
 
-      // Now run the state
-      // Stance
-      if (foot.state == 0) {
-        foot.time_in_state = current_time - foot.state_start_time;
-        foot.phase += dt / (stance_duration_);
-      } 
-      // Swing
-      else if (foot.state == 1)
-      {
-        foot.time_in_state = current_time - foot.state_start_time;
-        foot.phase += dt / (swing_duration_);
+      // State transitions logic
+      switch (foot.state) {
+        case -2:  // Preinit -> Init
+          if (gait_start_received_) {
+            transition_state(foot, -1, 0, current_time, foot.phase_offset);
+            RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d: preinit -> init", i+1);
+          }
+          break;
+
+        case -1:  // Init -> Stance
+          if (current_time >= foot.state_end_time) {
+            transition_state(foot, 0, 0, current_time, stance_duration_);
+            RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d: init -> stance", i+1);
+          }
+          break;
+          
+        case 0:  // Stance -> Swing
+          // Update phase for stance state
+          foot.phase += dt / stance_duration_;
+          
+          if (foot.phase >= 1) {
+            transition_state(foot, 1, -dt / swing_duration_, current_time, swing_duration_);
+            
+            // Calculate step target (only needed for stance->swing transition)
+            Eigen::Vector3d term1 = hip_positions[i]; // Current hip position
+            Eigen::Vector3d term2 = swing_duration_/2 * cmd_linear; // Raibert heuristic
+            Eigen::Vector3d term3 = sqrt(step_height_/9.81) * (com_velocity-cmd_linear); // Step height term
+            
+            RCLCPP_DEBUG(get_node()->get_logger(), 
+                "Foot %d step planning: term1=[%f, %f, %f], term2=[%f, %f, %f], term3=[%f, %f, %f]",
+                i+1, term1.x(), term1.y(), term1.z(), term2.x(), term2.y(), term2.z(),
+                term3.x(), term3.y(), term3.z());
+                
+            foot.step_target = term1 + term2 + term3;
+          }
+          break;
+          
+        case 1:  // Swing -> Stance
+          // Update phase for swing state
+          foot.phase += dt / swing_duration_;
+          
+          if (foot.contact || foot.phase >= 1) {
+            transition_state(foot, 0, -dt / stance_duration_, current_time, stance_duration_);
+          }
+          break;
       }
-      // Init state - update time but don't advance phase
-      else if (foot.state == -1) {
-        foot.time_in_state = current_time - foot.state_start_time;
-      }
-      // Preinit state - don't update anything
     }
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error updating foot phases: %s", e.what());
     return false;
   }
+}
+
+// Helper function to handle state transitions
+inline void GaitPatternGenerator::transition_state(FootInfo& foot, int new_state, double new_phase, 
+                                                double current_time, double duration) {
+  foot.state = new_state;
+  foot.phase = new_phase;
+  foot.state_start_time = current_time;
+  foot.state_end_time = current_time + duration;
+  foot.time_in_state = 0.0;
 }
 
 inline bool GaitPatternGenerator::support_polygon()
@@ -234,19 +241,20 @@ inline bool GaitPatternGenerator::publish_pattern()
     if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
       auto& msg = rt_gait_pub_->msg_;
 
-      // Set foot states
+      // Set foot states - these indicate which phase of the gait cycle each foot is in
       msg.foot1_state = static_cast<int32_t>(foot_info_[0].state);
       msg.foot2_state = static_cast<int32_t>(foot_info_[1].state);
       msg.foot3_state = static_cast<int32_t>(foot_info_[2].state);
       msg.foot4_state = static_cast<int32_t>(foot_info_[3].state);
 
-      // Set foot phases
+      // Set foot phases - these represent the progress through the current state (0.0 to 1.0)
       msg.foot1_phase = static_cast<float>(foot_info_[0].phase);
       msg.foot2_phase = static_cast<float>(foot_info_[1].phase);
       msg.foot3_phase = static_cast<float>(foot_info_[2].phase);
       msg.foot4_phase = static_cast<float>(foot_info_[3].phase);
 
-      // Set step target positions
+      // Set step target positions - these are the points where each foot should 
+      // be placed during the next step
       msg.foot1_step_position.x = foot_info_[0].step_target.x();
       msg.foot1_step_position.y = foot_info_[0].step_target.y();
       msg.foot1_step_position.z = foot_info_[0].step_target.z();
@@ -263,19 +271,23 @@ inline bool GaitPatternGenerator::publish_pattern()
       msg.foot4_step_position.y = foot_info_[3].step_target.y();
       msg.foot4_step_position.z = foot_info_[3].step_target.z();
 
-      // Set COM position (support center)
+      // Set the Center of Mass (COM) position based on the calculated support polygon
+      // This is used by the balance controller for stabilization
       msg.com_position.x = support_center_.x();
       msg.com_position.y = support_center_.y();
       msg.com_position.z = 0.0;  // We only compute 2D support polygon
-      
-      // Add step height to the message
+
+      // Add step height to the message - other controllers use this to determine
+      // how high to lift each foot during the swing phase
       msg.step_height = static_cast<float>(step_height_);
 
+      // Publish the message in a thread-safe way
       rt_gait_pub_->unlockAndPublish();
     }
 
     return true;
   } catch (const std::exception& e) {
+    // Log any exceptions that occur during publishing
     RCLCPP_ERROR(get_node()->get_logger(), "Error publishing pattern: %s", e.what());
     return false;
   }

@@ -92,6 +92,10 @@ private:
   // Support polygon information
   Eigen::Vector2d support_center_{Eigen::Vector2d::Zero()};  // Changed from Vector3d to Vector2d
 
+  // Helper function for state transitions
+  void transition_state(FootInfo& foot, int new_state, double new_phase, 
+                        double current_time, double duration);
+
   // Function declarations
   bool unpack_state();
   bool update_foot_phase(const rclcpp::Time & time, const rclcpp::Duration & period);
