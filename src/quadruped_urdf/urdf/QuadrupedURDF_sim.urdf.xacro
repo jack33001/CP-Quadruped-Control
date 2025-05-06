@@ -19,11 +19,11 @@
   <xacro:leg prefix="fl" parent="Body">
     <origin xyz="0.15605 -0.1796 0" rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['fl_hip']} -1.5708"/>
   </xacro:leg>
-  <xacro:leg prefix="rr" parent="Body">
-    <origin xyz="-0.15605 0.1796 0" rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['rr_hip']} 1.5708"/>
-  </xacro:leg>
   <xacro:leg prefix="rl" parent="Body">
     <origin xyz="0.15605 0.1796 0" rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['rl_hip']} -1.5708"/>
+  </xacro:leg>
+  <xacro:leg prefix="rr" parent="Body">
+    <origin xyz="-0.15605 0.1796 0" rpy="1.5708 ${init_pos_yaml['initial_joint_positions']['rr_hip']} 1.5708"/>
   </xacro:leg>
 
 </robot>

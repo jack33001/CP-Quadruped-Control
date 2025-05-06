@@ -1,0 +1,93 @@
+2025-02-09 19:58:49,439 - INFO: Starting controller test...
+2025-02-09 19:58:49,440 - INFO: Loaded parameters: mass=14.5kg, inertia=0.1kg*m^2
+2025-02-09 19:58:49,440 - INFO: Initializing controller with N=20, T=2
+2025-02-09 19:58:49,441 - INFO: Loaded parameters: mass=14.5kg, inertia=0.1kg*m^2
+2025-02-09 19:58:49,441 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-09 19:58:49,441 - INFO: Creating quadruped ODE model...
+2025-02-09 19:58:49,441 - INFO: Created model with name: quadruped_ode
+2025-02-09 19:58:49,442 - INFO: Created state vector with shape: (24, 1)
+2025-02-09 19:58:49,442 - INFO: Set model.x with type: <class 'casadi.casadi.SX'>
+2025-02-09 19:58:49,442 - INFO: Control vector created with shape: (12, 1)
+2025-02-09 19:58:49,442 - INFO: Set model.xdot with shape: (24, 1)
+2025-02-09 19:58:49,443 - INFO: Created dynamics vector with shape: (24, 1)
+2025-02-09 19:58:49,443 - INFO: Set model dynamics expressions
+2025-02-09 19:58:49,443 - INFO: Set initial conditions constraint
+2025-02-09 19:58:49,443 - INFO: Added dynamics constraints with type: explicit
+2025-02-09 19:58:49,443 - INFO: Set model dimensions - nx: 24, nu: 12, np: 0
+2025-02-09 19:58:49,443 - INFO: Set model labels for states, controls, and time
+2025-02-09 19:58:49,443 - INFO: Model creation completed successfully
+2025-02-09 19:58:49,443 - INFO: Created model with state type: <class 'casadi.casadi.SX'>
+2025-02-09 19:58:49,446 - INFO: Set model in OCP
+2025-02-09 19:58:49,446 - INFO: Setting up OCP...
+2025-02-09 19:58:49,446 - INFO: Model state shape: (24, 1)
+2025-02-09 19:58:49,446 - INFO: Model control shape: (12, 1)
+2025-02-09 19:58:49,446 - INFO: Dimensions - nx: 24, nu: 12, np: 0, ny: 12, ny_e: 12
+2025-02-09 19:58:49,446 - INFO: Set selection matrices to track only first 12 states
+2025-02-09 19:58:49,446 - INFO: Set weight matrices
+2025-02-09 19:58:49,446 - INFO: Set zero references
+2025-02-09 19:58:49,446 - INFO: Set force constraints: min=-14.5, max=14.5
+2025-02-09 19:58:49,446 - INFO: Set solver options
+2025-02-09 19:58:49,446 - INFO: Set prediction horizon to 2s
+2025-02-09 19:58:49,446 - INFO: Set initial state constraints
+2025-02-09 19:58:49,446 - INFO: OCP setup completed
+2025-02-09 19:58:49,446 - INFO: Creating solver...
+2025-02-09 19:58:52,297 - INFO: Moving generated files...
+2025-02-09 19:58:52,299 - INFO: Foot positions:
+2025-02-09 19:58:52,300 - INFO: FR (p1): [0.14900193 0.18456772 0.        ]
+2025-02-09 19:58:52,300 - INFO: FL (p2): [ 0.1589309  -0.10783903  0.        ]
+2025-02-09 19:58:52,301 - INFO: BR (p3): [-0.15587858  0.1786263   0.        ]
+2025-02-09 19:58:52,301 - INFO: BL (p4): [-0.15817723 -0.10153988  0.        ]
+2025-02-09 19:59:05,711 - INFO: 
+============ Controller Performance Analysis ============
+2025-02-09 19:59:05,711 - INFO: 
+=== Timing Performance ===
+2025-02-09 19:59:05,711 - INFO: Total simulation time: 13.406 s
+2025-02-09 19:59:05,711 - INFO: Steps completed: 6000
+2025-02-09 19:59:05,712 - INFO: Average step time: 2.23 ms
+2025-02-09 19:59:05,712 - INFO: 
+=== Position Tracking ===
+2025-02-09 19:59:05,712 - INFO: RMS Error (x,y,z): [0.129, 0.097, 0.139] m
+2025-02-09 19:59:05,712 - INFO: Max Error (x,y,z): [0.141, 0.102, 0.156] m
+2025-02-09 19:59:05,712 - INFO: Position Drift: [-0.229, -0.163, -0.109] m
+2025-02-09 19:59:05,712 - INFO: 
+=== Orientation Tracking ===
+2025-02-09 19:59:05,712 - INFO: RMS Error (r,p,y): [0.218, 0.142, 0.148] rad
+2025-02-09 19:59:05,712 - INFO: Max Error (r,p,y): [0.489, 0.268, 0.185] rad
+2025-02-09 19:59:05,712 - INFO: Orientation Drift: [0.108, -0.279, 0.006] rad
+2025-02-09 19:59:05,712 - INFO: 
+=== Velocity Performance ===
+2025-02-09 19:59:05,712 - INFO: Mean Linear Velocity (x,y,z): [0.040, 0.027, 0.025] m/s
+2025-02-09 19:59:05,712 - INFO: Mean Angular Velocity (x,y,z): [0.098, 0.101, 0.013] rad/s
+2025-02-09 19:59:05,712 - INFO: 
+=== Force Performance ===
+2025-02-09 19:59:05,712 - INFO: 
+FR Foot:
+2025-02-09 19:59:05,712 - INFO: Max forces (x,y,z): [14.500, 14.500, 102.249] N
+2025-02-09 19:59:05,712 - INFO: Avg forces (x,y,z): [1.501, 0.791, 4.864] N
+2025-02-09 19:59:05,712 - INFO: Force std (x,y,z): [3.241, 2.385, 15.874] N
+2025-02-09 19:59:05,712 - INFO: 
+FL Foot:
+2025-02-09 19:59:05,712 - INFO: Max forces (x,y,z): [14.500, 14.500, 50.196] N
+2025-02-09 19:59:05,712 - INFO: Avg forces (x,y,z): [1.099, 0.889, 13.466] N
+2025-02-09 19:59:05,712 - INFO: Force std (x,y,z): [2.994, 2.168, 10.422] N
+2025-02-09 19:59:05,712 - INFO: 
+BR Foot:
+2025-02-09 19:59:05,712 - INFO: Max forces (x,y,z): [14.500, 14.500, 29.510] N
+2025-02-09 19:59:05,712 - INFO: Avg forces (x,y,z): [1.469, 1.139, 0.339] N
+2025-02-09 19:59:05,712 - INFO: Force std (x,y,z): [3.663, 3.211, 1.060] N
+2025-02-09 19:59:05,712 - INFO: 
+BL Foot:
+2025-02-09 19:59:05,712 - INFO: Max forces (x,y,z): [14.500, 11.284, 134.670] N
+2025-02-09 19:59:05,712 - INFO: Avg forces (x,y,z): [0.923, 1.041, 123.296] N
+2025-02-09 19:59:05,712 - INFO: Force std (x,y,z): [2.834, 2.495, 27.834] N
+2025-02-09 19:59:05,712 - INFO: 
+=== Energy Performance ===
+2025-02-09 19:59:05,712 - INFO: Total force magnitude: 870328.990 N
+2025-02-09 19:59:05,712 - INFO: Average power: 5.065 W
+2025-02-09 19:59:05,712 - INFO: 
+=== Stability Metrics ===
+2025-02-09 19:59:05,713 - INFO: Average height: 0.044 m
+2025-02-09 19:59:05,713 - INFO: Height variance: 0.028 m
+2025-02-09 19:59:05,713 - INFO: Roll variance: 0.101 rad
+2025-02-09 19:59:05,713 - INFO: Pitch variance: 0.125 rad
+2025-02-09 19:59:05,713 - INFO: Yaw variance: 0.011 rad

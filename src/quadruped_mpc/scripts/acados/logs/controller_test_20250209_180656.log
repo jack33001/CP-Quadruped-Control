@@ -1,0 +1,30 @@
+2025-02-09 18:06:57,353 - INFO: Starting controller test...
+2025-02-09 18:06:57,354 - INFO: Loaded parameters: mass=11kg, inertia=0.09kg*m^2
+2025-02-09 18:06:57,354 - INFO: Initializing controller with N=20, T=2
+2025-02-09 18:06:57,355 - INFO: Loaded parameters: mass=11kg, inertia=0.09kg*m^2
+2025-02-09 18:06:57,355 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-09 18:06:57,355 - INFO: Creating quadruped ODE model...
+2025-02-09 18:06:57,356 - INFO: Model creation completed successfully
+2025-02-09 18:06:57,356 - INFO: Created model with state type: <class 'casadi.casadi.SX'>
+2025-02-09 18:06:57,358 - INFO: Set model in OCP
+2025-02-09 18:06:57,359 - INFO: Setting up OCP...
+2025-02-09 18:06:57,359 - INFO: Model state shape: (24, 1)
+2025-02-09 18:06:57,359 - INFO: Model control shape: (12, 1)
+2025-02-09 18:06:57,359 - INFO: Dimensions - nx: 24, nu: 12, np: 0, ny: 12, ny_e: 12
+2025-02-09 18:06:57,359 - INFO: Set selection matrices to track only first 12 states
+2025-02-09 18:06:57,359 - INFO: Set weight matrices
+2025-02-09 18:06:57,359 - INFO: Set zero references
+2025-02-09 18:06:57,359 - INFO: Set force constraints: min=-11, max=11.0
+2025-02-09 18:06:57,359 - INFO: Set solver options
+2025-02-09 18:06:57,359 - INFO: Set prediction horizon to 2s
+2025-02-09 18:06:57,359 - INFO: Set initial state constraints
+2025-02-09 18:06:57,359 - INFO: OCP setup completed
+2025-02-09 18:06:57,359 - INFO: Creating solver...
+2025-02-09 18:07:00,276 - INFO: Moving generated files...
+2025-02-09 18:07:00,278 - INFO: Foot positions:
+2025-02-09 18:07:00,278 - INFO: FR (p1): [0.15 0.15 0.  ]
+2025-02-09 18:07:00,279 - INFO: FL (p2): [ 0.15 -0.15  0.  ]
+2025-02-09 18:07:00,279 - INFO: BR (p3): [-0.15  0.15  0.  ]
+2025-02-09 18:07:00,279 - INFO: BL (p4): [-0.15 -0.15  0.  ]
+2025-02-09 18:07:00,285 - INFO: Set initial state
+2025-02-09 18:07:00,285 - INFO: Set reference trajectory

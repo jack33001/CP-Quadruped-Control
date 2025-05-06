@@ -1,0 +1,28 @@
+2025-02-06 22:51:59,299 - INFO: Starting controller test...
+2025-02-06 22:51:59,299 - INFO: Loading config from: /home/ws/src/quadruped_mpc/config/optimal_controller.yaml
+2025-02-06 22:51:59,300 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-06 22:51:59,300 - INFO: Initializing controller with N=20, T=0.2
+2025-02-06 22:51:59,300 - INFO: Initializing controller with N=20, T=0.2
+2025-02-06 22:51:59,300 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-06 22:51:59,300 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-06 22:51:59,300 - INFO: Creating quadruped ODE model...
+2025-02-06 22:51:59,301 - INFO: Model creation completed successfully
+2025-02-06 22:51:59,302 - INFO: Setting up OCP...
+2025-02-06 22:51:59,302 - INFO: Dimensions - nx: 24, nu: 12, ny: 12, ny_e: 12
+2025-02-06 22:51:59,302 - INFO: OCP setup completed
+2025-02-06 22:51:59,302 - INFO: Creating solver...
+2025-02-06 22:51:59,302 - ERROR: Failed to initialize controller: inconsistent dimension nbu, regarding idxbu, ubu, lbu.
+Traceback (most recent call last):
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 192, in main
+    controller = QuadrupedOptimalController(N=20, T=0.2, param_file=config_file)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/src/quadruped_mpc/scripts/acados/optimal_controller.py", line 65, in __init__
+    self.solver = AcadosOcpSolver(self.ocp,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/acados/acados/interfaces/acados_template/acados_template/acados_ocp_solver.py", line 206, in __init__
+    self.generate(acados_ocp, json_file=acados_ocp.json_file, simulink_opts=simulink_opts, cmake_builder=cmake_builder)
+  File "/home/acados/acados/interfaces/acados_template/acados_template/acados_ocp_solver.py", line 112, in generate
+    acados_ocp.make_consistent()
+  File "/home/acados/acados/interfaces/acados_template/acados_template/acados_ocp.py", line 404, in make_consistent
+    raise Exception('inconsistent dimension nbu, regarding idxbu, ubu, lbu.')
+Exception: inconsistent dimension nbu, regarding idxbu, ubu, lbu.

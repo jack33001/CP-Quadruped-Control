@@ -1,0 +1,17 @@
+2025-02-09 17:46:56,368 - INFO: Starting controller test...
+2025-02-09 17:46:56,369 - INFO: Loaded parameters: mass=11kg, inertia=0.09kg*m^2
+2025-02-09 17:46:56,369 - INFO: Initializing controller with N=100, T=0.01
+2025-02-09 17:46:56,370 - INFO: Loaded parameters: mass=11kg, inertia=0.09kg*m^2
+2025-02-09 17:46:56,370 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-09 17:46:56,370 - INFO: Creating quadruped ODE model...
+2025-02-09 17:46:56,377 - INFO: Model creation completed successfully
+2025-02-09 17:46:56,382 - INFO: Setting up OCP...
+2025-02-09 17:46:56,382 - INFO: Dimensions - nx: 24, nu: 12, np: 0, ny: 12, ny_e: 12
+2025-02-09 17:46:56,382 - INFO: OCP setup completed
+2025-02-09 17:46:56,383 - INFO: Creating solver...
+2025-02-09 17:46:59,649 - INFO: Moving generated files...
+2025-02-09 17:46:59,651 - INFO: Foot positions:
+2025-02-09 17:46:59,652 - INFO: FR (p1): [0.15 0.15 0.  ]
+2025-02-09 17:46:59,653 - INFO: FL (p2): [ 0.15 -0.15  0.  ]
+2025-02-09 17:46:59,653 - INFO: BR (p3): [-0.15  0.15  0.  ]
+2025-02-09 17:46:59,653 - INFO: BL (p4): [-0.15 -0.15  0.  ]

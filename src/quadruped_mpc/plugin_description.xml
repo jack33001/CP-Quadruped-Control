@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<library path="quadruped_mpc_controllers">
+  <class name="quadruped_mpc/balance_controller"
+         type="quadruped_mpc::BalanceController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Balance controller for quadruped robot</description>
+  </class>
+  <class name="quadruped_mpc/gait_pattern_generator"
+         type="quadruped_mpc::GaitPatternGenerator"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Gait pattern generator for quadruped robot</description>
+  </class>
+  <class name="quadruped_mpc/state_estimator"
+         type="quadruped_mpc::StateEstimator"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>State estimator for quadruped robot</description>
+  </class>
+  <class name="quadruped_mpc/foot_controller"
+         type="quadruped_mpc::FootController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>State estimator for quadruped robot</description>
+  </class>
+</library>

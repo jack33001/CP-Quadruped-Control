@@ -1,0 +1,5 @@
+- ros_topic_name: "/quadruped/state/ground_truth/odometry"
+  gz_topic_name: "nav_msgs/msg/Odometry"
+  ros_type_name: "nav_msgs/msg/odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: "GZ_TO_ROS"

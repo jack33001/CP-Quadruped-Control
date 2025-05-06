@@ -1,0 +1,24 @@
+2025-02-06 22:48:10,782 - INFO: Starting controller test...
+2025-02-06 22:48:10,782 - INFO: Loading config from: /home/ws/src/quadruped_mpc/config/optimal_controller.yaml
+2025-02-06 22:48:10,782 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-06 22:48:10,783 - INFO: Initializing controller with N=20, T=0.2
+2025-02-06 22:48:10,783 - INFO: Initializing controller with N=20, T=0.2
+2025-02-06 22:48:10,783 - INFO: Loaded parameters: mass=20.0kg, inertia=10kg*m^2
+2025-02-06 22:48:10,783 - INFO: Will export code to: /home/ws/src/quadruped_mpc/include/quadruped_mpc/acados_generated
+2025-02-06 22:48:10,783 - INFO: Creating quadruped ODE model...
+2025-02-06 22:48:10,784 - INFO: Model creation completed successfully
+2025-02-06 22:48:10,786 - INFO: Setting up OCP...
+2025-02-06 22:48:10,786 - INFO: Dimensions - nx: 24, nu: 12, ny: 12, ny_e: 12
+2025-02-06 22:48:10,786 - INFO: OCP setup completed
+2025-02-06 22:48:10,786 - INFO: Creating solver...
+2025-02-06 22:48:12,378 - INFO: Moving generated files...
+2025-02-06 22:48:12,379 - INFO: Simulation parameters: dt=0.01s, t_final=10s, n_steps=1000
+2025-02-06 22:48:12,379 - INFO: Initializing state vectors...
+2025-02-06 22:48:12,379 - INFO: Initial state position: [-0.086, -0.092, 0.152]
+2025-02-06 22:48:12,379 - INFO: Initial state orientation: [0.067, 0.256, 0.123]
+2025-02-06 22:48:12,379 - CRITICAL: Fatal error
+Traceback (most recent call last):
+  File "/home/ws/src/quadruped_mpc/scripts/acados/test_optimal_controller.py", line 242, in main
+    x_hist[0] = x0  # Store initial state
+    ~~~~~~^^^
+ValueError: could not broadcast input array from shape (24,) into shape (12,)

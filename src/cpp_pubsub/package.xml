@@ -9,8 +9,19 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+<<<<<<< HEAD:src/quadruped_mpc/package.xml
+  <depend>controller_interface</depend>
+  <depend>tf2_ros</depend>
+  <depend>nav_msgs</depend>  <!-- Add this line -->
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>pinocchio</depend>
+  <depend>quadruped_msgs</depend>
+
+=======
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
+>>>>>>> main:src/cpp_pubsub/package.xml
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

@@ -66,6 +66,8 @@ WORKDIR /home/acados/acados/build
 
 RUN cmake -DACADOS_WITH_QPOASES=ON ..
 RUN make install -j4
+RUN cd /home/acados/acados/external/qpoases \
+    && make
 
 
 # Install xhost
@@ -126,8 +128,18 @@ RUN echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/acados/acados/lib"' >> 
 RUN cd /home/acados/acados/bin \
     && wget https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux \
     && mv t_renderer-v0.0.34-linux t_renderer \
-    && sudo chown $USERNAME:$USERNAME t_renderer 
+    && chmod +x t_renderer \
+    && chown $USERNAME:$USERNAME t_renderer \
+    && chmod 755 .
 
+# Pre-generate ACADOS code during build
+RUN mkdir -p /tmp/quadruped_ws/src \
+    && cd /tmp/quadruped_ws/src \
+    && git clone https://github.com/jack33001/CP-Quadruped-Control.git \
+    && cd CP-Quadruped-Control/src/quadruped_mpc/scripts/acados \
+    && yes y | /bin/python3 generate_controller.py \
+    && cd /tmp \
+    && rm -rf quadruped_ws
 
 # Install required packages for ROS2 development
 RUN pip3 install --break-system-packages -U colcon-common-extensions
@@ -137,13 +149,14 @@ RUN pip3 install --break-system-packages -U rosdep
 
 
 # Install testing packages without upgrading system packages
-RUN pip3 install --break-system-packages --ignore-installed pytest
 RUN apt-get install -y \
     python3-pytest \
     ros-jazzy-launch-testing \
-    ros-jazzy-launch-testing-ros
+    ros-jazzy-launch-testing-ros \
+    ros-jazzy-plotjuggler
 
-RUN pip3 install --break-system-packages --ignore-installed -U \
+# Don't try to upgrade system-installed pytest
+RUN pip3 install --break-system-packages \
     flake8 \
     flake8-blind-except \
     flake8-builtins \
@@ -152,8 +165,10 @@ RUN pip3 install --break-system-packages --ignore-installed -U \
     flake8-deprecated \
     flake8-docstrings \
     flake8-import-order \
-    flake8-quotes
-    
+    flake8-quotes \
+    tqdm \
+    pynput
+
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
 CMD ["/bin/bash"]

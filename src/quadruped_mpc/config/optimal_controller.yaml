@@ -1,0 +1,5 @@
+optimal_controller:
+  mass: 15  # Robot mass in kg
+  inertia: .5  # Robot inertia in kg*m^2
+  stages: 50 # Number of stages in the MPC
+  horizon: 5  # Time horizon in seconds

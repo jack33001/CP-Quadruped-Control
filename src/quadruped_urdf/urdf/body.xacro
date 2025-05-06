@@ -2,10 +2,11 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="body">
     <!-- Dummy link and joint -->
-    <link name="dummy_link" />
-    <joint name="dummy_joint" type="fixed">
-      <parent link="dummy_link" />
+    <link name="base_link" />
+    <joint name="base_fixed" type="fixed">
+      <parent link="base_link" />
       <child link="Body" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
     <link name="Body">
@@ -29,7 +30,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="$(find quadruped_urdf)/urdf/meshes/Body.STL" />
+            filename="file://$(find quadruped_urdf)/urdf/meshes/Body.STL" />
         </geometry>
         <material name="Green"/>
       </visual>
@@ -39,7 +40,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="$(find quadruped_urdf)/urdf/meshes/Body.STL" />
+            filename="file://$(find quadruped_urdf)/urdf/meshes/Body.STL" />
         </geometry>
       </collision>
     </link>
@@ -96,7 +97,7 @@
     <link name="Battery">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.3"/>
+        <mass value="0.1"/>
         <inertia ixx="0.000125" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.000125"/>
       </inertial>
       <visual>
