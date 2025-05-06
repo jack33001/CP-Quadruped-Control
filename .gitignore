@@ -8,3 +8,8 @@ log/
 
 # ignore github copilot instructions
 .github/
+
+# Ignore pycache files
+__pycache__/
+*.py[cod]
+*$py.class
