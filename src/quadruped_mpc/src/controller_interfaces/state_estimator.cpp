@@ -1,7 +1,7 @@
 #include "quadruped_mpc/controller_interfaces/state_estimator.hpp"
 #include "quadruped_mpc/control_laws/StateEstimation.hpp"
 #include <std_msgs/msg/string.hpp>
-#include <sstream>  // Add this header
+#include <sstream>
 
 namespace quadruped_mpc
 {
@@ -21,8 +21,6 @@ StateEstimator::state_interface_configuration() const
 {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  
-  // Remove floating base interfaces - these don't exist in hardware
   
   // Add state interfaces for actuated joints
   for (const auto & joint : joint_names_) {
@@ -105,17 +103,16 @@ auto StateEstimator::on_init() -> CallbackReturn
     auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
     auto_declare<std::vector<std::string>>("state_interfaces", std::vector<std::string>());
     
-    // Set up sim clock before anything else
+    // Set up sim clock
     get_node()->set_parameter(rclcpp::Parameter("use_sim_time", true));
     sim_clock_ = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
     clock_connected_ = false;
     
-    // Setup clock subscription with reliable QoS
+    // Setup clock subscription
     clock_sub_ = get_node()->create_subscription<rosgraph_msgs::msg::Clock>(
       "/clock", 
       rclcpp::QoS(rclcpp::KeepLast(10)).reliable(),
       [this](const rosgraph_msgs::msg::Clock::SharedPtr msg) {
-        // Simply mark as connected when we receive clock messages
         if (!clock_connected_) {
           RCLCPP_INFO(get_node()->get_logger(), "Connected to /clock topic");
           clock_connected_ = true;
@@ -141,23 +138,18 @@ auto StateEstimator::on_init() -> CallbackReturn
 auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) -> CallbackReturn
 {
   try {
-    // First explicitly set use_sim_time before anything else
-    bool use_sim_time = false;
-    if (!get_node()->get_parameter("use_sim_time", use_sim_time)) {
-      RCLCPP_INFO(get_node()->get_logger(), "Setting use_sim_time parameter");
-      get_node()->set_parameter(rclcpp::Parameter("use_sim_time", true));
-    }
+    // Set use_sim_time parameter
+    get_node()->set_parameter(rclcpp::Parameter("use_sim_time", true));
 
-    // Wait for clock without using spin_some
-    rclcpp::Rate rate(10);  // 10 Hz check rate
+    // Wait for clock
+    rclcpp::Rate rate(10);
     auto start = std::chrono::steady_clock::now();
 
     while (rclcpp::ok() && !clock_connected_) {
-      RCLCPP_INFO(get_node()->get_logger(), "Waiting for /clock...");
+      RCLCPP_INFO_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "Waiting for /clock...");
       
       // Check for timeout after 5 seconds
-      auto now = std::chrono::steady_clock::now();
-      if (std::chrono::duration_cast<std::chrono::seconds>(now - start).count() > 5) {
+      if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count() > 5) {
         RCLCPP_ERROR(get_node()->get_logger(), "Timeout waiting for clock connection");
         return CallbackReturn::ERROR;
       }
@@ -165,26 +157,11 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       rate.sleep();
     }
 
-    // Set up clock subscription with reliable AND transient local QoS
-    clock_sub_ = get_node()->create_subscription<rosgraph_msgs::msg::Clock>(
-      "/clock", 
-      rclcpp::QoS(rclcpp::KeepLast(10))
-        .reliable()
-        .transient_local(),
-      [this](const rosgraph_msgs::msg::Clock::SharedPtr msg) {
-        if (!clock_connected_) {
-          RCLCPP_INFO(get_node()->get_logger(), "Connected to /clock topic");
-          clock_connected_ = true;
-        }
-      }
-    );
-
-    RCLCPP_INFO(get_node()->get_logger(), "Clock subscription confirmed");
-
-    // Initialize tf broadcaster and odom publisher
+    // Initialize publishers
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*get_node());
     odom_pub_ = get_node()->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
     
+    // Get parameters
     joint_names_ = get_node()->get_parameter("joints").as_string_array();
     if (joint_names_.empty()) {
       RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
@@ -197,13 +174,13 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       return CallbackReturn::ERROR;
     }
 
-    // Add timeout for robot description
+    // Wait for robot description
     rclcpp::Time start_time = get_node()->now();
     while (!urdf_received_ && (get_node()->now() - start_time).seconds() < 5.0) {
       RCLCPP_INFO_THROTTLE(
         get_node()->get_logger(),
         *get_node()->get_clock(),
-        1000,  // ms
+        1000,
         "Waiting for robot description...");
       rclcpp::sleep_for(std::chrono::milliseconds(100));
     }
@@ -221,7 +198,6 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       // Create mapping from state interface index to pinocchio joint index
       joint_mappings_.clear();
       for (size_t i = 0; i < joint_names_.size(); ++i) {
-        // Don't append "_joint" - use joint name directly
         const std::string pin_joint_name = joint_names_[i];
         
         // Find exact joint ID match
@@ -243,18 +219,17 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
         joint_mappings_.push_back({joint_names_[i], i, pin_idx});
       }
 
-      // Pre-allocate vectors to correct sizes
+      // Pre-allocate vectors
       current_positions_.resize(model_.nq);
       current_velocities_.resize(model_.nv);
       current_positions_.setZero();
       current_velocities_.setZero();
 
-      // Get foot frame IDs
+      // Get frame IDs
       const std::array<std::string, 4> foot_frame_names = {
         "fl_foot", "fr_foot", "rl_foot", "rr_foot"
       };
       
-      // Initialize foot_frame_ids_
       for (size_t i = 0; i < 4; ++i) {
         foot_frame_ids_[i] = model_.getFrameId(foot_frame_names[i]);
         if (foot_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
@@ -263,7 +238,6 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
         }
       }
       
-      // Get hip frame IDs
       const std::array<std::string, 4> hip_frame_names = {
         "fl_hip", "fr_hip", "rl_hip", "rr_hip"
       };
@@ -276,16 +250,14 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
         }
       }
       
-      // Find body frame id - try different case variations
+      // Find body frame id
       body_frame_id_ = model_.getFrameId("body");
       if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-        // Try with capital B
         body_frame_id_ = model_.getFrameId("Body");
         if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-          // Try with base_link as fallback
           body_frame_id_ = model_.getFrameId("base_link");
           if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-            RCLCPP_ERROR(get_node()->get_logger(), "Body frame not found in model (tried 'body', 'Body', 'base_link')");
+            RCLCPP_ERROR(get_node()->get_logger(), "Body frame not found in model");
             return CallbackReturn::ERROR;
           }
         }
@@ -298,7 +270,7 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       return CallbackReturn::ERROR;
     }
 
-    // Set up odometry subscription with best effort QoS
+    // Set up subscriptions
     odom_sub_ = get_node()->create_subscription<nav_msgs::msg::Odometry>(
       "/quadruped/state/ground_truth/odometry",
       rclcpp::QoS(1).reliable(),
@@ -306,30 +278,23 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
         latest_odom_ = msg;
       }
     );
-
-    RCLCPP_INFO(get_node()->get_logger(), "Created odometry subscription");
     
-    // Set up gait pattern subscription with sensor data QoS
     gait_sub_ = get_node()->create_subscription<quadruped_msgs::msg::GaitPattern>(
       "/quadruped/gait/gait_pattern", 
       rclcpp::SensorDataQoS(),
       std::bind(&StateEstimator::gaitPatternCallback, this, std::placeholders::_1)
     );
     
-    RCLCPP_INFO(get_node()->get_logger(), "Created gait pattern subscription");
-
-    // Create a regular publisher first
+    // Create realtime state publisher
     auto state_pub = get_node()->create_publisher<quadruped_msgs::msg::QuadrupedState>(
       "/quadruped/state/state_estimate", 10);
     
-    // Then create the realtime publisher using the regular publisher
     rt_state_pub_ = std::make_unique<RTPublisher>(state_pub);
     state_msg_ = std::make_shared<quadruped_msgs::msg::QuadrupedState>();
-    RCLCPP_INFO(get_node()->get_logger(), "Created realtime state publisher");
 
     return CallbackReturn::SUCCESS;
   } catch (const std::exception& e) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Exception thrown during configure stage with message: %s", e.what());
+    RCLCPP_ERROR(get_node()->get_logger(), "Exception during configure: %s", e.what());
     return CallbackReturn::ERROR;
   }
 }
@@ -346,7 +311,6 @@ auto StateEstimator::on_deactivate(const rclcpp_lifecycle::State & /*previous_st
 
 void StateEstimator::gaitPatternCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg)
 {
-  // Store the gait pattern directly in the member variable rather than using a buffer
   gait_pattern_ = *msg;
 }
 

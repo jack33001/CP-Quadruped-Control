@@ -242,25 +242,12 @@ inline bool StateEstimator::estimate_base_position()
     // Store current time for next iteration
     prev_update_time_ = current_time;
     
-    // Calculate foot velocity magnitudes and average
-    std::vector<double> foot_vel_magnitudes(4, 0.0);
-    double avg_foot_vel_magnitude = 0.0;
+    // Calculate foot velocity magnitudes and count contacts
     int contact_count = 0;
-    
     for (size_t i = 0; i < foot_states_.size(); i++) {
-      // Calculate magnitude of each foot velocity
-      foot_vel_magnitudes[i] = foot_states_[i].velocity.norm();
-      
-      // Count contacts for both contact counting and averaging foot velocities
       if (foot_states_[i].in_contact) {
-        avg_foot_vel_magnitude += foot_vel_magnitudes[i];
         contact_count++;
       }
-    }
-    
-    // Calculate average foot velocity magnitude if there are contacts
-    if (contact_count > 0) {
-      avg_foot_vel_magnitude /= contact_count;
     }
     
     if (latest_odom_) {
@@ -277,49 +264,35 @@ inline bool StateEstimator::estimate_base_position()
       // Define foot sphere radius
       constexpr double foot_radius = 0.015;  // meters
       
-      Eigen::Vector3d body_velocity = Eigen::Vector3d(velocity.x, velocity.y, velocity.z);
-      Eigen::Vector3d body_angular_velocity = Eigen::Vector3d(angular_velocity.x, angular_velocity.y, angular_velocity.z);
+      Eigen::Vector3d body_angular_velocity = Eigen::Vector3d(
+        angular_velocity.x,
+        angular_velocity.y,
+        angular_velocity.z
+      );
       
-      // For each foot in contact
-      int contacting_foot_number = 0;
-
-      Eigen::MatrixXd A = Eigen::MatrixXd::Zero(3*contact_count, 3);
-      Eigen::VectorXd b = Eigen::VectorXd::Zero(3*contact_count);
-
-      // … inside estimate_base_position(), right after you set body_velocity/body_angular_velocity …
-      Eigen::Quaterniond q_base(
-        current_positions_[6],   // w
-        current_positions_[3],   // x
-        current_positions_[4],   // y
-        current_positions_[5]);  // z
-      Eigen::Matrix3d R_wb = q_base.toRotationMatrix().transpose();  // world → body
-
-      // Replace your contact‐loop fill of b with:
-      for (size_t i = 0; i < foot_states_.size(); i++) {
-        if (foot_states_[i].in_contact) {
-          A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
-          // foot_states_[i].position is already in body frame from pin_kinematics()
-          // foot_states_[i].velocity is already in body from pin_kinematics()
-          Eigen::Vector3d w_body = body_angular_velocity;//R_wb * body_angular_velocity;
-          b.segment<3>(3*contacting_foot_number) 
-            = -foot_states_[i].velocity 
-              - w_body.cross(foot_states_[i].position);
-          contacting_foot_number++;
-        }
-      }
-
-      // Solve for COM velocity if we have contacts
+      // Simplified COM velocity calculation
       if (contact_count > 0) {
-        // Solve the system A*v_com = b using least squares
-        v_com = A.colPivHouseholderQr().solve(b);
+        // Optimization: For diagonal elements all the same (contact_count),
+        // we can directly accumulate without constructing matrices
+        Eigen::Vector3d sum_velocities = Eigen::Vector3d::Zero();
+        
+        for (const auto& foot : foot_states_) {
+          if (foot.in_contact) {
+            // Add negative foot velocity and cross product to sum
+            sum_velocities -= (foot.velocity + body_angular_velocity.cross(foot.position));
+          }
+        }
+        
+        // Simple division by contact count (equivalent to matrix inversion for our case)
+        v_com = sum_velocities / static_cast<double>(contact_count);
         
         // Update velocity in current state
-        current_velocities_[0] = v_com[0];//velocity.x;  // Using odom velocity instead of estimated
-        current_velocities_[1] = v_com[1];//velocity.y;  // Using odom velocity instead of estimated
-        current_velocities_[2] = v_com[2];//velocity.z;  // Using odom velocity instead of estimated
+        current_velocities_[0] = v_com[0];
+        current_velocities_[1] = v_com[1];
+        current_velocities_[2] = v_com[2];
       }
       
-      // World z position - still compute from foot positions
+      // World z position calculation from foot contacts
       double world_z = 0.0;
       if (contact_count > 0) {
         for (const auto& foot : foot_states_) {
@@ -342,55 +315,17 @@ inline bool StateEstimator::estimate_base_position()
     // Calculate velocity magnitudes
     double odom_vel_magnitude = 0.0;
     if (latest_odom_) {
-      // These values were already set above if latest_odom_ exists
       odom_vel_magnitude = std::sqrt(odom_vel_x*odom_vel_x + odom_vel_y*odom_vel_y + odom_vel_z*odom_vel_z);
     }
     
     double v_com_magnitude = v_com.norm();
 
-    // Only log velocity comparison when magnitude is significant
+    // Only log velocity comparison at debug level
     if (odom_vel_magnitude > 0.1) {
-      // Create a table comparing odom velocity and calculated v_com
-      std::stringstream vel_table;
-      vel_table << "\n┌───────────────────────────────────────────────────────────────────────────────────────┐\n";
-      vel_table << "│                              VELOCITY COMPARISON                                      │\n";
-      vel_table << "├───────────────┬───────────────────────┬───────────────────────┬───────────┬───────────┤\n";
-      vel_table << "│ Axis          │ Ground Truth Velocity │ Pinocchio v_com (m/s) │ Error     │ Error %   │\n";
-      vel_table << "├───────────────┼───────────────────────┼───────────────────────┼───────────┼───────────┤\n";
-      
-      // Helper to calculate percent error safely
-      auto percent_error = [](double truth, double estimated) -> double {
-        // Avoid division by zero
-        if (std::abs(truth) < 1e-6) {
-          return estimated < 1e-6 ? 0.0 : 100.0;
-        }
-        return (truth - estimated) / truth * 100.0;
-      };
-      
-      vel_table << "│ X             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_x 
-            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.x() 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_x - v_com.x()) 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_x, v_com.x()) << "% │\n";
-      
-      vel_table << "│ Y             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_y 
-            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.y() 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_y - v_com.y()) 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_y, v_com.y()) << "% │\n";
-      
-      vel_table << "│ Z             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_z 
-            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.z() 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_z - v_com.z()) 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_z, v_com.z()) << "% │\n";
-      
-      vel_table << "│ Magnitude     │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_magnitude 
-            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com_magnitude 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_magnitude - v_com_magnitude) 
-            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_magnitude, v_com_magnitude) << "% │\n";
-      
-      vel_table << "└───────────────┴───────────────────────┴───────────────────────┴───────────┴───────────┘";
-      
-      // Log velocity table
-      RCLCPP_INFO(get_node()->get_logger(), "%s", vel_table.str().c_str());
+      RCLCPP_DEBUG(get_node()->get_logger(), 
+                  "COM velocity - Truth: [%.4f,%.4f,%.4f], Est: [%.4f,%.4f,%.4f]",
+                  odom_vel_x, odom_vel_y, odom_vel_z,
+                  v_com.x(), v_com.y(), v_com.z());
     }
 
     return true;
@@ -427,39 +362,32 @@ inline bool StateEstimator::update_odometry()
     // Publish tf data for RViz
     auto time_now = get_node()->get_clock()->now();
     geometry_msgs::msg::TransformStamped transform;
-    nav_msgs::msg::Odometry odom;
     Eigen::Vector3d pc(current_positions_[0], current_positions_[1], current_positions_[2]);
     transform.header.stamp = time_now;
     transform.header.frame_id = "odom";
     transform.child_frame_id = "base_link";
     
-    odom.header = transform.header;
-    odom.child_frame_id = transform.child_frame_id;
-
-    const auto& body_placement = model_.frames[body_frame_id_].placement;
-    Eigen::Vector3d base_position = pc - body_placement.translation();
-
     transform.transform.translation.x = current_positions_[0];
     transform.transform.translation.y = current_positions_[1];
     transform.transform.translation.z = current_positions_[2];
-    
     transform.transform.rotation.x = current_positions_[3];
     transform.transform.rotation.y = current_positions_[4];
     transform.transform.rotation.z = current_positions_[5];
     transform.transform.rotation.w = current_positions_[6];
 
+    nav_msgs::msg::Odometry odom;
+    odom.header = transform.header;
+    odom.child_frame_id = transform.child_frame_id;
     odom.pose.pose.position.x = transform.transform.translation.x;
     odom.pose.pose.position.y = transform.transform.translation.y;
     odom.pose.pose.position.z = transform.transform.translation.z;
     odom.pose.pose.orientation = transform.transform.rotation;
-    tf_broadcaster_->sendTransform(transform);
     odom.twist.twist.linear.x = current_velocities_[0];
     odom.twist.twist.linear.y = current_velocities_[1];
     odom.twist.twist.linear.z = current_velocities_[2];
     odom.twist.twist.angular.x = imu_angular_velocity_[0];
     odom.twist.twist.angular.y = imu_angular_velocity_[1];
     odom.twist.twist.angular.z = imu_angular_velocity_[2];
-
     odom_pub_->publish(odom);
 
     // Publish the state estimate
@@ -520,7 +448,6 @@ inline bool StateEstimator::update_odometry()
       msg.joint_positions.resize(joint_states_.size());
       msg.joint_velocities.resize(joint_states_.size());
       msg.joint_efforts.resize(joint_states_.size());
-
       for (size_t i = 0; i < joint_states_.size(); ++i) {
         msg.joint_positions[i] = joint_states_[i].position;
         msg.joint_velocities[i] = joint_states_[i].velocity;
@@ -550,13 +477,11 @@ inline bool StateEstimator::update_odometry()
 
       // Convert Eigen matrices to vectors for Jacobians - now using local storage
       std::vector<double> j1_vec(6), j2_vec(6), j3_vec(6), j4_vec(6);
-
       // Map the matrices to vectors in column-major order
       Eigen::Map<Eigen::VectorXd>(j1_vec.data(), 6) = Eigen::Map<const Eigen::VectorXd>(leg_jacobians_.J1.data(), 6);
       Eigen::Map<Eigen::VectorXd>(j2_vec.data(), 6) = Eigen::Map<const Eigen::VectorXd>(leg_jacobians_.J2.data(), 6);
       Eigen::Map<Eigen::VectorXd>(j3_vec.data(), 6) = Eigen::Map<const Eigen::VectorXd>(leg_jacobians_.J3.data(), 6);
       Eigen::Map<Eigen::VectorXd>(j4_vec.data(), 6) = Eigen::Map<const Eigen::VectorXd>(leg_jacobians_.J4.data(), 6);
-
       msg.j1 = j1_vec;
       msg.j2 = j2_vec;
       msg.j3 = j3_vec;

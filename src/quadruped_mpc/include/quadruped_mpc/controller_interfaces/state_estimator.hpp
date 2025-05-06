@@ -14,11 +14,9 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
-#include "rosgraph_msgs/msg/clock.hpp"  // Add Clock message include
+#include "rosgraph_msgs/msg/clock.hpp"
 #include <nav_msgs/msg/odometry.hpp>
-#include "quadruped_msgs/msg/gait_pattern.hpp"  // Add gait pattern message include
-
-// Project headers
+#include "quadruped_msgs/msg/gait_pattern.hpp"
 
 // Pinocchio headers
 #include <pinocchio/fwd.hpp>
@@ -26,19 +24,15 @@
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 
-// Simplify to just the essential tf2_ros includes
+// TF2 includes
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2_ros/transform_broadcaster.h"
-#include "nav_msgs/msg/odometry.hpp"  // Move after transform includes
-#include "quadruped_msgs/msg/quadruped_state.hpp"  // Add this line
+#include "nav_msgs/msg/odometry.hpp"
+#include "quadruped_msgs/msg/quadruped_state.hpp"
 
-// Add realtime publisher includes
+// Realtime publisher includes
 #include "realtime_tools/realtime_publisher.hpp"
 #include "realtime_tools/realtime_buffer.hpp"
-
-// Remove MeshcatCpp includes
-// #include <MeshcatCpp/Meshcat.h>
-// #include <MeshcatCpp/Shape.h>
 
 namespace quadruped_mpc
 {
@@ -46,7 +40,6 @@ namespace quadruped_mpc
 class StateEstimator : public controller_interface::ControllerInterface
 {
 public:
-  // Move the type alias to the public section before any usage
   using RTPublisher = realtime_tools::RealtimePublisher<quadruped_msgs::msg::QuadrupedState>;
   using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
@@ -54,7 +47,7 @@ public:
 
   ~StateEstimator()
   {
-    data_.reset();  // Ensure data is destroyed before model
+    data_.reset();
   }
 
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
@@ -71,12 +64,12 @@ protected:
   std::vector<std::string> joint_names_;
   std::vector<std::string> state_interface_types_;
   
-  // Add IMU data storage
+  // IMU data storage
   Eigen::Vector4d imu_orientation_;  // [x,y,z,w]
   Eigen::Vector3d imu_angular_velocity_;
   Eigen::Vector3d imu_linear_acceleration_;
   
-  // Add foot state storage
+  // Foot state storage
   struct FootState {
     Eigen::Vector3d position;
     Eigen::Vector3d velocity;
@@ -84,14 +77,14 @@ protected:
   };
   std::array<FootState, 4> foot_states_;  // FL, FR, RL, RR
   
-  // Add hip positions storage
+  // Hip positions storage
   std::array<Eigen::Vector3d, 4> hip_positions_;  // FL, FR, RL, RR
 
-  // Add position differencing variables for velocity calculation
+  // Position differencing variables for velocity calculation
   std::vector<Eigen::Vector3d> prev_foot_positions_;
   rclcpp::Time prev_update_time_{0};
 
-  // Add Jacobian storage
+  // Jacobian storage
   using JacobianMatrix = Eigen::Matrix<double, 3, 2>;
   struct LegJacobians {
     JacobianMatrix J1, J2, J3, J4;  // FL, FR, RL, RR
@@ -104,7 +97,7 @@ protected:
   
   // Frame IDs for feet and body
   std::array<pinocchio::FrameIndex, 4> foot_frame_ids_;
-  std::array<pinocchio::FrameIndex, 4> hip_frame_ids_;  // Add this properly typed
+  std::array<pinocchio::FrameIndex, 4> hip_frame_ids_;
   pinocchio::FrameIndex body_frame_id_;
   
   // Robot description subscription
@@ -119,7 +112,6 @@ protected:
   Eigen::VectorXd current_positions_;
   Eigen::VectorXd current_velocities_;
 
-  // Simplify joint mapping struct to only necessary fields
   struct JointMapping {
     std::string name;
     size_t state_interface_idx;
@@ -135,10 +127,9 @@ protected:
   };
   std::vector<JointState> joint_states_;
 
-  // Add this declaration for setup_frames()
   bool setup_frames();
 
-  // These function declarations stay here but implementations move to state_estimation.hpp
+  // State estimation functions
   bool read_state_interfaces();
   bool update_model();
   bool foot_positions();
@@ -149,7 +140,6 @@ protected:
   bool update_odometry();
 
 private:
-  // Removed hardware_height_
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   bool clock_connected_{false};
@@ -158,15 +148,12 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   nav_msgs::msg::Odometry::SharedPtr latest_odom_;
   
-  // Correct declaration - no buffer, just subscription and message variable
   rclcpp::Subscription<quadruped_msgs::msg::GaitPattern>::SharedPtr gait_sub_;
   quadruped_msgs::msg::GaitPattern gait_pattern_;
   void gaitPatternCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
   
-  // Replace regular publisher with realtime publisher
   std::unique_ptr<RTPublisher> rt_state_pub_;
   std::shared_ptr<quadruped_msgs::msg::QuadrupedState> state_msg_;
-  // std::shared_ptr<MeshcatCpp::Meshcat> visualizer_;
 };
 
 }  // namespace quadruped_mpc
