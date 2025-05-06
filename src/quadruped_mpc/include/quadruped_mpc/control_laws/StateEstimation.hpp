@@ -159,7 +159,11 @@ inline bool StateEstimator::pin_kinematics()
     
     // Update foot positions and set default contact states
     for (size_t i = 0; i < 4; ++i) {
-      foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation();
+      // Get world-frame position using Pinocchio
+      Eigen::Vector3d p_world = data_->oMf[foot_frame_ids_[i]].translation();
+      
+      // Transform position from world to body frame
+      foot_states_[i].position = R_wb * p_world;
       foot_states_[i].in_contact = true;  // Default to true for now
 
       // Get world-frame velocity using Pinocchio
@@ -382,31 +386,39 @@ inline bool StateEstimator::estimate_base_position()
           << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_magnitude - v_com_magnitude) << " │\n";
     vel_table << "└───────────────┴───────────────────────┴───────────────────────┴───────────┘";
     
-    // Add foot velocity table
-    std::stringstream foot_vel_table;
-    foot_vel_table << "\n┌───────────────────────────────────────────────────────────────┐\n";
-    foot_vel_table << "│                      FOOT VELOCITIES                          │\n";
-    foot_vel_table << "├───────────────┬───────────────────────┬─────────┬─────────────┤\n";
-    foot_vel_table << "│ Foot          │ Velocity Magnitude    │ Contact │ Components  │\n";
-    foot_vel_table << "├───────────────┼───────────────────────┼─────────┼─────────────┤\n";
+    // Add foot position table instead of velocity table
+    std::stringstream foot_pos_table;
+    foot_pos_table << "\n┌───────────────────────────────────────────────────────────────┐\n";
+    foot_pos_table << "│                      FOOT POSITIONS                           │\n";
+    foot_pos_table << "├───────────────┬───────────────────────┬─────────┬─────────────┤\n";
+    foot_pos_table << "│ Foot          │ Position (body frame) │ Contact │ World Frame │\n";
+    foot_pos_table << "├───────────────┼───────────────────────┼─────────┼─────────────┤\n";
     
     for (size_t i = 0; i < foot_states_.size(); i++) {
-      foot_vel_table << "│ Foot " << i+1 << "        │ " 
-            << std::setw(21) << std::fixed << std::setprecision(6) << foot_vel_magnitudes[i] 
-            << " │ " << std::setw(7) << (foot_states_[i].in_contact ? "Yes" : "No") 
-            << " │ [" << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].velocity.x()
-            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].velocity.y()
-            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].velocity.z() << "] │\n";
+      // Get world frame positions by transforming back from body frame
+      Eigen::Quaterniond q_base(
+        current_positions_[6],   // w
+        current_positions_[3],   // x
+        current_positions_[4],   // y
+        current_positions_[5]);  // z
+      Eigen::Matrix3d R_bw = q_base.toRotationMatrix();  // body → world
+      Eigen::Vector3d p_world = R_bw * foot_states_[i].position;
+      
+      foot_pos_table << "│ Foot " << i+1 << "        │ [" 
+            << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].position.x()
+            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].position.y()
+            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].position.z()
+            << "] │ " << std::setw(7) << (foot_states_[i].in_contact ? "Yes" : "No") 
+            << " │ [" << std::setw(6) << std::fixed << std::setprecision(3) << p_world.x()
+            << "," << std::setw(6) << std::fixed << std::setprecision(3) << p_world.y()
+            << "," << std::setw(6) << std::fixed << std::setprecision(3) << p_world.z() << "] │\n";
     }
     
-    foot_vel_table << "├───────────────┼───────────────────────┼─────────┴─────────────┤\n";
-    foot_vel_table << "│ Average       │ " << std::setw(21) << std::fixed << std::setprecision(6) 
-          << avg_foot_vel_magnitude << " │ (contacting feet only) │\n";
-    foot_vel_table << "└───────────────┴───────────────────────┴───────────────────────┘";
+    foot_pos_table << "└───────────────┴───────────────────────┴─────────┴─────────────┘";
     
     // Log both tables
     RCLCPP_INFO(get_node()->get_logger(), "%s", vel_table.str().c_str());
-    RCLCPP_INFO(get_node()->get_logger(), "%s", foot_vel_table.str().c_str());
+    RCLCPP_INFO(get_node()->get_logger(), "%s", foot_pos_table.str().c_str());
 
     return true;
   } catch (const std::exception& e) {
