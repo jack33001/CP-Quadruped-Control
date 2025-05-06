@@ -22,38 +22,6 @@ namespace quadruped_mpc
       const Eigen::Vector3d &p2,
       int num_points);
 
-  // Helper to log vector values
-  inline std::string vec3_to_string(const Eigen::Vector3d &vec)
-  {
-    std::stringstream ss;
-    ss << "[" << vec[0] << ", " << vec[1] << ", " << vec[2] << "]";
-    return ss.str();
-  }
-
-  // Helper to log vector2d values
-  inline std::string vec2_to_string(const Eigen::Vector2d &vec)
-  {
-    std::stringstream ss;
-    ss << "[" << vec[0] << ", " << vec[1] << "]";
-    return ss.str();
-  }
-
-  // Helper to visualize a mapping between forces and torques for debugging
-  inline std::string visualize_force_torque_mapping(
-      const Eigen::Vector3d &force,
-      const Eigen::Vector2d &torque,
-      const Eigen::Matrix<double, 3, 2> &jacobian)
-  {
-    std::stringstream ss;
-    ss << "\n    Force: " << vec3_to_string(force);
-    ss << "\n    Jacobian:\n";
-    ss << "      [ " << std::fixed << std::setprecision(4) << jacobian(0, 0) << ", " << jacobian(0, 1) << " ]\n";
-    ss << "      [ " << std::fixed << std::setprecision(4) << jacobian(1, 0) << ", " << jacobian(1, 1) << " ]\n";
-    ss << "      [ " << std::fixed << std::setprecision(4) << jacobian(2, 0) << ", " << jacobian(2, 1) << " ]\n";
-    ss << "    Torque: " << vec2_to_string(torque);
-    return ss.str();
-  }
-
   inline bool read_topics(FootController &controller)
   {
     try
@@ -70,19 +38,31 @@ namespace quadruped_mpc
 
         // Only log state sizes if they've changed or on initialization
         static size_t prev_j1_size = 0, prev_j2_size = 0, prev_j3_size = 0, prev_j4_size = 0;
-        if (controller.latest_state_.j1.size() != prev_j1_size ||
-            controller.latest_state_.j2.size() != prev_j2_size ||
-            controller.latest_state_.j3.size() != prev_j3_size ||
-            controller.latest_state_.j4.size() != prev_j4_size)
+        
+        // Create arrays for more concise code
+        const std::array<size_t, 4> current_sizes = {
+            controller.latest_state_.j1.size(),
+            controller.latest_state_.j2.size(),
+            controller.latest_state_.j3.size(),
+            controller.latest_state_.j4.size()
+        };
+        
+        std::array<size_t*, 4> prev_sizes = {&prev_j1_size, &prev_j2_size, &prev_j3_size, &prev_j4_size};
+        bool sizes_changed = false;
+        
+        // Check if any sizes have changed
+        for (size_t i = 0; i < 4; i++) {
+            if (current_sizes[i] != *prev_sizes[i]) {
+                *prev_sizes[i] = current_sizes[i];
+                sizes_changed = true;
+            }
+        }
+        
+        if (sizes_changed)
         {
-          prev_j1_size = controller.latest_state_.j1.size();
-          prev_j2_size = controller.latest_state_.j2.size();
-          prev_j3_size = controller.latest_state_.j3.size();
-          prev_j4_size = controller.latest_state_.j4.size();
-
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
                        "Updated state data - J1 size: %zu, J2 size: %zu, J3 size: %zu, J4 size: %zu",
-                       prev_j1_size, prev_j2_size, prev_j3_size, prev_j4_size);
+                       current_sizes[0], current_sizes[1], current_sizes[2], current_sizes[3]);
         }
       }
 
@@ -115,12 +95,20 @@ namespace quadruped_mpc
       // Get latest foot forces from the realtime buffer
       auto foot_forces_msg = controller.foot_forces_buffer_->readFromRT();
 
-      // Initialize final forces with zeros
-      controller.foot_forces_.foot1 = geometry_msgs::msg::Vector3();
-      controller.foot_forces_.foot2 = geometry_msgs::msg::Vector3();
-      controller.foot_forces_.foot3 = geometry_msgs::msg::Vector3();
-      controller.foot_forces_.foot4 = geometry_msgs::msg::Vector3();
+      // Initialize forces structure
       controller.foot_forces_.has_data = false;
+      
+      // Initialize all foot forces to zero using an array-based approach
+      geometry_msgs::msg::Vector3* foot_forces[4] = {
+          &controller.foot_forces_.foot1,
+          &controller.foot_forces_.foot2,
+          &controller.foot_forces_.foot3,
+          &controller.foot_forces_.foot4
+      };
+      
+      for (auto& force : foot_forces) {
+          force->x = force->y = force->z = 0.0;
+      }
 
       // Acquire lock for accessing gait data
       std::lock_guard<std::mutex> gait_lock(controller.gait_mutex_);
@@ -128,12 +116,21 @@ namespace quadruped_mpc
       // If we have forces data from balance controller, update our local foot forces
       if (foot_forces_msg)
       {
-        // Set flag that we have data and copy forces
+        // Set flag that we have data
         controller.foot_forces_.has_data = true;
-        controller.foot_forces_.foot1 = foot_forces_msg->foot1_force;
-        controller.foot_forces_.foot2 = foot_forces_msg->foot2_force;
-        controller.foot_forces_.foot3 = foot_forces_msg->foot3_force;
-        controller.foot_forces_.foot4 = foot_forces_msg->foot4_force;
+        
+        // Get pointers to the message forces
+        const geometry_msgs::msg::Vector3* msg_forces[4] = {
+            &foot_forces_msg->foot1_force,
+            &foot_forces_msg->foot2_force,
+            &foot_forces_msg->foot3_force,
+            &foot_forces_msg->foot4_force
+        };
+        
+        // Copy all forces in one loop
+        for (int i = 0; i < 4; i++) {
+            *foot_forces[i] = *msg_forces[i];
+        }
       }
       else
       {
@@ -145,51 +142,49 @@ namespace quadruped_mpc
         return false; // No forces to apply
       }
 
+      // Get foot states and swing forces
+      int* foot_states[4] = {
+          &controller.latest_gait_.foot1_state,
+          &controller.latest_gait_.foot2_state,
+          &controller.latest_gait_.foot3_state,
+          &controller.latest_gait_.foot4_state
+      };
+      
+      geometry_msgs::msg::Vector3* swing_forces[4] = {
+          &controller.swing_forces_.foot1,
+          &controller.swing_forces_.foot2,
+          &controller.swing_forces_.foot3,
+          &controller.swing_forces_.foot4
+      };
+      
       // Log all relevant condition values in debug level
       RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                   "Gait and swing conditions: swing_forces.has_data=%d, "
-                   "foot1_state=%d, foot2_state=%d, foot3_state=%d, foot4_state=%d",
-                   controller.swing_forces_.has_data,
-                   controller.latest_gait_.foot1_state,
-                   controller.latest_gait_.foot2_state,
-                   controller.latest_gait_.foot3_state,
-                   controller.latest_gait_.foot4_state);
-
-      // Array to organize foot data access
-      struct FootGaitInfo
-      {
-        int *state;
-        geometry_msgs::msg::Vector3 *swing_force;
-        geometry_msgs::msg::Vector3 *foot_force;
-        const char *name;
-      };
-
-      // Map foot data for easier access
-      FootGaitInfo feet[4] = {
-          {&controller.latest_gait_.foot1_state, &controller.swing_forces_.foot1, &controller.foot_forces_.foot1, "Foot 1"},
-          {&controller.latest_gait_.foot2_state, &controller.swing_forces_.foot2, &controller.foot_forces_.foot2, "Foot 2"},
-          {&controller.latest_gait_.foot3_state, &controller.swing_forces_.foot3, &controller.foot_forces_.foot3, "Foot 3"},
-          {&controller.latest_gait_.foot4_state, &controller.swing_forces_.foot4, &controller.foot_forces_.foot4, "Foot 4"}};
+                  "Gait and swing conditions: swing_forces.has_data=%d, "
+                  "foot1_state=%d, foot2_state=%d, foot3_state=%d, foot4_state=%d",
+                  controller.swing_forces_.has_data,
+                  *foot_states[0], *foot_states[1], *foot_states[2], *foot_states[3]);
 
       // Process each foot for swing forces
+      const char* foot_names[4] = {"Foot 1", "Foot 2", "Foot 3", "Foot 4"};
+      
       for (int i = 0; i < 4; i++)
       {
-        if (*feet[i].state == 1 && controller.swing_forces_.has_data)
+        if (*foot_states[i] == 1 && controller.swing_forces_.has_data)
         {
           // Apply swing force
-          *feet[i].foot_force = *feet[i].swing_force;
+          *foot_forces[i] = *swing_forces[i];
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                       "%s using swing force: [%.2f, %.2f, %.2f]",
-                       feet[i].name,
-                       feet[i].swing_force->x,
-                       feet[i].swing_force->y,
-                       feet[i].swing_force->z);
+                      "%s using swing force: [%.2f, %.2f, %.2f]",
+                      foot_names[i],
+                      swing_forces[i]->x,
+                      swing_forces[i]->y,
+                      swing_forces[i]->z);
         }
         else
         {
           RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                       "%s not using swing force: state=%d, has_data=%d",
-                       feet[i].name, *feet[i].state, controller.swing_forces_.has_data);
+                      "%s not using swing force: state=%d, has_data=%d",
+                      foot_names[i], *foot_states[i], controller.swing_forces_.has_data);
         }
       }
       return true;
@@ -325,15 +320,17 @@ namespace quadruped_mpc
 
         // Add INFO level logging for control points with foot number
         RCLCPP_INFO(controller.get_node()->get_logger(),
-                   "Foot %d (%s) trajectory control points: start=%s, mid=%s, end=%s",
-                   foot_idx + 1, foot.name, vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(),
-                   vec3_to_string(foot.target_pos).c_str());
+                   "Foot %d (%s) trajectory control points: start=[%.3f, %.3f, %.3f], mid=[%.3f, %.3f, %.3f], end=[%.3f, %.3f, %.3f]",
+                   foot_idx + 1, foot.name, 
+                   p0.x(), p0.y(), p0.z(),
+                   p1.x(), p1.y(), p1.z(),
+                   foot.target_pos.x(), foot.target_pos.y(), foot.target_pos.z());
 
         // Log trajectory details at debug level
         RCLCPP_DEBUG(controller.get_node()->get_logger(),
-                     "Generated trajectory for %s: from %s through %s to %s",
-                     foot.name, vec3_to_string(p0).c_str(), vec3_to_string(p1).c_str(),
-                     vec3_to_string(foot.target_pos).c_str());
+                     "Generated trajectory for %s: from [%.3f, %.3f, %.3f] through [%.3f, %.3f, %.3f] to [%.3f, %.3f, %.3f]",
+                     foot.name, p0.x(), p0.y(), p0.z(), p1.x(), p1.y(), p1.z(),
+                     foot.target_pos.x(), foot.target_pos.y(), foot.target_pos.z());
 
         if (RCUTILS_LOG_SEVERITY_DEBUG >= rcutils_logging_get_logger_level(
                                               controller.get_node()->get_logger().get_name()))
@@ -442,17 +439,29 @@ namespace quadruped_mpc
 
       std::lock_guard<std::mutex> lock(controller.state_mutex_);
 
+      // Define arrays for jacobian access
+      const std::vector<double>* jacobian_arrays[4] = {
+          &controller.latest_state_.j1,
+          &controller.latest_state_.j2,
+          &controller.latest_state_.j3,
+          &controller.latest_state_.j4
+      };
+      
       // Check for valid Jacobian data
-      bool jacobians_empty = controller.latest_state_.j1.empty() ||
-                             controller.latest_state_.j2.empty() ||
-                             controller.latest_state_.j3.empty() ||
-                             controller.latest_state_.j4.empty();
-
-      bool jacobians_wrong_size = controller.latest_state_.j1.size() < 6 ||
-                                  controller.latest_state_.j2.size() < 6 ||
-                                  controller.latest_state_.j3.size() < 6 ||
-                                  controller.latest_state_.j4.size() < 6;
-
+      bool jacobians_empty = false;
+      bool jacobians_wrong_size = false;
+      
+      for (const auto* jacobian : jacobian_arrays) {
+          if (jacobian->empty()) {
+              jacobians_empty = true;
+              break;
+          }
+          if (jacobian->size() < 6) {
+              jacobians_wrong_size = true;
+              break;
+          }
+      }
+      
       if (jacobians_empty || jacobians_wrong_size)
       {
         static int jacobian_error_counter = 0;
@@ -462,18 +471,18 @@ namespace quadruped_mpc
           {
             RCLCPP_WARN(controller.get_node()->get_logger(),
                         "Jacobian data incomplete: j1=%s, j2=%s, j3=%s, j4=%s",
-                        controller.latest_state_.j1.empty() ? "empty" : "has data",
-                        controller.latest_state_.j2.empty() ? "empty" : "has data",
-                        controller.latest_state_.j3.empty() ? "empty" : "has data",
-                        controller.latest_state_.j4.empty() ? "empty" : "has data");
+                        jacobian_arrays[0]->empty() ? "empty" : "has data",
+                        jacobian_arrays[1]->empty() ? "empty" : "has data",
+                        jacobian_arrays[2]->empty() ? "empty" : "has data",
+                        jacobian_arrays[3]->empty() ? "empty" : "has data");
           }
 
           if (jacobians_wrong_size)
           {
             RCLCPP_WARN(controller.get_node()->get_logger(),
                         "Jacobian arrays wrong size: j1=%zu, j2=%zu, j3=%zu, j4=%zu (expected 6 each)",
-                        controller.latest_state_.j1.size(), controller.latest_state_.j2.size(),
-                        controller.latest_state_.j3.size(), controller.latest_state_.j4.size());
+                        jacobian_arrays[0]->size(), jacobian_arrays[1]->size(),
+                        jacobian_arrays[2]->size(), jacobian_arrays[3]->size());
           }
         }
 
@@ -498,36 +507,32 @@ namespace quadruped_mpc
         return true;
       }
 
-      // Create arrays for forces and matrices for more compact code
-      std::array<Eigen::Vector3d, 4> forces = {
-          Eigen::Vector3d(controller.foot_forces_.foot1.x, controller.foot_forces_.foot1.y, controller.foot_forces_.foot1.z),
-          Eigen::Vector3d(controller.foot_forces_.foot2.x, controller.foot_forces_.foot2.y, controller.foot_forces_.foot2.z),
-          Eigen::Vector3d(controller.foot_forces_.foot3.x, controller.foot_forces_.foot3.y, controller.foot_forces_.foot3.z),
-          Eigen::Vector3d(controller.foot_forces_.foot4.x, controller.foot_forces_.foot4.y, controller.foot_forces_.foot4.z)};
-
+      // Create arrays for forces for more compact code
+      const geometry_msgs::msg::Vector3* force_msgs[4] = {
+          &controller.foot_forces_.foot1,
+          &controller.foot_forces_.foot2,
+          &controller.foot_forces_.foot3,
+          &controller.foot_forces_.foot4
+      };
+      
+      std::array<Eigen::Vector3d, 4> forces;
       std::array<Eigen::Matrix<double, 3, 2>, 4> jacobians;
-
-      // Create the jacobian matrices
-      jacobians[0] << controller.latest_state_.j1[0], controller.latest_state_.j1[3],
-          controller.latest_state_.j1[1], controller.latest_state_.j1[4],
-          controller.latest_state_.j1[2], controller.latest_state_.j1[5];
-
-      jacobians[1] << controller.latest_state_.j2[0], controller.latest_state_.j2[3],
-          controller.latest_state_.j2[1], controller.latest_state_.j2[4],
-          controller.latest_state_.j2[2], controller.latest_state_.j2[5];
-
-      jacobians[2] << controller.latest_state_.j3[0], controller.latest_state_.j3[3],
-          controller.latest_state_.j3[1], controller.latest_state_.j3[4],
-          controller.latest_state_.j3[2], controller.latest_state_.j3[5];
-
-      jacobians[3] << controller.latest_state_.j4[0], controller.latest_state_.j4[3],
-          controller.latest_state_.j4[1], controller.latest_state_.j4[4],
-          controller.latest_state_.j4[2], controller.latest_state_.j4[5];
-
-      // Calculate total vertical force before any transformations (if available from the state message)
-      double total_vertical_force = 0.0;
+      
+      // Fill the forces and jacobians in loops
       for (int i = 0; i < 4; i++) {
-        total_vertical_force += forces[i].z();
+          forces[i] = Eigen::Vector3d(force_msgs[i]->x, force_msgs[i]->y, force_msgs[i]->z);
+          
+          // Create the jacobian matrix
+          const auto& j = *jacobian_arrays[i];
+          jacobians[i] << j[0], j[3],
+                          j[1], j[4],
+                          j[2], j[5];
+      }
+
+      // Calculate total vertical force
+      double total_vertical_force = 0.0;
+      for (const auto& force : forces) {
+          total_vertical_force += force.z();
       }
 
       // Compute torques
@@ -558,25 +563,19 @@ namespace quadruped_mpc
         // Calculate power (torque * angular velocity)
         double power = torques[i](0) * v1 + torques[i](1) * v2;
         total_power += power;
-      }
-
-      // Check all torques against limits
-      const double torque_limit = 8.0; // 8 Newton-meters
-      for (int i = 0; i < 4; i++)
-      {
+        
+        // Set torque values to joint interfaces
+        controller.joint_command_interfaces_[i * 2].set_value(torques[i][0]);
+        controller.joint_command_interfaces_[i * 2 + 1].set_value(torques[i][1]);
+        
+        // Check torques against limits
+        const double torque_limit = 8.0; // 8 Newton-meters
         if (std::abs(torques[i](0)) >= torque_limit || std::abs(torques[i](1)) >= torque_limit)
         {
           RCLCPP_WARN(controller.get_node()->get_logger(),
                       "%s torque exceeds limit: [%.2f, %.2f] Nm (limit: %.2f Nm)",
                       leg_names[i], torques[i](0), torques[i](1), torque_limit);
         }
-      }
-
-      // Set torque values to joint interfaces - use flat indexing for compactness
-      for (int i = 0; i < 4; i++)
-      {
-        controller.joint_command_interfaces_[i * 2].set_value(torques[i][0]);
-        controller.joint_command_interfaces_[i * 2 + 1].set_value(torques[i][1]);
       }
 
       // Log foot forces and states in a formatted table with Unicode borders on every cycle
@@ -596,6 +595,9 @@ namespace quadruped_mpc
         ss << "│ Foot │   Force X   │   Force Y   │   Force Z   │ State │\n";
         ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┤\n";
 
+        // Calculate sums for summary row
+        double sum_x = 0.0, sum_y = 0.0;
+        
         // Add each foot's data
         for (int i = 0; i < 4; i++) {
           ss << "│ " << std::setw(4) << std::left << leg_names[i] << " │ ";
@@ -607,14 +609,16 @@ namespace quadruped_mpc
           std::string state_str = (foot_states[i] == 1) ? "SWING" : "STANCE";
           ss << std::setw(5) << std::left << state_str << " │";
           ss << "\n";
+          
+          // Add to sums
+          sum_x += forces[i].x();
+          sum_y += forces[i].y();
         }
 
         // Add table footer with summary
         ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┤\n";
-        ss << "│ SUM  │ " << std::setw(11) << std::right << std::fixed << std::setprecision(3)
-           << (forces[0].x() + forces[1].x() + forces[2].x() + forces[3].x()) << " │ ";
-        ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) 
-           << (forces[0].y() + forces[1].y() + forces[2].y() + forces[3].y()) << " │ ";
+        ss << "│ SUM  │ " << std::setw(11) << std::right << std::fixed << std::setprecision(3) << sum_x << " │ ";
+        ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) << sum_y << " │ ";
         ss << std::setw(11) << std::right << std::fixed << std::setprecision(3)
            << total_vertical_force << " │       │\n";
         ss << "└──────┴─────────────┴─────────────┴─────────────┴───────┘\n";
