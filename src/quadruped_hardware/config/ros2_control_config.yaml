@@ -1,0 +1,31 @@
+# This yaml file configures the hardware interface and controllers for the robot.
+
+ros2_control:
+  ros__parameters:
+    # Controller manager
+    controller_manager_name: controller_manager
+
+    # Hardware components
+    hardware_components:
+      - name: CAN_interface_0
+        type: quadruped_hardware/QuadrupedHardware
+        parameters:
+          can_interface: "can0"
+          can_ids: ["1", "2", "3", "4"]
+
+      - name: CAN_interface_1
+        type: quadruped_hardware/QuadrupedHardware
+        parameters:
+          can_interface: "can1"
+          can_ids: ["1", "2", "3", "4"]
+
+
+    # Controllers
+    controllers:
+      - name: controller_1
+        type: controller_interface/YourControllerType
+        hardware_components: [hardware_interface_1]
+      - name: controller_2
+        type: controller_interface/YourControllerType
+        hardware_components: [hardware_interface_2]
+

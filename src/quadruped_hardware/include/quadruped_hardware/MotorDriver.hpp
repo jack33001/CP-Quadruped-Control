@@ -48,7 +48,8 @@ enum MotorType {
   AK80_9_V1p1,
   AK80_9_V2,
   AK70_10V1p1,
-  AK10_9_V1p1
+  AK10_9_V1p1,
+  GIM8108
 };
 
 class MotorDriver {
@@ -99,7 +100,10 @@ class MotorDriver {
   // Pre-allocate memory for CAN messages which are overwritten by functions.
   unsigned char CAN_msg_[8];
   unsigned char CAN_reply_msg_[8];
+  const struct can_filter rfilter_;
   CAN_interface::CANInterface motor_CAN_interface_;
+
+  
 
   const double pi = 3.14159265359;
 };
@@ -212,9 +216,9 @@ const motorParams AK10_9_V1p1_params = {
 };
 
 // Working parameters for Steadywin GIM8108 firmware
-const motorParams GIM8108_PARAMS = {
-    -15*2*3.141592,  // P_MIN
-    15*2*3.141592,   // P_MAX
+const motorParams GIM8108_params = {
+    -15*2*3.14159265359,  // P_MIN
+    15*2*3.14159265359,   // P_MAX
     -45,    // V_MIN
     45,     // V_MAX
     -18,  // T_MIN

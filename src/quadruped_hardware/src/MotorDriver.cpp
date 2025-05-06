@@ -1,4 +1,5 @@
 #include "quadruped_hardware/MotorDriver.hpp"
+#include <memory>
 
 namespace motor_driver {
 
@@ -7,7 +8,16 @@ MotorDriver::MotorDriver(const std::vector<int>& motor_ids,
                          MotorType motor_type = MotorType::AK80_6_V1p1)
     : motor_type_(motor_type),
       motor_ids_(motor_ids),
-      motor_CAN_interface_(motor_can_socket) {
+      rfilter_({.can_id = static_cast<canid_t>(motor_ids_[0]), .can_mask = CAN_SFF_MASK}),
+      // motor_CAN_interface_(motor_can_socket, rfilter_) {
+      motor_CAN_interface_(motor_can_socket, rfilter_) {
+
+    // rfilter_.can_id = motor_ids_[0];
+    // rfilter_.can_mask = CAN_SFF_MASK;
+    std::cout << "MotorID filter: "<< motor_ids_[0] << std::endl;
+
+    
+  
   // Set Motor Parameters According to Motor Type
 
   switch (motor_type_) {
@@ -39,12 +49,20 @@ MotorDriver::MotorDriver(const std::vector<int>& motor_ids,
       std::cout << "Using Motor Type AK10-9 V1.1" << std::endl;
       current_params_ = default_params::AK10_9_V1p1_params;
       break;
+    case MotorType::GIM8108:
+      std::cout << "Using Motor Type GIM8108" << std::endl;
+      current_params_ = default_params::GIM8108_params;
+      break;
+
     default:
       perror("Specified Motor Type Not Found!!");
   }
 
   // Initialize all Motors to not enabled.
   // TODO: Enable enabled check better across multiple objects of this class.
+
+
+
   for (int motor_id : motor_ids_) is_motor_enabled_[motor_id] = false;
 }
 
@@ -94,7 +112,7 @@ std::map<int, motorState> MotorDriver::disableMotor(
     // {
     //     std::cout << "MotorDriver::disableMotor() Motor seems to already be
     //     in disabled state. \
-    //                           Did you want to really do this?" << std::endl;
+            //                   Did you want to really do this?" << std::endl;
     // }
 
     // Bugfix: To remove the initial kick at motor start.
@@ -178,12 +196,27 @@ std::map<int, motorState> MotorDriver::sendRadCommand(
   motorState state;
   std::map<int, motorState> motor_state_map;
 
-  // Fixed the range-based for loop
-  for (const auto& command_pair : motor_rad_commands) {
+  for (const std::pair<int, motorCommand>& command_pair : motor_rad_commands) {
     int cmd_motor_id = command_pair.first;
     const motorCommand& cmd_to_send = command_pair.second;
-    // ...rest of the function remains unchanged...
+
+    encodeCANFrame(cmd_to_send, this->CAN_msg_);
+    // TODO: Enable enabled check better across multiple objects of this class.
+    // if (is_motor_enabled_[cmd_motor_id])
+    // {
+    //     std::cout << "MotorDriver::sendRadCommand() Motor in disabled state.\
+            //                   Did you want to really do this?" << std::endl;
+    // }
+    motor_CAN_interface_.sendCANFrame(cmd_motor_id, CAN_msg_);
+    usleep(motorReplyWaitTime);
+    if (motor_CAN_interface_.receiveCANFrame(CAN_reply_msg_)) {
+      state = decodeCANFrame(CAN_reply_msg_);
+      motor_state_map[cmd_motor_id] = state;
+    } else {
+      perror("MotorDriver::sendRadCommand() Unable to Receive CAN Reply.");
+    }
   }
+
   return motor_state_map;
 }
 
@@ -232,12 +265,12 @@ motorState MotorDriver::decodeCANFrame(
   float i = uint_to_float(i_int, -current_params_.T_MAX, current_params_.T_MAX,
                           12);  // here -T_MAX, in encode T_MIN
 
-  motorState state;
-      state.motor_id = id;
-      state.position = p * current_params_.AXIS_DIRECTION;
-      state.velocity = v * current_params_.AXIS_DIRECTION;
-      state.torque = i * current_params_.AXIS_DIRECTION;
-      return state;
+  motorState state{.motor_id = id,
+                   .position = p * current_params_.AXIS_DIRECTION,
+                   .velocity = v * current_params_.AXIS_DIRECTION,
+                   .torque = i * current_params_.AXIS_DIRECTION};
+
+  return state;
 }
 
 void MotorDriver::encodeCANFrame(const motorCommand& cmd_to_send,
