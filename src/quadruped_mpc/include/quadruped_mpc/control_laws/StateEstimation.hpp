@@ -135,29 +135,43 @@ inline bool StateEstimator::pin_kinematics()
     pinocchio::forwardKinematics(model_, *data_, current_positions_, current_velocities_);
     pinocchio::updateFramePlacements(model_, *data_);
     
+    // Get the body rotation matrix from base to world
+    Eigen::Quaterniond q_base(
+      current_positions_[6],   // w (quaternion scalar part)
+      current_positions_[3],   // x
+      current_positions_[4],   // y
+      current_positions_[5]);  // z
+    
+    // Make sure quaternion is normalized
+    if (std::abs(q_base.norm() - 1.0) > 1e-6) {
+      q_base.normalize();
+      RCLCPP_WARN(get_node()->get_logger(), "Base quaternion was not normalized, normalizing now");
+    }
+    
+    // Get rotation matrix from body to world (transpose is world to body)
+    Eigen::Matrix3d R_bw = q_base.toRotationMatrix();
+    Eigen::Matrix3d R_wb = R_bw.transpose();  // world to body rotation
+    
+    // For debugging quaternion/rotation correctness
+    RCLCPP_DEBUG(get_node()->get_logger(), 
+                "Base quaternion: w=%.4f, x=%.4f, y=%.4f, z=%.4f", 
+                q_base.w(), q_base.x(), q_base.y(), q_base.z());
+    
     // Update foot positions and set default contact states
     for (size_t i = 0; i < 4; ++i) {
       foot_states_[i].position = data_->oMf[foot_frame_ids_[i]].translation();
       foot_states_[i].in_contact = true;  // Default to true for now
 
-      // … inside the loop over feet …
+      // Get world-frame velocity using Pinocchio
       auto frame_velocity = pinocchio::getFrameVelocity(
         model_, *data_, foot_frame_ids_[i], pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
-
-      // 1) get world‑frame foot vel
+      
+      // Extract linear component, which is in world frame
       Eigen::Vector3d v_world = frame_velocity.linear();
-
-      // 2) build base‑to‑world rotation from your current base quaternion
-      Eigen::Quaterniond q_base(
-        current_positions_[6],   // w
-        current_positions_[3],   // x
-        current_positions_[4],   // y
-        current_positions_[5]);  // z
-      Eigen::Matrix3d R_wb = q_base.toRotationMatrix().transpose();  // world→body
-
-      // 3) express foot velocity in body frame
+      
+      // Transform velocity from world to body frame
       foot_states_[i].velocity = R_wb * v_world;
-
+      
       // Get hip positions from oMf (frame placement in world frame)
       hip_positions_[i] = data_->oMf[hip_frame_ids_[i]].translation();
     }
@@ -224,6 +238,27 @@ inline bool StateEstimator::estimate_base_position()
     // Store current time for next iteration
     prev_update_time_ = current_time;
     
+    // Calculate foot velocity magnitudes and average
+    std::vector<double> foot_vel_magnitudes(4, 0.0);
+    double avg_foot_vel_magnitude = 0.0;
+    int contact_count = 0;
+    
+    for (size_t i = 0; i < foot_states_.size(); i++) {
+      // Calculate magnitude of each foot velocity
+      foot_vel_magnitudes[i] = foot_states_[i].velocity.norm();
+      
+      // Count contacts for both contact counting and averaging foot velocities
+      if (foot_states_[i].in_contact) {
+        avg_foot_vel_magnitude += foot_vel_magnitudes[i];
+        contact_count++;
+      }
+    }
+    
+    // Calculate average foot velocity magnitude if there are contacts
+    if (contact_count > 0) {
+      avg_foot_vel_magnitude /= contact_count;
+    }
+    
     if (latest_odom_) {
       auto odom = latest_odom_;
       auto position = odom->pose.pose.position;
@@ -238,14 +273,6 @@ inline bool StateEstimator::estimate_base_position()
       // Define foot sphere radius
       constexpr double foot_radius = 0.015;  // meters
       
-      // Count the contacts
-      int contact_count = 0;
-      for (size_t i = 0; i < foot_states_.size(); i++) {
-        if (foot_states_[i].in_contact) {
-          contact_count++;
-        }
-      }
-
       Eigen::Vector3d body_velocity = Eigen::Vector3d(velocity.x, velocity.y, velocity.z);
       Eigen::Vector3d body_angular_velocity = Eigen::Vector3d(angular_velocity.x, angular_velocity.y, angular_velocity.z);
       
@@ -254,30 +281,6 @@ inline bool StateEstimator::estimate_base_position()
 
       Eigen::MatrixXd A = Eigen::MatrixXd::Zero(3*contact_count, 3);
       Eigen::VectorXd b = Eigen::VectorXd::Zero(3*contact_count);
-
-      //for (size_t i = 0; i < foot_states_.size(); i++) {
-      //  if (foot_states_[i].in_contact) {
-      //    // Fill one 3x3 block of the A matrix with identity
-      //    A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
-      //    
-      //    // Fill the corresponding section of b with negative foot velocity
-      //    b.segment<3>(3*contacting_foot_number) = -foot_states_[i].velocity - body_angular_velocity.cross(foot_states_[i].position);
-      //    contacting_foot_number++;
-//
-      //    RCLCPP_INFO(get_node()->get_logger(),
-      //      "contact %zu: foot_pos = [%.5f, %.5f, %.5f], com = [%.5f, %.5f, %.5f], foot_vel = [%.5f, %.5f, %.5f]",
-      //      i,
-      //      foot_states_[i].position.x(),
-      //      foot_states_[i].position.y(),
-      //      foot_states_[i].position.z(),
-      //      current_positions_[0],
-      //      current_positions_[1],
-      //      current_positions_[2],
-      //      foot_states_[i].velocity.x(),
-      //      foot_states_[i].velocity.y(),
-      //      foot_states_[i].velocity.z());
-      //  }
-      //}
 
       // … inside estimate_base_position(), right after you set body_velocity/body_angular_velocity …
       Eigen::Quaterniond q_base(
@@ -334,6 +337,30 @@ inline bool StateEstimator::estimate_base_position()
       current_positions_[2] = world_z; // Direct Z from contact
     }
 
+    // Calculate velocity magnitudes
+    double odom_vel_magnitude = std::sqrt(odom_vel_x*odom_vel_x + odom_vel_y*odom_vel_y + odom_vel_z*odom_vel_z);
+    double v_com_magnitude = v_com.norm();
+
+    // Log orientation quaternion to understand robot's orientation during movement
+    std::stringstream orientation_str;
+    orientation_str << "Robot orientation: w=" << std::fixed << std::setprecision(4) << current_positions_[6]
+                   << ", x=" << std::fixed << std::setprecision(4) << current_positions_[3]
+                   << ", y=" << std::fixed << std::setprecision(4) << current_positions_[4]
+                   << ", z=" << std::fixed << std::setprecision(4) << current_positions_[5]
+                   << " (Euler: "
+                   << std::fixed << std::setprecision(2) 
+                   << 180.0/M_PI * atan2(2*(current_positions_[6]*current_positions_[3] + current_positions_[4]*current_positions_[5]),
+                                         1-2*(current_positions_[3]*current_positions_[3] + current_positions_[4]*current_positions_[4])) 
+                   << "°, "
+                   << std::fixed << std::setprecision(2)
+                   << 180.0/M_PI * asin(2*(current_positions_[6]*current_positions_[4] - current_positions_[5]*current_positions_[3])) 
+                   << "°, "
+                   << std::fixed << std::setprecision(2)
+                   << 180.0/M_PI * atan2(2*(current_positions_[6]*current_positions_[5] + current_positions_[3]*current_positions_[4]),
+                                         1-2*(current_positions_[4]*current_positions_[4] + current_positions_[5]*current_positions_[5])) 
+                   << "°)";
+    RCLCPP_INFO(get_node()->get_logger(), "%s", orientation_str.str().c_str());
+
     // Create a table comparing odom velocity and calculated v_com
     std::stringstream vel_table;
     vel_table << "\n┌───────────────────────────────────────────────────────────────────────────┐\n";
@@ -350,9 +377,36 @@ inline bool StateEstimator::estimate_base_position()
     vel_table << "│ Z             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_z 
           << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.z() 
           << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_z - v_com.z()) << " │\n";
+    vel_table << "│ Magnitude     │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_magnitude 
+          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com_magnitude 
+          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_magnitude - v_com_magnitude) << " │\n";
     vel_table << "└───────────────┴───────────────────────┴───────────────────────┴───────────┘";
     
+    // Add foot velocity table
+    std::stringstream foot_vel_table;
+    foot_vel_table << "\n┌───────────────────────────────────────────────────────────────┐\n";
+    foot_vel_table << "│                      FOOT VELOCITIES                          │\n";
+    foot_vel_table << "├───────────────┬───────────────────────┬─────────┬─────────────┤\n";
+    foot_vel_table << "│ Foot          │ Velocity Magnitude    │ Contact │ Components  │\n";
+    foot_vel_table << "├───────────────┼───────────────────────┼─────────┼─────────────┤\n";
+    
+    for (size_t i = 0; i < foot_states_.size(); i++) {
+      foot_vel_table << "│ Foot " << i+1 << "        │ " 
+            << std::setw(21) << std::fixed << std::setprecision(6) << foot_vel_magnitudes[i] 
+            << " │ " << std::setw(7) << (foot_states_[i].in_contact ? "Yes" : "No") 
+            << " │ [" << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].velocity.x()
+            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].velocity.y()
+            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].velocity.z() << "] │\n";
+    }
+    
+    foot_vel_table << "├───────────────┼───────────────────────┼─────────┴─────────────┤\n";
+    foot_vel_table << "│ Average       │ " << std::setw(21) << std::fixed << std::setprecision(6) 
+          << avg_foot_vel_magnitude << " │ (contacting feet only) │\n";
+    foot_vel_table << "└───────────────┴───────────────────────┴───────────────────────┘";
+    
+    // Log both tables
     RCLCPP_INFO(get_node()->get_logger(), "%s", vel_table.str().c_str());
+    RCLCPP_INFO(get_node()->get_logger(), "%s", foot_vel_table.str().c_str());
 
     return true;
   } catch (const std::exception& e) {
