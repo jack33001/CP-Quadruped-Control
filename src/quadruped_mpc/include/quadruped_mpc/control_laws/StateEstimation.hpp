@@ -298,15 +298,13 @@ inline bool StateEstimator::estimate_base_position()
       for (size_t i = 0; i < foot_states_.size(); i++) {
         if (foot_states_[i].in_contact) {
           A.block<3,3>(3*contacting_foot_number, 0) = Eigen::Matrix3d::Identity();
-          // express position & ω in body:
-          Eigen::Vector3d p_body = R_wb * foot_states_[i].position;     
-          Eigen::Vector3d w_body = R_wb * body_angular_velocity;          
+          // foot_states_[i].position is already in body frame from pin_kinematics()
           // foot_states_[i].velocity is already in body from pin_kinematics()
+          Eigen::Vector3d w_body = body_angular_velocity;//R_wb * body_angular_velocity;
           b.segment<3>(3*contacting_foot_number) 
             = -foot_states_[i].velocity 
-              - w_body.cross(p_body);
+              - w_body.cross(foot_states_[i].position);
           contacting_foot_number++;
-          // … your logging …
         }
       }
 
@@ -316,9 +314,9 @@ inline bool StateEstimator::estimate_base_position()
         v_com = A.colPivHouseholderQr().solve(b);
         
         // Update velocity in current state
-        current_velocities_[0] = velocity.x;  // Using odom velocity instead of estimated
-        current_velocities_[1] = velocity.y;  // Using odom velocity instead of estimated
-        current_velocities_[2] = velocity.z;  // Using odom velocity instead of estimated
+        current_velocities_[0] = v_com[0];//velocity.x;  // Using odom velocity instead of estimated
+        current_velocities_[1] = v_com[1];//velocity.y;  // Using odom velocity instead of estimated
+        current_velocities_[2] = v_com[2];//velocity.z;  // Using odom velocity instead of estimated
       }
       
       // World z position - still compute from foot positions
@@ -342,83 +340,58 @@ inline bool StateEstimator::estimate_base_position()
     }
 
     // Calculate velocity magnitudes
-    double odom_vel_magnitude = std::sqrt(odom_vel_x*odom_vel_x + odom_vel_y*odom_vel_y + odom_vel_z*odom_vel_z);
-    double v_com_magnitude = v_com.norm();
-
-    // Log orientation quaternion to understand robot's orientation during movement
-    std::stringstream orientation_str;
-    orientation_str << "Robot orientation: w=" << std::fixed << std::setprecision(4) << current_positions_[6]
-                   << ", x=" << std::fixed << std::setprecision(4) << current_positions_[3]
-                   << ", y=" << std::fixed << std::setprecision(4) << current_positions_[4]
-                   << ", z=" << std::fixed << std::setprecision(4) << current_positions_[5]
-                   << " (Euler: "
-                   << std::fixed << std::setprecision(2) 
-                   << 180.0/M_PI * atan2(2*(current_positions_[6]*current_positions_[3] + current_positions_[4]*current_positions_[5]),
-                                         1-2*(current_positions_[3]*current_positions_[3] + current_positions_[4]*current_positions_[4])) 
-                   << "°, "
-                   << std::fixed << std::setprecision(2)
-                   << 180.0/M_PI * asin(2*(current_positions_[6]*current_positions_[4] - current_positions_[5]*current_positions_[3])) 
-                   << "°, "
-                   << std::fixed << std::setprecision(2)
-                   << 180.0/M_PI * atan2(2*(current_positions_[6]*current_positions_[5] + current_positions_[3]*current_positions_[4]),
-                                         1-2*(current_positions_[4]*current_positions_[4] + current_positions_[5]*current_positions_[5])) 
-                   << "°)";
-    RCLCPP_INFO(get_node()->get_logger(), "%s", orientation_str.str().c_str());
-
-    // Create a table comparing odom velocity and calculated v_com
-    std::stringstream vel_table;
-    vel_table << "\n┌───────────────────────────────────────────────────────────────────────────┐\n";
-    vel_table << "│                          VELOCITY COMPARISON                              │\n";
-    vel_table << "├───────────────┬───────────────────────┬───────────────────────┬───────────┤\n";
-    vel_table << "│ Axis          │ Ground Truth Velocity │ Pinocchio v_com (m/s) │ Error     │\n";
-    vel_table << "├───────────────┼───────────────────────┼───────────────────────┼───────────┤\n";
-    vel_table << "│ X             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_x 
-          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.x() 
-          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_x - v_com.x()) << " │\n";
-    vel_table << "│ Y             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_y 
-          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.y() 
-          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_y - v_com.y()) << " │\n";
-    vel_table << "│ Z             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_z 
-          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.z() 
-          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_z - v_com.z()) << " │\n";
-    vel_table << "│ Magnitude     │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_magnitude 
-          << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com_magnitude 
-          << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_magnitude - v_com_magnitude) << " │\n";
-    vel_table << "└───────────────┴───────────────────────┴───────────────────────┴───────────┘";
-    
-    // Add foot position table instead of velocity table
-    std::stringstream foot_pos_table;
-    foot_pos_table << "\n┌───────────────────────────────────────────────────────────────┐\n";
-    foot_pos_table << "│                      FOOT POSITIONS                           │\n";
-    foot_pos_table << "├───────────────┬───────────────────────┬─────────┬─────────────┤\n";
-    foot_pos_table << "│ Foot          │ Position (body frame) │ Contact │ World Frame │\n";
-    foot_pos_table << "├───────────────┼───────────────────────┼─────────┼─────────────┤\n";
-    
-    for (size_t i = 0; i < foot_states_.size(); i++) {
-      // Get world frame positions by transforming back from body frame
-      Eigen::Quaterniond q_base(
-        current_positions_[6],   // w
-        current_positions_[3],   // x
-        current_positions_[4],   // y
-        current_positions_[5]);  // z
-      Eigen::Matrix3d R_bw = q_base.toRotationMatrix();  // body → world
-      Eigen::Vector3d p_world = R_bw * foot_states_[i].position;
-      
-      foot_pos_table << "│ Foot " << i+1 << "        │ [" 
-            << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].position.x()
-            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].position.y()
-            << "," << std::setw(6) << std::fixed << std::setprecision(3) << foot_states_[i].position.z()
-            << "] │ " << std::setw(7) << (foot_states_[i].in_contact ? "Yes" : "No") 
-            << " │ [" << std::setw(6) << std::fixed << std::setprecision(3) << p_world.x()
-            << "," << std::setw(6) << std::fixed << std::setprecision(3) << p_world.y()
-            << "," << std::setw(6) << std::fixed << std::setprecision(3) << p_world.z() << "] │\n";
+    double odom_vel_magnitude = 0.0;
+    if (latest_odom_) {
+      // These values were already set above if latest_odom_ exists
+      odom_vel_magnitude = std::sqrt(odom_vel_x*odom_vel_x + odom_vel_y*odom_vel_y + odom_vel_z*odom_vel_z);
     }
     
-    foot_pos_table << "└───────────────┴───────────────────────┴─────────┴─────────────┘";
-    
-    // Log both tables
-    RCLCPP_INFO(get_node()->get_logger(), "%s", vel_table.str().c_str());
-    RCLCPP_INFO(get_node()->get_logger(), "%s", foot_pos_table.str().c_str());
+    double v_com_magnitude = v_com.norm();
+
+    // Only log velocity comparison when magnitude is significant
+    if (odom_vel_magnitude > 0.1) {
+      // Create a table comparing odom velocity and calculated v_com
+      std::stringstream vel_table;
+      vel_table << "\n┌───────────────────────────────────────────────────────────────────────────────────────┐\n";
+      vel_table << "│                              VELOCITY COMPARISON                                      │\n";
+      vel_table << "├───────────────┬───────────────────────┬───────────────────────┬───────────┬───────────┤\n";
+      vel_table << "│ Axis          │ Ground Truth Velocity │ Pinocchio v_com (m/s) │ Error     │ Error %   │\n";
+      vel_table << "├───────────────┼───────────────────────┼───────────────────────┼───────────┼───────────┤\n";
+      
+      // Helper to calculate percent error safely
+      auto percent_error = [](double truth, double estimated) -> double {
+        // Avoid division by zero
+        if (std::abs(truth) < 1e-6) {
+          return estimated < 1e-6 ? 0.0 : 100.0;
+        }
+        return (truth - estimated) / truth * 100.0;
+      };
+      
+      vel_table << "│ X             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_x 
+            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.x() 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_x - v_com.x()) 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_x, v_com.x()) << "% │\n";
+      
+      vel_table << "│ Y             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_y 
+            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.y() 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_y - v_com.y()) 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_y, v_com.y()) << "% │\n";
+      
+      vel_table << "│ Z             │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_z 
+            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com.z() 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_z - v_com.z()) 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_z, v_com.z()) << "% │\n";
+      
+      vel_table << "│ Magnitude     │ " << std::setw(21) << std::fixed << std::setprecision(6) << odom_vel_magnitude 
+            << " │ " << std::setw(21) << std::fixed << std::setprecision(6) << v_com_magnitude 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(6) << (odom_vel_magnitude - v_com_magnitude) 
+            << " │ " << std::setw(9) << std::fixed << std::setprecision(2) << percent_error(odom_vel_magnitude, v_com_magnitude) << "% │\n";
+      
+      vel_table << "└───────────────┴───────────────────────┴───────────────────────┴───────────┴───────────┘";
+      
+      // Log velocity table
+      RCLCPP_INFO(get_node()->get_logger(), "%s", vel_table.str().c_str());
+    }
 
     return true;
   } catch (const std::exception& e) {
@@ -512,11 +485,19 @@ inline bool StateEstimator::update_odometry()
         return v;
       };
 
-      // Update foot positions and contacts directly from foot_states_
-      msg.p1 = eigen_to_point(foot_states_[0].position);
-      msg.p2 = eigen_to_point(foot_states_[1].position);
-      msg.p3 = eigen_to_point(foot_states_[2].position);
-      msg.p4 = eigen_to_point(foot_states_[3].position);
+      // Update foot positions and contacts from foot_states_, transformed to world frame
+      Eigen::Quaterniond q_base_for_tf(
+        current_positions_[6],   // w
+        current_positions_[3],   // x
+        current_positions_[4],   // y
+        current_positions_[5]);  // z
+      Eigen::Matrix3d R_bw_for_tf = q_base_for_tf.toRotationMatrix();  // body to world rotation
+
+      // Transform foot positions from body to world frame
+      msg.p1 = eigen_to_point(R_bw_for_tf * foot_states_[0].position);
+      msg.p2 = eigen_to_point(R_bw_for_tf * foot_states_[1].position);
+      msg.p3 = eigen_to_point(R_bw_for_tf * foot_states_[2].position);
+      msg.p4 = eigen_to_point(R_bw_for_tf * foot_states_[3].position);
 
       // Update hip positions
       msg.h1 = eigen_to_point(hip_positions_[0]);
