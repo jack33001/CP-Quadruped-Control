@@ -21,6 +21,7 @@ class QuadrupedTeleop(Node):
         self.twist = Twist()
         
         # Initialize pose with position [0, 0, 0.2] and quaternion [1, 0, 0, 0] (identity)
+        # X and Y positions are no longer controlled, only Z for ride height
         self.pose.position.x = 0.0
         self.pose.position.y = 0.0
         self.pose.position.z = 0.2
@@ -60,13 +61,11 @@ class QuadrupedTeleop(Node):
         self.get_logger().info('- /quadruped/cmd/twist_cmd (Twist)')
         self.get_logger().info('- /quadruped/cmd/gait_start (Bool)')
         self.get_logger().info('Control Scheme:')
-        self.get_logger().info('W/S: +/- X position')
-        self.get_logger().info('A/D: +/- Y position')
         self.get_logger().info('Q/E: +/- Yaw')
-        self.get_logger().info('Up/Down: +/- Z position')
+        self.get_logger().info('Up/Down: +/- Ride Height (Z position)')
         self.get_logger().info('Left/Right: +/- Roll')
-        self.get_logger().info('I/K: +/- X velocity')
-        self.get_logger().info('J/L: +/- Y velocity')
+        self.get_logger().info('W/S: +/- X velocity')
+        self.get_logger().info('A/D: +/- Y velocity')
         self.get_logger().info('U/O: +/- Yaw rate')
         self.get_logger().info('SPACE: Start gait pattern')
         self.get_logger().info('ESC: Exit')
@@ -95,36 +94,24 @@ class QuadrupedTeleop(Node):
             # Make sure key_char is lowercase for consistent comparisons
             key_char = key_char.lower()
             
-            # Position control keys (WASDQE)
-            if key_char == 'w':
-                self.pose.position.x += self.position_step
-                self.get_logger().info(f'X position: {self.pose.position.x:.3f}')
-            elif key_char == 's':
-                self.pose.position.x -= self.position_step
-                self.get_logger().info(f'X position: {self.pose.position.x:.3f}')
-            elif key_char == 'a':
-                self.pose.position.y += self.position_step
-                self.get_logger().info(f'Y position: {self.pose.position.y:.3f}')
-            elif key_char == 'd':
-                self.pose.position.y -= self.position_step
-                self.get_logger().info(f'Y position: {self.pose.position.y:.3f}')
-            elif key_char == 'q':
+            # Orientation control keys (QE)
+            if key_char == 'q':
                 self.apply_yaw_rotation(self.rotation_step)
                 self.get_logger().info(f'Yaw: increased by {self.rotation_step:.3f}')
             elif key_char == 'e':
                 self.apply_yaw_rotation(-self.rotation_step)
                 self.get_logger().info(f'Yaw: decreased by {self.rotation_step:.3f}')
-            # Velocity control keys (IJKLUO)
-            elif key_char == 'i':
+            # Velocity control keys (WASD) - changed from IJKL
+            elif key_char == 'w':
                 self.twist.linear.x += self.velocity_step
                 self.get_logger().info(f'X velocity: {self.twist.linear.x:.3f}')
-            elif key_char == 'k':
+            elif key_char == 's':
                 self.twist.linear.x -= self.velocity_step
                 self.get_logger().info(f'X velocity: {self.twist.linear.x:.3f}')
-            elif key_char == 'j':
+            elif key_char == 'a':
                 self.twist.linear.y += self.velocity_step
                 self.get_logger().info(f'Y velocity: {self.twist.linear.y:.3f}')
-            elif key_char == 'l':
+            elif key_char == 'd':
                 self.twist.linear.y -= self.velocity_step
                 self.get_logger().info(f'Y velocity: {self.twist.linear.y:.3f}')
             elif key_char == 'u':
@@ -137,10 +124,10 @@ class QuadrupedTeleop(Node):
         else:
             if key == keyboard.Key.up:
                 self.pose.position.z += self.position_step
-                self.get_logger().info(f'Z position: {self.pose.position.z:.3f}')
+                self.get_logger().info(f'Z position (ride height): {self.pose.position.z:.3f}')
             elif key == keyboard.Key.down:
                 self.pose.position.z -= self.position_step
-                self.get_logger().info(f'Z position: {self.pose.position.z:.3f}')
+                self.get_logger().info(f'Z position (ride height): {self.pose.position.z:.3f}')
             elif key == keyboard.Key.left:
                 self.apply_roll_rotation(self.rotation_step)
                 self.get_logger().info(f'Roll: increased by {self.rotation_step:.3f}')
