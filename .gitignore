@@ -14,3 +14,15 @@ log/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Ignore generated ACADOS files
+**/acados_generated/
+**/acados_solver_*.c
+**/acados_solver_*.h
+**/acados_sim_solver_*.c
+**/acados_sim_solver_*.h
+**/libacados_ocp_solver_*.so
+**/acados_solver_*.o
+**/acados_solver.pxd
+acados_ocp.json
+**/scripts/acados/logs/

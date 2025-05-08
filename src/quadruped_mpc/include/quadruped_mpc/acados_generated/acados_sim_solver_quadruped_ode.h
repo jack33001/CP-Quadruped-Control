@@ -80,7 +80,7 @@ typedef struct quadruped_ode_sim_solver_capsule
 
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_sim_create(quadruped_ode_sim_solver_capsule *capsule);
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_sim_solve(quadruped_ode_sim_solver_capsule *capsule);
-ACADOS_SYMBOL_EXPORT void quadruped_ode_acados_sim_batch_solve(quadruped_ode_sim_solver_capsule **capsules, int N_batch);
+
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_sim_free(quadruped_ode_sim_solver_capsule *capsule);
 ACADOS_SYMBOL_EXPORT int quadruped_ode_acados_sim_update_params(quadruped_ode_sim_solver_capsule *capsule, double *value, int np);
 
