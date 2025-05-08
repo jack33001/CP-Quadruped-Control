@@ -173,8 +173,10 @@ RUN apt-get update && apt-get install -y \
     gdbserver \
     ros-jazzy-tf2 ros-jazzy-tf2-ros \
     ros-jazzy-tf2-geometry-msgs \
+    ros-jazzy-ament-cmake-vendor-package \
     usbutils \
-    libqt5serialport5-dev
+    libqt5serialport5-dev \
+    i2c-tools
 
 
 

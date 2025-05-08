@@ -38,12 +38,11 @@
         "/tmp/.X11-unix:/tmp/.X11-unix",  // X11 socket for GUI rendering
         "--device",
         "/dev/dri:/dev/dri",  // Device for GPU access
-        "--device=/dev/ttyACM0:/dev/ttyACM0", // forward serial communication
-        "--device=/dev/ttyUSB0:/dev/ttyUSB1",
-        "--device=/dev/ttyCH341USB0:/dev/ttyUSB0"
+         "--device=/dev/ttyACM0:/dev/ttyACM0"
+        
     ],
     "mounts": [
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
     ],
-    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3 && sudo usermod -aG dialout jack"
+    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3 && sudo usermod -aG dialout jack && sudo chmod a+rw /dev/i2c-7"
 }
