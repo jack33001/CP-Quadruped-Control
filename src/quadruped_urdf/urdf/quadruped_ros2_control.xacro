@@ -3,7 +3,7 @@
 
 
 
-<!-- 
+
     <ros2_control name="IMUSystem" type="system">
         <hardware>
             <plugin>imu_hardware_interface/IMUHardwareInterface</plugin>
@@ -21,7 +21,7 @@
             <state_interface name="linear_acceleration_y"/>
             <state_interface name="linear_acceleration_z"/>
         </sensor>
-    </ros2_control> -->
+    </ros2_control>
 
     
 
