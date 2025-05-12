@@ -75,6 +75,18 @@ RUN cd /home/acados/acados/external/qpoases \
 # Install xhost
 RUN apt-get install -y x11-xserver-utils
 
+# Install Foxglove Agent based on architecture
+RUN arch=$(uname -m) \
+    && if [ "$arch" = "x86_64" ]; then \
+        wget -O foxglove-agent.deb https://github.com/foxglove/agent/releases/download/v1.3.3/foxglove-agent_1.3.3-1_amd64.deb; \
+    elif [ "$arch" = "aarch64" ]; then \
+        wget -O foxglove-agent.deb https://github.com/foxglove/agent/releases/download/v1.3.3/foxglove-agent_1.3.3-1_arm64.deb; \
+    else \
+        echo "Unsupported architecture: $arch"; exit 1; \
+    fi \
+    && apt-get install -y ./foxglove-agent.deb \
+    && rm foxglove-agent.deb
+
 # Install CasADi
 RUN mkdir -p /home/casadi \
     && cd /home/casadi \
@@ -106,18 +118,12 @@ RUN apt-get update \
     ros-jazzy-joint-trajectory-controller \
     ros-jazzy-imu-sensor-broadcaster \
     ros-jazzy-pinocchio \
-    ros-jazzy-joint-state-publisher-gui 
-
-# Install ROS2 debugging dependencies
-# RUN apt-get update \
-#     && apt-get install xterm gdb gdbserver
-
-
+    ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-foxglove-bridge
 
 # Clone ros2_control repositories
 RUN git clone https://github.com/ros-controls/ros2_control.git src/ros2_control
 RUN git clone https://github.com/ros-controls/ros2_controllers.git src/ros2_controllers
-
 
 # More ACADOS setup
 RUN pip install --break-system-packages -e /home/acados/acados/interfaces/acados_template

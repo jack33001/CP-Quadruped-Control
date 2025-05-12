@@ -1,5 +1,11 @@
 optimal_controller:
-  mass: 15  # Robot mass in kg
+  mass: 13.2   # Robot mass in kg
   inertia: .5  # Robot inertia in kg*m^2
   stages: 50 # Number of stages in the MPC
   horizon: 5  # Time horizon in seconds
+  weights:
+    position: [2000, 2000, 2000]        # Position tracking weights (x, y, z)
+    orientation: [2000, 2000, 2000, 2000]  # Orientation tracking weights (quaternion)
+    velocity: [10, 10, 10]              # Linear velocity tracking weights
+    angular_velocity: [10, 10, 10]      # Angular velocity tracking weights
+    terminal_factor: 10.0               # Factor to multiply all weights for terminal cost
