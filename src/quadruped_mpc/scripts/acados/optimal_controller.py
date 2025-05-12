@@ -26,7 +26,18 @@ class QuadrupedOptimalController:
             self.mass = params.get('mass',.001)
             self.inertia = params.get('inertia', .09)
             
+            # Load weight parameters
+            weights = params.get('weights', {})
+            self.position_weights = weights.get('position', [2000, 2000, 2000])
+            self.orientation_weights = weights.get('orientation', [2000, 2000, 2000, 2000])
+            self.velocity_weights = weights.get('velocity', [10, 10, 10])
+            self.angular_velocity_weights = weights.get('angular_velocity', [10, 10, 10])
+            self.terminal_weight_factor = weights.get('terminal_factor', 10.0)
+            
         logger.info(f"Loaded parameters: mass={self.mass}kg, inertia={self.inertia}kg*m^2")
+        logger.info(f"Loaded weights: position={self.position_weights}, orientation={self.orientation_weights}, "
+                   f"velocity={self.velocity_weights}, angular_velocity={self.angular_velocity_weights}, "
+                   f"terminal_factor={self.terminal_weight_factor}")
 
         # Get the quadruped_mpc root directory
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -141,19 +152,19 @@ class QuadrupedOptimalController:
         ocp.cost.Vx_e = Vx  # Terminal cost same selection
         logger.info("Set selection matrices to track only first 13 states")
 
-        # Weights for tracked states
-        pos_weights = [2000]*3     # Position tracking
-        rot_weights = [2000]*4      # Rotation tracking
-        vel_weights = [10]*3      # Linear velocity tracking
-        ang_weights = [10]*3      # Angular velocity tracking
+        # Weights for tracked states - use values from YAML
+        pos_weights = self.position_weights
+        rot_weights = self.orientation_weights
+        vel_weights = self.velocity_weights
+        ang_weights = self.angular_velocity_weights
         
         # Combine weights into diagonal matrices
         W = numpy.diag(pos_weights + rot_weights + vel_weights + ang_weights)
-        W_e = W * 10.0  # Terminal cost higher to enforce convergence
+        W_e = W * self.terminal_weight_factor  # Terminal cost higher to enforce convergence
         
         ocp.cost.W = W
         ocp.cost.W_e = W_e
-        logger.info("Set weight matrices")
+        logger.info("Set weight matrices from configuration file")
 
         # References (only for tracked states)
         ocp.cost.yref = numpy.zeros(ny)     # Reference for tracked states
