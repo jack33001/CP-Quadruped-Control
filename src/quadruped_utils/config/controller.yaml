@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10
+    update_rate: 100
       
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -109,11 +109,8 @@ joint_group_position_controller:
 
 zero_joints_controller:
   ros__parameters:
-    update_rate: 1
-    test: 1
-    effort_threshold: 0.3
-      
-    zero_effort_lim: 0.5
+    update_rate: 100
+    zero_effort_lim: 0.7
 
 
     kp: 0.0

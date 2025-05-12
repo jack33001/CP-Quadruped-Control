@@ -26,7 +26,7 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 
 CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
-                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1) {}
+                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1),effort_limit(1.5) {}
 
 
 hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::HardwareInfo& info){
@@ -36,6 +36,8 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     joint_name = info.hardware_parameters.at("joint_name");
     const char* can_bus = info.hardware_parameters.at("can_bus").c_str();
     can_id = parseCanId(info.hardware_parameters.at("can_id"));
+
+    effort_limit = std::stod(info.hardware_parameters.at("effort_limit"));
 
     // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
 
@@ -130,57 +132,60 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
 }
 
 hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const rclcpp::Duration& period) {
-    // Read data from the hardware
-    // std::lock_guard<std::mutex> lock(read_write_mutex_);
+    // Read data from the hardware and check for over limit
+
+
+        // if effort is over safe limits, drop kp kd to zero
+        if (state_effort > effort_limit)
+        {
+            RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "Effort Limit Exceeded during WRITE: %f", state_effort);
+
+            cmd_kp  = 0;
+            cmd_kd = 0;
+        
+        }
+
+        // Update command data from the hardware
+        movecmd = {static_cast<float>(cmd_position*cmd_flip),
+            static_cast<float>(cmd_velocity*cmd_flip),
+            static_cast<float>(cmd_kp),
+            static_cast<float>(cmd_kd),
+            static_cast<float>(cmd_effort*cmd_flip)};
+
+        commandMap[can_id[0]] = movecmd;
+
     return hardware_interface::return_type::OK;
 }
+
+
 
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Write data to the hardware
     // std::cout << "_START WRITE MOTOR_" << can_id[0] << std::endl;
-    // std::lock_guard<std::mutex> lock(read_write_mutex_);
 
-    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-    // if effort is over safe limits, drop kp kd to zero
-    if (state_effort > 1)
-    {
-        RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "limit exceeded");
-
-        cmd_kp  = 0;
-        cmd_kd = 0;
-    
-    }
-    
-    
-    movecmd = {static_cast<float>(cmd_position*cmd_flip),
-        static_cast<float>(cmd_velocity*cmd_flip),
-        static_cast<float>(cmd_kp),
-        static_cast<float>(cmd_kd),
-        static_cast<float>(cmd_effort*cmd_flip)};
-
-    commandMap[can_id[0]] = movecmd;
-    
-
-
+    // State Machine
     if(cmd_m_state == 0)
+    // send standard cmd state
     {
         stateMap = motor_controller_->sendDegreeCommand( commandMap);
 
     }
     else if(cmd_m_state == 1)
+    // enable motor state
     {
         stateMap = motor_controller_->enableMotor(can_id);
         cmd_m_state = 0;
         std::cout << "Motor: " << can_id[0] << "Enabled"<< std::endl;
     }
     else if(cmd_m_state == 2)
+    // disable motor state
     {
         stateMap = motor_controller_->disableMotor(can_id);
         // cmd_m_state = 0;
         std::cout << "Motor: " << can_id[0] << "Disabled"<< std::endl;
     }
     else if(cmd_m_state == 3)
+    // zero motor state
     {
         // check if zeroing would cause the motor to jump
         if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
@@ -204,12 +209,6 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
     }
 
-
-    // stateMap = motor_controller_->sendDegreeCommand( commandMap);
-
-
-
-
     //update state variables AFTER sending command
     state_position = stateMap[can_id[0]].position * cmd_flip;
     state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
@@ -220,6 +219,7 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     state_flip = cmd_flip;
 
 
+    // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "motor write: %d", can_id[0]);
 
 
 

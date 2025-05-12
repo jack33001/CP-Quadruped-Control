@@ -3,7 +3,7 @@
 
 
 
-
+<!-- 
     <ros2_control name="IMUSystem" type="system">
         <hardware>
             <plugin>imu_hardware_interface/IMUHardwareInterface</plugin>
@@ -21,12 +21,12 @@
             <state_interface name="linear_acceleration_y"/>
             <state_interface name="linear_acceleration_z"/>
         </sensor>
-    </ros2_control>
+    </ros2_control> -->
 
     
 
     
-<!-- 
+
     <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" > 
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
@@ -34,6 +34,8 @@
             <param name="can_bus" >can0</param>
             <param name="can_id" >10</param>
             <param name="flip" >false</param>
+            <param name="effort_limit" >2</param>
+
         </hardware>
         <joint name="fr_hip">
             <command_interface name="position"/>
@@ -57,7 +59,8 @@
             <param name="joint_name">fr_knee</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >11</param>
-             <param name="flip" >true</param>
+            <param name="flip" >true</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="fr_knee">
             <command_interface name="position"/>
@@ -81,7 +84,8 @@
             <param name="joint_name">rr_hip</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >12</param>
-             <param name="flip" >true</param>
+            <param name="flip" >true</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="rr_hip">
             <command_interface name="position"/>
@@ -105,7 +109,8 @@
             <param name="joint_name">rr_knee</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >13</param>
-             <param name="flip" >false</param>
+            <param name="flip" >false</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="rr_knee">
             <command_interface name="position"/>
@@ -129,7 +134,8 @@
             <param name="joint_name">fl_hip</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >14</param>
-             <param name="flip" >true</param>
+            <param name="flip" >true</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="fl_hip">
             <command_interface name="position"/>
@@ -153,7 +159,8 @@
             <param name="joint_name">fl_knee</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >15</param>
-             <param name="flip" >false</param>
+            <param name="flip" >false</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="fl_knee">
             <command_interface name="position"/>
@@ -177,7 +184,8 @@
             <param name="joint_name">rl_hip</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >16</param>
-             <param name="flip" >false</param>
+            <param name="flip" >false</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="rl_hip">
             <command_interface name="position"/>
@@ -202,7 +210,8 @@
             <param name="joint_name">rl_knee</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >17</param>
-             <param name="flip" >true</param>
+            <param name="flip" >true</param>
+            <param name="effort_limit" >2</param>
         </hardware>
         <joint name="rl_knee">
             <command_interface name="position"/>
@@ -218,7 +227,7 @@
             <state_interface   name="m_state"/>
             <state_interface   name="flip"/>
         </joint>
-    </ros2_control>  -->
+    </ros2_control>  
 
     
 </robot>
