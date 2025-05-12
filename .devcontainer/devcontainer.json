@@ -25,7 +25,7 @@
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}",
         "LIBGL_ALWAYS_SO#tFTWARE": "0",
-        "ROS_AUTOMATIC_DISCOVERY_RANGE": "LOCALHOST",
+        "ROS_AUTOMATIC_DISCOVERY_RANGE": "SUBNET",
         "ROS_DOMAIN_ID": "42"
     },
     "runArgs": [
@@ -37,10 +37,12 @@
         "--volume",
         "/tmp/.X11-unix:/tmp/.X11-unix",  // X11 socket for GUI rendering
         "--device",
-        "/dev/dri:/dev/dri"  // Device for GPU access
+        "/dev/dri:/dev/dri",  // Device for GPU access
+         "--device=/dev/ttyACM0:/dev/ttyACM0"
+        
     ],
     "mounts": [
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
     ],
-    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3"
+    "postCreateCommand": "rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ws/ && sudo apt-get install -y libglu1-mesa libglfw3 && sudo usermod -aG dialout jack && sudo chmod a+rw /dev/i2c-7"
 }

@@ -1,4 +1,4 @@
-#include "quadruped_hardware/CANInterface.hpp"
+#include <CANInterface.hpp>
 
 
 

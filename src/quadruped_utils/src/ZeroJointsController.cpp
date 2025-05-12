@@ -186,6 +186,7 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
     joint_kp_command_interface_.clear();
     joint_kd_command_interface_.clear();
     joint_m_state_command_interface_.clear();
+    joint_flip_command_interface_.clear();
 
     joint_position_state_interface_.clear();
     joint_velocity_state_interface_.clear();
@@ -212,17 +213,17 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
 
 controller_interface::return_type ZeroJointController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
-    RCLCPP_INFO(get_node()->get_logger(), "___ UPDATING ZERO JOINT CONTROLLER ___");
+    // RCLCPP_INFO(get_node()->get_logger(), "___ UPDATING ZERO JOINT CONTROLLER ___");
     float pos = 10;
     float vel = 10;
 
     // print all kp and kd joint cmd interfaces
-    for (size_t i = 0; i < joint_names_.size(); ++i) 
-        {
-            auto kp_s = joint_kp_command_interface_[i].get().get_name().c_str();
-            auto kd_s = joint_kd_command_interface_[i].get().get_name().c_str();
-            RCLCPP_INFO(get_node()->get_logger(), "JOINT %s KP: %s, KD: %s", joint_names_[i].c_str(), kp_s, kd_s);
-        }
+    // for (size_t i = 0; i < joint_names_.size(); ++i) 
+    // {
+    //     auto kp_s = joint_kp_command_interface_[i].get().get_name().c_str();
+    //     auto kd_s = joint_kd_command_interface_[i].get().get_name().c_str();
+    //     RCLCPP_INFO(get_node()->get_logger(), "JOINT %s KP: %s, KD: %s", joint_names_[i].c_str(), kp_s, kd_s);
+    // }
 
 
     // if all elements of zero status are 0, then end the controller
@@ -232,13 +233,12 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
     for (size_t i = 0; i < joint_names_.size(); ++i) 
         {
 
-            
             // if not zeroed
             if (zero_status[i] == 1)
             {
-                auto effort = joint_effort_state_interface_[i].get().get_value();
+                auto effort = joint_effort_state_interface_[i].get().get_value(); 
 
-                // check if run into limit
+                // if effort limit exceeded (run into limit)
                 if (effort > zero_effort_lim)
                 { 
                     RCLCPP_INFO(get_node()->get_logger(), "JOINT %s EFFORT LIMIT EXCEEDED IN ZERO: %f", joint_names_[i].c_str(),effort);
@@ -257,7 +257,7 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
                     zero_status[i] = 0;
                 } 
             }
-            // if still not zeroed
+            // if still not zeroed send zeroing movement command to update states
             if (zero_status[i] == 1)
             {
                 all_zero = false;
@@ -277,6 +277,7 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
             
             // deactivate_controller("zero_joints_controller"); 
         }
+        RCLCPP_INFO(get_node()->get_logger(), "Controller time");
 
         
         return controller_interface::return_type::OK;

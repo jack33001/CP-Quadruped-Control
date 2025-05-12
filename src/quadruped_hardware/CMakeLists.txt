@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(quadruped_hardware)
 
+# find_library(SH2_LIBRARY sh2 REQUIRED)
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -11,20 +12,63 @@ find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
+
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/quadruped_hardware")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/sh2")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 add_library(${PROJECT_NAME} SHARED
 
-  src/hex_utils.cpp
-  src/CANtester.cpp
+  include/sh2/sh2.c
+  include/sh2/sh2_util.c
+  include/sh2/sh2_SensorValue.c
+  include/sh2/shtp.c
+  include/sh2/euler.c
+  
   src/ROS2_CAN_Motor.cpp
   src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
-  src/bno08x.cpp
-  src/ROS2_BNO08x.cpp
+  # src/ROS2_BNO08x.cpp
+  src/i2c_device.cpp
+  # src/bno08x_driver.cpp
+)
+
+# JSON library dependency____________
+include(FetchContent)
+
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2 # Replace with the desired version
+  
+)
+# set(BUILD_EXAMPLES OFF CACHE INTERNAL "" )
+FetchContent_MakeAvailable(nlohmann_json)
+
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+# end JSON library dependency__________
+
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/quadruped_hardware>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sh2>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:include>
+    $<INSTALL_INTERFACE:src>
+    $<INSTALL_INTERFACE:/include/sh2>
+    $<INSTALL_INTERFACE:/include/quadruped_hardware>
+    
 )
 
 
+# target_link_libraries( ${PROJECT_NAME} sh2)
+
 include_directories(/usr/include)
+include_directories(/usr/include/quadruped_hardware)
 
 # add_executable(i2c_tools src/i2c_tools.cpp)
 
@@ -32,11 +76,8 @@ include_directories(/usr/include)
 # target_include_directories(i2c_tools PRIVATE /home/ws/include)
 
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
+
+
 
 ament_target_dependencies(${PROJECT_NAME}
   controller_interface
@@ -46,21 +87,11 @@ ament_target_dependencies(${PROJECT_NAME}
   rclcpp_lifecycle
   sensor_msgs
   std_msgs
-  
 )
 
 pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
-pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
-
-# Install the plugin description file
-install(FILES ros2_Cantester.xml
-  DESTINATION share/${PROJECT_NAME}
-)
-
-pluginlib_export_plugin_description_file(controller_interface ros2_Cantester.xml)
-
-
+# pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
 
 
 install(
@@ -83,7 +114,7 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
-# #
+
 # install(TARGETS ros2_control_node 
 #   RUNTIME DESTINATION lib/${PROJECT_NAME}
 # )

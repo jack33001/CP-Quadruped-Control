@@ -1,5 +1,7 @@
 <library path="quadruped_hardware">
-  <class name="quadruped_hardware/CANMotor" type="quadruped_hardware::CANMotor" base_class_type="hardware_interface::SystemInterface">
+  <class name="quadruped_hardware/CANMotor" 
+  type="quadruped_hardware::CANMotor" 
+  base_class_type="hardware_interface::SystemInterface">
     <description>
       ROS2 CAN Interface for quadruped hardware.
     </description>
