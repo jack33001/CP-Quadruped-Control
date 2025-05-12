@@ -13,28 +13,3 @@ controller_manager:
     hardware_plugin: "quadruped_hardware/QuadrupedHardwareInterface"
 
 
-CANCommandController:
-  ros__parameters:
-    type: "quadruped_hardware/CANCommandController"
-    some_parameter: some_value  # Add any necessary parameters here
-
-ros2_control:
-  ros__parameters:
-    # Controller manager
-    controller_manager_name: controller_manager
-
-    hardware_parameters:
-
-        can_interface: "can0"
-        can_ids: "1,2,3,4"
-        power_board_can_id: 10
-
-
-    controllers:
-      - name: controller_1
-        type: controller_interface/YourControllerType
-        hardware_components: [CAN_interface_0]
-      - name: controller_2
-        type: controller_interface/YourControllerType
-        hardware_components: [CAN_interface_1]
-

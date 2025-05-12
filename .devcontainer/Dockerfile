@@ -19,6 +19,8 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip wget
 ENV SHELL /bin/bash
 
+# RUN RUN usermod -aG dialout $USERNAME
+
 # ********************************************************
 # * Anything else you want to do like clean up goes here *
 # ********************************************************
@@ -45,6 +47,8 @@ RUN apt-get install -y \
 
 RUN addgroup realtime \
     && usermod -a -G realtime $USERNAME \
+
+    
     && echo "@realtime soft rtprio 99" >> /etc/security/limits.conf \
     && echo "@realtime soft priority 99" >> /etc/security/limits.conf \
     && echo "@realtime soft memlock 102400" >> /etc/security/limits.conf \
@@ -114,9 +118,10 @@ RUN apt-get update \
 
 
 
+
 # Clone ros2_control repositories
-RUN git clone https://github.com/ros-controls/ros2_control.git src/ros2_control
-RUN git clone https://github.com/ros-controls/ros2_controllers.git src/ros2_controllers
+# RUN git clone https://github.com/ros-controls/ros2_control.git src/ros2_control
+# RUN git clone https://github.com/ros-controls/ros2_controllers.git src/ros2_controllers
 
 
 # More ACADOS setup
@@ -167,8 +172,28 @@ RUN pip3 install --break-system-packages \
     flake8-import-order \
     flake8-quotes \
     tqdm \
-    pynput
+    pynput\
+    adafruit-circuitpython-bno08x\
+    Adafruit-Blinka\
+    Jetson.GPIO
+
+RUN echo "deb [trusted=yes] https://download.eclipse.org/zenoh/debian-repo/ /" | sudo tee -a /etc/apt/sources.list > /dev/null \
+    sudo apt update \
+    sudo apt install zenoh-plugin-ros2dds\
+    sudo apt-get install ros-jazzy-ament-cmake
+    
+
+RUN apt-get update && apt-get install -y \
+    gdb \
+    gdbserver \
+    ros-jazzy-tf2 ros-jazzy-tf2-ros \
+    ros-jazzy-tf2-geometry-msgs \
+    ros-jazzy-ament-cmake-vendor-package \
+    usbutils \
+    libqt5serialport5-dev \
+    i2c-tools
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
 CMD ["/bin/bash"]
+

@@ -59,16 +59,17 @@ protected:
         joint_kd_command_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_m_state_command_interface_;
-
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+        joint_flip_command_interface_;
 
     // State interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
         joint_position_state_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
         joint_velocity_state_interface_;
-     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
         joint_effort_state_interface_;
-
+    
 
 
 
@@ -81,7 +82,8 @@ protected:
         {"velocity", &joint_velocity_command_interface_},
         {"kp", &joint_kp_command_interface_},
         {"kd", &joint_kd_command_interface_},
-        {"m_state", &joint_m_state_command_interface_}};
+        {"m_state", &joint_m_state_command_interface_},
+        {"flip", &joint_flip_command_interface_}};
 
     // std::unordered_map<
     //     std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> *>

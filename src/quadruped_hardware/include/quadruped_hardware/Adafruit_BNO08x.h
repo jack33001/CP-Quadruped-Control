@@ -17,15 +17,14 @@
 #ifndef _ADAFRUIT_BNO08x_H
 #define _ADAFRUIT_BNO08x_H
 
-#include "quadruped_hardware/BNO08x/Arduino.h"
-
-#include "quadruped_hardware/BNO08x/sh2.h"
-#include "quadruped_hardware/BNO08x/sh2_SensorValue.h"
-#include "quadruped_hardware/BNO08x/sh2_err.h"
-#include <quadruped_hardware/BNO08x/Adafruit_BusIO_Register.h>
-#include <quadruped_hardware/BNO08x/Adafruit_I2CDevice.h>
-#include <quadruped_hardware/BNO08x/Adafruit_Sensor.h>
-#include <quadruped_hardware/BNO08x/Wire.h>
+#include "Arduino.h"
+#include "sh2.h"
+#include "sh2_SensorValue.h"
+#include "sh2_err.h"
+#include <Adafruit_BusIO_Register.h>
+#include <Adafruit_I2CDevice.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
 
 #define BNO08x_I2CADDR_DEFAULT 0x4A ///< The default I2C address
 
