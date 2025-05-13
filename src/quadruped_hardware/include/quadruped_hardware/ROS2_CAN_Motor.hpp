@@ -14,6 +14,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 
+#include <thread>
+#include <atomic>
+#include <chrono>
+
 
 #include "quadruped_hardware/CANInterface.hpp"
 
@@ -32,12 +36,9 @@ public:
     hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
     hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state) override;
     hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
+
     hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
     hardware_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state) override;
-
-
-    std::map<int, motor_driver::motorState> send_motor_cmd();
-  
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
@@ -45,32 +46,27 @@ public:
     hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
     hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-   
+    std::map<int, motor_driver::motorState> send_motor_cmd();
+    void startThread();
+    void stopThread();
+    void threadLoop();
 
     
 
 
 private:
-    
+
+    std::atomic<bool> running_;
+    std::thread thread_;
 
     hardware_interface::HardwareInfo hardware_info_;  ///< Hardware information from URDF.
-    // std::unique_ptr<CAN_interface::CANInterface> can_interface_;  ///< CAN interface for communication.
     std::unique_ptr<motor_driver::MotorDriver> motor_controller_;  ///< Motor controller for managing motors.
     
     std::vector<hardware_interface::StateInterface> state_interfaces_;  ///< List of state interfaces.
     std::vector<hardware_interface::CommandInterface> command_interfaces_;  ///< List of state interfaces.
     
-    // Command data buffer (8-byte array for commands).
-    // std::vector<uint8_t> command_data_;
-
-    // State data buffer (8-byte array for state information).
-    std::vector<uint8_t> state_data_;
-
-    // std::mutex read_write_mutex_;
-
     std::vector<int> can_id;
     std::string joint_name;
-    std::array<double,3> command_data_;
 
     double effort_limit;
     
@@ -98,12 +94,6 @@ private:
     motor_driver::motorCommand movecmd ;
 
     std::map<int, motor_driver::motorState> stateMap;
-
-
-    
-    
-
-
 };
 
 } // namespace quadruped_hardware

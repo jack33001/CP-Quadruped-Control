@@ -47,8 +47,111 @@ std::map<int, motor_driver::motorState> CANMotor::send_motor_cmd(){
     }
 
     return stateMap;
-
 }
+
+void CANMotor::startThread()
+{
+    std::cout << "____THREAD START____" << std::endl;
+    running_ = true;
+    thread_ = std::thread(&CANMotor::threadLoop, this);
+}
+
+void CANMotor::stopThread()
+{
+    running_ = false;
+    if (thread_.joinable())
+    {
+        thread_.join();
+    }
+
+    std::cout << "____THREAD STOPPED____" << std::endl;
+}
+
+void CANMotor::threadLoop()
+{
+  using namespace std::chrono_literals;
+  
+  while (running_)
+  {
+    // if effort is over safe limits, drop kp kd to zero
+    if (state_effort > effort_limit)
+    {
+        RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "Effort Limit Exceeded during WRITE: %f", state_effort);
+        cmd_kp  = 0;
+        cmd_kd = 0;
+    }
+
+    // Update command data from the hardware
+    movecmd = {static_cast<float>(cmd_position*cmd_flip),
+        static_cast<float>(cmd_velocity*cmd_flip),
+        static_cast<float>(cmd_kp),
+        static_cast<float>(cmd_kd),
+        static_cast<float>(cmd_effort*cmd_flip)};
+
+    commandMap[can_id[0]] = movecmd;
+
+    // State Machine
+    if(cmd_m_state == 0)
+    // send standard cmd state
+    {
+        stateMap = send_motor_cmd();
+    }
+    else if(cmd_m_state == 1)
+    // enable motor state
+    {
+        stateMap = motor_controller_->enableMotor(can_id);
+        cmd_m_state = 0;
+        std::cout << "Motor: " << can_id[0] << "Enabled"<< std::endl;
+    }
+    else if(cmd_m_state == 2)
+    // disable motor state
+    {
+        stateMap = motor_controller_->disableMotor(can_id);
+        // cmd_m_state = 0;
+        std::cout << "Motor: " << can_id[0] << "Disabled"<< std::endl;
+    }
+    else if(cmd_m_state == 3)
+    // zero motor state
+    {
+        // check if zeroing would cause the motor to jump
+        if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
+        {
+            // stop motor exert 0 effort
+            movecmd = {static_cast<float>(0),
+                        static_cast<float>(0),
+                        static_cast<float>(0),
+                        static_cast<float>(0),
+                        static_cast<float>(0)};
+            commandMap[can_id[0]] = movecmd;
+            
+            stateMap = send_motor_cmd();
+            
+            stateMap = motor_controller_->setZeroPosition(can_id);
+            cmd_m_state = 0;
+    
+            std::cout << "Motor: " << can_id[0] << " Zeroed"<< std::endl;
+        }
+
+    }
+
+    //update state variables AFTER sending command
+    state_position = stateMap[can_id[0]].position * cmd_flip;
+    state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
+    state_effort = stateMap[can_id[0]].torque * cmd_flip;
+    state_kp = cmd_kp;
+    state_kd = cmd_kd;
+    state_m_state = cmd_m_state;
+    state_flip = cmd_flip;
+
+    // Sleep to maintain your desired update rate
+    std::this_thread::sleep_for(10ms);  // Adjust timing as needed
+  }
+}
+
+
+
+
+
 
 hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::HardwareInfo& info){
     // Initialization code
@@ -115,12 +218,16 @@ hardware_interface::CallbackReturn CANMotor::on_activate(const rclcpp_lifecycle:
     motor_controller_->disableMotor(can_id);
     auto start_state = motor_controller_->enableMotor(can_id);
 
+    startThread();
+
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn CANMotor::on_deactivate(const rclcpp_lifecycle::State& previous_state) {
     // Deactivation code
     stateMap = motor_controller_->disableMotor(can_id);
+
+    stopThread();
     
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -169,27 +276,27 @@ std::vector<hardware_interface::CommandInterface> CANMotor::export_command_inter
 }
 
 hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const rclcpp::Duration& period) {
-    // Read data from the hardware and check for over limit
+    // // Read data from the hardware and check for over limit
 
 
-        // if effort is over safe limits, drop kp kd to zero
-        if (state_effort > effort_limit)
-        {
-            RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "Effort Limit Exceeded during WRITE: %f", state_effort);
+    //     // if effort is over safe limits, drop kp kd to zero
+    //     if (state_effort > effort_limit)
+    //     {
+    //         RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "Effort Limit Exceeded during WRITE: %f", state_effort);
 
-            cmd_kp  = 0;
-            cmd_kd = 0;
+    //         cmd_kp  = 0;
+    //         cmd_kd = 0;
         
-        }
+    //     }
 
-        // Update command data from the hardware
-        movecmd = {static_cast<float>(cmd_position*cmd_flip),
-            static_cast<float>(cmd_velocity*cmd_flip),
-            static_cast<float>(cmd_kp),
-            static_cast<float>(cmd_kd),
-            static_cast<float>(cmd_effort*cmd_flip)};
+    //     // Update command data from the hardware
+    //     movecmd = {static_cast<float>(cmd_position*cmd_flip),
+    //         static_cast<float>(cmd_velocity*cmd_flip),
+    //         static_cast<float>(cmd_kp),
+    //         static_cast<float>(cmd_kd),
+    //         static_cast<float>(cmd_effort*cmd_flip)};
 
-        commandMap[can_id[0]] = movecmd;
+    //     commandMap[can_id[0]] = movecmd;
 
     return hardware_interface::return_type::OK;
 }
@@ -197,119 +304,119 @@ hardware_interface::return_type CANMotor::read(const rclcpp::Time& time, const r
 
 
 hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
-    // Write data to the hardware
-    // std::cout << "_START WRITE MOTOR_" << can_id[0] << std::endl;
+    // // Write data to the hardware
+    // // std::cout << "_START WRITE MOTOR_" << can_id[0] << std::endl;
 
-    // State Machine
-    if(cmd_m_state == 0)
-    // send standard cmd state
-    {
+    // // State Machine
+    // if(cmd_m_state == 0)
+    // // send standard cmd state
+    // {
 
-        stateMap = send_motor_cmd();
+    //     stateMap = send_motor_cmd();
 
-        // if(command_type=="degree"){
+    //     // if(command_type=="degree"){
 
-        //     stateMap = motor_controller_->sendDegreeCommand( commandMap);
-        // }
-        // else if (command_type == "radian")
-        // {
-        //     stateMap = motor_controller_->sendRadCommand( commandMap);
-        // }
-        // else
-        // {
-        //     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
-        // }
+    //     //     stateMap = motor_controller_->sendDegreeCommand( commandMap);
+    //     // }
+    //     // else if (command_type == "radian")
+    //     // {
+    //     //     stateMap = motor_controller_->sendRadCommand( commandMap);
+    //     // }
+    //     // else
+    //     // {
+    //     //     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
+    //     // }
     
 
-    }
-    else if(cmd_m_state == 1)
-    // enable motor state
-    {
-        stateMap = motor_controller_->enableMotor(can_id);
-        cmd_m_state = 0;
-        std::cout << "Motor: " << can_id[0] << "Enabled"<< std::endl;
-    }
-    else if(cmd_m_state == 2)
-    // disable motor state
-    {
-        stateMap = motor_controller_->disableMotor(can_id);
-        // cmd_m_state = 0;
-        std::cout << "Motor: " << can_id[0] << "Disabled"<< std::endl;
-    }
-    else if(cmd_m_state == 3)
-    // zero motor state
-    {
-        // check if zeroing would cause the motor to jump
-        if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
-        {
-            // stop motor exert 0 effort
-            movecmd = {static_cast<float>(0),
-                        static_cast<float>(0),
-                        static_cast<float>(0),
-                        static_cast<float>(0),
-                        static_cast<float>(0)};
+    // }
+    // else if(cmd_m_state == 1)
+    // // enable motor state
+    // {
+    //     stateMap = motor_controller_->enableMotor(can_id);
+    //     cmd_m_state = 0;
+    //     std::cout << "Motor: " << can_id[0] << "Enabled"<< std::endl;
+    // }
+    // else if(cmd_m_state == 2)
+    // // disable motor state
+    // {
+    //     stateMap = motor_controller_->disableMotor(can_id);
+    //     // cmd_m_state = 0;
+    //     std::cout << "Motor: " << can_id[0] << "Disabled"<< std::endl;
+    // }
+    // else if(cmd_m_state == 3)
+    // // zero motor state
+    // {
+    //     // check if zeroing would cause the motor to jump
+    //     if ( abs(cmd_position) < 0.2 || (state_kp==0 and state_kd==0))
+    //     {
+    //         // stop motor exert 0 effort
+    //         movecmd = {static_cast<float>(0),
+    //                     static_cast<float>(0),
+    //                     static_cast<float>(0),
+    //                     static_cast<float>(0),
+    //                     static_cast<float>(0)};
 
-            commandMap[can_id[0]] = movecmd;
+    //         commandMap[can_id[0]] = movecmd;
             
 
 
-            stateMap = send_motor_cmd();
+    //         stateMap = send_motor_cmd();
 
-            // if(command_type=="degree"){
+    //         // if(command_type=="degree"){
 
-            //     stateMap = motor_controller_->sendDegreeCommand( commandMap);
-            // }
-            // else if (command_type == "radian")
-            // {
-            //     stateMap = motor_controller_->sendRadCommand( commandMap);
-            // }
-            // else
-            // {
-            //     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
-            // }
+    //         //     stateMap = motor_controller_->sendDegreeCommand( commandMap);
+    //         // }
+    //         // else if (command_type == "radian")
+    //         // {
+    //         //     stateMap = motor_controller_->sendRadCommand( commandMap);
+    //         // }
+    //         // else
+    //         // {
+    //         //     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
+    //         // }
             
-            stateMap = motor_controller_->setZeroPosition(can_id);
-            cmd_m_state = 0;
+    //         stateMap = motor_controller_->setZeroPosition(can_id);
+    //         cmd_m_state = 0;
     
-            std::cout << "Motor: " << can_id[0] << " Zeroed"<< std::endl;
-        }
+    //         std::cout << "Motor: " << can_id[0] << " Zeroed"<< std::endl;
+    //     }
 
-    }
+    // }
 
-    //update state variables AFTER sending command
-    state_position = stateMap[can_id[0]].position * cmd_flip;
-    state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
-    state_effort = stateMap[can_id[0]].torque * cmd_flip;
-    state_kp = cmd_kp;
-    state_kd = cmd_kd;
-    state_m_state = cmd_m_state;
-    state_flip = cmd_flip;
-
-
-    // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "motor write: %d", can_id[0]);
+    // //update state variables AFTER sending command
+    // state_position = stateMap[can_id[0]].position * cmd_flip;
+    // state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
+    // state_effort = stateMap[can_id[0]].torque * cmd_flip;
+    // state_kp = cmd_kp;
+    // state_kd = cmd_kd;
+    // state_m_state = cmd_m_state;
+    // state_flip = cmd_flip;
 
 
-
-    // LOGGING
-    // std::cout << "_COMMANDS MOTOR_" << can_id[0] << std::endl;
-    // std::cout << "Commanded position: " << cmd_position << std::endl;
-    // std::cout << "Commanded velocity: " << cmd_velocity << std::endl;
-    // std::cout << "Commanded kp: " << cmd_kp << std::endl;
-    // std::cout << "Commanded kd: " << cmd_kd << std::endl;
-    // std::cout << "Commanded effort: " << cmd_effort << std::endl;
-    // std::cout << "Commanded state: " << cmd_m_state << std::endl;
-
-    // std::cout << "_STATES MOTOR_" << can_id[0] << std::endl;
-    // std::cout << "State position: " << state_position << std::endl;
-    // std::cout << "State velocity: " << state_velocity << std::endl;
-    // std::cout << "State torque: " << state_effort << std::endl;
-    // std::cout << "State kp: " << state_kp << std::endl;
-    // std::cout << "State kd: " << state_kd << std::endl;
-    // std::cout << "State m_state: " << state_m_state << std::endl;
+    // // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "motor write: %d", can_id[0]);
 
 
 
-    // motor_controller_->disableMotor(can_id);
+    // // LOGGING
+    // // std::cout << "_COMMANDS MOTOR_" << can_id[0] << std::endl;
+    // // std::cout << "Commanded position: " << cmd_position << std::endl;
+    // // std::cout << "Commanded velocity: " << cmd_velocity << std::endl;
+    // // std::cout << "Commanded kp: " << cmd_kp << std::endl;
+    // // std::cout << "Commanded kd: " << cmd_kd << std::endl;
+    // // std::cout << "Commanded effort: " << cmd_effort << std::endl;
+    // // std::cout << "Commanded state: " << cmd_m_state << std::endl;
+
+    // // std::cout << "_STATES MOTOR_" << can_id[0] << std::endl;
+    // // std::cout << "State position: " << state_position << std::endl;
+    // // std::cout << "State velocity: " << state_velocity << std::endl;
+    // // std::cout << "State torque: " << state_effort << std::endl;
+    // // std::cout << "State kp: " << state_kp << std::endl;
+    // // std::cout << "State kd: " << state_kd << std::endl;
+    // // std::cout << "State m_state: " << state_m_state << std::endl;
+
+
+
+    // // motor_controller_->disableMotor(can_id);
 
     // sleep(1);
     return hardware_interface::return_type::OK;
