@@ -84,6 +84,24 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   desired_state_[2] = 0.15;  // Set desired height
   desired_state_[3] = 1.0;  // Forward facing quaternion has w=1
 
+  // Read the COM offset from parameters
+  try {
+    // Declare and get the COM offset parameter with default values
+    get_node()->declare_parameter("com_offset", std::vector<double>{0.0, 0.0, -0.1});
+    com_offset_ = get_node()->get_parameter("com_offset").as_double_array();
+    
+    RCLCPP_INFO(get_node()->get_logger(), "Using COM offset: [%.3f, %.3f, %.3f]", 
+                com_offset_[0], com_offset_[1], com_offset_[2]);
+                
+    // Apply the COM offset to the desired state immediately
+    desired_state_[0] += com_offset_[0];
+    desired_state_[1] += com_offset_[1];
+    desired_state_[2] += com_offset_[2];
+  } catch (const std::exception& e) {
+    RCLCPP_WARN(get_node()->get_logger(), "Error getting COM offset: %s. Using defaults [0.0, 0.0, -0.1]", e.what());
+    com_offset_ = {0.0, 0.0, -0.1};
+  }
+
   // Find package share directory
   const auto package_path = ament_index_cpp::get_package_share_directory("quadruped_mpc");
   std::string lib_path = package_path + "/include/quadruped_mpc/acados_generated";
@@ -115,6 +133,19 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     return CallbackReturn::ERROR;
   }
   RCLCPP_INFO(get_node()->get_logger(), "ACADOS solver initialized successfully");
+
+  // Get the MPC parameters
+  try {
+    // Log the parameters we're using
+    RCLCPP_INFO(get_node()->get_logger(), "Using MPC parameters - mass: %.2f kg, inertia: %.2f kg*m^2", 
+                get_node()->get_parameter("mass").as_double(),
+                get_node()->get_parameter("inertia").as_double());
+    RCLCPP_INFO(get_node()->get_logger(), "MPC parameters - stages: %ld, horizon: %.1f s",
+                get_node()->get_parameter("stages").as_int(),
+                get_node()->get_parameter("horizon").as_double());
+  } catch (const std::exception& e) {
+    RCLCPP_WARN(get_node()->get_logger(), "Error getting MPC parameters: %s. Using defaults.", e.what());
+  }
 
   // Subscribe to command topics
   pose_cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(
@@ -177,7 +208,6 @@ void BalanceController::state_callback(const quadruped_msgs::msg::QuadrupedState
   new_state_received_ = true;
 }
 
-// Update the gait callback to use the foot_states_ array
 void BalanceController::gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg)
 {
   std::lock_guard<std::mutex> lock(gait_mutex_);

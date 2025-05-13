@@ -68,6 +68,18 @@ balance_controller:
       - rl_knee
       - rr_hip
       - rr_knee
+    # Parameters moved from optimal_controller.yaml
+    mass: 13.2   # Robot mass in kg
+    inertia: 0.5  # Robot inertia in kg*m^2
+    stages: 50   # Number of stages in the MPC
+    horizon: 5.0  # Time horizon in seconds
+    com_offset: [0.0, 0.0, 0.0]  # Center of mass offset [x, y, z] in meters
+    weights:
+      position: [100000000, 100000000, 100000000]        # Position tracking weights (x, y, z)
+      orientation: [1000000, 1000000, 1000000, 1000000]  # Orientation tracking weights (quaternion)
+      velocity: [1000, 1000, 1000]                       # Linear velocity tracking weights
+      angular_velocity: [10000, 10000, 10000]            # Angular velocity tracking weights
+      terminal_factor: 10.0                              # Factor to multiply all weights for terminal cost
 
 foot_controller:
   ros__parameters:

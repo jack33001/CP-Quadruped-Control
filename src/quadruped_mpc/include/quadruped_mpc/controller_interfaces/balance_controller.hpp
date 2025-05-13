@@ -47,6 +47,9 @@ protected:
   std::array<double,25> desired_state_;
   std::array<double,25> optimal_control_;
   
+  // COM offset parameters
+  std::vector<double> com_offset_{0.0, 0.0, -0.1};  // Default COM offset [x, y, z]
+  
   // Foot position storage - convert to a 2D array for more efficient access
   std::array<std::array<double,3>, 5> foot_positions_; // 4 feet + COM at index 4
   

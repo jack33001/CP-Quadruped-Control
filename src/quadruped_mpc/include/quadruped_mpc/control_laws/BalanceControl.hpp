@@ -361,16 +361,21 @@ namespace quadruped_mpc
       {
         std::lock_guard<std::mutex> lock(cmd_mutex_);
 
-        // Handle pose commands
+        // Handle pose commands with COM offset applied
         if (new_pose_cmd_received_ && latest_pose_cmd_)
         {
-          desired_state_[0] = 0;
-          desired_state_[1] = 0;
-          desired_state_[2] = latest_pose_cmd_->position.z;
+          desired_state_[0] = com_offset_[0];  // Apply X offset
+          desired_state_[1] = com_offset_[1];  // Apply Y offset
+          desired_state_[2] = latest_pose_cmd_->position.z + com_offset_[2];  // Apply Z offset to commanded height
+          
+          // Apply quaternion from command
           desired_state_[3] = latest_pose_cmd_->orientation.w;
           desired_state_[4] = latest_pose_cmd_->orientation.x;
           desired_state_[5] = latest_pose_cmd_->orientation.y;
           desired_state_[6] = latest_pose_cmd_->orientation.z;
+          
+          RCLCPP_DEBUG(get_node()->get_logger(), "Updated desired pose with COM offset: [%.3f, %.3f, %.3f]",
+                      desired_state_[0], desired_state_[1], desired_state_[2]);
           new_pose_cmd_received_ = false;
         }
 

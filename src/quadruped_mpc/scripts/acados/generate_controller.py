@@ -1,48 +1,40 @@
 #!/usr/bin/env python3
-
+import sys
 import os
-import shutil
 import logging
-import yaml
+import argparse
 from optimal_controller import QuadrupedOptimalController
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    # Get package root directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    package_root = os.path.dirname(os.path.dirname(script_dir))
-    export_dir = os.path.join(package_root, 'include/quadruped_mpc/acados_generated')
+    parser = argparse.ArgumentParser(description="Generate ACADOS controller for quadruped robot")
+    parser.add_argument('--output-dir', type=str, help='Directory to output generated files')
+    parser.add_argument('--config', type=str, help='Path to configuration file')
+    args = parser.parse_args()
+
+    # Set output directory
+    if args.output_dir:
+        output_dir = args.output_dir
+    else:
+        # Default to include directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(os.path.dirname(script_dir))
+        output_dir = os.path.join(root_dir, 'include', 'quadruped_mpc', 'acados_generated')
     
-    print(f"Generating ACADOS code to: {export_dir}")
-    os.makedirs(export_dir, exist_ok=True)
-    os.makedirs(os.path.join(export_dir, 'quadruped_ode_model'), exist_ok=True)
+    logger.info(f"Generating ACADOS code to: {output_dir}")
     
-    # Default to package config directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(os.path.dirname(script_dir))
-    param_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
+    # Use the config file from the argument or the default one
+    config_file = args.config
+    if not config_file:
+        # Use the consolidated config file instead of optimal_controller.yaml
+        root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        config_file = os.path.join(root_dir, 'src', 'quadruped_mpc', 'config', 'quadruped_controllers.yaml')
     
-    with open(param_file, 'r') as f:
-        params = yaml.safe_load(f)['optimal_controller']
-        N = params.get('stages')
-        T = params.get('horizon')
-    
-    try:
-        # Create controller - this will generate code
-        controller = QuadrupedOptimalController(
-            N, 
-            T, 
-            code_export_dir=export_dir
-        )
-        
-        print("Code generation successful!")
-        return 0
-        
-    except Exception as e:
-        print(f"Error during code generation: {str(e)}")
-        return 1
+    # Create controller
+    controller = QuadrupedOptimalController(code_export_dir=output_dir, param_file=config_file)
+    logger.info("Code generation successful!")
 
 if __name__ == "__main__":
     main()
