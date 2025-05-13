@@ -17,4 +17,22 @@ After the Docker container has been created, source /opt/ros/jazzy/setup.bash. N
 Currently, Gazebo is the only simulation environment supported within this project. To run a simulation, launch the file `sim.launch.py` from the `quadruped_bringup` folder. 
 
 ## Running on hardware
+CurrentlyHardware is run using Zenoh as middleware. This requires switching the middleware in each open terminal, but never fear the source files are here! 
 
+### Zenoh
+
+1. On startup of a terminal run: 
+source CLnew.sh 
+
+2. Run Zenoh Router: 
+source CL_router_start.sh 
+
+3. Work as Normal.
+
+### Running the robot.
+
+ros2 launch quadruped_bringup real.launch.py
+
+### remoting into the robot while on the same network
+
+ros2 launch quadruped_bringup remote.launch.py
