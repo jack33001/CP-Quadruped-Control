@@ -18,11 +18,14 @@
 #include <atomic>
 #include <chrono>
 
+#include <cmath>
+
 
 #include "quadruped_hardware/CANInterface.hpp"
 
 
 using namespace CAN_interface;
+using namespace std::chrono_literals;
 namespace quadruped_hardware {
 
 /**
@@ -86,9 +89,12 @@ private:
     double state_m_state;
     double state_flip;
 
-    std::string command_type ;
+    std::string command_type;
+    double frequency;
+    double period;
+    std::chrono::duration<double> thread_period;
 
-    
+    double position_offset;
 
     std::map<int, motor_driver::motorCommand> commandMap;
     motor_driver::motorCommand movecmd ;

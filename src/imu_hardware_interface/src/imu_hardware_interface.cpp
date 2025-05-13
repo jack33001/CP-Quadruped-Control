@@ -153,20 +153,21 @@ hardware_interface::return_type IMUHardwareInterface::write(
 {
 
 
-  // print all the data received
-  RCLCPP_INFO(
-    rclcpp::get_logger("IMUHardwareInterface"), 
-    "Orientation: [%f, %f, %f, %f]", 
-    orientation_x_, orientation_y_, orientation_z_, orientation_w_);
-  RCLCPP_INFO(
-    rclcpp::get_logger("IMUHardwareInterface"), 
-    "Angular Velocity: [%f, %f, %f]", 
-    angular_velocity_x_, angular_velocity_y_, angular_velocity_z_);
-  RCLCPP_INFO(
-    rclcpp::get_logger("IMUHardwareInterface"), 
-    "Linear Acceleration: [%f, %f, %f]", 
-    linear_acceleration_x_, linear_acceleration_y_, linear_acceleration_z_);
-  // This is a read-only interface, nothing to write
+  // // print all the data received
+  // RCLCPP_INFO(
+  //   rclcpp::get_logger("IMUHardwareInterface"), 
+  //   "Orientation: [%f, %f, %f, %f]", 
+  //   orientation_x_, orientation_y_, orientation_z_, orientation_w_);
+  // RCLCPP_INFO(
+  //   rclcpp::get_logger("IMUHardwareInterface"), 
+  //   "Angular Velocity: [%f, %f, %f]", 
+  //   angular_velocity_x_, angular_velocity_y_, angular_velocity_z_);
+  // RCLCPP_INFO(
+  //   rclcpp::get_logger("IMUHardwareInterface"), 
+  //   "Linear Acceleration: [%f, %f, %f]", 
+  //   linear_acceleration_x_, linear_acceleration_y_, linear_acceleration_z_);
+  // // This is a read-only interface, nothing to write
+
   return hardware_interface::return_type::OK;
 }
 

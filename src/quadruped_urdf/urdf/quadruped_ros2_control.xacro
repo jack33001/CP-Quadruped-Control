@@ -37,6 +37,8 @@
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>     
+            <param name="frequency" >100</param>   
+            <param name="zero_position_offset" >1.3162</param>
 
         </hardware>
         <joint name="fr_hip">
@@ -64,7 +66,8 @@
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
-            <param name="command_type" >degree</param>    
+            <param name="command_type" >radian</param>   
+            <param name="frequency" >100</param>    
         </hardware>
         <joint name="fr_knee">
             <command_interface name="position"/>
@@ -91,7 +94,8 @@
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
-            <param name="command_type" >radian</param>    
+            <param name="command_type" >radian</param>
+            <param name="frequency" >100</param>       
         </hardware>
         <joint name="rr_hip">
             <command_interface name="position"/>
@@ -118,7 +122,8 @@
             <param name="flip" >false</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
-            <param name="command_type" >radian</param>    
+            <param name="command_type" >radian</param>   
+            <param name="frequency" >100</param>    
         </hardware>
         <joint name="rr_knee">
             <command_interface name="position"/>
@@ -145,7 +150,8 @@
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
-            <param name="command_type" >radian</param>    
+            <param name="command_type" >radian</param>  
+            <param name="frequency" >100</param>     
         </hardware>
         <joint name="fl_hip">
             <command_interface name="position"/>
@@ -172,7 +178,8 @@
             <param name="flip" >false</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
-            <param name="command_type" >radian</param>    
+            <param name="command_type" >radian</param>   
+            <param name="frequency" >100</param>    
         </hardware>
         <joint name="fl_knee">
             <command_interface name="position"/>
@@ -200,6 +207,7 @@
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>    
+            <param name="frequency" >100</param>   
         </hardware>
         <joint name="rl_hip">
             <command_interface name="position"/>
@@ -227,7 +235,8 @@
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
-            <param name="command_type" >radian</param>    
+            <param name="command_type" >radian</param> 
+            <param name="frequency" >100</param>      
         </hardware>
         <joint name="rl_knee">
             <command_interface name="position"/>

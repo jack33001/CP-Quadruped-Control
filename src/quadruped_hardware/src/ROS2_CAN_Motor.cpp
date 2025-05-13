@@ -27,7 +27,8 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 
 CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
-                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1),effort_limit(1.5) {}
+                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1),
+                        effort_limit(1.5),frequency(100) {}
 
 
 std::map<int, motor_driver::motorState> CANMotor::send_motor_cmd(){
@@ -82,7 +83,7 @@ void CANMotor::threadLoop()
     }
 
     // Update command data from the hardware
-    movecmd = {static_cast<float>(cmd_position*cmd_flip),
+    movecmd = {static_cast<float>(cmd_position*cmd_flip + position_offset),
         static_cast<float>(cmd_velocity*cmd_flip),
         static_cast<float>(cmd_kp),
         static_cast<float>(cmd_kd),
@@ -135,7 +136,7 @@ void CANMotor::threadLoop()
     }
 
     //update state variables AFTER sending command
-    state_position = stateMap[can_id[0]].position * cmd_flip;
+    state_position = stateMap[can_id[0]].position * cmd_flip - position_offset;
     state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
     state_effort = stateMap[can_id[0]].torque * cmd_flip;
     state_kp = cmd_kp;
@@ -143,8 +144,11 @@ void CANMotor::threadLoop()
     state_m_state = cmd_m_state;
     state_flip = cmd_flip;
 
+
+
     // Sleep to maintain your desired update rate
-    std::this_thread::sleep_for(10ms);  // Adjust timing as needed
+
+    std::this_thread::sleep_for(thread_period);  // Adjust timing as needed
   }
 }
 
@@ -163,8 +167,13 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
 
     effort_limit = std::stod(info.hardware_parameters.at("effort_limit"));
 
-    command_type = info.hardware_parameters.at("command_type").c_str();
+    frequency = std::stod(info.hardware_parameters.at("frequency"));
+    period = std::round(1/frequency*1000)/1000; //round to ms
+    thread_period = std::chrono::duration<double>(period);
 
+    position_offset = std::stod(info.hardware_parameters.at("zero_position_offset"));
+
+    command_type = info.hardware_parameters.at("command_type").c_str();
 
     if (command_type == "degree" || command_type == "deg"){
         command_type = "degree";
