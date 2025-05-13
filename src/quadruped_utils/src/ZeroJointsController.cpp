@@ -93,13 +93,11 @@ controller_interface::CallbackReturn ZeroJointController::on_init()
             zero_effort_lim = auto_declare<double>("zero_effort_lim", zero_effort_lim);
             kp = auto_declare<double>("kp", kp);
             kd = auto_declare<double>("kd", kd);
-            
 
+            vel = auto_declare<double>("velocity", vel);
 
             // initialize zero status vector: 0 =zeroed, 1 = not zeroed
             zero_status = std::vector<int>(joint_names_.size(), 1);
-
-
 
             // print command and state interface types
             RCLCPP_INFO(get_node()->get_logger(), "Command interface types:");
@@ -214,8 +212,7 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
 controller_interface::return_type ZeroJointController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
     // RCLCPP_INFO(get_node()->get_logger(), "___ UPDATING ZERO JOINT CONTROLLER ___");
-    double pos = 10;
-    double vel = 10;
+ 
 
     // print all kp and kd joint cmd interfaces
     // for (size_t i = 0; i < joint_names_.size(); ++i) 
@@ -227,7 +224,7 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
 
 
     // if all elements of zero status are 0, then end the controller
-    bool all_zero = true;
+    all_zero = true;
     
     // for all joints
     for (size_t i = 0; i < joint_names_.size(); ++i) 
@@ -260,7 +257,7 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
             // if still not zeroed send zeroing movement command to update states
             if (zero_status[i] == 1)
             {
-                all_zero = false;
+                all_zero = false; 
                 
                 success = joint_kp_command_interface_[i].get().set_value(kp);
                 assert(success);   
@@ -292,6 +289,8 @@ controller_interface::CallbackReturn ZeroJointController::on_deactivate(const rc
         success = joint_kp_command_interface_[i].get().set_value(0.0);
         assert(success);   
         success = joint_kd_command_interface_[i].get().set_value(0.0);
+        assert(success);
+        success = joint_velocity_command_interface_[i].get().set_value(0.0);
         assert(success);
         }
 

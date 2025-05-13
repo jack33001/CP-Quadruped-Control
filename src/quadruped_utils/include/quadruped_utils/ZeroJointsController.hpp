@@ -36,6 +36,7 @@ public:
     
 protected:
     bool success;
+    bool all_zero;
 
     // Pramamter vectors
     std::vector<std::string> joint_names_;
@@ -47,6 +48,7 @@ protected:
     double zero_effort_lim;
     double kp;
     double kd;
+    double vel;
 
     // Command interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
