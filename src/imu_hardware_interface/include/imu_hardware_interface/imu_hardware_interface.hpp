@@ -65,7 +65,7 @@ private:
   std::shared_ptr<rclcpp::Node> node_;
   
   // Topic configuration
-  std::string imu_topic_ = "/imu";
+  std::string imu_topic_ = "/imu_sensor";
   
   // Callback to handle IMU data
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);

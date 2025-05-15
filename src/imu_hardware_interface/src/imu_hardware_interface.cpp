@@ -82,49 +82,36 @@ hardware_interface::CallbackReturn IMUHardwareInterface::on_deactivate(
 std::vector<hardware_interface::StateInterface> IMUHardwareInterface::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
-  
+
   // Add Orientation interfaces
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "orientation_x", &orientation_x_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "orientation_y", &orientation_y_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "orientation_z", &orientation_z_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "orientation_w", &orientation_w_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "orientation.x", &orientation_x_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "orientation.y", &orientation_y_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "orientation.z", &orientation_z_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "orientation.w", &orientation_w_));
     
   // Add Orientation Covariance interfaces
   for (size_t i = 0; i < 9; ++i) {
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-      "imu", "orientation_covariance_" + std::to_string(i), &orientation_covariance_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "orientation_covariance_" + std::to_string(i), &orientation_covariance_[i]));
   }
   
   // Add Angular Velocity interfaces
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "angular_velocity_x", &angular_velocity_x_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "angular_velocity_y", &angular_velocity_y_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "angular_velocity_z", &angular_velocity_z_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "angular_velocity.x", &angular_velocity_x_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "angular_velocity.y", &angular_velocity_y_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "angular_velocity.z", &angular_velocity_z_));
     
   // Add Angular Velocity Covariance interfaces
   for (size_t i = 0; i < 9; ++i) {
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-      "imu", "angular_velocity_covariance_" + std::to_string(i), &angular_velocity_covariance_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "angular_velocity_covariance_" + std::to_string(i), &angular_velocity_covariance_[i]));
   }
   
   // Add Linear Acceleration interfaces
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "linear_acceleration_x", &linear_acceleration_x_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "linear_acceleration_y", &linear_acceleration_y_));
-  state_interfaces.emplace_back(hardware_interface::StateInterface(
-    "imu", "linear_acceleration_z", &linear_acceleration_z_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "linear_acceleration.x", &linear_acceleration_x_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "linear_acceleration.y", &linear_acceleration_y_));
+  state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "linear_acceleration.z", &linear_acceleration_z_));
     
   // Add Linear Acceleration Covariance interfaces
   for (size_t i = 0; i < 9; ++i) {
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-      "imu", "linear_acceleration_covariance_" + std::to_string(i), &linear_acceleration_covariance_[i]));
+    state_interfaces.emplace_back(hardware_interface::StateInterface("imu_sensor", "linear_acceleration_covariance_" + std::to_string(i), &linear_acceleration_covariance_[i]));
   }
   
   return state_interfaces;
