@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
+    update_rate: 50
       
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -135,6 +135,9 @@ zero_joints_controller:
 
       - rl_hip
       - rl_knee
+
+    zero_direction: [-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0]
+      
       
       
     command_interfaces:

@@ -86,7 +86,8 @@ controller_interface::CallbackReturn ZeroJointController::on_init()
             fprintf(stderr, "Zero controller trying to declare parameters\n");
             
             joint_names_ = auto_declare<std::vector<std::string>>("joints", joint_names_);
-
+            zero_direction_ = auto_declare<std::vector<double>>("zero_direction", std::vector<double>(joint_names_.size(), 1.0));
+            
             command_interface_types_ = auto_declare<std::vector<std::string>>("command_interfaces", command_interface_types_);
             state_interface_types_ = auto_declare<std::vector<std::string>>("state_interfaces", state_interface_types_);
 
@@ -226,17 +227,25 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
     // if all elements of zero status are 0, then end the controller
     all_zero = true;
     
+    
     // for all joints
     for (size_t i = 0; i < joint_names_.size(); ++i) 
         {
 
+            // if zeroed
+            if (zero_status[i] == 0)
+            {
+                success = joint_kd_command_interface_[i].get().set_value(1.0);
+                    assert(success);   
+
+            }
             // if not zeroed
             if (zero_status[i] == 1)
             {
                 auto effort = joint_effort_state_interface_[i].get().get_value(); 
 
                 // if effort limit exceeded (run into limit)
-                if (effort > zero_effort_lim)
+                if (abs(effort) > zero_effort_lim)
                 { 
                     RCLCPP_INFO(get_node()->get_logger(), "JOINT %s EFFORT LIMIT EXCEEDED IN ZERO: %f", joint_names_[i].c_str(),effort);
 
@@ -251,7 +260,9 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
                     success = joint_m_state_command_interface_[i].get().set_value(3.0);
                     assert(success);
 
-                    zero_status[i] = 0;
+                    zero_status[i] = 0; // joint zeroed
+                   
+
                 } 
             }
             // if still not zeroed send zeroing movement command to update states
@@ -263,18 +274,30 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
                 assert(success);   
                 success = joint_kd_command_interface_[i].get().set_value(kd);
                 assert(success);
-                bool success = joint_velocity_command_interface_[i].get().set_value(vel);
+
+                
+                bool success = joint_velocity_command_interface_[i].get().set_value(vel*zero_direction_[i]);
                 assert(success);
             }
+
+
+
+
         }
 
-        if (all_zero)
-        { 
-            RCLCPP_INFO(get_node()->get_logger(), "All joints zeroed, waiting...");
-            
-            // deactivate_controller("zero_joints_controller"); 
-        }
-        // RCLCPP_INFO(get_node()->get_logger(), "Controller time");
+
+    
+    // if all joints are zeroed for the first time
+    if (all_zero && all_zero_history != all_zero) 
+    {
+  
+        RCLCPP_INFO(get_node()->get_logger(), "All joints zeroed, waiting...");
+
+        // deactivate_controller("zero_joints_controller"); 
+    }
+
+    all_zero_history = all_zero;
+    // RCLCPP_INFO(get_node()->get_logger(), "Controller time");
 
         
         return controller_interface::return_type::OK;

@@ -37,6 +37,9 @@ public:
 protected:
     bool success;
     bool all_zero;
+    bool all_zero_history;
+    std::vector<double> zero_direction_;
+
 
     // Pramamter vectors
     std::vector<std::string> joint_names_;

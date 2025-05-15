@@ -26,8 +26,8 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 
 
-CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
-                       state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1),
+CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(0), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
+                       state_position(0), state_velocity(0), state_effort(0), state_kp(0), state_kd(1), state_m_state(0),state_flip(1),
                         effort_limit(1.5),frequency(100) {}
 
 
@@ -83,7 +83,7 @@ void CANMotor::threadLoop()
     }
 
     // Update command data from the hardware
-    movecmd = {static_cast<float>(cmd_position*cmd_flip + position_offset),
+    movecmd = {static_cast<float>(cmd_position*cmd_flip + (cmd_flip*position_offset)),
         static_cast<float>(cmd_velocity*cmd_flip),
         static_cast<float>(cmd_kp),
         static_cast<float>(cmd_kd),
@@ -136,7 +136,7 @@ void CANMotor::threadLoop()
     }
 
     //update state variables AFTER sending command
-    state_position = stateMap[can_id[0]].position * cmd_flip - position_offset;
+    state_position = stateMap[can_id[0]].position * cmd_flip - (cmd_flip*position_offset);
     state_velocity = stateMap[can_id[0]].velocity * cmd_flip;
     state_effort = stateMap[can_id[0]].torque * cmd_flip;
     state_kp = cmd_kp;

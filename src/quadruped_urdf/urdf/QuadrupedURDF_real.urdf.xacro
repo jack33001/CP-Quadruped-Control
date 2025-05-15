@@ -2,7 +2,7 @@
 <robot name="quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Include all component files -->
-  <xacro:include filename="$(find quadruped_urdf)/urdf/properties.xacro"/>
+  <xacro:include filename="$(find quadruped_urdf)/urdf/properties_real.xacro"/>
   <xacro:include filename="$(find quadruped_urdf)/urdf/materials.xacro"/>
   <xacro:include filename="$(find quadruped_urdf)/urdf/body.xacro"/>
   <xacro:include filename="$(find quadruped_urdf)/urdf/leg.xacro"/>

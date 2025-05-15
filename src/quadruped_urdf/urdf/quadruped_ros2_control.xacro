@@ -33,12 +33,12 @@
             <param name="joint_name">fr_hip</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >10</param>
-            <param name="flip" >false</param>
+            <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>     
-            <param name="frequency" >100</param>   
-            <param name="zero_position_offset" >1.3162</param>
+            <param name="frequency" >50.0</param>   
+            <param name="zero_position_offset" >0</param>
 
         </hardware>
         <joint name="fr_hip">
@@ -67,7 +67,8 @@
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>   
-            <param name="frequency" >100</param>    
+            <param name="frequency" >50.0</param>   
+            <param name="zero_position_offset" >0</param> 
         </hardware>
         <joint name="fr_knee">
             <command_interface name="position"/>
@@ -95,7 +96,9 @@
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>
-            <param name="frequency" >100</param>       
+            <param name="frequency" >50.0</param>     
+            <param name="zero_position_offset" >0</param> 
+
         </hardware>
         <joint name="rr_hip">
             <command_interface name="position"/>
@@ -119,11 +122,13 @@
             <param name="joint_name">rr_knee</param> 
             <param name="can_bus" >can0</param>
             <param name="can_id" >13</param>
-            <param name="flip" >false</param>
+            <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>   
-            <param name="frequency" >100</param>    
+            <param name="frequency" >50.0</param> 
+            <param name="zero_position_offset" >0</param> 
+
         </hardware>
         <joint name="rr_knee">
             <command_interface name="position"/>
@@ -151,7 +156,9 @@
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>  
-            <param name="frequency" >100</param>     
+            <param name="frequency" >50.0</param>    
+            <param name="zero_position_offset" >0</param> 
+
         </hardware>
         <joint name="fl_hip">
             <command_interface name="position"/>
@@ -175,11 +182,13 @@
             <param name="joint_name">fl_knee</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >15</param>
-            <param name="flip" >false</param>
+            <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>   
-            <param name="frequency" >100</param>    
+            <param name="frequency" >50.0</param>  
+            <param name="zero_position_offset" >0</param> 
+
         </hardware>
         <joint name="fl_knee">
             <command_interface name="position"/>
@@ -203,11 +212,13 @@
             <param name="joint_name">rl_hip</param> 
             <param name="can_bus" >can1</param>
             <param name="can_id" >16</param>
-            <param name="flip" >false</param>
+            <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param>    
-            <param name="frequency" >100</param>   
+            <param name="frequency" >50.0</param> 
+            <param name="zero_position_offset" >0</param> 
+
         </hardware>
         <joint name="rl_hip">
             <command_interface name="position"/>
@@ -236,7 +247,9 @@
             <param name="effort_limit" >2</param>
             <!-- degree or rad -->
             <param name="command_type" >radian</param> 
-            <param name="frequency" >100</param>      
+            <param name="frequency" >50.0</param>  
+            <param name="zero_position_offset" >0.0</param> 
+
         </hardware>
         <joint name="rl_knee">
             <command_interface name="position"/>
