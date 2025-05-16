@@ -109,7 +109,7 @@ joint_group_position_controller:
 
 zero_joints_controller:
   ros__parameters:
-    # update_rate: 100
+
     # use doubles for all values ie 0 => 0.0
     zero_effort_lim: 1.0
 
@@ -119,6 +119,9 @@ zero_joints_controller:
 
     velocity: 0.25
 
+    # Gains for the motor after the joint is zeroed
+    zeroed_kp: 0.0 
+    zeroed_kd: 0.5
 
 
     joints_orientation: [-1.0]
@@ -138,8 +141,6 @@ zero_joints_controller:
 
     zero_direction: [-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0]
       
-      
-      
     command_interfaces:
       - position
       - velocity
@@ -147,9 +148,6 @@ zero_joints_controller:
       - kp
       - kd
       - flip
-    # state_interfaces:
-    #   -velocity
-      # interface_name: position
     state_interfaces:
       - position
       - velocity

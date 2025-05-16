@@ -23,9 +23,6 @@
         </sensor>
     </ros2_control>
 
-    
-
-    
 
     <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" > 
         <hardware>
@@ -39,6 +36,8 @@
             <param name="command_type" >radian</param>     
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param>
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param>
 
         </hardware>
         <joint name="fr_hip">
@@ -69,6 +68,8 @@
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param> 
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param>
         </hardware>
         <joint name="fr_knee">
             <command_interface name="position"/>
@@ -98,6 +99,8 @@
             <param name="command_type" >radian</param>
             <param name="frequency" >50.0</param>     
             <param name="zero_position_offset" >0</param> 
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param>
 
         </hardware>
         <joint name="rr_hip">
@@ -127,7 +130,9 @@
             <!-- degree or rad -->
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param> 
-            <param name="zero_position_offset" >0</param> 
+            <param name="zero_position_offset" >0</param>
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param> 
 
         </hardware>
         <joint name="rr_knee">
@@ -158,6 +163,8 @@
             <param name="command_type" >radian</param>  
             <param name="frequency" >50.0</param>    
             <param name="zero_position_offset" >0</param> 
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param>
 
         </hardware>
         <joint name="fl_hip">
@@ -187,7 +194,9 @@
             <!-- degree or rad -->
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>  
-            <param name="zero_position_offset" >0</param> 
+            <param name="zero_position_offset" >0</param>
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param> 
 
         </hardware>
         <joint name="fl_knee">
@@ -217,7 +226,9 @@
             <!-- degree or rad -->
             <param name="command_type" >radian</param>    
             <param name="frequency" >50.0</param> 
-            <param name="zero_position_offset" >0</param> 
+            <param name="zero_position_offset" >0</param>
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param> 
 
         </hardware>
         <joint name="rl_hip">
@@ -248,7 +259,9 @@
             <!-- degree or rad -->
             <param name="command_type" >radian</param> 
             <param name="frequency" >50.0</param>  
-            <param name="zero_position_offset" >0.0</param> 
+            <param name="zero_position_offset" >0.0</param>
+            <param name="min_position_limit" >-1.0</param>
+            <param name="max_position_limit" >1.0</param> 
 
         </hardware>
         <joint name="rl_knee">

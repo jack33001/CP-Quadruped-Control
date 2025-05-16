@@ -53,6 +53,9 @@ protected:
     double kd;
     double vel;
 
+    double zeroed_kp;
+    double zeroed_kd;
+
     // Command interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_position_command_interface_;

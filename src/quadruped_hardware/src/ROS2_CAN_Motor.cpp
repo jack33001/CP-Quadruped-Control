@@ -28,14 +28,26 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(0), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
                        state_position(0), state_velocity(0), state_effort(0), state_kp(0), state_kd(1), state_m_state(0),state_flip(1),
-                        effort_limit(1.5),frequency(100) {}
+                        effort_limit(1.5),frequency(100), min_pos(-10000), max_pos(10000) {}
 
 
 std::map<int, motor_driver::motorState> CANMotor::send_motor_cmd(){
+    // move command for motor with config for deg, rad and position limits
     std::map<int, motor_driver::motorState> stateMap;
-    
-    if(command_type=="degree"){
 
+    // Set command position limits
+    if (cmd_position > max_pos)
+    {
+        cmd_position = max_pos;
+    }
+    if (cmd_position < min_pos)
+    {
+        cmd_position = min_pos;
+    }
+    
+    // Radian vs degree control
+    if(command_type=="degree")
+    {
         stateMap = motor_controller_->sendDegreeCommand( commandMap);
     }
     else if (command_type == "radian")
@@ -74,12 +86,30 @@ void CANMotor::threadLoop()
   
   while (running_)
   {
+
+
+
+    // Estop conditions
+    // if out of position limits
+    if(state_position > max_pos || state_position < min_pos)
+    {
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Position Limit Exceeded: pos %f range: %f - %f", state_position, min_pos, max_pos);
+        // set E stop state
+        cmd_m_state = 4;
+    }
+    // if cmd effort is too high
+    if(abs(cmd_effort) > 18)
+    {
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Command Effort Exceeded Motor Max of 18: %f", cmd_effort);
+        // set E stop state
+        cmd_m_state = 4;
+    }
     // if effort is over safe limits, drop kp kd to zero
     if (state_effort > effort_limit)
     {
-        RCLCPP_INFO(rclcpp::get_logger("CANMotor"), "Effort Limit Exceeded during WRITE: %f", state_effort);
-        cmd_kp  = 0;
-        cmd_kd = 0;
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "State Effort Exceeded Set Motor limit of %f: %f", effort_limit, state_effort);
+        // set E stop state
+        cmd_m_state = 4;
     }
 
     // Update command data from the hardware
@@ -90,6 +120,7 @@ void CANMotor::threadLoop()
         static_cast<float>(cmd_effort*cmd_flip)};
 
     commandMap[can_id[0]] = movecmd;
+
 
     // State Machine
     if(cmd_m_state == 0)
@@ -103,6 +134,7 @@ void CANMotor::threadLoop()
         stateMap = motor_controller_->enableMotor(can_id);
         cmd_m_state = 0;
         std::cout << "Motor: " << can_id[0] << "Enabled"<< std::endl;
+        
     }
     else if(cmd_m_state == 2)
     // disable motor state
@@ -121,7 +153,7 @@ void CANMotor::threadLoop()
             movecmd = {static_cast<float>(0),
                         static_cast<float>(0),
                         static_cast<float>(0),
-                        static_cast<float>(0),
+                        static_cast<float>(0), 
                         static_cast<float>(0)};
             commandMap[can_id[0]] = movecmd;
             
@@ -130,10 +162,39 @@ void CANMotor::threadLoop()
             stateMap = motor_controller_->setZeroPosition(can_id);
             cmd_m_state = 0;
     
+            // Set Position limits
+            min_pos = std::stod(info_.hardware_parameters.at("min_position_limit"));
+            max_pos = std::stod(info_.hardware_parameters.at("max_position_limit"));
+
             std::cout << "Motor: " << can_id[0] << " Zeroed"<< std::endl;
         }
+    }
+    else if(cmd_m_state == 4)
+        // E_stop
+    { 
+
+        std::cout << "Motor Estopped:  " << can_id[0] << std::endl;
+        // stop motor exert 0 effort
+        movecmd = {static_cast<float>(0),
+                    static_cast<float>(0),
+                    static_cast<float>(0),
+                    static_cast<float>(0.5), //kd
+                    static_cast<float>(0)};
+        commandMap[can_id[0]] = movecmd;
+        
+        stateMap = send_motor_cmd();
+
+        std::cout << "Motor: "<< joint_name << "ID: " << can_id[0] << " E-stop"<< std::endl;
+        // std::this_thread::sleep_for(1s);
+    }
+
+    else
+    {
+        std::cout << "Motor: "<< joint_name << "ID: " << can_id[0] << " has entered an unknown state "<< std::endl;
 
     }
+
+    
 
     //update state variables AFTER sending command
     state_position = stateMap[can_id[0]].position * cmd_flip - (cmd_flip*position_offset);
@@ -161,20 +222,23 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     // Initialization code
     hardware_interface::ComponentInfo config;
 
+    // Joint name for interface names
     joint_name = info.hardware_parameters.at("joint_name");
+
+    // Motor Controller params
     const char* can_bus = info.hardware_parameters.at("can_bus").c_str();
     can_id = parseCanId(info.hardware_parameters.at("can_id"));
 
-    effort_limit = std::stod(info.hardware_parameters.at("effort_limit"));
-
+    // Thread period
     frequency = std::stod(info.hardware_parameters.at("frequency"));
     period = std::round(1/frequency*1000)/1000; //round to ms
     thread_period = std::chrono::duration<double>(period);
 
-    position_offset = std::stod(info.hardware_parameters.at("zero_position_offset"));
+    // Motor limit parameters
+    effort_limit = std::stod(info.hardware_parameters.at("effort_limit"));
 
+    // set Degree or radian controll
     command_type = info.hardware_parameters.at("command_type").c_str();
-
     if (command_type == "degree" || command_type == "deg"){
         command_type = "degree";
     }
@@ -187,10 +251,7 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
         command_type = "radian";
     }
 
-    // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
-
-    
-
+    // Create the motor controller object
     motor_controller_ = std::make_unique<motor_driver::MotorDriver>(
         can_id, can_bus, motor_driver::MotorType::GIM8108
     );

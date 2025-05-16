@@ -88,13 +88,16 @@ private:
     double state_kd;
     double state_m_state;
     double state_flip;
-
+    
     std::string command_type;
     double frequency;
     double period;
     std::chrono::duration<double> thread_period;
 
     double position_offset;
+
+    double min_pos;
+    double max_pos;
 
     std::map<int, motor_driver::motorCommand> commandMap;
     motor_driver::motorCommand movecmd ;

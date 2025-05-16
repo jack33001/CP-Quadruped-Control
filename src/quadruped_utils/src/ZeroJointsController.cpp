@@ -97,6 +97,12 @@ controller_interface::CallbackReturn ZeroJointController::on_init()
 
             vel = auto_declare<double>("velocity", vel);
 
+
+            zeroed_kp = auto_declare<double>("zeroed_kp", kp);
+            zeroed_kd = auto_declare<double>("zeroed_kd", kd);
+
+
+
             // initialize zero status vector: 0 =zeroed, 1 = not zeroed
             zero_status = std::vector<int>(joint_names_.size(), 1);
 
@@ -204,7 +210,12 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
         state_interface_map_[interface.get_interface_name()]->push_back(interface);
     }
 
-
+    // Set motor state to receive commands  
+    for (size_t i = 0; i < joint_names_.size(); ++i) 
+        {
+        success = joint_m_state_command_interface_[i].get().set_value(0.0);
+        assert(success); 
+        }
 
     return CallbackReturn::SUCCESS;
     }
@@ -213,48 +224,31 @@ controller_interface::CallbackReturn ZeroJointController::on_activate(const rclc
 controller_interface::return_type ZeroJointController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
     // RCLCPP_INFO(get_node()->get_logger(), "___ UPDATING ZERO JOINT CONTROLLER ___");
- 
-
-    // print all kp and kd joint cmd interfaces
-    // for (size_t i = 0; i < joint_names_.size(); ++i) 
-    // {
-    //     auto kp_s = joint_kp_command_interface_[i].get().get_name().c_str();
-    //     auto kd_s = joint_kd_command_interface_[i].get().get_name().c_str();
-    //     RCLCPP_INFO(get_node()->get_logger(), "JOINT %s KP: %s, KD: %s", joint_names_[i].c_str(), kp_s, kd_s);
-    // }
-
 
     // if all elements of zero status are 0, then end the controller
     all_zero = true;
-    
     
     // for all joints
     for (size_t i = 0; i < joint_names_.size(); ++i) 
         {
 
-            // if zeroed
-            if (zero_status[i] == 0)
-            {
-                success = joint_kd_command_interface_[i].get().set_value(1.0);
-                    assert(success);   
-
-            }
             // if not zeroed
             if (zero_status[i] == 1)
             {
                 auto effort = joint_effort_state_interface_[i].get().get_value(); 
 
-                // if effort limit exceeded (run into limit)
+                // if effort limit exceeded (found limit), zero
                 if (abs(effort) > zero_effort_lim)
+                // Zeroing Procedure
                 { 
                     RCLCPP_INFO(get_node()->get_logger(), "JOINT %s EFFORT LIMIT EXCEEDED IN ZERO: %f", joint_names_[i].c_str(),effort);
 
-                    // set Velocity to zero
+                    // set command interfaces on zero
                     bool success = joint_velocity_command_interface_[i].get().set_value(0.0);
                     assert(success);
-                    success = joint_kp_command_interface_[i].get().set_value(0.0);
+                    success = joint_kp_command_interface_[i].get().set_value(zeroed_kp);
                     assert(success);   
-                    success = joint_kd_command_interface_[i].get().set_value(0.0);
+                    success = joint_kd_command_interface_[i].get().set_value(zeroed_kd);
                     assert(success);    
                     // Zero motor
                     success = joint_m_state_command_interface_[i].get().set_value(3.0);
@@ -279,10 +273,6 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
                 bool success = joint_velocity_command_interface_[i].get().set_value(vel*zero_direction_[i]);
                 assert(success);
             }
-
-
-
-
         }
 
 
@@ -292,7 +282,7 @@ controller_interface::return_type ZeroJointController::update(const rclcpp::Time
     {
   
         RCLCPP_INFO(get_node()->get_logger(), "All joints zeroed, waiting...");
-
+        // on_deactivate()
         // deactivate_controller("zero_joints_controller"); 
     }
 
@@ -309,9 +299,9 @@ controller_interface::CallbackReturn ZeroJointController::on_deactivate(const rc
     {
     for (size_t i = 0; i < joint_names_.size(); ++i) 
         {
-        success = joint_kp_command_interface_[i].get().set_value(0.0);
+        success = joint_kp_command_interface_[i].get().set_value(zeroed_kp);
         assert(success);   
-        success = joint_kd_command_interface_[i].get().set_value(0.0);
+        success = joint_kd_command_interface_[i].get().set_value(zeroed_kd);
         assert(success);
         success = joint_velocity_command_interface_[i].get().set_value(0.0);
         assert(success);

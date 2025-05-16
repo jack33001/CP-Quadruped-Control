@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.12)
 project(quadruped_hardware)
 
 # find_library(SH2_LIBRARY sh2 REQUIRED)
@@ -28,16 +28,16 @@ add_library(${PROJECT_NAME} SHARED
 # JSON library dependency____________
 include(FetchContent)
 
-FetchContent_Declare(
-  nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.2 # Replace with the desired version
+# FetchContent_Declare(
+#   nlohmann_json
+#   GIT_REPOSITORY https://github.com/nlohmann/json.git
+#   GIT_TAG v3.11.2 # Replace with the desired version
   
-)
-# set(BUILD_EXAMPLES OFF CACHE INTERNAL "" )
-FetchContent_MakeAvailable(nlohmann_json)
+# )
+# # set(BUILD_EXAMPLES OFF CACHE INTERNAL "" )
+# FetchContent_MakeAvailable(nlohmann_json)
 
-target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+# target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
 # end JSON library dependency__________
 
 
