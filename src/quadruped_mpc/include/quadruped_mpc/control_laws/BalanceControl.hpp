@@ -112,7 +112,7 @@ namespace quadruped_mpc
     ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
 
     // Log the table
-    RCLCPP_DEBUG(get_node()->get_logger(), "State Vector Prediction:\n%s", ss.str().c_str());
+    RCLCPP_INFO(get_node()->get_logger(), "State Vector Prediction:\n%s", ss.str().c_str());
   }
 
   inline void BalanceController::print_controller_output_table()
@@ -251,7 +251,7 @@ namespace quadruped_mpc
     ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝";
 
     // Log the table
-    RCLCPP_DEBUG(get_node()->get_logger(), "Balance Controller Output (Foot Forces and Positions):\n%s", ss.str().c_str());
+    RCLCPP_INFO(get_node()->get_logger(), "Balance Controller Output (Foot Forces and Positions):\n%s", ss.str().c_str());
   }
 
   inline bool BalanceController::update_state()
@@ -598,6 +598,10 @@ namespace quadruped_mpc
           foot_forces[foot].y = optimal_control_[base_idx + 1];
           foot_forces[foot].z = optimal_control_[base_idx + 2];
         }
+
+        msg.total_force.x = -(foot_forces[0].x + foot_forces[1].x + foot_forces[2].x + foot_forces[3].x);
+        msg.total_force.y = -(foot_forces[0].y + foot_forces[1].y + foot_forces[2].y + foot_forces[3].y);
+        msg.total_force.z = -(foot_forces[0].z + foot_forces[1].z + foot_forces[2].z + foot_forces[3].z);
 
         foot_forces_publisher_->unlockAndPublish();
       }

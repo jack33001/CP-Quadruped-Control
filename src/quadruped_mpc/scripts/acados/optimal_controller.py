@@ -43,6 +43,7 @@ class QuadrupedOptimalController:
                 self.velocity_weights = weights.get('velocity', [1000, 1000, 1000])
                 self.angular_velocity_weights = weights.get('angular_velocity', [10000, 10000, 10000])
                 self.terminal_weight_factor = weights.get('terminal_factor', 10.0)
+                self.force_weight = weights.get('force_weight', 0)
                 
         except Exception as e:
             logger.warning(f"Error loading config file: {e}. Using default parameters.")
@@ -59,6 +60,7 @@ class QuadrupedOptimalController:
             self.velocity_weights = [1000, 1000, 1000]
             self.angular_velocity_weights = [10000, 10000, 10000]
             self.terminal_weight_factor = 10.0
+            self.force_weight = 0
             
         logger.info(f"Loaded parameters: mass={self.mass}kg, inertia={self.inertia}kg*m^2")
         logger.info(f"Loaded weights: position={self.position_weights}, orientation={self.orientation_weights}, "
@@ -171,7 +173,7 @@ class QuadrupedOptimalController:
         # Selection matrices - only select first 13 states
         Vx = numpy.zeros((ny, nx))
         Vx[:13, :13] = numpy.eye(13)  # Select only first 13 states
-        Vu = numpy.zeros((ny, nu))*.001 # for now, don't worry about policing the controller effort
+        Vu = numpy.ones((ny, nu))*self.force_weight # for now, don't worry about policing the controller effort
         
         ocp.cost.Vx = Vx
         ocp.cost.Vu = Vu

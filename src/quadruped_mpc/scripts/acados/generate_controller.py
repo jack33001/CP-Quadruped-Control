@@ -30,7 +30,7 @@ def main():
     if not config_file:
         # Use the consolidated config file instead of optimal_controller.yaml
         root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        config_file = os.path.join(root_dir, 'src', 'quadruped_mpc', 'config', 'quadruped_controllers.yaml')
+        config_file = os.path.join(root_dir,'config', 'quadruped_controllers.yaml')
     
     # Create controller
     controller = QuadrupedOptimalController(code_export_dir=output_dir, param_file=config_file)

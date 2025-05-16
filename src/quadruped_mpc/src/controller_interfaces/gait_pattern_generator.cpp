@@ -28,22 +28,22 @@ GaitPatternGenerator::state_interface_configuration() const
 controller_interface::return_type
 GaitPatternGenerator::update(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
-    // Pass the time information to the functions that need it
-    if (!unpack_state()) {
-        return controller_interface::return_type::ERROR;
-    }
+  // Pass the time information to the functions that need it
+  if (!unpack_state()) {
+      return controller_interface::return_type::ERROR;
+  }
 
-    if (!update_foot_phase(time, period)) {
-        return controller_interface::return_type::ERROR;
-    }
+  if (!update_foot_phase(time, period)) {
+      return controller_interface::return_type::ERROR;
+  }
 
-    if (!support_polygon()) {
-        return controller_interface::return_type::ERROR;
-    }
+  if (!support_polygon()) {
+      return controller_interface::return_type::ERROR;
+  }
 
-    if (!publish_pattern()) {
-        return controller_interface::return_type::ERROR;
-    }
+  if (!publish_pattern()) {
+      return controller_interface::return_type::ERROR;
+  }
 
   return controller_interface::return_type::OK;
 }

@@ -134,19 +134,6 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   }
   RCLCPP_INFO(get_node()->get_logger(), "ACADOS solver initialized successfully");
 
-  // Get the MPC parameters
-  try {
-    // Log the parameters we're using
-    RCLCPP_INFO(get_node()->get_logger(), "Using MPC parameters - mass: %.2f kg, inertia: %.2f kg*m^2", 
-                get_node()->get_parameter("mass").as_double(),
-                get_node()->get_parameter("inertia").as_double());
-    RCLCPP_INFO(get_node()->get_logger(), "MPC parameters - stages: %ld, horizon: %.1f s",
-                get_node()->get_parameter("stages").as_int(),
-                get_node()->get_parameter("horizon").as_double());
-  } catch (const std::exception& e) {
-    RCLCPP_WARN(get_node()->get_logger(), "Error getting MPC parameters: %s. Using defaults.", e.what());
-  }
-
   // Subscribe to command topics
   pose_cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(
     "/quadruped/cmd/pose_cmd", 10,
