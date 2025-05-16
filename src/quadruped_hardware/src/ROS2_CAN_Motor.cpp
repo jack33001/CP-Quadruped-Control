@@ -173,7 +173,7 @@ void CANMotor::threadLoop()
         // E_stop
     { 
 
-        std::cout << "Motor Estopped:  " << can_id[0] << std::endl;
+        // std::cout << "Motor Estopped:  " << can_id[0] << std::endl;
         // stop motor exert 0 effort
         movecmd = {static_cast<float>(0),
                     static_cast<float>(0),
@@ -184,7 +184,9 @@ void CANMotor::threadLoop()
         
         stateMap = send_motor_cmd();
 
-        std::cout << "Motor: "<< joint_name << "ID: " << can_id[0] << " E-stop"<< std::endl;
+        std::this_thread::sleep_for(100ms);  // Adjust timing as needed
+
+        // std::cout << "Motor: "<< joint_name << "ID: " << can_id[0] << " E-stop"<< std::endl;
         // std::this_thread::sleep_for(1s);
     }
 

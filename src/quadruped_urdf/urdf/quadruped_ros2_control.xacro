@@ -36,8 +36,8 @@
             <param name="command_type" >radian</param>     
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param>
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param>
+            <param name="min_position_limit" >-3.13</param>
+            <param name="max_position_limit" >0.531</param>
 
         </hardware>
         <joint name="fr_hip">
@@ -68,8 +68,8 @@
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param> 
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param>
+            <param name="min_position_limit" >-4.0</param>
+            <param name="max_position_limit" >0.2</param>
         </hardware>
         <joint name="fr_knee">
             <command_interface name="position"/>
@@ -99,8 +99,8 @@
             <param name="command_type" >radian</param>
             <param name="frequency" >50.0</param>     
             <param name="zero_position_offset" >0</param> 
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param>
+            <param name="min_position_limit" >-0.531</param>
+            <param name="max_position_limit" >3.131</param>
 
         </hardware>
         <joint name="rr_hip">
@@ -131,8 +131,8 @@
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param> 
             <param name="zero_position_offset" >0</param>
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param> 
+            <param name="min_position_limit" >-0.02</param>
+            <param name="max_position_limit" >4.0</param> 
 
         </hardware>
         <joint name="rr_knee">
@@ -163,8 +163,8 @@
             <param name="command_type" >radian</param>  
             <param name="frequency" >50.0</param>    
             <param name="zero_position_offset" >0</param> 
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param>
+            <param name="min_position_limit" >-0.53</param>
+            <param name="max_position_limit" >3.131</param>
 
         </hardware>
         <joint name="fl_hip">
@@ -195,8 +195,8 @@
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>  
             <param name="zero_position_offset" >0</param>
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param> 
+            <param name="min_position_limit" >-0.02</param>
+            <param name="max_position_limit" >4.0</param> 
 
         </hardware>
         <joint name="fl_knee">
@@ -227,8 +227,8 @@
             <param name="command_type" >radian</param>    
             <param name="frequency" >50.0</param> 
             <param name="zero_position_offset" >0</param>
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param> 
+            <param name="min_position_limit" >-3.131</param>
+            <param name="max_position_limit" >0.531</param> 
 
         </hardware>
         <joint name="rl_hip">
@@ -260,8 +260,8 @@
             <param name="command_type" >radian</param> 
             <param name="frequency" >50.0</param>  
             <param name="zero_position_offset" >0.0</param>
-            <param name="min_position_limit" >-1.0</param>
-            <param name="max_position_limit" >1.0</param> 
+            <param name="min_position_limit" >-4.0</param>
+            <param name="max_position_limit" >0.02</param> 
 
         </hardware>
         <joint name="rl_knee">
