@@ -542,8 +542,8 @@ namespace quadruped_mpc
       }
 
       // Uncomment these lines for detailed debug output when needed
-      print_controller_output_table();
-      print_state_vector_table();
+      //print_controller_output_table();
+      //print_state_vector_table();
 
       // Log debug info about foot forces more efficiently
       const char *foot_names[] = {"Foot1", "Foot2", "Foot3", "Foot4"};

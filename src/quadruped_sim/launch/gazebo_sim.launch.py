@@ -46,29 +46,6 @@ def generate_launch_description():
         ]
     )
 
-    # Contact sensors bridge node
-    contact_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='contact_bridge',
-        output='screen',
-        parameters=[{'use_sim_time': True}],
-        arguments=[
-            # Bridge all four foot contact sensors
-            '/world/empty/model/quadruped/link/fr_shin/sensor/fr_foot_contact/contact@gz_msgs/msg/Contacts[gz.msgs.Contacts',
-            '/world/empty/model/quadruped/link/fl_shin/sensor/fl_foot_contact/contact@gz_msgs/msg/Contacts[gz.msgs.Contacts',
-            '/world/empty/model/quadruped/link/rr_shin/sensor/rr_foot_contact/contact@gz_msgs/msg/Contacts[gz.msgs.Contacts',
-            '/world/empty/model/quadruped/link/rl_shin/sensor/rl_foot_contact/contact@gz_msgs/msg/Contacts[gz.msgs.Contacts',
-        ],
-        remappings=[
-            # Remap to unified namespace with clear naming
-            ('/world/empty/model/quadruped/link/fr_shin/sensor/fr_foot_contact/contact', '/quadruped/state/ground_truth/contacts/fr_foot'),
-            ('/world/empty/model/quadruped/link/fl_shin/sensor/fl_foot_contact/contact', '/quadruped/state/ground_truth/contacts/fl_foot'),
-            ('/world/empty/model/quadruped/link/rr_shin/sensor/rr_foot_contact/contact', '/quadruped/state/ground_truth/contacts/rr_foot'),
-            ('/world/empty/model/quadruped/link/rl_shin/sensor/rl_foot_contact/contact', '/quadruped/state/ground_truth/contacts/rl_foot'),
-        ]
-    )
-
     # Spawn robot node
     spawn_robot = Node(
         package='ros_gz_sim',
@@ -127,7 +104,5 @@ def generate_launch_description():
         spawn_robot,
         # Then bridge its pose and contacts
         state_bridge,
-        contact_bridge,
-        #plotjuggler,
         bag_recorder,
     ])

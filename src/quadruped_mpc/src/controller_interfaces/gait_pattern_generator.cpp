@@ -122,11 +122,23 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
     step_length_ = node->declare_parameter<double>("step_length", 0.1);
     step_width_ = node->declare_parameter<double>("step_width", 0.1);
 
+    // Initialize prediction data
+    prediction_stages_ = node->declare_parameter<int>("prediction_stages", 50);
+    prediction_horizon_ = node->declare_parameter<double>("prediction_horizon", 5.0);
+    
+    // Initialize prediction arrays
+    for (int foot = 0; foot < 4; foot++) {
+      prediction_data_.states[foot].resize(prediction_stages_, -2);  // Default to pre-init state
+      prediction_data_.phases[foot].resize(prediction_stages_, 0.0); // Default phase 0.0
+    }
+    prediction_data_.timestep = prediction_horizon_ / prediction_stages_;
+    
+    // Calculate total cycle time (needed for logging)
+    double total_cycle_time = stance_duration_ + swing_duration_;
+    
     // Use the gait type to determine the phase offsets
     // First, figure out how many steps are in the sequence
     int step_count_ = *std::max_element(gait_type_.begin(), gait_type_.end());
-    // Calculate total cycle time based on stance and swing durations
-    double total_cycle_time_ = (stance_duration_ + swing_duration_);
     // Evenly space the foot phases over the cycle
 
     // Add a declaration for current_time
@@ -134,7 +146,7 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
 
     for (int i = 0; i < 4; i++) {
       // Set up the phase offset per-foot
-      foot_info_[i].phase_offset = static_cast<double>(gait_type_[i]-1) * (total_cycle_time_)/step_count_;
+      foot_info_[i].phase_offset = static_cast<double>(gait_type_[i]-1) * (total_cycle_time)/step_count_;
       // Start all feet in the -2 (preinit) state
       foot_info_[i].state = -2;
     }
@@ -148,7 +160,10 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
     RCLCPP_INFO(node->get_logger(), "  Step height: %f", step_height_);
     RCLCPP_INFO(node->get_logger(), "  Step length: %f", step_length_);
     RCLCPP_INFO(node->get_logger(), "  Step width: %f", step_width_);
-    RCLCPP_INFO(node->get_logger(), "  Total cycle time: %f", total_cycle_time_);
+    RCLCPP_INFO(node->get_logger(), "  Total cycle time: %f", total_cycle_time);
+    RCLCPP_INFO(node->get_logger(), "  Prediction stages: %d", prediction_stages_);
+    RCLCPP_INFO(node->get_logger(), "  Prediction horizon: %f", prediction_horizon_);
+    RCLCPP_INFO(node->get_logger(), "  Prediction timestep: %f", prediction_data_.timestep);
     
     // Set up state subscription
     state_sub_ = node->create_subscription<quadruped_msgs::msg::QuadrupedState>(
@@ -190,6 +205,59 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
     rt_gait_pub_ = std::make_unique<RTPublisher>(gait_pub);
     gait_msg_ = std::make_shared<quadruped_msgs::msg::GaitPattern>();
 
+    // Initialize gait pattern message with prediction arrays
+    if (rt_gait_pub_ && rt_gait_pub_->trylock()) {
+      auto& msg = rt_gait_pub_->msg_;
+      // Set initial states to stance
+      msg.foot1_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      msg.foot2_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      msg.foot3_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      msg.foot4_state = static_cast<int32_t>(-2);  // Changed to -2 (preinit state)
+      // Initialize other fields with default values
+      msg.foot1_phase = 0.0f;
+      msg.foot2_phase = 0.0f;
+      msg.foot3_phase = 0.0f;
+      msg.foot4_phase = 0.0f;
+      // Initialize step positions to prevent NaN values
+      msg.foot1_step_position.x = 0.0;
+      msg.foot1_step_position.y = 0.0;
+      msg.foot1_step_position.z = 0.0;
+      msg.foot2_step_position.x = 0.0;
+      msg.foot2_step_position.y = 0.0;
+      msg.foot2_step_position.z = 0.0;
+      msg.foot3_step_position.x = 0.0;
+      msg.foot3_step_position.y = 0.0;
+      msg.foot3_step_position.z = 0.0;
+      msg.foot4_step_position.x = 0.0;
+      msg.foot4_step_position.y = 0.0;
+      msg.foot4_step_position.z = 0.0;
+      // Initialize COM position
+      msg.com_position.x = 0.0;
+      msg.com_position.y = 0.0;
+      msg.com_position.z = 0.0;
+      // Initialize step height
+      msg.step_height = 0.05f;  // Default 5cm
+      
+      // Initialize prediction arrays
+      std::vector<int32_t> predicted_states;
+      std::vector<float> predicted_phases;
+      
+      for (int foot = 0; foot < 4; foot++) {
+        for (int step = 0; step < prediction_stages_; step++) {
+          predicted_states.push_back(-2);  // Default to pre-init state
+          predicted_phases.push_back(0.0f);  // Default phase 0.0
+        }
+      }
+      
+      msg.predicted_states = predicted_states;
+      msg.predicted_phases = predicted_phases;
+      msg.prediction_stages = prediction_stages_;
+      msg.prediction_horizon = static_cast<float>(prediction_horizon_);
+      msg.prediction_timestep = static_cast<float>(prediction_data_.timestep);
+      
+      rt_gait_pub_->unlockAndPublish();
+    }
+    
     RCLCPP_INFO(node->get_logger(), "Gait pattern generator configured successfully");
     RCLCPP_INFO(node->get_logger(), "Waiting for gait start command (SPACE key) to begin initialization sequence");
     return CallbackReturn::SUCCESS;

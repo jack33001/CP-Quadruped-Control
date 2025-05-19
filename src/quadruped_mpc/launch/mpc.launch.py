@@ -23,7 +23,7 @@ def generate_launch_description():
             'state_estimator',
             'gait_pattern_generator',
             'balance_controller',
-            'foot_controller'
+            #'foot_controller'
         ],
         output='screen',
     )

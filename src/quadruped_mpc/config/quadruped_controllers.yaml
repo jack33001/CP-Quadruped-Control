@@ -56,6 +56,9 @@ gait_pattern_generator:
     stance_duration: 0.6
     swing_duration: 0.1
     step_height: 0.1
+    # Duplicate MPC parameters here to avoid dependency on balance_controller
+    stages: 50    # Number of stages in the MPC
+    horizon: 5.0  # Time horizon in seconds
 
 balance_controller:
   ros__parameters:
