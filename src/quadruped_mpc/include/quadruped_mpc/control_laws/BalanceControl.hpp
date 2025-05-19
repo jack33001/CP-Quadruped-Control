@@ -212,7 +212,7 @@ namespace quadruped_mpc
     double total_z = stage_controls[0][2] + stage_controls[0][5] + stage_controls[0][8] + stage_controls[0][11];
 
     // Add a separator line before the totals
-    ss << "╠═════╩══════════════════════════╩══════════════════════════╩══════════════════════════╩══════════════════════════╬═══════════════════════════╣\n";
+    ss << "╠═════╩══════════════════════════╩══════════════════════════╦══════════════════════════╦══════════════════════════╬═══════════════════════════╣\n";
 
     // Add the totals row for forces
     ss << "║ TOTAL FORCE (4 feet)                                                                                            ║ [";
@@ -352,6 +352,35 @@ namespace quadruped_mpc
         current_state_[0] -= latest_gait_->com_position.x;
         current_state_[1] -= latest_gait_->com_position.y;
 
+        // Unpack predicted states and phases into 2D arrays
+        int num_stages = latest_gait_->prediction_stages;
+
+        // Process predicted states (converts from flattened array to 2D)
+        if (!latest_gait_->predicted_states.empty() &&
+            latest_gait_->predicted_states.size() >= 4 * num_stages)
+        {
+          for (int stage = 0; stage < num_stages; stage++)
+          {
+            for (int foot = 0; foot < 4; foot++)
+            {
+              foot_states_prediction_[stage][foot] = latest_gait_->predicted_states[stage + foot * num_stages];
+            }
+          }
+        }
+
+        // Process predicted phases (converts from flattened array to 2D)
+        if (!latest_gait_->predicted_phases.empty() &&
+            latest_gait_->predicted_phases.size() >= 4 * num_stages)
+        {
+          for (int stage = 0; stage < num_stages; stage++)
+          {
+            for (int foot = 0; foot < 4; foot++)
+            {
+              foot_phases_prediction_[stage][foot] = latest_gait_->predicted_phases[stage + foot * num_stages];
+            }
+          }
+        }
+
         // Use more concise logging for foot states
         RCLCPP_DEBUG(get_node()->get_logger(), "Foot states: [%d, %d, %d, %d]",
                      foot_states_[0], foot_states_[1], foot_states_[2], foot_states_[3]);
@@ -367,15 +396,15 @@ namespace quadruped_mpc
           desired_state_[0] = com_offset_[0];  // Apply X offset
           desired_state_[1] = com_offset_[1];  // Apply Y offset
           desired_state_[2] = latest_pose_cmd_->position.z + com_offset_[2];  // Apply Z offset to commanded height
-          
+
           // Apply quaternion from command
           desired_state_[3] = latest_pose_cmd_->orientation.w;
           desired_state_[4] = latest_pose_cmd_->orientation.x;
           desired_state_[5] = latest_pose_cmd_->orientation.y;
           desired_state_[6] = latest_pose_cmd_->orientation.z;
-          
+
           RCLCPP_DEBUG(get_node()->get_logger(), "Updated desired pose with COM offset: [%.3f, %.3f, %.3f]",
-                      desired_state_[0], desired_state_[1], desired_state_[2]);
+                       desired_state_[0], desired_state_[1], desired_state_[2]);
           new_pose_cmd_received_ = false;
         }
 
@@ -512,7 +541,7 @@ namespace quadruped_mpc
                                       stage, "lbu", min_force.data());
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,
                                       stage, "ubu", max_force.data());
-        // Set the height constraints
+        // Set the state
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,
                                       stage, "lbx", lowest_state.data());
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,

@@ -84,6 +84,29 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   desired_state_[2] = 0.15;  // Set desired height
   desired_state_[3] = 1.0;  // Forward facing quaternion has w=1
 
+  // Get stages parameter for prediction arrays
+  int stages = 50;  // Default value
+  try {
+    get_node()->declare_parameter("stages", 50);
+    stages = get_node()->get_parameter("stages").as_int();
+    RCLCPP_INFO(get_node()->get_logger(), "Using %d stages for prediction arrays", stages);
+  } catch (const std::exception& e) {
+    RCLCPP_WARN(get_node()->get_logger(), "Error getting stages parameter: %s. Using default of 50", e.what());
+  }
+
+  // Initialize prediction arrays with default values
+  foot_states_prediction_.resize(stages);
+  foot_phases_prediction_.resize(stages);
+  
+  // Fill prediction arrays with default values (-2 for states, 0 for phases)
+  for (auto& state_array : foot_states_prediction_) {
+    state_array.fill(-2);  // -2 as default/invalid state value
+  }
+  
+  for (auto& phase_array : foot_phases_prediction_) {
+    phase_array.fill(0.0f);  // 0.0 as default phase value
+  }
+
   // Read the COM offset from parameters
   try {
     // Declare and get the COM offset parameter with default values

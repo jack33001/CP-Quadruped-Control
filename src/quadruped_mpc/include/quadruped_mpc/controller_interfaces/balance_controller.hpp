@@ -52,9 +52,12 @@ protected:
   
   // Foot position storage - convert to a 2D array for more efficient access
   std::array<std::array<double,3>, 5> foot_positions_; // 4 feet + COM at index 4
-  
   // Foot state tracking - use an array for more consistent access
   std::array<int, 4> foot_states_{0, 0, 0, 0};
+  
+  // 2D arrays for tracking foot states and phases across multiple stages
+  std::vector<std::array<int, 4>> foot_states_prediction_;  // [stages][4 feet]
+  std::vector<std::array<float, 4>> foot_phases_prediction_; // [stages][4 feet]
 
 private:
   // Command subscriptions
