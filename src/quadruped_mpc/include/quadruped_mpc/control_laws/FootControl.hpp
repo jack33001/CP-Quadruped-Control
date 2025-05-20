@@ -318,8 +318,8 @@ namespace quadruped_mpc
           foot.trajectories[i].z = trajectory[i][2];
         }
 
-        // Add INFO level logging for control points with foot number
-        RCLCPP_INFO(controller.get_node()->get_logger(),
+        // Add DEBUG level logging for control points with foot number
+        RCLCPP_DEBUG(controller.get_node()->get_logger(),
                    "Foot %d (%s) trajectory control points: start=[%.3f, %.3f, %.3f], mid=[%.3f, %.3f, %.3f], end=[%.3f, %.3f, %.3f]",
                    foot_idx + 1, foot.name, 
                    p0.x(), p0.y(), p0.z(),
