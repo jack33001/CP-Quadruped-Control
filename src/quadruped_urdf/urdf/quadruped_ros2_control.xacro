@@ -32,7 +32,6 @@
             <param name="can_id" >10</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>     
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param>
@@ -56,6 +55,7 @@
         </joint>
     </ros2_control>
 
+
     <ros2_control name="quadruped_hardware/CANMotorDriver_FRK" type="system">
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
@@ -64,7 +64,6 @@
             <param name="can_id" >11</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param> 
@@ -95,7 +94,6 @@
             <param name="can_id" >12</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>
             <param name="frequency" >50.0</param>     
             <param name="zero_position_offset" >0</param> 
@@ -127,7 +125,6 @@
             <param name="can_id" >13</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param> 
             <param name="zero_position_offset" >0</param>
@@ -159,7 +156,6 @@
             <param name="can_id" >14</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>  
             <param name="frequency" >50.0</param>    
             <param name="zero_position_offset" >0</param> 
@@ -191,7 +187,6 @@
             <param name="can_id" >15</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>  
             <param name="zero_position_offset" >0</param>
@@ -223,7 +218,6 @@
             <param name="can_id" >16</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param>    
             <param name="frequency" >50.0</param> 
             <param name="zero_position_offset" >0</param>
@@ -256,7 +250,6 @@
             <param name="can_id" >17</param>
             <param name="flip" >true</param>
             <param name="effort_limit" >2</param>
-            <!-- degree or rad -->
             <param name="command_type" >radian</param> 
             <param name="frequency" >50.0</param>  
             <param name="zero_position_offset" >0.0</param>
@@ -280,5 +273,5 @@
         </joint>
     </ros2_control>  
 
-    
+     
 </robot>

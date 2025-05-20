@@ -22,6 +22,7 @@
 
 
 #include "quadruped_hardware/CANInterface.hpp"
+#include "watchdog.hpp"
 
 
 using namespace CAN_interface;
@@ -53,6 +54,7 @@ public:
     void startThread();
     void stopThread();
     void threadLoop();
+    void on_timeout();
 
     
 
@@ -88,6 +90,7 @@ private:
     double state_kd;
     double state_m_state;
     double state_flip;
+    double state_watchdog;
     
     std::string command_type;
     double frequency;
@@ -100,9 +103,13 @@ private:
     double max_pos;
 
     std::map<int, motor_driver::motorCommand> commandMap;
-    motor_driver::motorCommand movecmd ;
 
     std::map<int, motor_driver::motorState> stateMap;
+
+    motor_driver::motorCommand movecmd ;
+
+    std::unique_ptr<Watchdog>  watchdog;
+    // std::optional<Watchdog> wd;
 };
 
 } // namespace quadruped_hardware

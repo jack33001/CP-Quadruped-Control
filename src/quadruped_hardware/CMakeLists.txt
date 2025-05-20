@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} SHARED
   src/ROS2_CAN_Motor.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
+  src/watchdog.cpp
  
 )
 

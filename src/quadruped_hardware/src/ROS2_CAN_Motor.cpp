@@ -9,7 +9,7 @@
 
 
 #include "quadruped_hardware/ROS2_CAN_Motor.hpp"
-
+// #include "watchdog.cpp"
 
 namespace quadruped_hardware {
 
@@ -28,7 +28,7 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(0), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
                        state_position(0), state_velocity(0), state_effort(0), state_kp(0), state_kd(1), state_m_state(0),state_flip(1),
-                        effort_limit(1.5),frequency(100), min_pos(-10000), max_pos(10000) {}
+                        effort_limit(1.5),frequency(100), min_pos(-10000), max_pos(10000),state_watchdog(0) {}
 
 
 std::map<int, motor_driver::motorState> CANMotor::send_motor_cmd(){
@@ -86,7 +86,8 @@ void CANMotor::threadLoop()
   
   while (running_)
   {
-
+    // reset watchdog timer
+    watchdog->reset();
 
 
     // Estop conditions
@@ -172,9 +173,6 @@ void CANMotor::threadLoop()
     else if(cmd_m_state == 4)
         // E_stop
     { 
-
-        // std::cout << "Motor Estopped:  " << can_id[0] << std::endl;
-        // stop motor exert 0 effort
         movecmd = {static_cast<float>(0),
                     static_cast<float>(0),
                     static_cast<float>(0),
@@ -184,19 +182,13 @@ void CANMotor::threadLoop()
         
         stateMap = send_motor_cmd();
 
-        std::this_thread::sleep_for(100ms);  // Adjust timing as needed
-
-        // std::cout << "Motor: "<< joint_name << "ID: " << can_id[0] << " E-stop"<< std::endl;
-        // std::this_thread::sleep_for(1s);
+        std::this_thread::sleep_for(100ms);  // extra timing as needed
     }
 
     else
     {
         std::cout << "Motor: "<< joint_name << "ID: " << can_id[0] << " has entered an unknown state "<< std::endl;
-
     }
-
-    
 
     //update state variables AFTER sending command
     state_position = stateMap[can_id[0]].position * cmd_flip - (cmd_flip*position_offset);
@@ -206,19 +198,21 @@ void CANMotor::threadLoop()
     state_kd = cmd_kd;
     state_m_state = cmd_m_state;
     state_flip = cmd_flip;
+    state_watchdog = 0; //watchdog set to okay every loop, if hung up watchdog will be set to 1
 
-
-
-    // Sleep to maintain your desired update rate
-
+    // Sleep to maintain your desired thread update rate
     std::this_thread::sleep_for(thread_period);  // Adjust timing as needed
   }
 }
 
 
+void CANMotor::on_timeout(){
+    // timeout function for watchdog timer
+    state_watchdog=1;
+    // RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Watchdog triggered on motor: %d", can_id[0]);
 
-
-
+    std::this_thread::sleep_for(10ms);
+}
 
 hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::HardwareInfo& info){
     // Initialization code
@@ -258,6 +252,12 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
         can_id, can_bus, motor_driver::MotorType::GIM8108
     );
 
+    unsigned int timeout_ms = static_cast<unsigned int>(thread_period.count() * 5 * 1000);
+    watchdog = std::make_unique <Watchdog> (std::chrono::milliseconds(timeout_ms),
+     [this]() { this->on_timeout(); });
+    // 
+    // wd.emplace(timeout_ms, [this]() { this->on_timeout(); });
+
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -292,14 +292,18 @@ hardware_interface::CallbackReturn CANMotor::on_activate(const rclcpp_lifecycle:
 
     startThread();
 
+    watchdog->start();
+
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn CANMotor::on_deactivate(const rclcpp_lifecycle::State& previous_state) {
     // Deactivation code
+    stopThread();
+
     stateMap = motor_controller_->disableMotor(can_id);
 
-    stopThread();
+    watchdog->stop();
     
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -320,7 +324,8 @@ std::vector<hardware_interface::StateInterface> CANMotor::export_state_interface
         hardware_interface::StateInterface(joint_name,  "m_state", &state_m_state));
     state_interfaces_.emplace_back(
         hardware_interface::StateInterface(joint_name,  "flip", &state_flip));
-    
+    state_interfaces_.emplace_back(
+        hardware_interface::StateInterface(joint_name,  "watchdog", &state_watchdog));
     
 
 
