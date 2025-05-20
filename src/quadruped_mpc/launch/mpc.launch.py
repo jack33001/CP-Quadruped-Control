@@ -18,12 +18,13 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=[
-            'joint_state_broadcaster',
-            'imu_sensor_controller',
-            'state_estimator',
-            'gait_pattern_generator',
-            'balance_controller',
-            'foot_controller'
+            # 'joint_state_broadcaster',
+            # 'imu_sensor_controller',
+            'state_estimator'#,
+            # 'gait_pattern_generator',
+            
+            # 'balance_controller',
+            # 'foot_controller'
         ],
         output='screen',
     )
@@ -38,5 +39,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         controllers_spawner,
-        teleop_node,
+        # teleop_node,
     ])                          
