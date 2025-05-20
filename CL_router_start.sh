@@ -3,11 +3,11 @@ sudo apt-get update
 
 rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro jazzy -y
-export RMW_IMPLEMENTATION=rmw_zenoh_cpp
+
 
 source /opt/ros/jazzy/setup.bash
 colcon build --packages-select zenoh_cpp_vendor rmw_zenoh_cpp
-
+export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 # colcon build --packages-select zenoh_cpp_vendor
 # colcon build --packages-select rmw_zenoh_cpp
 source install/setup.bash

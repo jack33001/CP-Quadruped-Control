@@ -94,7 +94,7 @@ void CANMotor::threadLoop()
     // if out of position limits
     if(state_position > max_pos || state_position < min_pos)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Position Limit Exceeded: pos %f range: %f - %f", state_position, min_pos, max_pos);
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Motor %d Position Limit Exceeded: pos %f range: %f - %f", can_id[0],state_position, min_pos, max_pos);
         // set E stop state
         cmd_m_state = 4;
     }
@@ -209,8 +209,7 @@ void CANMotor::threadLoop()
 void CANMotor::on_timeout(){
     // timeout function for watchdog timer
     state_watchdog=1;
-    // RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Watchdog triggered on motor: %d", can_id[0]);
-
+    RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Watchdog triggered on motor: %d", can_id[0]);
     std::this_thread::sleep_for(10ms);
 }
 
