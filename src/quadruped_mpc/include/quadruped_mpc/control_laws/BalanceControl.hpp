@@ -446,64 +446,11 @@ namespace quadruped_mpc
       // Calculate robot mass parameters
       double robot_mass = 15.0; // kg - replace with actual robot mass parameter
       double gravity = 9.81;    // m/s²
-
-      // Create force constraint vectors
-      std::vector<double> min_force(12, 0.0);
-      std::vector<double> max_force(12, 0.0);
-      std::vector<double> initial_guess(12, 0.0);
-
-      // Default force constraints - lateral friction constraints and max vertical force
-      double friction_coef = 0.2;                       // friction coefficient
+      double friction_coef = 0.2; // friction coefficient
       double max_vertical_force = robot_mass * gravity; // Maximum force robot can apply
 
-      // Count the number of stance feet to distribute weight
-      int num_stance_feet = 0;
-      for (int state : foot_states_)
-      {
-        if (state == 0)
-          num_stance_feet++;
-      }
-
-      // Safety check to avoid division by zero
-      if (num_stance_feet == 0)
-        num_stance_feet = 1;
-
-      // Calculate the vertical force per stance foot to support the robot's weight
-      double vertical_force_per_foot = robot_mass * gravity / num_stance_feet;
-
-      // Set foot-specific constraints based on current state using a loop
-      for (int foot = 0; foot < 4; foot++)
-      {
-        int base_idx = foot * 3; // Each foot has 3 force components (x,y,z)
-        int foot_state = foot_states_[foot];
-
-        if (foot_state == 1)
-        { // Swing - zero force in ALL directions
-          for (int axis = 0; axis < 3; axis++)
-          {
-            min_force[base_idx + axis] = -0.01;
-            max_force[base_idx + axis] = 0.01;
-            initial_guess[base_idx + axis] = 0.0;
-          }
-        }
-        else
-        { // Stance - apply friction cone constraints
-          // X and Y bounds (limited by friction cone)
-          min_force[base_idx] = -max_vertical_force / 4 * friction_coef;
-          max_force[base_idx] = max_vertical_force / 4 * friction_coef;
-          min_force[base_idx + 1] = -max_vertical_force / 4 * friction_coef;
-          max_force[base_idx + 1] = max_vertical_force / 4 * friction_coef;
-
-          // Z bounds (non-negative vertical force)
-          min_force[base_idx + 2] = 0.0;
-          max_force[base_idx + 2] = max_vertical_force;
-
-          // Initial guess for stance foot - share weight
-          initial_guess[base_idx] = 0.0;     // no lateral force initially
-          initial_guess[base_idx + 1] = 0.0; // no lateral force initially
-          initial_guess[base_idx + 2] = vertical_force_per_foot;
-        }
-      }
+      // Apply constraints to ALL stages in the optimization horizon
+      int horizon_length = solver_->nlp_solver_plan->N;
 
       // Create and set state bounds vectors more efficiently
       std::vector<double> lowest_state(12, 0.0);
@@ -532,16 +479,78 @@ namespace quadruped_mpc
         highest_state[i] = 10.0;
       }
 
-      // Apply constraints to ALL stages in the optimization horizon
-      int horizon_length = solver_->nlp_solver_plan->N;
+      // For each stage in the optimization horizon, set constraints based on predicted foot states
       for (int stage = 0; stage < horizon_length; stage++)
       {
+        // Create force constraint vectors for this stage
+        std::vector<double> min_force(12, 0.0);
+        std::vector<double> max_force(12, 0.0);
+        std::vector<double> initial_guess(12, 0.0);
+
+        // Count stance feet in this stage based on predicted states
+        int num_stance_feet = 0;
+        for (int foot = 0; foot < 4; foot++)
+        {
+          // Use the predicted foot state if available, otherwise fall back to current foot state
+          int foot_state = (stage < static_cast<int>(foot_states_prediction_.size())) ? 
+                            foot_states_prediction_[stage][foot] : foot_states_[foot];
+          
+          // States -2, -1, and 0 are stance states
+          if (foot_state <= 0)
+            num_stance_feet++;
+        }
+
+        // Safety check to avoid division by zero
+        if (num_stance_feet == 0)
+          num_stance_feet = 1;
+
+        // Calculate the vertical force per stance foot to support the robot's weight
+        double vertical_force_per_foot = robot_mass * gravity / num_stance_feet;
+
+        // Set foot-specific constraints based on predicted state for this stage
+        for (int foot = 0; foot < 4; foot++)
+        {
+          int base_idx = foot * 3; // Each foot has 3 force components (x,y,z)
+          
+          // Use the predicted foot state if available, otherwise fall back to current foot state
+          int foot_state = foot_states_prediction_[stage][foot];
+
+          // States <= 0 are stance states, > 0 are swing
+          if (foot_state > 0)  
+          { // Swing - zero force in ALL directions
+            for (int axis = 0; axis < 3; axis++)
+            {
+              min_force[base_idx + axis] = -0.01;
+              max_force[base_idx + axis] = 0.01;
+              initial_guess[base_idx + axis] = 0.0;
+            }
+          }
+          else
+          { // Stance - apply friction cone constraints
+            // X and Y bounds (limited by friction cone)
+            min_force[base_idx] = -max_vertical_force / 4 * friction_coef;
+            max_force[base_idx] = max_vertical_force / 4 * friction_coef;
+            min_force[base_idx + 1] = -max_vertical_force / 4 * friction_coef;
+            max_force[base_idx + 1] = max_vertical_force / 4 * friction_coef;
+
+            // Z bounds (non-negative vertical force)
+            min_force[base_idx + 2] = 0.0;
+            max_force[base_idx + 2] = max_vertical_force;
+
+            // Initial guess for stance foot - share weight
+            initial_guess[base_idx] = 0.0;     // no lateral force initially
+            initial_guess[base_idx + 1] = 0.0; // no lateral force initially
+            initial_guess[base_idx + 2] = vertical_force_per_foot;
+          }
+        }
+
         // Apply force constraints to the current stage in the ACADOS solver
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,
                                       stage, "lbu", min_force.data());
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,
                                       stage, "ubu", max_force.data());
-        // Set the state
+        
+        // Set the state constraints
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,
                                       stage, "lbx", lowest_state.data());
         ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in,
@@ -571,8 +580,8 @@ namespace quadruped_mpc
       }
 
       // Uncomment these lines for detailed debug output when needed
-      //print_controller_output_table();
       //print_state_vector_table();
+      //print_controller_output_table();
 
       // Log debug info about foot forces more efficiently
       const char *foot_names[] = {"Foot1", "Foot2", "Foot3", "Foot4"};
@@ -583,7 +592,7 @@ namespace quadruped_mpc
         RCLCPP_DEBUG(get_node()->get_logger(),
                      "%s [%s]: X: %.2f, Y: %.2f, Z: %.2f",
                      foot_names[foot],
-                     (foot_states_[foot] == 1) ? "SWING" : "STANCE",
+                     (foot_states_[foot] <= 0) ? "STANCE" : "SWING",
                      optimal_control_[base_idx],
                      optimal_control_[base_idx + 1],
                      optimal_control_[base_idx + 2]);

@@ -192,7 +192,8 @@ auto GaitPatternGenerator::on_configure(const rclcpp_lifecycle::State & /*previo
       [this, node](const std_msgs::msg::Bool::SharedPtr msg) {
         if (msg->data) {
           gait_start_received_ = true;
-          RCLCPP_INFO(node->get_logger(), "Received gait start command");
+          gait_start_time_ = node->get_clock()->now().seconds();  // Store the current time
+          RCLCPP_INFO(node->get_logger(), "Received gait start command at time: %f", gait_start_time_);
         }
       }
     );

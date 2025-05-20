@@ -61,6 +61,7 @@ private:
   // Subscriber for gait start command
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr gait_start_sub_;
   std::atomic<bool> gait_start_received_{false};
+  double gait_start_time_{0.0};  // Store time when gait start command was received
   
   // Gait parameters from config
   std::vector<int> gait_type_;

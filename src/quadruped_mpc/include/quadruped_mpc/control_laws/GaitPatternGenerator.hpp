@@ -57,11 +57,11 @@ inline void GaitPatternGenerator::run_fsm(double t_curr, double t_gait_start, do
 {
   double t_cycle = t_stance + t_swing;
   
-  // State -2: Pre-initialization
+  // State -2: Pre-initialization             
   if (t_curr - t_gait_start < t_offset) {
     state = -2;
     phase = (t_curr - t_gait_start) / t_offset;
-  } 
+  }
   // State -1: Initialization
   else if (t_curr - t_gait_start < t_offset + t_cycle) {
     state = -1;
@@ -135,21 +135,21 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
       // For each foot, predict future states and phases
       for (int foot = 0; foot < 4; foot++) {
         auto& foot_info = foot_info_[foot];
-        
+
         // Predict states and phases over the horizon
         for (int stage = 0; stage < prediction_stages_; stage++) {
-          double prediction_time = current_time + (stage * prediction_data_.timestep);
           int predicted_state;
           double predicted_phase;
-          
-          // Generate prediction using FSM logic
-          run_fsm(prediction_time, 
-                  gait_start_received_ ? foot_info.state_start_time : current_time, 
-                  foot_info.phase_offset, 
-                  stance_duration_, 
-                  swing_duration_,
-                  predicted_state,
-                  predicted_phase);
+
+          // Calculate predicted state for this foot at this stage
+          double predict_time = current_time + stage * prediction_data_.timestep;
+          run_fsm(predict_time, 
+              gait_start_time_,  // Use stored gait start time instead of current time
+              foot_info.phase_offset, 
+              stance_duration_, 
+              swing_duration_,
+              predicted_state,
+              predicted_phase);
           
           // Store prediction
           prediction_data_.states[foot][stage] = predicted_state;

@@ -384,11 +384,12 @@ namespace quadruped_mpc
         RCLCPP_DEBUG(controller.get_node()->get_logger(), "Entered %s pd control", feet[i].name);
 
         // Generate trajectory at the beginning of swing phase
-        if (feet[i].phase == 0.0)
+        if (feet[i].phase <= 0.05)
         {
           RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s generating new trajectory", feet[i].name);
           generate_trajectory(feet[i], i);
         }
+        
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
         int trajectory_idx = static_cast<int>(feet[i].phase * 49);  // Map 0.0-1.0 to 0-49
@@ -569,7 +570,7 @@ namespace quadruped_mpc
         controller.joint_command_interfaces_[i * 2 + 1].set_value(torques[i][1]);
         
         // Check torques against limits
-        const double torque_limit = 8.0; // 8 Newton-meters
+        const double torque_limit = 16.0; // 8 Newton-meters
         if (std::abs(torques[i](0)) >= torque_limit || std::abs(torques[i](1)) >= torque_limit)
         {
           RCLCPP_WARN(controller.get_node()->get_logger(),
@@ -588,12 +589,20 @@ namespace quadruped_mpc
           controller.latest_gait_.foot4_state
         };
 
+        // Get foot phases for the new column
+        std::array<double, 4> foot_phases = {
+          controller.latest_gait_.foot1_phase,
+          controller.latest_gait_.foot2_phase,
+          controller.latest_gait_.foot3_phase,
+          controller.latest_gait_.foot4_phase
+        };
+
         // Create table header and separator with Unicode borders
         std::stringstream ss;
         ss << "\nFoot Forces and States:\n";
-        ss << "┌──────┬─────────────┬─────────────┬─────────────┬───────┐\n";
-        ss << "│ Foot │   Force X   │   Force Y   │   Force Z   │ State │\n";
-        ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┤\n";
+        ss << "┌──────┬─────────────┬─────────────┬─────────────┬───────┬─────────┐\n";
+        ss << "│ Foot │   Force X   │   Force Y   │   Force Z   │ State │  Phase  │\n";
+        ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┼─────────┤\n";
 
         // Calculate sums for summary row
         double sum_x = 0.0, sum_y = 0.0;
@@ -607,7 +616,10 @@ namespace quadruped_mpc
           
           // State: 0=stance, 1=swing
           std::string state_str = (foot_states[i] == 1) ? "SWING" : "STANCE";
-          ss << std::setw(5) << std::left << state_str << " │";
+          ss << std::setw(5) << std::left << state_str << " │ ";
+          
+          // Add phase value
+          ss << std::setw(7) << std::fixed << std::setprecision(3) << foot_phases[i] << " │";
           ss << "\n";
           
           // Add to sums
@@ -616,18 +628,18 @@ namespace quadruped_mpc
         }
 
         // Add table footer with summary
-        ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┤\n";
+        ss << "├──────┼─────────────┼─────────────┼─────────────┼───────┼─────────┤\n";
         ss << "│ SUM  │ " << std::setw(11) << std::right << std::fixed << std::setprecision(3) << sum_x << " │ ";
         ss << std::setw(11) << std::right << std::fixed << std::setprecision(3) << sum_y << " │ ";
         ss << std::setw(11) << std::right << std::fixed << std::setprecision(3)
-           << total_vertical_force << " │       │\n";
-        ss << "└──────┴─────────────┴─────────────┴─────────────┴───────┘\n";
+           << total_vertical_force << " │       │         │\n";
+        ss << "└──────┴─────────────┴─────────────┴─────────────┴───────┴─────────┘\n";
         
         // Add power information
         ss << "Total Mechanical Power: " << std::fixed << std::setprecision(3) << total_power << " W\n";
 
         // Log the entire table at once on every cycle
-        //RCLCPP_INFO(controller.get_node()->get_logger(), "%s", ss.str().c_str());
+        //RCLCPP_INFO(controller.get_nodfe()->get_logger(), "%s", ss.str().c_str());
       }
 
       return true;
