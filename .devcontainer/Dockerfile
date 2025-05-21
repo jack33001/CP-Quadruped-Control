@@ -198,10 +198,12 @@ RUN apt-get update && apt-get install -y \
     usbutils \
     libqt5serialport5-dev \
     i2c-tools
+    
+RUN git submodule update --recursive --init
 
-RUN cd /home/ws/src \
-    && git clone https://github.com/bnbhat/bno08x_ros2_driver.git \
-    && git clone https://github.com/ros2/rmw_zenoh.git
+# RUN cd /home/ws/src \
+#     && git clone https://github.com/bnbhat/bno08x_ros2_driver.git \
+#     && git clone https://github.com/ros2/rmw_zenoh.git
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME

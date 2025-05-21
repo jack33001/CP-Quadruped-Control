@@ -69,7 +69,7 @@ private:
   
   // Callback to handle IMU data
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
-  
+  void normalizeQuaternion();
   // Flag to indicate if new data has been received
   bool data_received_ = false;
 };

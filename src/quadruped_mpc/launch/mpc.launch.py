@@ -2,6 +2,8 @@ from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 import os
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     # Get package directory
@@ -14,6 +16,15 @@ def generate_launch_description():
         shell=False
     )
 
+
+    # config_file = PathJoinSubstitution(
+    # [
+    #     FindPackageShare("quadruped_mpc"),
+    #     "config",
+    #     "quadruped_controllers.yaml",
+    # ])
+        
+        
     controllers_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -27,6 +38,7 @@ def generate_launch_description():
             # 'foot_controller'
         ],
         output='screen',
+        parameters = [ {"use_sim_time" : False}]
     )
 
     # Add teleop node

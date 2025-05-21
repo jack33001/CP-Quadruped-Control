@@ -2,6 +2,9 @@ controller_manager:
   ros__parameters:
     update_rate: 50
       
+    state_estimator:
+      type: quadruped_mpc/state_estimator
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -148,6 +151,23 @@ zero_joints_controller:
       - kp
       - kd
       - flip
+    state_interfaces:
+      - position
+      - velocity
+      - effort
+
+
+state_estimator:
+  ros__parameters:
+    joints:
+      - fl_hip
+      - fl_knee  
+      - fr_hip
+      - fr_knee
+      - rl_hip
+      - rl_knee
+      - rr_hip
+      - rr_knee
     state_interfaces:
       - position
       - velocity
