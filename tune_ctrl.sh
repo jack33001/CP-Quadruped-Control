@@ -4,4 +4,4 @@ colcon build --symlink-install --packages-skip quadruped_hardware quadruped_util
 
 source install/setup.bash
 
-ros2 launch quadruped_bringup sim.launch.py
+ros2 launch quadruped_bringup gz.launch.py

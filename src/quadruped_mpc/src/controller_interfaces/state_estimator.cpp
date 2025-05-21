@@ -235,14 +235,6 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
     }
 
     // Set up subscriptions
-    odom_sub_ = get_node()->create_subscription<nav_msgs::msg::Odometry>(
-      "/quadruped/state/ground_truth/odometry",
-      rclcpp::QoS(1).reliable(),
-      [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
-        latest_odom_ = msg;
-      }
-    );
-    
     gait_sub_ = get_node()->create_subscription<quadruped_msgs::msg::GaitPattern>(
       "/quadruped/gait/gait_pattern", 
       rclcpp::SensorDataQoS(),
