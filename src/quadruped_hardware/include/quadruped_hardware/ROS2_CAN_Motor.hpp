@@ -36,6 +36,8 @@ public:
     hardware_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state) override;
 
 
+    std::map<int, motor_driver::motorState> send_motor_cmd();
+  
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
@@ -87,6 +89,8 @@ private:
     double state_kd;
     double state_m_state;
     double state_flip;
+
+    std::string command_type ;
 
     
 

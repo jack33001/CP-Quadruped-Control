@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(quadruped_hardware)
 
 # find_library(SH2_LIBRARY sh2 REQUIRED)
@@ -19,20 +19,10 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/sh2")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 add_library(${PROJECT_NAME} SHARED
-
-  include/sh2/sh2.c
-  include/sh2/sh2_util.c
-  include/sh2/sh2_SensorValue.c
-  include/sh2/shtp.c
-  include/sh2/euler.c
-  
   src/ROS2_CAN_Motor.cpp
-  src/ROS2_CAN_Interface.cpp
   src/CANInterface.cpp
   src/MotorDriver.cpp
-  # src/ROS2_BNO08x.cpp
-  src/i2c_device.cpp
-  # src/bno08x_driver.cpp
+ 
 )
 
 # JSON library dependency____________
@@ -55,25 +45,19 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/quadruped_hardware>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sh2>
+
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include>
     $<INSTALL_INTERFACE:src>
-    $<INSTALL_INTERFACE:/include/sh2>
+
     $<INSTALL_INTERFACE:/include/quadruped_hardware>
     
 )
 
 
-# target_link_libraries( ${PROJECT_NAME} sh2)
 
 include_directories(/usr/include)
 include_directories(/usr/include/quadruped_hardware)
-
-# add_executable(i2c_tools src/i2c_tools.cpp)
-
-# Add the include directory for this target
-# target_include_directories(i2c_tools PRIVATE /home/ws/include)
 
 
 
@@ -89,9 +73,7 @@ ament_target_dependencies(${PROJECT_NAME}
   std_msgs
 )
 
-pluginlib_export_plugin_description_file(hardware_interface ros2CANInterface_Description.xml)
 pluginlib_export_plugin_description_file(hardware_interface ros2CANMotor_Description.xml)
-# pluginlib_export_plugin_description_file(hardware_interface ros2BNO08X_Description.xml)
 
 
 install(

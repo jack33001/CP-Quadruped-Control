@@ -109,12 +109,16 @@ joint_group_position_controller:
 
 zero_joints_controller:
   ros__parameters:
-    update_rate: 100
-    zero_effort_lim: 0.7
+    # update_rate: 100
+    # use doubles for all values ie 0 => 0.0
+    zero_effort_lim: 1.0
 
 
     kp: 0.0
     kd: 4.0
+
+    velocity: 0.25
+
 
 
     joints_orientation: [-1.0]

@@ -25,9 +25,30 @@ std::vector<int> parseCanId(const std::string& can_id_str) {
 
 
 
+
 CANMotor::CANMotor() : cmd_position(0), cmd_velocity(0), cmd_effort(0), cmd_kp(2), cmd_kd(1), cmd_m_state(0), cmd_flip(1),
                        state_position(0), state_velocity(0), state_effort(0), state_kp(2), state_kd(1), state_m_state(0),state_flip(1),effort_limit(1.5) {}
 
+
+std::map<int, motor_driver::motorState> CANMotor::send_motor_cmd(){
+    std::map<int, motor_driver::motorState> stateMap;
+    
+    if(command_type=="degree"){
+
+        stateMap = motor_controller_->sendDegreeCommand( commandMap);
+    }
+    else if (command_type == "radian")
+    {
+        stateMap = motor_controller_->sendRadCommand( commandMap);
+    }
+    else
+    {
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
+    }
+
+    return stateMap;
+
+}
 
 hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::HardwareInfo& info){
     // Initialization code
@@ -38,6 +59,21 @@ hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::H
     can_id = parseCanId(info.hardware_parameters.at("can_id"));
 
     effort_limit = std::stod(info.hardware_parameters.at("effort_limit"));
+
+    command_type = info.hardware_parameters.at("command_type").c_str();
+
+
+    if (command_type == "degree" || command_type == "deg"){
+        command_type = "degree";
+    }
+    else if (command_type == "radian" || command_type == "rad"){
+        command_type = "radian";
+    }
+    else{
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Set command type to degree or radian in the motor hardware interface URDF");
+        RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Command type will be set to radian!");
+        command_type = "radian";
+    }
 
     // RCLCPP_INFO(rclcpp::get_logger("CANMotor"), info.hardware_parameters.at("flip").c_str());
 
@@ -84,6 +120,7 @@ hardware_interface::CallbackReturn CANMotor::on_activate(const rclcpp_lifecycle:
 
 hardware_interface::CallbackReturn CANMotor::on_deactivate(const rclcpp_lifecycle::State& previous_state) {
     // Deactivation code
+    stateMap = motor_controller_->disableMotor(can_id);
     
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -167,7 +204,22 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
     if(cmd_m_state == 0)
     // send standard cmd state
     {
-        stateMap = motor_controller_->sendDegreeCommand( commandMap);
+
+        stateMap = send_motor_cmd();
+
+        // if(command_type=="degree"){
+
+        //     stateMap = motor_controller_->sendDegreeCommand( commandMap);
+        // }
+        // else if (command_type == "radian")
+        // {
+        //     stateMap = motor_controller_->sendRadCommand( commandMap);
+        // }
+        // else
+        // {
+        //     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
+        // }
+    
 
     }
     else if(cmd_m_state == 1)
@@ -199,7 +251,22 @@ hardware_interface::return_type CANMotor::write(const rclcpp::Time& time, const 
 
             commandMap[can_id[0]] = movecmd;
             
-            stateMap = motor_controller_->sendDegreeCommand( commandMap);
+
+
+            stateMap = send_motor_cmd();
+
+            // if(command_type=="degree"){
+
+            //     stateMap = motor_controller_->sendDegreeCommand( commandMap);
+            // }
+            // else if (command_type == "radian")
+            // {
+            //     stateMap = motor_controller_->sendRadCommand( commandMap);
+            // }
+            // else
+            // {
+            //     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Obscure error: Command type not set to degree or radian in URDF and safety failed");
+            // }
             
             stateMap = motor_controller_->setZeroPosition(can_id);
             cmd_m_state = 0;

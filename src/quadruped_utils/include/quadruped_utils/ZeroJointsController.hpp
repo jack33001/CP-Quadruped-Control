@@ -36,6 +36,7 @@ public:
     
 protected:
     bool success;
+    bool all_zero;
 
     // Pramamter vectors
     std::vector<std::string> joint_names_;
@@ -45,8 +46,9 @@ protected:
     std::vector<float> measured_state_values_;
 
     double zero_effort_lim;
-    float kp;
-    float kd;
+    double kp;
+    double kd;
+    double vel;
 
     // Command interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
