@@ -45,7 +45,10 @@ def generate_launch_description():
                         'launch',
                         'mpc.launch.py'
                     ])
-                ])
+                ]),
+                launch_arguments={
+                    'use_sim_time': 'true'
+                }.items()
             )
         ]
     )
