@@ -131,6 +131,8 @@ hardware_interface::return_type IMUHardwareInterface::read(
       "No IMU data received yet on topic %s", 
       imu_topic_.c_str());
   }
+
+  normalizeQuaternion();
   
   return hardware_interface::return_type::OK;
 }
@@ -157,6 +159,27 @@ hardware_interface::return_type IMUHardwareInterface::write(
 
   return hardware_interface::return_type::OK;
 }
+
+void IMUHardwareInterface::normalizeQuaternion()
+{
+  double norm = std::sqrt(
+    orientation_x_ * orientation_x_ +
+    orientation_y_ * orientation_y_ +
+    orientation_z_ * orientation_z_ +
+    orientation_w_ * orientation_w_);
+
+  if (std::abs(norm - 1.0) > std::numeric_limits<double>::epsilon()) {
+    orientation_x_ /= norm;
+    orientation_y_ /= norm;
+    orientation_z_ /= norm;
+    orientation_w_ /= norm;
+
+    // RCLCPP_WARN(
+    //   rclcpp::get_logger("IMUHardwareInterface"),
+    //   "Quaternion was not normalized. Normalizing now.");
+  }
+}
+
 
 void IMUHardwareInterface::imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
 {

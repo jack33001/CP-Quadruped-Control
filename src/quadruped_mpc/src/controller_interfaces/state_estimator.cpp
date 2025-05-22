@@ -28,7 +28,7 @@ StateEstimator::state_interface_configuration() const
       config.names.push_back(joint + "/" + interface);
     }
   }
-  
+  try {
   // Add IMU interfaces
   config.names.push_back("imu_sensor/orientation.x");
   config.names.push_back("imu_sensor/orientation.y");
@@ -40,7 +40,10 @@ StateEstimator::state_interface_configuration() const
   config.names.push_back("imu_sensor/linear_acceleration.x");
   config.names.push_back("imu_sensor/linear_acceleration.y");
   config.names.push_back("imu_sensor/linear_acceleration.z");
-  
+  }
+  catch (const std::exception &e) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to claim imu state interfaces: %s", e.what());
+  }
   return config;
 }
 
@@ -122,16 +125,19 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
 {
   try {
     // Initialize publishers
+    RCLCPP_INFO(get_node()->get_logger(), "Initializing publishers");
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*get_node());
     odom_pub_ = get_node()->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
     
     // Get parameters
+    RCLCPP_INFO(get_node()->get_logger(), "Getting joint names parameter");
     joint_names_ = get_node()->get_parameter("joints").as_string_array();
     if (joint_names_.empty()) {
       RCLCPP_ERROR(get_node()->get_logger(), "No joints specified");
       return CallbackReturn::ERROR;
     }
 
+    RCLCPP_INFO(get_node()->get_logger(), "Getting state interface types parameter");
     state_interface_types_ = get_node()->get_parameter("state_interfaces").as_string_array();
     if (state_interface_types_.empty()) {
       RCLCPP_ERROR(get_node()->get_logger(), "No state interfaces specified");
@@ -139,13 +145,14 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
     }
 
     // Wait for robot description
+    RCLCPP_INFO(get_node()->get_logger(), "Waiting for robot description");
     rclcpp::Time start_time = get_node()->now();
     while (!urdf_received_ && (get_node()->now() - start_time).seconds() < 5.0) {
       RCLCPP_INFO_THROTTLE(
-        get_node()->get_logger(),
-        *get_node()->get_clock(),
-        1000,
-        "Waiting for robot description...");
+      get_node()->get_logger(),
+      *get_node()->get_clock(),
+      1000,
+      "Waiting for robot description...");
       rclcpp::sleep_for(std::chrono::milliseconds(100));
     }
 
@@ -155,76 +162,76 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
     }
 
     try {
-      // Create Pinocchio model from URDF
+      RCLCPP_INFO(get_node()->get_logger(), "Building Pinocchio model from URDF");
       pinocchio::urdf::buildModelFromXML(urdf_string_, pinocchio::JointModelFreeFlyer(), model_);
       data_ = std::make_unique<pinocchio::Data>(model_);
 
-      // Create mapping from state interface index to pinocchio joint index
+      RCLCPP_INFO(get_node()->get_logger(), "Creating joint mappings");
       joint_mappings_.clear();
       for (size_t i = 0; i < joint_names_.size(); ++i) {
-        const std::string pin_joint_name = joint_names_[i];
-        
-        // Find exact joint ID match
-        size_t pin_idx = 0;
-        bool found = false;
-        for (size_t j = 0; j < model_.joints.size(); ++j) {
-          if (model_.names[j] == pin_joint_name) {
-            pin_idx = j;
-            found = true;
-            break;
-          }
+      const std::string pin_joint_name = joint_names_[i];
+      
+      // Find exact joint ID match
+      size_t pin_idx = 0;
+      bool found = false;
+      for (size_t j = 0; j < model_.joints.size(); ++j) {
+        if (model_.names[j] == pin_joint_name) {
+        pin_idx = j;
+        found = true;
+        break;
         }
-
-        if (!found) {
-          RCLCPP_ERROR(get_node()->get_logger(), "Joint '%s' not found in model", pin_joint_name.c_str());
-          return CallbackReturn::ERROR;
-        }
-
-        joint_mappings_.push_back({joint_names_[i], i, pin_idx});
       }
 
-      // Pre-allocate vectors
+      if (!found) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Joint '%s' not found in model", pin_joint_name.c_str());
+        return CallbackReturn::ERROR;
+      }
+
+      joint_mappings_.push_back({joint_names_[i], i, pin_idx});
+      }
+
+      RCLCPP_INFO(get_node()->get_logger(), "Pre-allocating vectors for positions and velocities");
       current_positions_.resize(model_.nq);
       current_velocities_.resize(model_.nv);
       current_positions_.setZero();
       current_velocities_.setZero();
 
-      // Get frame IDs
+      RCLCPP_INFO(get_node()->get_logger(), "Getting frame IDs for feet and hips");
       const std::array<std::string, 4> foot_frame_names = {
-        "fl_foot", "fr_foot", "rl_foot", "rr_foot"
+      "fl_foot", "fr_foot", "rl_foot", "rr_foot"
       };
       
       for (size_t i = 0; i < 4; ++i) {
-        foot_frame_ids_[i] = model_.getFrameId(foot_frame_names[i]);
-        if (foot_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
-          RCLCPP_ERROR(get_node()->get_logger(), "Frame %s not found in model", foot_frame_names[i].c_str());
-          return CallbackReturn::ERROR;
-        }
+      foot_frame_ids_[i] = model_.getFrameId(foot_frame_names[i]);
+      if (foot_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Frame %s not found in model", foot_frame_names[i].c_str());
+        return CallbackReturn::ERROR;
+      }
       }
       
       const std::array<std::string, 4> hip_frame_names = {
-        "fl_hip", "fr_hip", "rl_hip", "rr_hip"
+      "fl_hip", "fr_hip", "rl_hip", "rr_hip"
       };
 
       for (size_t i = 0; i < 4; ++i) {
-        hip_frame_ids_[i] = model_.getFrameId(hip_frame_names[i]);
-        if (hip_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
-          RCLCPP_ERROR(get_node()->get_logger(), "Hip frame %s not found in model", hip_frame_names[i].c_str());
-          return CallbackReturn::ERROR;
-        }
+      hip_frame_ids_[i] = model_.getFrameId(hip_frame_names[i]);
+      if (hip_frame_ids_[i] >= static_cast<std::size_t>(model_.nframes)) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Hip frame %s not found in model", hip_frame_names[i].c_str());
+        return CallbackReturn::ERROR;
+      }
       }
       
-      // Find body frame id
+      RCLCPP_INFO(get_node()->get_logger(), "Finding body frame ID");
       body_frame_id_ = model_.getFrameId("body");
       if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-        body_frame_id_ = model_.getFrameId("Body");
+      body_frame_id_ = model_.getFrameId("Body");
+      if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
+        body_frame_id_ = model_.getFrameId("base_link");
         if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-          body_frame_id_ = model_.getFrameId("base_link");
-          if (body_frame_id_ >= static_cast<std::size_t>(model_.nframes)) {
-            RCLCPP_ERROR(get_node()->get_logger(), "Body frame not found in model");
-            return CallbackReturn::ERROR;
-          }
+        RCLCPP_ERROR(get_node()->get_logger(), "Body frame not found in model");
+        return CallbackReturn::ERROR;
         }
+      }
       }
 
       RCLCPP_INFO(get_node()->get_logger(), "State estimator configured successfully");
@@ -241,7 +248,7 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
       std::bind(&StateEstimator::gaitPatternCallback, this, std::placeholders::_1)
     );
     
-    // Create realtime state publisher
+    RCLCPP_INFO(get_node()->get_logger(), "Creating realtime state publisher");
     auto state_pub = get_node()->create_publisher<quadruped_msgs::msg::QuadrupedState>(
       "/quadruped/state/state_estimate", 10);
     

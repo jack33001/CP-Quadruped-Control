@@ -3,6 +3,8 @@ from launch.actions import ExecuteProcess, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import os
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     # Get package directory
@@ -22,19 +24,29 @@ def generate_launch_description():
         shell=False
     )
 
+
+    # config_file = PathJoinSubstitution(
+    # [
+    #     FindPackageShare("quadruped_mpc"),
+    #     "config",
+    #     "quadruped_controllers.yaml",
+    # ])
+        
+        
     controllers_spawner = Node(
         package='controller_manager',
         executable='spawner',
         arguments=[
-            'joint_state_broadcaster',
-            'imu_sensor_controller',
+            # 'joint_state_broadcaster',
+            # 'imu_sensor_controller',
             'state_estimator',
             'gait_pattern_generator',
+            
             'balance_controller',
-            'foot_controller'
+            # 'foot_controller'
         ],
         parameters=[{
-            'use_sim_time': LaunchConfiguration('use_sim_time'),
+            'use_sim_time': False#LaunchConfiguration('use_sim_time'),
         }],
         output='screen',
     )

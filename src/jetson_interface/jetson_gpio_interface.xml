@@ -1,0 +1,9 @@
+<library path="jetson_interface">
+  <class name="jetson_interface/JetsonGPIOInterface"
+         type="jetson_interface::JetsonGPIOInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ROS2 Hardware Interface for Jetson GPIO control that monitors another hardware interface's state.
+    </description>
+  </class>
+</library>

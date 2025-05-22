@@ -24,6 +24,16 @@
     </ros2_control>
 
 
+    <!-- <ros2_control name="jetson_interface" type="system">
+        <hardware>
+            <plugin>jetson_interface/JetsonGPIOInterface</plugin>
+            <param name="gpio_pin">32</param>
+        </hardware>
+    </ros2_control> -->
+
+
+
+
     <ros2_control name="quadruped_hardware/CANMotorDriver_FRH" type="system" > 
         <hardware>
             <plugin>quadruped_hardware/CANMotor</plugin>
@@ -271,7 +281,7 @@
             <state_interface   name="m_state"/>
             <state_interface   name="flip"/>
         </joint>
-    </ros2_control>  
+    </ros2_control>   
 
      
 </robot>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<library path="quadruped_utils_controllers">
+  <class name="quadruped_utils/EstopController"
+         type="quadruped_utils::EstopController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Estop Controller handling logic and commands</description>
+  </class>
+</library>
