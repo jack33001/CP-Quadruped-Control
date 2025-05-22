@@ -9,30 +9,58 @@ import os
 logger = logging.getLogger(__name__)
 
 class QuadrupedOptimalController:
-    def __init__(self, N, T, code_export_dir=None, param_file=None):
+    def __init__(self, N=None, T=None, code_export_dir=None, param_file=None):
         logger.info(f"Initializing controller with N={N}, T={T}")
         self.N = N
         self.T = T
 
         # Load parameters from yaml
         if param_file is None:
-            # Default to package config directory
+            # Default to consolidated config file
             script_dir = os.path.dirname(os.path.abspath(__file__))
             root_dir = os.path.dirname(os.path.dirname(script_dir))
-            param_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
+            param_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
         
-        with open(param_file, 'r') as f:
-            params = yaml.safe_load(f)['optimal_controller']
-            self.mass = params.get('mass',.001)
-            self.inertia = params.get('inertia', .09)
-            
-            # Load weight parameters
-            weights = params.get('weights', {})
-            self.position_weights = weights.get('position', [2000, 2000, 2000])
-            self.orientation_weights = weights.get('orientation', [2000, 2000, 2000, 2000])
-            self.velocity_weights = weights.get('velocity', [10, 10, 10])
-            self.angular_velocity_weights = weights.get('angular_velocity', [10, 10, 10])
-            self.terminal_weight_factor = weights.get('terminal_factor', 10.0)
+        try:
+            with open(param_file, 'r') as f:
+                config = yaml.safe_load(f)
+                balance_params = config.get('balance_controller', {}).get('ros__parameters', {})
+                
+                # Get parameters with defaults
+                if N is None:
+                    self.N = balance_params.get('stages', 50)
+                if T is None:
+                    self.T = balance_params.get('horizon', 5.0)
+                
+                # Robot parameters
+                self.mass = balance_params.get('mass', 13.2)
+                self.inertia = balance_params.get('inertia', 0.5)
+                
+                # Load weight parameters
+                weights = balance_params.get('weights', {})
+                self.position_weights = weights.get('position', [100000000, 100000000, 100000000])
+                self.orientation_weights = weights.get('orientation', [1000000, 1000000, 1000000, 1000000])
+                self.velocity_weights = weights.get('velocity', [1000, 1000, 1000])
+                self.angular_velocity_weights = weights.get('angular_velocity', [10000, 10000, 10000])
+                self.terminal_weight_factor = weights.get('terminal_factor', 10.0)
+                self.force_weight = weights.get('force_weight', 0)
+                
+        except Exception as e:
+            logger.warning(f"Error loading config file: {e}. Using default parameters.")
+            # Fall back to default values if there's an error
+            if self.N is None:
+                self.N = 50
+            if self.T is None:
+                self.T = 5.0
+                
+            self.mass = 13.2
+            self.inertia = 0.5
+            self.position_weights = [100000000, 100000000, 100000000]
+            self.orientation_weights = [1000000, 1000000, 1000000, 1000000]
+            self.velocity_weights = [1000, 1000, 1000]
+            self.angular_velocity_weights = [10000, 10000, 10000]
+            self.terminal_weight_factor = 10.0
+            self.force_weight = 0
             
         logger.info(f"Loaded parameters: mass={self.mass}kg, inertia={self.inertia}kg*m^2")
         logger.info(f"Loaded weights: position={self.position_weights}, orientation={self.orientation_weights}, "
@@ -52,7 +80,7 @@ class QuadrupedOptimalController:
         os.makedirs(os.path.join(code_export_dir, 'quadruped_ode_model'), exist_ok=True)
         
         # Create and verify model with loaded parameters
-        self.model = export_quadruped_ode_model(mass=self.mass, inertia=self.inertia)
+        self.model = export_quadruped_ode_model(mass=self.mass, inertia=self.inertia, config_file=param_file)
         if self.model.x is None:
             raise ValueError("Model state is None after creation")
         logger.info(f"Created model with state type: {type(self.model.x)}")
@@ -145,7 +173,7 @@ class QuadrupedOptimalController:
         # Selection matrices - only select first 13 states
         Vx = numpy.zeros((ny, nx))
         Vx[:13, :13] = numpy.eye(13)  # Select only first 13 states
-        Vu = numpy.zeros((ny, nu))*.001 # for now, don't worry about policing the controller effort
+        Vu = numpy.ones((ny, nu))*self.force_weight # for now, don't worry about policing the controller effort
         
         ocp.cost.Vx = Vx
         ocp.cost.Vu = Vu

@@ -1,12 +1,50 @@
 from acados_template import AcadosModel
 from casadi import SX, vertcat, cross
 import logging
+import yaml
+import os
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def export_quadruped_ode_model(mass, inertia) -> AcadosModel:
+def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> AcadosModel:
     logger.info(" =========================== Creating quadruped ODE model =========================== ")
+    
+    # Try to get parameters from config file if not provided directly
+    if mass is None or inertia is None:
+        try:
+            if config_file is None:
+                # Default to consolidated config file
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                root_dir = os.path.dirname(os.path.dirname(script_dir))
+                config_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
+            
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
+                    config = yaml.safe_load(f)
+                    balance_params = config.get('balance_controller', {}).get('ros__parameters', {})
+                    
+                    if mass is None:
+                        mass = balance_params.get('mass', 13.2)
+                    if inertia is None:
+                        inertia = balance_params.get('inertia', 0.5)
+                        
+                logger.info(f"Got parameters from config file: mass={mass}, inertia={inertia}")
+            else:
+                # Use defaults if file not found
+                if mass is None:
+                    mass = 13.2
+                if inertia is None:
+                    inertia = 0.5
+                logger.info(f"Config file not found. Using default parameters: mass={mass}, inertia={inertia}")
+        except Exception as e:
+            logger.warning(f"Could not get parameters from config file: {e}")
+            # Use defaults if there's an exception
+            if mass is None:
+                mass = 13.2
+            if inertia is None:
+                inertia = 0.5
+            logger.info(f"Using default parameters: mass={mass}, inertia={inertia}")
     
     # Create and verify model instance
     model = AcadosModel()

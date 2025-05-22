@@ -6,6 +6,8 @@
 #include <memory>
 #include <array>
 #include <cmath>  // Add this for std::erf
+#include <iomanip> // Add this for std::setprecision
+#include <sstream> // Add this for std::stringstream
 #include <Eigen/Dense>
 
 #include "controller_interface/controller_interface.hpp"
@@ -59,6 +61,7 @@ private:
   // Subscriber for gait start command
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr gait_start_sub_;
   std::atomic<bool> gait_start_received_{false};
+  double gait_start_time_{0.0};  // Store time when gait start command was received
   
   // Gait parameters from config
   std::vector<int> gait_type_;
@@ -91,6 +94,22 @@ private:
 
   // Support polygon information
   Eigen::Vector2d support_center_{Eigen::Vector2d::Zero()};  // Changed from Vector3d to Vector2d
+
+  // MPC prediction parameters
+  int prediction_stages_ = 50;  // Number of prediction steps
+  double prediction_horizon_ = 5.0;  // Time horizon for prediction in seconds
+  
+  // Arrays to store predicted states and phases
+  struct PredictionData {
+    std::vector<int> states[4];  // States for each foot over prediction horizon
+    std::vector<double> phases[4];  // Phases for each foot over prediction horizon
+    double timestep = 0.1;  // Default timestep between predictions
+  };
+  PredictionData prediction_data_;
+  
+  // Helper function to predict future gait pattern
+  void run_fsm(double t_curr, double t_gait_start, double t_offset, 
+              double t_stance, double t_swing, int& state, double& phase);
 
   // Helper function for state transitions
   void transition_state(FootInfo& foot, int new_state, double new_phase, 

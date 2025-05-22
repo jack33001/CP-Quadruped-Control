@@ -21,3 +21,13 @@ int32 foot4_state
 
 # Step height parameter
 float32 step_height
+
+# Prediction arrays (flattened 2D arrays)
+# Format: [foot1_stage1, foot1_stage2, ..., foot2_stage1, ..., foot4_stageN]
+int32[] predicted_states
+float32[] predicted_phases
+
+# Prediction metadata
+int32 prediction_stages
+float32 prediction_horizon
+float32 prediction_timestep

@@ -84,6 +84,47 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
   desired_state_[2] = 0.15;  // Set desired height
   desired_state_[3] = 1.0;  // Forward facing quaternion has w=1
 
+  // Get stages parameter for prediction arrays
+  int stages = 50;  // Default value
+  try {
+    get_node()->declare_parameter("stages", 50);
+    stages = get_node()->get_parameter("stages").as_int();
+    RCLCPP_INFO(get_node()->get_logger(), "Using %d stages for prediction arrays", stages);
+  } catch (const std::exception& e) {
+    RCLCPP_WARN(get_node()->get_logger(), "Error getting stages parameter: %s. Using default of 50", e.what());
+  }
+
+  // Initialize prediction arrays with default values
+  foot_states_prediction_.resize(stages);
+  foot_phases_prediction_.resize(stages);
+  
+  // Fill prediction arrays with default values (-2 for states, 0 for phases)
+  for (auto& state_array : foot_states_prediction_) {
+    state_array.fill(-2);  // -2 as default/invalid state value
+  }
+  
+  for (auto& phase_array : foot_phases_prediction_) {
+    phase_array.fill(0.0f);  // 0.0 as default phase value
+  }
+
+  // Read the COM offset from parameters
+  try {
+    // Declare and get the COM offset parameter with default values
+    get_node()->declare_parameter("com_offset", std::vector<double>{0.0, 0.0, -0.1});
+    com_offset_ = get_node()->get_parameter("com_offset").as_double_array();
+    
+    RCLCPP_INFO(get_node()->get_logger(), "Using COM offset: [%.3f, %.3f, %.3f]", 
+                com_offset_[0], com_offset_[1], com_offset_[2]);
+                
+    // Apply the COM offset to the desired state immediately
+    desired_state_[0] += com_offset_[0];
+    desired_state_[1] += com_offset_[1];
+    desired_state_[2] += com_offset_[2];
+  } catch (const std::exception& e) {
+    RCLCPP_WARN(get_node()->get_logger(), "Error getting COM offset: %s. Using defaults [0.0, 0.0, -0.1]", e.what());
+    com_offset_ = {0.0, 0.0, -0.1};
+  }
+
   // Find package share directory
   const auto package_path = ament_index_cpp::get_package_share_directory("quadruped_mpc");
   std::string lib_path = package_path + "/include/quadruped_mpc/acados_generated";
@@ -177,7 +218,6 @@ void BalanceController::state_callback(const quadruped_msgs::msg::QuadrupedState
   new_state_received_ = true;
 }
 
-// Update the gait callback to use the foot_states_ array
 void BalanceController::gait_callback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg)
 {
   std::lock_guard<std::mutex> lock(gait_mutex_);

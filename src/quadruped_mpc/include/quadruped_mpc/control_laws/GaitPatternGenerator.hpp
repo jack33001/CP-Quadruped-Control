@@ -52,6 +52,43 @@ inline bool GaitPatternGenerator::unpack_state()
   }
 }
 
+inline void GaitPatternGenerator::run_fsm(double t_curr, double t_gait_start, double t_offset, 
+                                         double t_stance, double t_swing, int& state, double& phase)
+{
+  double t_cycle = t_stance + t_swing;
+  
+  // State -2: Pre-initialization             
+  if (t_curr - t_gait_start < t_offset) {
+    state = -2;
+    phase = (t_curr - t_gait_start) / t_offset;
+  }
+  // State -1: Initialization
+  else if (t_curr - t_gait_start < t_offset + t_cycle) {
+    state = -1;
+    phase = (t_curr - t_gait_start - t_offset) / t_cycle;
+  } 
+  else {
+    // Calculate time within cycle after initialization period
+    // Fix: Use fmod for floating point modulo operation instead of % operator
+    double t_elapsed = t_curr - (t_gait_start + t_offset);
+    double t = std::fmod(t_elapsed, t_cycle);
+    if (t < 0) {
+      t += t_cycle; // Ensure positive result
+    }
+    
+    // State 0: Stance phase
+    if (t < t_stance) {
+      state = 0;
+      phase = t / t_stance;
+    } 
+    // State 1: Swing phase
+    else {
+      state = 1;
+      phase = (t - t_stance) / t_swing;
+    }
+  }
+}
+
 inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   try {
@@ -84,77 +121,96 @@ inline bool GaitPatternGenerator::update_foot_phase(const rclcpp::Time & time, c
     double dt = period.seconds();
     double current_time = time.seconds();
 
-    // Run the state machine for each foot
-    for (int i = 0; i < 4; i++) {
-      auto& foot = foot_info_[i];
+    // Calculate timestep for prediction
+    prediction_data_.timestep = prediction_horizon_ / prediction_stages_;
+    
+    // Clear previous predictions and initialize new arrays
+    for (int foot = 0; foot < 4; foot++) {
+      prediction_data_.states[foot].resize(prediction_stages_, -2);  // Default to pre-init state
+      prediction_data_.phases[foot].resize(prediction_stages_, 0.0);  // Default phase 0.0
+    }
+    
+    // Only generate predictions if we've received the gait start command
+    if (gait_start_received_) {
+      // For each foot, predict future states and phases
+      for (int foot = 0; foot < 4; foot++) {
+        auto& foot_info = foot_info_[foot];
 
-      // Update time in current state for all states except preinit
-      if (foot.state > -2) {
-        foot.time_in_state = current_time - foot.state_start_time;
-      }
+        // Predict states and phases over the horizon
+        for (int stage = 0; stage < prediction_stages_; stage++) {
+          int predicted_state;
+          double predicted_phase;
 
-      // State transitions logic
-      switch (foot.state) {
-        case -2:  // Preinit -> Init
-          if (gait_start_received_) {
-            transition_state(foot, -1, 0, current_time, foot.phase_offset);
-            RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d: preinit -> init", i+1);
-          }
-          break;
-
-        case -1:  // Init -> Stance
-          if (current_time >= foot.state_end_time) {
-            transition_state(foot, 0, 0, current_time, stance_duration_);
-            RCLCPP_DEBUG(get_node()->get_logger(), "Foot %d: init -> stance", i+1);
-          }
-          break;
+          // Calculate predicted state for this foot at this stage
+          double predict_time = current_time + stage * prediction_data_.timestep;
+          run_fsm(predict_time, 
+              gait_start_time_,  // Use stored gait start time instead of current time
+              foot_info.phase_offset, 
+              stance_duration_, 
+              swing_duration_,
+              predicted_state,
+              predicted_phase);
           
-        case 0:  // Stance -> Swing
-          // Update phase for stance state
-          foot.phase += dt / stance_duration_;
+          // Store prediction
+          prediction_data_.states[foot][stage] = predicted_state;
+          prediction_data_.phases[foot][stage] = predicted_phase;
+        }
+        
+        // Update current foot state and phase with first prediction
+        if (prediction_data_.states[foot].size() > 0) {
+          foot_info.state = prediction_data_.states[foot][0];
+          foot_info.phase = prediction_data_.phases[foot][0];
+        }
+        
+        // Calculate step targets for feet in stance state going to swing
+        if (foot_info.state == 0 && prediction_data_.states[foot].size() > 1 && 
+            prediction_data_.states[foot][1] == 1) {
           
-          if (foot.phase >= 1) {
-            transition_state(foot, 1, -dt / swing_duration_, current_time, swing_duration_);
-            
-            // Calculate step target (only needed for stance->swing transition)
-            Eigen::Vector3d term1 = hip_positions[i]; // Current hip position
-            Eigen::Vector3d term2 = swing_duration_/2 * cmd_linear; // Raibert heuristic
-            Eigen::Vector3d term3 = sqrt(step_height_/9.81) * (com_velocity-cmd_linear); // Step height term
-            
-            RCLCPP_DEBUG(get_node()->get_logger(), 
-                "Foot %d step planning: term1=[%f, %f, %f], term2=[%f, %f, %f], term3=[%f, %f, %f]",
-                i+1, term1.x(), term1.y(), term1.z(), term2.x(), term2.y(), term2.z(),
-                term3.x(), term3.y(), term3.z());
-                
-            foot.step_target = term1 + term2 + term3;
+          // Calculate step target (only needed for stance->swing transition)
+          Eigen::Vector3d term1 = hip_positions[foot]; // Current hip position
+          Eigen::Vector3d term2 = swing_duration_/2 * cmd_linear; // Raibert heuristic
+          Eigen::Vector3d term3 = sqrt(step_height_/9.81) * (com_velocity-cmd_linear); // Step height term
+          
+          RCLCPP_DEBUG(get_node()->get_logger(), 
+              "Foot %d step planning: term1=[%f, %f, %f], term2=[%f, %f, %f], term3=[%f, %f, %f]",
+              foot+1, term1.x(), term1.y(), term1.z(), term2.x(), term2.y(), term2.z(),
+              term3.x(), term3.y(), term3.z());
+              
+          foot_info.step_target = term1 + term2 + term3;
+        }
+        
+        // Update time in current state for UI and debug purposes
+        if (foot_info.state > -2) {
+          foot_info.time_in_state = current_time - foot_info.state_start_time;
+        }
+        
+        // Update state boundaries for transitioning between states
+        if (foot_info.state != prediction_data_.states[foot][0]) {
+          foot_info.state_start_time = current_time;
+          
+          // Set the state end time based on which state we're in
+          switch (prediction_data_.states[foot][0]) {
+            case -1:  // Init
+              foot_info.state_end_time = current_time + foot_info.phase_offset;
+              break;
+            case 0:   // Stance
+              foot_info.state_end_time = current_time + stance_duration_;
+              break;
+            case 1:   // Swing
+              foot_info.state_end_time = current_time + swing_duration_;
+              break;
+            default:
+              foot_info.state_end_time = current_time;
           }
-          break;
-          
-        case 1:  // Swing -> Stance
-          // Update phase for swing state
-          foot.phase += dt / swing_duration_;
-          
-          if (foot.contact || foot.phase >= 1) {
-            transition_state(foot, 0, -dt / stance_duration_, current_time, stance_duration_);
-          }
-          break;
+        }
       }
     }
+    
     return true;
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error updating foot phases: %s", e.what());
     return false;
   }
-}
-
-// Helper function to handle state transitions
-inline void GaitPatternGenerator::transition_state(FootInfo& foot, int new_state, double new_phase, 
-                                                double current_time, double duration) {
-  foot.state = new_state;
-  foot.phase = new_phase;
-  foot.state_start_time = current_time;
-  foot.state_end_time = current_time + duration;
-  foot.time_in_state = 0.0;
 }
 
 inline bool GaitPatternGenerator::support_polygon()
@@ -253,8 +309,7 @@ inline bool GaitPatternGenerator::publish_pattern()
       msg.foot3_phase = static_cast<float>(foot_info_[2].phase);
       msg.foot4_phase = static_cast<float>(foot_info_[3].phase);
 
-      // Set step target positions - these are the points where each foot should 
-      // be placed during the next step
+      // Set step target positions
       msg.foot1_step_position.x = foot_info_[0].step_target.x();
       msg.foot1_step_position.y = foot_info_[0].step_target.y();
       msg.foot1_step_position.z = foot_info_[0].step_target.z();
@@ -271,15 +326,33 @@ inline bool GaitPatternGenerator::publish_pattern()
       msg.foot4_step_position.y = foot_info_[3].step_target.y();
       msg.foot4_step_position.z = foot_info_[3].step_target.z();
 
-      // Set the Center of Mass (COM) position based on the calculated support polygon
-      // This is used by the balance controller for stabilization
+      // Set the Center of Mass (COM) position 
       msg.com_position.x = support_center_.x();
       msg.com_position.y = support_center_.y();
-      msg.com_position.z = 0.0;  // We only compute 2D support polygon
+      msg.com_position.z = 0.0;
 
-      // Add step height to the message - other controllers use this to determine
-      // how high to lift each foot during the swing phase
+      // Add step height to the message
       msg.step_height = static_cast<float>(step_height_);
+      
+      // Add prediction data
+      // Each array must be flattened into a 1D vector with the format:
+      // [foot1_step0, foot1_step1, ..., foot2_step0, foot2_step1, ..., foot4_stepN]
+      std::vector<int32_t> predicted_states;
+      std::vector<float> predicted_phases;
+      
+      for (int foot = 0; foot < 4; foot++) {
+        for (int step = 0; step < prediction_stages_; step++) {
+          predicted_states.push_back(static_cast<int32_t>(prediction_data_.states[foot][step]));
+          predicted_phases.push_back(static_cast<float>(prediction_data_.phases[foot][step]));
+        }
+      }
+      
+      // Add the prediction arrays to the message
+      msg.predicted_states = predicted_states;
+      msg.predicted_phases = predicted_phases;
+      msg.prediction_stages = prediction_stages_;
+      msg.prediction_horizon = static_cast<float>(prediction_horizon_);
+      msg.prediction_timestep = static_cast<float>(prediction_data_.timestep);
 
       // Publish the message in a thread-safe way
       rt_gait_pub_->unlockAndPublish();
@@ -287,7 +360,6 @@ inline bool GaitPatternGenerator::publish_pattern()
 
     return true;
   } catch (const std::exception& e) {
-    // Log any exceptions that occur during publishing
     RCLCPP_ERROR(get_node()->get_logger(), "Error publishing pattern: %s", e.what());
     return false;
   }
