@@ -52,10 +52,13 @@ gait_pattern_generator:
     # Gait type is determining the order of steps. The legs are numbered clockwise from the top left like this:
     # |1 2|
     # |4 3|
-    gait_type: [2,1,1,2] #[1,3,2,4]  # Walk
-    stance_duration: 0.9
+    gait_type: [2,1,1,2] # [1,3,2,4] #  # Walk
+    stance_duration: 0.4
     swing_duration: 0.1
     step_height: 0.1
+    # Duplicate MPC parameters here to avoid dependency on balance_controller
+    stages: 50    # Number of stages in the MPC
+    horizon: 3.0  # Time horizon in seconds
 
 balance_controller:
   ros__parameters:
@@ -68,12 +71,25 @@ balance_controller:
       - rl_knee
       - rr_hip
       - rr_knee
+    # Tuning parameters for the MPC
+    mass: 13.2    # Robot mass in kg 
+    inertia: 1    # Robot inertia in kg*m^2
+    stages: 50    # Number of stages in the MPC
+    horizon: 2.0  # Time horizon in seconds
+    com_offset: [0.0, 0.02, 0.0]                   # Center of mass offset [x, y, z] in meters
+    weights:
+      position: [100, 100, 100]                   # Position tracking weights (x, y, z)
+      orientation: [100, 100, 100, 100]           # Orientation tracking weights (quaternion)
+      velocity: [10, 10, 10]                      # Linear velocity tracking weights
+      angular_velocity: [10, 10, 10]              # Angular velocity tracking weights
+      force_cost: 1                               # Cost weight for control force inputs
+      terminal_factor: 10.0                       # Factor to multiply all weights for terminal cost
 
 foot_controller:
   ros__parameters:
     joints:
       - fl_hip
-      - fl_knee  
+      - fl_knee
       - fr_hip
       - fr_knee
       - rl_hip

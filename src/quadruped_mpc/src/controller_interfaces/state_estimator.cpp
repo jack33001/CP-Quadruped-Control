@@ -102,23 +102,6 @@ auto StateEstimator::on_init() -> CallbackReturn
     // Get parameters from yaml
     auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
     auto_declare<std::vector<std::string>>("state_interfaces", std::vector<std::string>());
-    
-    // Set up sim clock
-    get_node()->set_parameter(rclcpp::Parameter("use_sim_time", true));
-    sim_clock_ = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-    clock_connected_ = false;
-    
-    // Setup clock subscription
-    clock_sub_ = get_node()->create_subscription<rosgraph_msgs::msg::Clock>(
-      "/clock", 
-      rclcpp::QoS(rclcpp::KeepLast(10)).reliable(),
-      [this](const rosgraph_msgs::msg::Clock::SharedPtr msg) {
-        if (!clock_connected_) {
-          RCLCPP_INFO(get_node()->get_logger(), "Connected to /clock topic");
-          clock_connected_ = true;
-        }
-      }
-    );
 
     // Setup robot description subscription
     urdf_received_ = false;
@@ -138,25 +121,6 @@ auto StateEstimator::on_init() -> CallbackReturn
 auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) -> CallbackReturn
 {
   try {
-    // Set use_sim_time parameter
-    get_node()->set_parameter(rclcpp::Parameter("use_sim_time", true));
-
-    // Wait for clock
-    rclcpp::Rate rate(10);
-    auto start = std::chrono::steady_clock::now();
-
-    while (rclcpp::ok() && !clock_connected_) {
-      RCLCPP_INFO_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "Waiting for /clock...");
-      
-      // Check for timeout after 5 seconds
-      if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count() > 5) {
-        RCLCPP_ERROR(get_node()->get_logger(), "Timeout waiting for clock connection");
-        return CallbackReturn::ERROR;
-      }
-      
-      rate.sleep();
-    }
-
     // Initialize publishers
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*get_node());
     odom_pub_ = get_node()->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
@@ -271,14 +235,6 @@ auto StateEstimator::on_configure(const rclcpp_lifecycle::State & /*previous_sta
     }
 
     // Set up subscriptions
-    odom_sub_ = get_node()->create_subscription<nav_msgs::msg::Odometry>(
-      "/quadruped/state/ground_truth/odometry",
-      rclcpp::QoS(1).reliable(),
-      [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
-        latest_odom_ = msg;
-      }
-    );
-    
     gait_sub_ = get_node()->create_subscription<quadruped_msgs::msg::GaitPattern>(
       "/quadruped/gait/gait_pattern", 
       rclcpp::SensorDataQoS(),

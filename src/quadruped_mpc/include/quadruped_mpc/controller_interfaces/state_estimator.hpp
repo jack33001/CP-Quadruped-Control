@@ -145,8 +145,6 @@ private:
   bool clock_connected_{false};
   rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
   rclcpp::Clock::SharedPtr sim_clock_;
-  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-  nav_msgs::msg::Odometry::SharedPtr latest_odom_;
   
   rclcpp::Subscription<quadruped_msgs::msg::GaitPattern>::SharedPtr gait_sub_;
   quadruped_msgs::msg::GaitPattern gait_pattern_;

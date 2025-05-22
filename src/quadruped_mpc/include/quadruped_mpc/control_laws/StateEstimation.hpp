@@ -217,18 +217,8 @@ inline bool StateEstimator::pin_kinematics()
 inline bool StateEstimator::estimate_base_position()
 {
   try {
-    // Initialize odom velocity values to zero
-    double odom_vel_x = 0.0, odom_vel_y = 0.0, odom_vel_z = 0.0;
+    // Initialize velocity values to zero
     Eigen::Vector3d v_com = Eigen::Vector3d::Zero();
-    
-    // Get current time for velocity calculation
-    auto current_time = get_node()->get_clock()->now();
-    double dt = 0.0;
-    
-    // Calculate time difference
-    if (prev_update_time_.nanoseconds() > 0) {
-      dt = (current_time - prev_update_time_).seconds();
-    }
     
     // Store current foot positions for next iteration
     for (size_t i = 0; i < 4; ++i) {
@@ -239,10 +229,7 @@ inline bool StateEstimator::estimate_base_position()
       }
     }
     
-    // Store current time for next iteration
-    prev_update_time_ = current_time;
-    
-    // Calculate foot velocity magnitudes and count contacts
+    // Count contacts
     int contact_count = 0;
     for (size_t i = 0; i < foot_states_.size(); i++) {
       if (foot_states_[i].in_contact) {
@@ -250,83 +237,51 @@ inline bool StateEstimator::estimate_base_position()
       }
     }
     
-    if (latest_odom_) {
-      auto odom = latest_odom_;
-      auto position = odom->pose.pose.position;
-      auto velocity = odom->twist.twist.linear;
-      auto angular_velocity = odom->twist.twist.angular;
+    // Define foot sphere radius
+    constexpr double foot_radius = 0.015;  // meters
+    
+    Eigen::Vector3d body_angular_velocity = imu_angular_velocity_;
+    
+    // Simplified COM velocity calculation
+    if (contact_count > 0) {
+      // Optimization: For diagonal elements all the same (contact_count),
+      // we can directly accumulate without constructing matrices
+      Eigen::Vector3d sum_velocities = Eigen::Vector3d::Zero();
       
-      // Store odom velocity values for comparison
-      odom_vel_x = velocity.x;
-      odom_vel_y = velocity.y;
-      odom_vel_z = velocity.z;
-      
-      // Define foot sphere radius
-      constexpr double foot_radius = 0.015;  // meters
-      
-      Eigen::Vector3d body_angular_velocity = Eigen::Vector3d(
-        angular_velocity.x,
-        angular_velocity.y,
-        angular_velocity.z
-      );
-      
-      // Simplified COM velocity calculation
-      if (contact_count > 0) {
-        // Optimization: For diagonal elements all the same (contact_count),
-        // we can directly accumulate without constructing matrices
-        Eigen::Vector3d sum_velocities = Eigen::Vector3d::Zero();
-        
-        for (const auto& foot : foot_states_) {
-          if (foot.in_contact) {
-            // Add negative foot velocity and cross product to sum
-            sum_velocities -= (foot.velocity + body_angular_velocity.cross(foot.position));
-          }
+      for (const auto& foot : foot_states_) {
+        if (foot.in_contact) {
+          // Add negative foot velocity and cross product to sum
+          sum_velocities -= (foot.velocity + body_angular_velocity.cross(foot.position));
         }
-        
-        // Simple division by contact count (equivalent to matrix inversion for our case)
-        v_com = sum_velocities / static_cast<double>(contact_count);
-        
-        // Update velocity in current state
-        current_velocities_[0] = v_com[0];
-        current_velocities_[1] = v_com[1];
-        current_velocities_[2] = v_com[2];
       }
       
-      // World z position calculation from foot contacts
-      double world_z = 0.0;
-      if (contact_count > 0) {
-        for (const auto& foot : foot_states_) {
-          if (foot.in_contact) {
-            world_z -= foot.position.z();
-          }
-        }
-        world_z /= contact_count;
-        world_z += foot_radius; // Adjust by foot radius
-      } else {
-        world_z = position.z;  // Use odom if no contacts
-      }
+      // Simple division by contact count (equivalent to matrix inversion for our case)
+      v_com = sum_velocities / static_cast<double>(contact_count);
       
-      // Update position
-      current_positions_[0] += 0;  // No update to X
-      current_positions_[1] += 0;  // No update to Y
-      current_positions_[2] = world_z; // Direct Z from contact
-    }
-
-    // Calculate velocity magnitudes
-    double odom_vel_magnitude = 0.0;
-    if (latest_odom_) {
-      odom_vel_magnitude = std::sqrt(odom_vel_x*odom_vel_x + odom_vel_y*odom_vel_y + odom_vel_z*odom_vel_z);
+      // Update velocity in current state
+      current_velocities_[0] = v_com[0];
+      current_velocities_[1] = v_com[1];
+      current_velocities_[2] = v_com[2];
     }
     
-    double v_com_magnitude = v_com.norm();
-
-    // Only log velocity comparison at debug level
-    if (odom_vel_magnitude > 0.1) {
-      RCLCPP_DEBUG(get_node()->get_logger(), 
-                  "COM velocity - Truth: [%.4f,%.4f,%.4f], Est: [%.4f,%.4f,%.4f]",
-                  odom_vel_x, odom_vel_y, odom_vel_z,
-                  v_com.x(), v_com.y(), v_com.z());
+    // World z position calculation from foot contacts
+    double world_z = 0.0;
+    if (contact_count > 0) {
+      for (const auto& foot : foot_states_) {
+        if (foot.in_contact) {
+          world_z -= foot.position.z();
+        }
+      }
+      world_z /= contact_count;
+      world_z += foot_radius; // Adjust by foot radius
+    } else {
+      // Without ground truth, we keep the last known height
+      world_z = current_positions_[2];
     }
+    
+    current_positions_[0] = 0; // X (no need to estimate, Gait Scheduler's VPSP is used)
+    current_positions_[1] = 0; // Y (no need to estimate, Gait Scheduler's VPSP is used)
+    current_positions_[2] = world_z; // Direct Z from contact
 
     return true;
   } catch (const std::exception& e) {

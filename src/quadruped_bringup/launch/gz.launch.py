@@ -7,19 +7,6 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    # Define the RViz2 node   
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        arguments=['-d', PathJoinSubstitution([
-            FindPackageShare('quadruped_mpc'),
-            'rviz',
-            'mpc.rviz'
-        ])],
-        output='screen'
-    )
-
     # Define the package and launch file paths
     urdf_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -58,7 +45,10 @@ def generate_launch_description():
                         'launch',
                         'mpc.launch.py'
                     ])
-                ])
+                ]),
+                launch_arguments={
+                    'use_sim_time': 'true'
+                }.items()
             )
         ]
     )
@@ -66,7 +56,6 @@ def generate_launch_description():
     # Return launch description with timed execution
     return LaunchDescription([
         urdf_launch,
-        rviz_node,
         gazebo_launch,
         mpc_launch,
     ])
