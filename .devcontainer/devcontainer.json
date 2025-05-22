@@ -24,7 +24,9 @@
     },
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}",
-        "LIBGL_ALWAYS_SO#tFTWARE": "0",
+        "LIBGL_ALWAYS_SOFTWARE": "0",
+        "NVIDIA_VISIBLE_DEVICES": "all",
+        "NVIDIA_DRIVER_CAPABILITIES": "all",
         "ROS_AUTOMATIC_DISCOVERY_RANGE": "SUBNET",
         "ROS_DOMAIN_ID": "42"
     },
@@ -38,8 +40,8 @@
         "/tmp/.X11-unix:/tmp/.X11-unix",  // X11 socket for GUI rendering
         "--device",
         "/dev/dri:/dev/dri",  // Device for GPU access
-         "--device=/dev/ttyACM0:/dev/ttyACM0"
-        
+        "--device=/dev/ttyACM0:/dev/ttyACM0",
+        "--gpus=all"          // Enable NVIDIA GPU access
     ],
     "mounts": [
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
