@@ -39,17 +39,16 @@ def generate_launch_description():
         arguments=[
             # 'joint_state_broadcaster',
             # 'imu_sensor_controller',
-            'state_estimator'#,
-            # 'gait_pattern_generator',
+            'state_estimator',
+            'gait_pattern_generator',
             
-            # 'balance_controller',
+            'balance_controller',
             # 'foot_controller'
         ],
         parameters=[{
-            'use_sim_time': LaunchConfiguration('use_sim_time'),
+            'use_sim_time': False#LaunchConfiguration('use_sim_time'),
         }],
         output='screen',
-        parameters = [ {"use_sim_time" : False}]
     )
 
     # Add teleop node
