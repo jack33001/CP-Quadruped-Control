@@ -210,7 +210,7 @@ void CANMotor::on_timeout(){
     // timeout function for watchdog timer
     state_watchdog=1;
     RCLCPP_ERROR(rclcpp::get_logger("CANMotor"), "Watchdog triggered on motor: %d", can_id[0]);
-    std::this_thread::sleep_for(10ms);
+    std::this_thread::sleep_for(30ms);
 }
 
 hardware_interface::CallbackReturn CANMotor::on_init(const hardware_interface::HardwareInfo& info){
