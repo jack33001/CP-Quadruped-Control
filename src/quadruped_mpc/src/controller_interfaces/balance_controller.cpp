@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unistd.h>
+#include <chrono>
 #include "ament_index_cpp/get_package_share_directory.hpp"
 
 namespace quadruped_mpc
@@ -35,6 +36,9 @@ BalanceController::state_interface_configuration() const
 controller_interface::return_type
 BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
+  // Start high-resolution timer for measuring update duration
+  auto start_time = std::chrono::high_resolution_clock::now();
+
   if (!update_state()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to update state");
     return controller_interface::return_type::ERROR;
@@ -49,6 +53,14 @@ BalanceController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to update commands");
     return controller_interface::return_type::ERROR;
   }
+
+  // Calculate elapsed time with microsecond precision
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+  RCLCPP_INFO(
+    get_node()->get_logger(),
+    "Balance controller update took %.6f ms", 
+    elapsed_time.count() / 1000.0);
 
   return controller_interface::return_type::OK;
 }

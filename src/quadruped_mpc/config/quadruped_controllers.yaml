@@ -57,7 +57,7 @@ gait_pattern_generator:
     swing_duration: 0.1
     step_height: 0.1
     # Duplicate MPC parameters here to avoid dependency on balance_controller
-    stages: 50    # Number of stages in the MPC
+    stages: 30    # Number of stages in the MPC
     horizon: 3.0  # Time horizon in seconds
 
 balance_controller:
@@ -74,9 +74,9 @@ balance_controller:
     # Tuning parameters for the MPC
     mass: 13.2    # Robot mass in kg 
     inertia: 1    # Robot inertia in kg*m^2
-    stages: 50    # Number of stages in the MPC
+    stages: 30    # Number of stages in the MPC
     horizon: 2.0  # Time horizon in seconds
-    com_offset: [0.0, 0.02, 0.0]                   # Center of mass offset [x, y, z] in meters
+    com_offset: [0.0, 0.0, 0.0]                   # Center of mass offset [x, y, z] in meters
     weights:
       position: [100, 100, 100]                   # Position tracking weights (x, y, z)
       orientation: [100, 100, 100, 100]           # Orientation tracking weights (quaternion)

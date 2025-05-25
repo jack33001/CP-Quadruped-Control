@@ -1,5 +1,6 @@
 #include "quadruped_mpc/controller_interfaces/gait_pattern_generator.hpp"
 #include "quadruped_mpc/control_laws/GaitPatternGenerator.hpp"
+#include <chrono>
 
 namespace quadruped_mpc
 {
@@ -28,6 +29,9 @@ GaitPatternGenerator::state_interface_configuration() const
 controller_interface::return_type
 GaitPatternGenerator::update(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
+  // Start high-resolution timer for measuring update duration
+  auto start_time = std::chrono::high_resolution_clock::now();
+
   // Pass the time information to the functions that need it
   if (!unpack_state()) {
       return controller_interface::return_type::ERROR;
@@ -44,6 +48,14 @@ GaitPatternGenerator::update(const rclcpp::Time & time, const rclcpp::Duration &
   if (!publish_pattern()) {
       return controller_interface::return_type::ERROR;
   }
+
+  // Calculate elapsed time with microsecond precision
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+  RCLCPP_INFO(
+    get_node()->get_logger(),
+    "Gait pattern generator update took %.6f ms", 
+    elapsed_time.count() / 1000.0);
 
   return controller_interface::return_type::OK;
 }

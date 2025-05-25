@@ -37,13 +37,13 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=[
-            # 'joint_state_broadcaster',
-            # 'imu_sensor_controller',
+            'joint_state_broadcaster',
+            'imu_sensor_controller',
             'state_estimator',
             'gait_pattern_generator',
             
             'balance_controller',
-            # 'foot_controller'
+            'foot_controller'
         ],
         parameters=[{
             'use_sim_time': False#LaunchConfiguration('use_sim_time'),

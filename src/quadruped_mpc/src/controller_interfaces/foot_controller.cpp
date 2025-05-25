@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <chrono>
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/logging.hpp"
@@ -215,6 +216,9 @@ namespace quadruped_mpc
   controller_interface::return_type FootController::update(
       const rclcpp::Time &time, const rclcpp::Duration &period)
   {
+    // Start high-resolution timer for measuring update duration
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     if (!read_topics(*this))
     {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to read topics");
@@ -238,6 +242,14 @@ namespace quadruped_mpc
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to apply Jacobians");
       return controller_interface::return_type::ERROR;
     }
+
+      // Calculate elapsed time with microsecond precision
+      auto end_time = std::chrono::high_resolution_clock::now();
+      auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+      RCLCPP_INFO(
+        get_node()->get_logger(),
+        "Foot controller update took %.6f ms", 
+        elapsed_time.count() / 1000.0);
 
     // If we got here, everything was successful
     return controller_interface::return_type::OK;

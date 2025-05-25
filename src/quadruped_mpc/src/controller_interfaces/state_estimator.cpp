@@ -2,6 +2,7 @@
 #include "quadruped_mpc/control_laws/StateEstimation.hpp"
 #include <std_msgs/msg/string.hpp>
 #include <sstream>
+#include <chrono>
 
 namespace quadruped_mpc
 {
@@ -50,6 +51,9 @@ StateEstimator::state_interface_configuration() const
 controller_interface::return_type
 StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
+  // Start high-resolution timer for measuring update duration
+  auto start_time = std::chrono::high_resolution_clock::now();
+
   if (!read_state_interfaces()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to read state interfaces");
     return controller_interface::return_type::ERROR;
@@ -89,6 +93,14 @@ StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to update odometry");
     return controller_interface::return_type::ERROR;
   }
+
+  // Calculate elapsed time with microsecond precision
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+  RCLCPP_INFO(
+    get_node()->get_logger(),
+    "State estimator update took %.6f ms", 
+    elapsed_time.count() / 1000.0);
 
   return controller_interface::return_type::OK;
 }
