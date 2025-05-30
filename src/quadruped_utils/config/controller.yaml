@@ -76,6 +76,8 @@ controller_manager:
     zero_joints_controller:
       type: quadruped_utils/ZeroJointsController
 
+    static_joints_controller:
+      type: quadruped_utils/StaticJointsController
 
 
 # joint_state_broadcaster:
@@ -172,6 +174,57 @@ zero_joints_controller:
       - position
       - velocity
       - effort
+
+
+static_joints_controller:
+  ros__parameters:
+
+    zero_effort_lim: 1.0
+
+
+    kp: 30.0
+    kd: 1.0
+
+    velocity: 0.25
+
+    # Gains for the motor after the joint is zeroed
+    zeroed_kp: 0.0 
+    zeroed_kd: 0.5
+
+
+    joints_orientation: [-1.0]
+
+    joints:
+      - fr_hip 
+      - fr_knee
+
+      - rr_hip
+      - rr_knee
+
+      - fl_hip 
+      - fl_knee
+
+      - rl_hip
+      - rl_knee
+
+    zero_direction: [-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0]
+      
+    command_interfaces:
+      - position
+      - velocity
+      - m_state
+      - kp
+      - kd
+      - flip
+    state_interfaces:
+      - position
+      - velocity
+      - effort
+
+    positions: [-1.9,-0.5,1.9,0.5,1.9,0.5,-1.9,-0.5]  # Initial positions for the joints
+    velocities: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]  # Initial velocities for the joints
+      
+
 
 
 imu_sensor_controller:

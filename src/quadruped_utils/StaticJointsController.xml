@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<library path="quadruped_utils_controllers">
+  <class name="quadruped_utils/StaticJointsController"
+         type="quadruped_utils::StaticJointsController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>simple pose command controller</description>
+  </class>
+</library>

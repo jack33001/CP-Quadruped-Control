@@ -41,7 +41,7 @@
             <param name="can_bus" >can0</param>
             <param name="can_id" >10</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>     
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param>
@@ -73,7 +73,7 @@
             <param name="can_bus" >can0</param>
             <param name="can_id" >11</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>   
             <param name="zero_position_offset" >0</param> 
@@ -103,7 +103,7 @@
             <param name="can_bus" >can0</param>
             <param name="can_id" >12</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>
             <param name="frequency" >50.0</param>     
             <param name="zero_position_offset" >0</param> 
@@ -134,7 +134,7 @@
             <param name="can_bus" >can0</param>
             <param name="can_id" >13</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param> 
             <param name="zero_position_offset" >0</param>
@@ -165,7 +165,7 @@
             <param name="can_bus" >can1</param>
             <param name="can_id" >14</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>  
             <param name="frequency" >50.0</param>    
             <param name="zero_position_offset" >0</param> 
@@ -196,7 +196,7 @@
             <param name="can_bus" >can1</param>
             <param name="can_id" >15</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>   
             <param name="frequency" >50.0</param>  
             <param name="zero_position_offset" >0</param>
@@ -227,7 +227,7 @@
             <param name="can_bus" >can1</param>
             <param name="can_id" >16</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param>    
             <param name="frequency" >50.0</param> 
             <param name="zero_position_offset" >0</param>
@@ -259,7 +259,7 @@
             <param name="can_bus" >can1</param>
             <param name="can_id" >17</param>
             <param name="flip" >true</param>
-            <param name="effort_limit" >2</param>
+            <param name="effort_limit" >12.0</param>
             <param name="command_type" >radian</param> 
             <param name="frequency" >50.0</param>  
             <param name="zero_position_offset" >0.0</param>

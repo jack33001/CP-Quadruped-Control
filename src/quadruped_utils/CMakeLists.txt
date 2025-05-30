@@ -17,6 +17,7 @@ set(CMAKE_BUILD_TYPE Debug)
 add_library(quadruped_utils_controllers SHARED
    
     src/ZeroJointsController.cpp
+    src/StaticJointsController.cpp
     src/EstopController.cpp
 
 )
@@ -74,6 +75,7 @@ install(
 )
 
 pluginlib_export_plugin_description_file(controller_interface ZeroJointsController.xml)
+pluginlib_export_plugin_description_file(controller_interface StaticJointsController.xml)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
