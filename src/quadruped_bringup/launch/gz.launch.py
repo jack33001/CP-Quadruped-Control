@@ -36,7 +36,7 @@ def generate_launch_description():
 
     # Wrap MPC launch in TimerAction for delayed start
     mpc_launch = TimerAction(
-        period = 7.0,  # Wait for 10 seconds after launch start
+        period = 10.0,  # Wait for 10 seconds after launch start
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([

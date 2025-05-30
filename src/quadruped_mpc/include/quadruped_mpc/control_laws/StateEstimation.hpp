@@ -259,9 +259,9 @@ inline bool StateEstimator::estimate_base_position()
       v_com = sum_velocities / static_cast<double>(contact_count);
       
       // Update velocity in current state
-      current_velocities_[0] = v_com[0];
-      current_velocities_[1] = v_com[1];
-      current_velocities_[2] = v_com[2];
+      current_velocities_[0] = latest_odom_->twist.twist.linear.x;//v_com[0];
+      current_velocities_[1] = latest_odom_->twist.twist.linear.y;//v_com[1];
+      current_velocities_[2] = latest_odom_->twist.twist.linear.z;//v_com[2];
     }
     
     // World z position calculation from foot contacts

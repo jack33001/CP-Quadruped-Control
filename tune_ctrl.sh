@@ -1,3 +1,5 @@
+source /opt/ros/jazzy/setup.bash
+
 /bin/python3 /home/ws/src/quadruped_mpc/scripts/acados/generate_controller.py
 
 colcon build --symlink-install --packages-skip quadruped_hardware quadruped_utils imu_hardware_interface

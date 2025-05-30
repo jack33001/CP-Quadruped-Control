@@ -83,6 +83,7 @@ class QuadrupedTeleop(Node):
             gait_start_msg.data = True
             self.gait_start_publisher.publish(gait_start_msg)
             self.get_logger().info('Gait start command sent')
+            self.twist.linear.y = -.5
             return
             
         # Handle character keys

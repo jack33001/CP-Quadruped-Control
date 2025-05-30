@@ -406,64 +406,44 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     else
     {
         // set time_steps
-    double time_step = 0.1;
+    double time_step = 0.16666666666666666;
         for (int i = 0; i < N; i++)
         {
             ocp_nlp_in_set(nlp_config, nlp_dims, nlp_in, i, "Ts", &time_step);
         }
         // set cost scaling
         double* cost_scaling = malloc((N+1)*sizeof(double));
-        cost_scaling[0] = 0.1;
-        cost_scaling[1] = 0.1;
-        cost_scaling[2] = 0.1;
-        cost_scaling[3] = 0.1;
-        cost_scaling[4] = 0.1;
-        cost_scaling[5] = 0.1;
-        cost_scaling[6] = 0.1;
-        cost_scaling[7] = 0.1;
-        cost_scaling[8] = 0.1;
-        cost_scaling[9] = 0.1;
-        cost_scaling[10] = 0.1;
-        cost_scaling[11] = 0.1;
-        cost_scaling[12] = 0.1;
-        cost_scaling[13] = 0.1;
-        cost_scaling[14] = 0.1;
-        cost_scaling[15] = 0.1;
-        cost_scaling[16] = 0.1;
-        cost_scaling[17] = 0.1;
-        cost_scaling[18] = 0.1;
-        cost_scaling[19] = 0.1;
-        cost_scaling[20] = 0.1;
-        cost_scaling[21] = 0.1;
-        cost_scaling[22] = 0.1;
-        cost_scaling[23] = 0.1;
-        cost_scaling[24] = 0.1;
-        cost_scaling[25] = 0.1;
-        cost_scaling[26] = 0.1;
-        cost_scaling[27] = 0.1;
-        cost_scaling[28] = 0.1;
-        cost_scaling[29] = 0.1;
-        cost_scaling[30] = 0.1;
-        cost_scaling[31] = 0.1;
-        cost_scaling[32] = 0.1;
-        cost_scaling[33] = 0.1;
-        cost_scaling[34] = 0.1;
-        cost_scaling[35] = 0.1;
-        cost_scaling[36] = 0.1;
-        cost_scaling[37] = 0.1;
-        cost_scaling[38] = 0.1;
-        cost_scaling[39] = 0.1;
-        cost_scaling[40] = 0.1;
-        cost_scaling[41] = 0.1;
-        cost_scaling[42] = 0.1;
-        cost_scaling[43] = 0.1;
-        cost_scaling[44] = 0.1;
-        cost_scaling[45] = 0.1;
-        cost_scaling[46] = 0.1;
-        cost_scaling[47] = 0.1;
-        cost_scaling[48] = 0.1;
-        cost_scaling[49] = 0.1;
-        cost_scaling[50] = 1;
+        cost_scaling[0] = 0.16666666666666666;
+        cost_scaling[1] = 0.16666666666666666;
+        cost_scaling[2] = 0.16666666666666666;
+        cost_scaling[3] = 0.16666666666666666;
+        cost_scaling[4] = 0.16666666666666666;
+        cost_scaling[5] = 0.16666666666666666;
+        cost_scaling[6] = 0.16666666666666666;
+        cost_scaling[7] = 0.16666666666666666;
+        cost_scaling[8] = 0.16666666666666666;
+        cost_scaling[9] = 0.16666666666666666;
+        cost_scaling[10] = 0.16666666666666666;
+        cost_scaling[11] = 0.16666666666666666;
+        cost_scaling[12] = 0.16666666666666666;
+        cost_scaling[13] = 0.16666666666666666;
+        cost_scaling[14] = 0.16666666666666666;
+        cost_scaling[15] = 0.16666666666666666;
+        cost_scaling[16] = 0.16666666666666666;
+        cost_scaling[17] = 0.16666666666666666;
+        cost_scaling[18] = 0.16666666666666666;
+        cost_scaling[19] = 0.16666666666666666;
+        cost_scaling[20] = 0.16666666666666666;
+        cost_scaling[21] = 0.16666666666666666;
+        cost_scaling[22] = 0.16666666666666666;
+        cost_scaling[23] = 0.16666666666666666;
+        cost_scaling[24] = 0.16666666666666666;
+        cost_scaling[25] = 0.16666666666666666;
+        cost_scaling[26] = 0.16666666666666666;
+        cost_scaling[27] = 0.16666666666666666;
+        cost_scaling[28] = 0.16666666666666666;
+        cost_scaling[29] = 0.16666666666666666;
+        cost_scaling[30] = 1;
         for (int i = 0; i <= N; i++)
         {
             ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "scaling", &cost_scaling[i]);
@@ -488,13 +468,13 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
 
    double* W_0 = calloc(NY0*NY0, sizeof(double));
     // change only the non-zero elements:
-    W_0[0+(NY0) * 0] = 100000;
-    W_0[1+(NY0) * 1] = 100000;
-    W_0[2+(NY0) * 2] = 100000;
-    W_0[3+(NY0) * 3] = 1000;
-    W_0[4+(NY0) * 4] = 1000;
-    W_0[5+(NY0) * 5] = 1000;
-    W_0[6+(NY0) * 6] = 1000;
+    W_0[0+(NY0) * 0] = 1000;
+    W_0[1+(NY0) * 1] = 1000;
+    W_0[2+(NY0) * 2] = 1000;
+    W_0[3+(NY0) * 3] = 100;
+    W_0[4+(NY0) * 4] = 100;
+    W_0[5+(NY0) * 5] = 100;
+    W_0[6+(NY0) * 6] = 100;
     W_0[7+(NY0) * 7] = 10;
     W_0[8+(NY0) * 8] = 10;
     W_0[9+(NY0) * 9] = 10;
@@ -534,13 +514,13 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     free(yref);
     double* W = calloc(NY*NY, sizeof(double));
     // change only the non-zero elements:
-    W[0+(NY) * 0] = 100000;
-    W[1+(NY) * 1] = 100000;
-    W[2+(NY) * 2] = 100000;
-    W[3+(NY) * 3] = 1000;
-    W[4+(NY) * 4] = 1000;
-    W[5+(NY) * 5] = 1000;
-    W[6+(NY) * 6] = 1000;
+    W[0+(NY) * 0] = 1000;
+    W[1+(NY) * 1] = 1000;
+    W[2+(NY) * 2] = 1000;
+    W[3+(NY) * 3] = 100;
+    W[4+(NY) * 4] = 100;
+    W[5+(NY) * 5] = 100;
+    W[6+(NY) * 6] = 100;
     W[7+(NY) * 7] = 10;
     W[8+(NY) * 8] = 10;
     W[9+(NY) * 9] = 10;
@@ -590,13 +570,13 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
 
     double* W_e = calloc(NYN*NYN, sizeof(double));
     // change only the non-zero elements:
-    W_e[0+(NYN) * 0] = 1000000;
-    W_e[1+(NYN) * 1] = 1000000;
-    W_e[2+(NYN) * 2] = 1000000;
-    W_e[3+(NYN) * 3] = 10000;
-    W_e[4+(NYN) * 4] = 10000;
-    W_e[5+(NYN) * 5] = 10000;
-    W_e[6+(NYN) * 6] = 10000;
+    W_e[0+(NYN) * 0] = 10000;
+    W_e[1+(NYN) * 1] = 10000;
+    W_e[2+(NYN) * 2] = 10000;
+    W_e[3+(NYN) * 3] = 1000;
+    W_e[4+(NYN) * 4] = 1000;
+    W_e[5+(NYN) * 5] = 1000;
+    W_e[6+(NYN) * 6] = 1000;
     W_e[7+(NYN) * 7] = 100;
     W_e[8+(NYN) * 8] = 100;
     W_e[9+(NYN) * 9] = 100;
@@ -852,7 +832,7 @@ static void quadruped_ode_acados_create_set_opts(quadruped_ode_solver_capsule* c
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "levenberg_marquardt", &levenberg_marquardt);
 
     /* options QP solver */
-    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 50;
+    int qp_solver_cond_N;const int qp_solver_cond_N_ori = 30;
     qp_solver_cond_N = N < qp_solver_cond_N_ori ? N : qp_solver_cond_N_ori; // use the minimum value here
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_N", &qp_solver_cond_N);
 

@@ -64,7 +64,7 @@
 #define QUADRUPED_ODE_NY0    13
 #define QUADRUPED_ODE_NY     13
 #define QUADRUPED_ODE_NYN    13
-#define QUADRUPED_ODE_N      50
+#define QUADRUPED_ODE_N      30
 #define QUADRUPED_ODE_NH     0
 #define QUADRUPED_ODE_NHN    0
 #define QUADRUPED_ODE_NH0    0

@@ -6,7 +6,6 @@ controller_manager:
     
     imu_sensor_controller:
       type: imu_sensor_broadcaster/IMUSensorBroadcaster
-      publish_rate: 100
       sensor_name: "imu_sensor"
 
     state_estimator:
@@ -21,18 +20,20 @@ controller_manager:
     foot_controller:
       type: quadruped_mpc/foot_controller
 
-
 # Individual controller configurations
 joint_state_broadcaster:
   ros__parameters: {}  # Empty is fine, it will auto-discover joints
 
 imu_sensor_controller:
   ros__parameters:
+    is_async: true
     sensor_name: imu_sensor
     frame_id: imu_link
 
 state_estimator:
   ros__parameters:
+    is_async: false
+    update_rate: 125
     joints:
       - fl_hip
       - fl_knee  
@@ -49,6 +50,8 @@ state_estimator:
 
 gait_pattern_generator:
   ros__parameters:
+    is_async: false
+    update_rate: 125
     # Gait type is determining the order of steps. The legs are numbered clockwise from the top left like this:
     # |1 2|
     # |4 3|
@@ -57,11 +60,13 @@ gait_pattern_generator:
     swing_duration: 0.1
     step_height: 0.1
     # Duplicate MPC parameters here to avoid dependency on balance_controller
-    stages: 50    # Number of stages in the MPC
+    stages: 30    # Number of stages in the MPC
     horizon: 5.0  # Time horizon in seconds
 
 balance_controller:
   ros__parameters:
+    is_async: false
+    update_rate: 125
     joints:
       - fl_hip
       - fl_knee  
@@ -74,12 +79,12 @@ balance_controller:
     # Tuning parameters for the MPC
     mass: 13.2    # Robot mass in kg 
     inertia: .8    # Robot inertia in kg*m^2
-    stages: 50    # Number of stages in the MPC
+    stages: 30    # Number of stages in the MPC
     horizon: 5.0  # Time horizon in seconds
     com_offset: [0.0, 0.0, 0.0]                   # Center of mass offset [x, y, z] in meters
     weights:
-      position: [100000, 100000, 100000]          # Position tracking weights (x, y, z)
-      orientation: [1000, 1000, 1000, 1000]       # Orientation tracking weights (quaternion)
+      position: [1000, 1000, 1000]          # Position tracking weights (x, y, z)
+      orientation: [100, 100, 100, 100]       # Orientation tracking weights (quaternion)
       velocity: [10, 10, 10]                      # Linear velocity tracking weights
       angular_velocity: [30, 30, 30]                 # Angular velocity tracking weights
       force_cost: 1                               # Cost weight for control force inputs
@@ -87,6 +92,8 @@ balance_controller:
 
 foot_controller:
   ros__parameters:
+    is_async: false
+    update_rate: 125
     joints:
       - fl_hip
       - fl_knee  
