@@ -1,0 +1,3 @@
+ros2 control set_controller_state zero_joints_controller inactive
+ros2 control unload_controller zero_joints_controller
+ros2 control list_controllers

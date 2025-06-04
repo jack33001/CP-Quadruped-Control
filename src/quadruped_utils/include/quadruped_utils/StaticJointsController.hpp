@@ -58,6 +58,9 @@ protected:
     double zeroed_kp;
     double zeroed_kd;
 
+
+    bool alt;
+
     // Command interface vectors
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
         joint_position_command_interface_;

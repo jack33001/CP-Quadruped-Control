@@ -28,6 +28,8 @@ controller_interface::CallbackReturn StaticJointsController::on_init()
 
         // Get parameters from yaml
         try {
+
+            alt = false;
             fprintf(stderr, "static controller trying to declare parameters\n");
             
             joint_names_ = auto_declare<std::vector<std::string>>("joints", joint_names_);
@@ -173,7 +175,9 @@ controller_interface::CallbackReturn StaticJointsController::on_activate(const r
 controller_interface::return_type StaticJointsController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
 
+    double delta = 0.1;
     // for all joints
+
     for (size_t i = 0; i < joint_names_.size(); ++i) 
         {
             success = joint_position_command_interface_[i].get().set_value(pose_position[i]);
@@ -185,6 +189,36 @@ controller_interface::return_type StaticJointsController::update(const rclcpp::T
             success = joint_kd_command_interface_[i].get().set_value(kd);
             assert(success);
         }
+
+    // if(alt==false) {
+    //     for (size_t i = 0; i < joint_names_.size(); ++i) 
+    //     {
+    //         success = joint_position_command_interface_[i].get().set_value(pose_position[i]);
+    //         assert(success);
+    //         success = joint_velocity_command_interface_[i].get().set_value(pose_velocity[i]);
+    //         assert(success);
+    //         success = joint_kp_command_interface_[i].get().set_value(kp);
+    //         assert(success);   
+    //         success = joint_kd_command_interface_[i].get().set_value(kd);
+    //         assert(success);
+    //     }
+    //     alt=true;
+    // } 
+    // else if(alt==true) {
+    //     for (size_t i = 0; i < joint_names_.size(); ++i) 
+    //     {
+    //         success = joint_position_command_interface_[i].get().set_value(pose_position[i]+delta);
+    //         assert(success);
+    //         success = joint_velocity_command_interface_[i].get().set_value(pose_velocity[i]);
+    //         assert(success);
+    //         success = joint_kp_command_interface_[i].get().set_value(kp);
+    //         assert(success);   
+    //         success = joint_kd_command_interface_[i].get().set_value(kd);
+    //         assert(success);
+    //     }
+    //     alt=false;
+    // }
+
 
         return controller_interface::return_type::OK;
     }

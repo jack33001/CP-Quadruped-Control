@@ -182,7 +182,8 @@ static_joints_controller:
     zero_effort_lim: 1.0
 
 
-    kp: 30.0
+    # kp: 30.0
+    kp: 20.0
     kd: 1.0
 
     velocity: 0.25
@@ -222,6 +223,11 @@ static_joints_controller:
       - effort
 
     positions: [-1.9,-0.5,1.9,0.5,1.9,0.5,-1.9,-0.5]  # Initial positions for the joints
+
+    # positions: [0.4,-0.5,-0.4,0.5,-0.4,0.5,0.4,-0.5]  # Initial positions for the joints
+
+
+
     velocities: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]  # Initial velocities for the joints
       
 
