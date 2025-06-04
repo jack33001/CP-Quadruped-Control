@@ -78,10 +78,10 @@ balance_controller:
     horizon: 5.0  # Time horizon in seconds
     com_offset: [0.0, 0.0, 0.0]                   # Center of mass offset [x, y, z] in meters
     weights:
-      position: [100000, 100000, 100000]          # Position tracking weights (x, y, z)
-      orientation: [1000, 1000, 1000, 1000]       # Orientation tracking weights (quaternion)
-      velocity: [10, 10, 10]                      # Linear velocity tracking weights
-      angular_velocity: [30, 30, 30]                 # Angular velocity tracking weights
+      position: [10000, 10000, 10000]          # Position tracking weights (x, y, z)
+      orientation: [100, 100, 100, 100]       # Orientation tracking weights (quaternion)
+      velocity: [0, 1, 1]                      # Linear velocity tracking weights
+      angular_velocity: [3, 3, 0]                 # Angular velocity tracking weights
       force_cost: 1                               # Cost weight for control force inputs
       terminal_factor: 10.0                       # Factor to multiply all weights for terminal cost
 
