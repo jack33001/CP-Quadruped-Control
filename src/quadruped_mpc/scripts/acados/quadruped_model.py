@@ -60,16 +60,11 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     I = inertia   # inertia of the robot (kg*m^2)
     g = -9.81  # gravity (m/s^2)
 
-    # Create state vector first
+    # Create reduced state vector (13 states instead of 25)
     states = [SX.sym(name) for name in [# positions/orientations
                                         'x', 'y', 'z', 'q_w', 'q_x', 'q_y', 'q_z', 
                                         # velocities
-                                        'vx', 'vy', 'vz', 'wx', 'wy', 'wz',
-                                        # foot positions
-                                        'f1_x', 'f1_y', 'f1_z',
-                                        'f2_x', 'f2_y', 'f2_z',
-                                        'f3_x', 'f3_y', 'f3_z',
-                                        'f4_x', 'f4_y', 'f4_z']]
+                                        'vx', 'vy', 'vz', 'wx', 'wy', 'wz']]
     x = vertcat(*states)
     logger.info(f"Created state vector with shape: {x.shape}")
     logger.info(f"State vector: {x}")
@@ -77,6 +72,15 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     # Set state in model immediately
     model.x = x
     logger.info(f"Set model.x with type: {type(model.x)}")
+    
+    # Create parameters for foot positions (12 parameters: 4 feet * 3 coordinates)
+    foot_params = [SX.sym(name) for name in ['f1_x', 'f1_y', 'f1_z',
+                                             'f2_x', 'f2_y', 'f2_z',
+                                             'f3_x', 'f3_y', 'f3_z',
+                                             'f4_x', 'f4_y', 'f4_z']]
+    p = vertcat(*foot_params)
+    model.p = p
+    logger.info(f"Created parameter vector with shape: {p.shape}")
     
     # Set control variables
     F1 = SX.sym('F1', 3)
@@ -90,6 +94,7 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     # Store dimensions for cost computation
     model.nx = x.shape[0]
     model.nu = u.shape[0]
+    model.np = p.shape[0]
 
     # Create and set xdot immediately after state
     xdot = SX.sym('xdot', x.shape[0])
@@ -106,10 +111,12 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     q_quat = x[3:7]        # quaternion states [qw, qx, qy, qz]
     v_lin = x[7:10]        # linear velocities [vx, vy, vz]
     v_ang = x[10:13]       # angular velocities [wx, wy, wz]
-    p1 = x[13:16]          # position of foot 1 [x,y,z]
-    p2 = x[16:19]          # position of foot 2 [x,y,z]
-    p3 = x[19:22]          # position of foot 3 [x,y,z]
-    p4 = x[22:25]          # position of foot 4 [x,y,z]
+    
+    # Extract foot positions from parameters
+    p1 = p[0:3]            # position of foot 1 [x,y,z]
+    p2 = p[3:6]            # position of foot 2 [x,y,z]
+    p3 = p[6:9]            # position of foot 3 [x,y,z]
+    p4 = p[9:12]           # position of foot 4 [x,y,z]
     pc = q_pos
 
     # System dynamics
@@ -139,10 +146,8 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
               cross(p3 - pc, F3) + cross(p4 - pc, F4)) / I
     logger.info(f"dv_ang: {dv_ang}")
 
-    # Combine all dynamics into state derivative vector
-    # Add zero derivatives for foot positions (they are treated as parameters)
-    foot_derivatives = vertcat(SX.zeros(3), SX.zeros(3), SX.zeros(3), SX.zeros(3))  # 12 zeros for 4 feet
-    f_expl = vertcat(dq_pos, dq_rot, dv_lin, dv_ang, foot_derivatives)
+    # Combine all dynamics into state derivative vector (13 states only)
+    f_expl = vertcat(dq_pos, dq_rot, dv_lin, dv_ang)
     logger.info(f"Created dynamics vector with shape: {f_expl.shape}")
     
     # Set model dynamics
@@ -162,7 +167,7 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     # Set model dimensions explicitly
     model.nx = x.shape[0]
     model.nu = u.shape[0]
-    model.np = 0
+    model.np = p.shape[0]
     logger.info(f"Set model dimensions - nx: {model.nx}, nu: {model.nu}, np: {model.np}")
 
     # Set labels

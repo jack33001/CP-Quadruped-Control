@@ -169,11 +169,26 @@ int quadruped_ode_acados_sim_create(quadruped_ode_sim_solver_capsule * capsule)
     capsule->acados_sim_solver = quadruped_ode_sim_solver;
 
 
+    /* initialize parameter values */
+    double* p = calloc(np, sizeof(double));
+    
+    p[0] = 0.15;
+    p[1] = 0.15;
+    p[3] = 0.15;
+    p[4] = -0.15;
+    p[6] = -0.15;
+    p[7] = 0.15;
+    p[9] = -0.15;
+    p[10] = -0.15;
+
+    quadruped_ode_acados_sim_update_params(capsule, p, np);
+    free(p);
+
 
     /* initialize input */
     // x
-    double x0[25];
-    for (int ii = 0; ii < 25; ii++)
+    double x0[13];
+    for (int ii = 0; ii < 13; ii++)
         x0[ii] = 0.0;
 
     sim_in_set(quadruped_ode_sim_config, quadruped_ode_sim_dims,
@@ -189,11 +204,11 @@ int quadruped_ode_acados_sim_create(quadruped_ode_sim_solver_capsule * capsule)
                quadruped_ode_sim_in, "u", u0);
 
     // S_forw
-    double S_forw[925];
-    for (int ii = 0; ii < 925; ii++)
+    double S_forw[325];
+    for (int ii = 0; ii < 325; ii++)
         S_forw[ii] = 0.0;
-    for (int ii = 0; ii < 25; ii++)
-        S_forw[ii + ii * 25 ] = 1.0;
+    for (int ii = 0; ii < 13; ii++)
+        S_forw[ii + ii * 13 ] = 1.0;
 
 
     sim_in_set(quadruped_ode_sim_config, quadruped_ode_sim_dims,

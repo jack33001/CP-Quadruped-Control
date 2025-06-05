@@ -152,12 +152,13 @@ class QuadrupedOptimalController:
         # Verify model attributes
         logger.info(f"Model state shape: {model.x.shape}")
         logger.info(f"Model control shape: {model.u.shape}")
+        logger.info(f"Model parameter shape: {model.p.shape}")
         
         # Get dimensions from model
-        nx = model.x.shape[0]  # 25 (state dimension)
+        nx = model.x.shape[0]  # 13 (reduced state dimension)
         nu = model.u.shape[0]  # 12 (control dimension)
-        np = 0
-        ny = 13              # We only track 13 states in the cost
+        np = model.p.shape[0]  # 12 (parameter dimension for foot positions)
+        ny = 13              # We track all 13 states in the cost
         ny_e = 13           # Terminal cost tracks same states
 
         logger.info(f"Dimensions - nx: {nx}, nu: {nu}, np: {np}, ny: {ny}, ny_e: {ny_e}")
@@ -165,20 +166,31 @@ class QuadrupedOptimalController:
         # Set dimensions
         ocp.dims.nx = nx
         ocp.dims.nu = nu
-        ocp.dims.np = 0
-        ocp.dims.ny = ny      # Track only 13 states
+        ocp.dims.np = np
+        ocp.dims.ny = ny      # Track all 13 states
         ocp.dims.ny_e = ny_e  # Same for terminal cost
         ocp.dims.N = self.N
 
-        # Selection matrices - only select first 13 states
-        Vx = numpy.zeros((ny, nx))
-        Vx[:13, :13] = numpy.eye(13)  # Select only first 13 states
+        # Set default parameter values (required for ACADOS)
+        # Default foot positions in a square configuration
+        leg_length = 0.15
+        default_foot_positions = numpy.array([
+            leg_length, leg_length, 0.0,      # foot 1 (front right)
+            leg_length, -leg_length, 0.0,     # foot 2 (front left)  
+            -leg_length, leg_length, 0.0,     # foot 3 (back right)
+            -leg_length, -leg_length, 0.0     # foot 4 (back left)
+        ])
+        ocp.parameter_values = default_foot_positions
+        logger.info(f"Set default parameter values: {default_foot_positions}")
+
+        # Selection matrices - select all 13 states
+        Vx = numpy.eye(ny, nx)  # Identity matrix for all states
         Vu = numpy.ones((ny, nu))*self.force_weight # for now, don't worry about policing the controller effort
         
         ocp.cost.Vx = Vx
         ocp.cost.Vu = Vu
         ocp.cost.Vx_e = Vx  # Terminal cost same selection
-        logger.info("Set selection matrices to track only first 13 states")
+        logger.info("Set selection matrices to track all 13 states")
 
         # Weights for tracked states - use values from YAML
         pos_weights = self.position_weights
@@ -194,7 +206,7 @@ class QuadrupedOptimalController:
         ocp.cost.W_e = W_e
         logger.info("Set weight matrices from configuration file")
 
-        # References (only for tracked states)
+        # References (for all tracked states)
         ocp.cost.yref = numpy.zeros(ny)     # Reference for tracked states
         ocp.cost.yref_e = numpy.zeros(ny_e) # Terminal reference
         logger.info("Set zero references")
@@ -234,13 +246,16 @@ class QuadrupedOptimalController:
 
         logger.info("OCP setup completed")
 
-    def solve(self, x0, x_ref):
+    def solve(self, x0, x_ref, foot_positions):
         try:         
-            self.solver.yref_0 = x0[:13]
+            # Set parameters for foot positions at all stages
+            for i in range(self.N + 1):
+                self.solver.set(i, "p", foot_positions)
+            
             # Set the reference trajectory
             for i in range(self.N):
-                self.solver.set(i, "yref", x_ref[:13])  # Only first 13 states as per cost setup
-            self.solver.set(self.N, "yref", x_ref[:13])  # Terminal reference
+                self.solver.set(i, "yref", x_ref)  # All 13 states as reference
+            self.solver.set(self.N, "yref", x_ref)  # Terminal reference
             
             u0 = self.solver.solve_for_x0(x0)
             status = 0

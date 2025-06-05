@@ -242,7 +242,7 @@ static ocp_nlp_dims* quadruped_ode_acados_create_setup_dimensions(quadruped_ode_
     nbx[0] = NBX0;
     nsbx[0] = 0;
     ns[0] = NS0;
-    nbxe[0] = 25;
+    nbxe[0] = 13;
     ny[0] = NY0;
     nh[0] = NH0;
     nsh[0] = NSH0;
@@ -371,7 +371,22 @@ void quadruped_ode_acados_create_setup_functions(quadruped_ode_solver_capsule* c
 void quadruped_ode_acados_create_set_default_parameters(quadruped_ode_solver_capsule* capsule)
 {
 
-    // no parameters defined
+    const int N = capsule->nlp_solver_plan->N;
+    // initialize parameters to nominal value
+    double* p = calloc(NP, sizeof(double));
+    p[0] = 0.15;
+    p[1] = 0.15;
+    p[3] = 0.15;
+    p[4] = -0.15;
+    p[6] = -0.15;
+    p[7] = 0.15;
+    p[9] = -0.15;
+    p[10] = -0.15;
+
+    for (int i = 0; i <= N; i++) {
+        quadruped_ode_acados_update_params(capsule, i, p, NP);
+    }
+    free(p);
 
 
     // no global parameters defined
@@ -640,18 +655,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     idxbx0[10] = 10;
     idxbx0[11] = 11;
     idxbx0[12] = 12;
-    idxbx0[13] = 13;
-    idxbx0[14] = 14;
-    idxbx0[15] = 15;
-    idxbx0[16] = 16;
-    idxbx0[17] = 17;
-    idxbx0[18] = 18;
-    idxbx0[19] = 19;
-    idxbx0[20] = 20;
-    idxbx0[21] = 21;
-    idxbx0[22] = 22;
-    idxbx0[23] = 23;
-    idxbx0[24] = 24;
 
     double* lubx0 = calloc(2*NBX0, sizeof(double));
     double* lbx0 = lubx0;
@@ -664,7 +667,7 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     free(idxbx0);
     free(lubx0);
     // idxbxe_0
-    int* idxbxe_0 = malloc(25 * sizeof(int));
+    int* idxbxe_0 = malloc(13 * sizeof(int));
     idxbxe_0[0] = 0;
     idxbxe_0[1] = 1;
     idxbxe_0[2] = 2;
@@ -678,18 +681,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     idxbxe_0[10] = 10;
     idxbxe_0[11] = 11;
     idxbxe_0[12] = 12;
-    idxbxe_0[13] = 13;
-    idxbxe_0[14] = 14;
-    idxbxe_0[15] = 15;
-    idxbxe_0[16] = 16;
-    idxbxe_0[17] = 17;
-    idxbxe_0[18] = 18;
-    idxbxe_0[19] = 19;
-    idxbxe_0[20] = 20;
-    idxbxe_0[21] = 21;
-    idxbxe_0[22] = 22;
-    idxbxe_0[23] = 23;
-    idxbxe_0[24] = 24;
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbxe", idxbxe_0);
     free(idxbxe_0);
 
@@ -1065,7 +1056,7 @@ int quadruped_ode_acados_update_params(quadruped_ode_solver_capsule* capsule, in
 {
     int solver_status = 0;
 
-    int casadi_np = 0;
+    int casadi_np = 12;
     if (casadi_np != np) {
         printf("acados_update_params: trying to set %i parameters for external functions."
             " External function has %i parameters. Exiting.\n", np, casadi_np);

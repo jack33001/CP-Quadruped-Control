@@ -73,9 +73,9 @@ def calculate_metrics(x_hist, u_hist, x_ref, sim_time):
     
     return metrics
 
-def system_dynamics(x, u, m, I):
+def system_dynamics(x, u, foot_positions, m, I):
     """Calculate state derivatives given current state and control"""
-    dx = np.zeros(25)
+    dx = np.zeros(13)  # Reduced to 13 states
     
     # Linear velocities are easy
     dx[0:3] = x[7:10]
@@ -88,11 +88,11 @@ def system_dynamics(x, u, m, I):
         x[3]*x[12] + x[4]*x[11] - x[5]*x[10]
         ])
     
-    # Unpack foot and com positions
-    p1 = x[13:16]
-    p2 = x[16:19]
-    p3 = x[19:22]
-    p4 = x[22:25]
+    # Unpack foot positions from parameters
+    p1 = foot_positions[0:3]
+    p2 = foot_positions[3:6]
+    p3 = foot_positions[6:9]
+    p4 = foot_positions[9:12]
     com = x[:3]
     
     # Reshape control output into foot forces
@@ -118,16 +118,15 @@ def system_dynamics(x, u, m, I):
                    np.cross(r3, F3) + 
                    np.cross(r4, F4))
     dx[10:13] = total_torque/I  # angular accelerations
-    dx[13:] = 0.0  # foot positions are constant
     
     return dx
 
-def rk4_step(x, u, dt, m, I):
+def rk4_step(x, u, foot_positions, dt, m, I):
     """Perform one RK4 integration step"""
-    k1 = system_dynamics(x, u, m, I)
-    k2 = system_dynamics(x + dt/2 * k1, u, m, I)
-    k3 = system_dynamics(x + dt/2 * k2, u, m, I)
-    k4 = system_dynamics(x + dt * k3, u, m, I)
+    k1 = system_dynamics(x, u, foot_positions, m, I)
+    k2 = system_dynamics(x + dt/2 * k1, u, foot_positions, m, I)
+    k3 = system_dynamics(x + dt/2 * k2, u, foot_positions, m, I)
+    k4 = system_dynamics(x + dt * k3, u, foot_positions, m, I)
     
     return x + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
 
@@ -220,6 +219,9 @@ def main():
     p3 = np.array([-leg_length + np.random.uniform(-foot_variation, foot_variation), leg_length + np.random.uniform(-foot_variation, foot_variation), 0.0])  # back right
     p4 = np.array([-leg_length + np.random.uniform(-foot_variation, foot_variation), -leg_length + np.random.uniform(-foot_variation, foot_variation), 0.0]) # back left
     
+    # Concatenate foot positions into parameter vector
+    foot_positions = np.concatenate([p1, p2, p3, p4])
+    
     # Print foot positions for verification
     logger.info("Foot positions:")
     logger.info(f"FR (p1): {p1}")
@@ -227,11 +229,9 @@ def main():
     logger.info(f"BR (p3): {p3}")
     logger.info(f"BL (p4): {p4}")
     
-    # Create full 24-dimensional state vector
-        
-    # Initial state [x, y, z, theta, phi, psi, vx, vy, vz, wx, wy, wz]
+    # Create reduced 13-dimensional state vector
     # Initial state with random perturbations within reasonable bounds
-    x0_full = np.zeros(25)
+    x0_full = np.zeros(13)  # Reduced state dimension
     # Position bounds (in meters)
     x0_full[0:3] = np.random.uniform([-0.1, -0.1, 0.14], [0.1, 0.1, 0.16])
     # Orientation bounds (in radians, roughly ±15 degrees)
@@ -243,14 +243,9 @@ def main():
     x0_full[7:10] = np.random.uniform(-0.2, 0.2, 3)
     # Angular velocity bounds (in rad/s)
     x0_full[10:13] = np.random.uniform(-0.5, 0.5, 3)
-    # Add foot positions to state vector
-    x0_full[13:16] = p1
-    x0_full[16:19] = p2
-    x0_full[19:22] = p3
-    x0_full[22:25] = p4
     
-    # Initialize history arrays for 24-dimensional state
-    x_hist = np.zeros((n_steps+1, 25))  # Pre-allocate full state history
+    # Initialize history arrays for 13-dimensional state
+    x_hist = np.zeros((n_steps+1, 13))  # Pre-allocate reduced state history
     u_hist = np.zeros((n_steps, 12))    # Pre-allocate control history
     t_hist = np.zeros(n_steps+1)        # Pre-allocate time history
     
@@ -259,12 +254,11 @@ def main():
     x_hist[0] = x0_full  # Store initial state
     t_hist[0] = 0.0
 
-    # Target state - include all states including foot positions
-    x_ref = np.zeros(25)  # Reference for all states
+    # Target state - reduced to 13 states
+    x_ref = np.zeros(13)  # Reference for reduced states
     x_ref[1] = .03  # Target y position
     x_ref[2] = 0.18  # Target height matches initial height
     x_ref[3] = 1.0   # Quaternion w = 1 for [0 0 0] Euler angles
-    x_ref[12:] = x0_full[12:]  # Keep foot positions constant
     
     # Simple simulation loop
     success = False
@@ -279,16 +273,8 @@ def main():
                 solve_start = time()
                 # Add different noise levels for translation and rotation states
                 x_noisy = x.copy()
-                # Translation position and velocity noise (±0.01)
-                #x_noisy[:3] += np.random.uniform(-0.01, 0.01, 3)    # positions
-                #x_noisy[6:9] += np.random.uniform(-0.01, 0.01, 3)   # velocities
-                ## Rotation position and velocity noise (±0.001)
-                #x_noisy[3:6] += np.random.uniform(-0.001, 0.001, 3)    # angles
-                #x_noisy[9:12] += np.random.uniform(-0.001, 0.001, 3)   # angular velocities
-                ## Keep foot positions unchanged
-                #x_noisy[12:] = x[12:]
                 
-                u, status = controller.solve(x_noisy, x_ref)  # Pass noisy state
+                u, status = controller.solve(x_noisy, x_ref, foot_positions)  # Pass foot positions as parameters
                 solve_time = time() - solve_start
                 
                 if status != 0:
@@ -301,7 +287,7 @@ def main():
                 break
             
             # RK4 integration step
-            x = rk4_step(x, u, dt, m, I)
+            x = rk4_step(x, u, foot_positions, dt, m, I)
             
             # Store data (pre-allocated arrays)
             t_hist[i+1] = t + dt
@@ -362,25 +348,26 @@ def main():
             plt.xlabel('Time (s)')
             plt.ylabel('Force (N)')
             
-            # New foot position XY plot with position labels
+            # New foot position XY plot with position labels (using fixed foot positions)
             plt.subplot(4, 1, 4)
-            foot_indices = [(13,14), (16,17), (19,20), (22,23)]  # X,Y indices for each foot
+            foot_pos_array = foot_positions.reshape(4, 3)
+            legs = ['FL', 'FR', 'RL', 'RR']
+            colors = ['r', 'g', 'b', 'm']
             
-            # Plot each foot position over time
-            for i, ((x_idx, y_idx), leg, color) in enumerate(zip(foot_indices, legs, colors)):
-                x_pos = x_hist[:, x_idx]
-                y_pos = x_hist[:, y_idx]
-                plt.plot(x_pos, y_pos, 'o-', label=f'{leg} Foot', color=color, markersize=2)
+            # Plot each foot position (fixed positions)
+            for i, (foot_pos, leg, color) in enumerate(zip(foot_pos_array, legs, colors)):
+                x_pos, y_pos = foot_pos[0], foot_pos[1]
+                plt.plot(x_pos, y_pos, 'o', label=f'{leg} Foot', color=color, markersize=8)
                 
-                # Add position label at the end point
-                end_pos = f'({x_pos[-1]:.3f}, {y_pos[-1]:.3f})'
-                plt.annotate(end_pos, (x_pos[-1], y_pos[-1]), 
+                # Add position label
+                pos_label = f'({x_pos:.3f}, {y_pos:.3f})'
+                plt.annotate(pos_label, (x_pos, y_pos), 
                            xytext=(10, 10), textcoords='offset points',
                            color=color, fontsize=8)
             
             plt.grid(True)
             plt.legend()
-            plt.title('Foot Positions in XY Plane')
+            plt.title('Fixed Foot Positions in XY Plane')
             plt.xlabel('X Position (m)')
             plt.ylabel('Y Position (m)')
             plt.axis('equal')  # Make plot aspect ratio 1:1
@@ -395,6 +382,7 @@ def main():
                     u_hist=u_hist, 
                     t_hist=t_hist,
                     x_ref=x_ref,
+                    foot_positions=foot_positions,
                     metrics=metrics)
             logger.info(f"Simulation data saved to {data_file}")
             

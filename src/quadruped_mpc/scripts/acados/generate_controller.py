@@ -32,7 +32,7 @@ def main():
         root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         config_file = os.path.join(root_dir,'config', 'quadruped_controllers.yaml')
     
-    # Create controller
+    # Create controller (this will automatically generate the code)
     controller = QuadrupedOptimalController(code_export_dir=output_dir, param_file=config_file)
     logger.info("Code generation successful!")
 
