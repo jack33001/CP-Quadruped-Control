@@ -253,10 +253,10 @@ namespace quadruped_mpc
       // Calculate elapsed time with microsecond precision
       auto end_time = std::chrono::high_resolution_clock::now();
       auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-      RCLCPP_INFO(
-        get_node()->get_logger(),
-        "Foot controller update took %.6f ms", 
-        elapsed_time.count() / 1000.0);
+      //RCLCPP_INFO(
+      //  get_node()->get_logger(),
+      //  "Foot controller update took %.6f ms", 
+      //  elapsed_time.count() / 1000.0);
 
     // If we got here, everything was successful
     return controller_interface::return_type::OK;

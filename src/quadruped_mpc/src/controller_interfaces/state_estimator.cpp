@@ -97,10 +97,10 @@ StateEstimator::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /
   // Calculate elapsed time with microsecond precision
   auto end_time = std::chrono::high_resolution_clock::now();
   auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-  RCLCPP_INFO(
-    get_node()->get_logger(),
-    "State estimator update took %.6f ms", 
-    elapsed_time.count() / 1000.0);
+  //RCLCPP_INFO(
+  //  get_node()->get_logger(),
+  //  "State estimator update took %.6f ms", 
+  //  elapsed_time.count() / 1000.0);
 
   return controller_interface::return_type::OK;
 }
