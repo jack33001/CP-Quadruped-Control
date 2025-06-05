@@ -191,11 +191,11 @@ def main():
     # Get config file path
     script_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(os.path.dirname(script_dir))
-    config_file = os.path.join(root_dir, 'config', 'optimal_controller.yaml')
+    config_file = os.path.join(root_dir, 'config', 'quadruped_controllers.yaml')
     
     # Load parameters from yaml
     with open(config_file, 'r') as f:
-        params = yaml.safe_load(f)['optimal_controller']
+        params = yaml.safe_load(f)['balance_controller']['ros__parameters']
         m = params.get('mass')
         I = params.get('inertia')
         N = params.get('stages')
