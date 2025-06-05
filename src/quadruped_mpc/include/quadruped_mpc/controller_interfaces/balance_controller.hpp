@@ -43,15 +43,19 @@ public:
 protected:
   std::vector<std::string> joint_names_;
   quadruped_ode_solver_capsule* solver_{nullptr};
-  std::array<double,25> current_state_;
-  std::array<double,25> desired_state_;
-  std::array<double,25> optimal_control_;
+  std::array<double,13> current_state_;  // Reduced from 25 to 13
+  std::array<double,13> desired_state_;  // Reduced from 25 to 13
+  std::array<double,12> optimal_control_;  // Keep at 12 for foot forces
   
   // COM offset parameters
   std::vector<double> com_offset_{0.0, 0.0, -0.1};  // Default COM offset [x, y, z]
   
   // Foot position storage - convert to a 2D array for more efficient access
   std::array<std::array<double,3>, 5> foot_positions_; // 4 feet + COM at index 4
+  
+  // Parameter vector for ACADOS (12 foot position values)
+  std::array<double,12> foot_position_params_;
+  
   // Foot state tracking - use an array for more consistent access
   std::array<int, 4> foot_states_{0, 0, 0, 0};
   

@@ -89,10 +89,12 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     return CallbackReturn::ERROR;
   }
 
-  // Initialize arrays with zeros
+  // Initialize arrays with zeros - updated for reduced state size
   std::fill(current_state_.begin(), current_state_.end(), 0.0);
-  std::fill(desired_state_.begin(), current_state_.end(), 0.0);
+  std::fill(desired_state_.begin(), desired_state_.end(), 0.0);
   std::fill(optimal_control_.begin(), optimal_control_.end(), 0.0);
+  std::fill(foot_position_params_.begin(), foot_position_params_.end(), 0.0);
+  
   desired_state_[2] = 0.15;  // Set desired height
   desired_state_[3] = 1.0;  // Forward facing quaternion has w=1
 
@@ -168,6 +170,24 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     return CallbackReturn::ERROR;
   }
   RCLCPP_INFO(get_node()->get_logger(), "ACADOS solver initialized successfully");
+
+  // Initialize foot position parameters with default leg length
+  double leg_length = 0.15;  // Default leg length
+  foot_position_params_[0] = leg_length;   foot_position_params_[1] = leg_length;   foot_position_params_[2] = 0.0;    // FR
+  foot_position_params_[3] = leg_length;   foot_position_params_[4] = -leg_length;  foot_position_params_[5] = 0.0;    // FL  
+  foot_position_params_[6] = -leg_length;  foot_position_params_[7] = leg_length;   foot_position_params_[8] = 0.0;    // BR
+  foot_position_params_[9] = -leg_length;  foot_position_params_[10] = -leg_length; foot_position_params_[11] = 0.0;   // BL
+
+  // Set initial foot position parameters in ACADOS solver
+  // Update foot position parameters in ACADOS solver for all stages
+  int horizon_length = solver_->nlp_solver_plan->N;
+  for (int stage = 0; stage <= horizon_length; stage++) {
+    int param_status = quadruped_ode_acados_update_params(solver_, stage, foot_position_params_.data(), 12);
+    if (param_status != 0) {
+      RCLCPP_WARN(get_node()->get_logger(), "Failed to update foot position parameters for stage %d with status %d", stage, param_status);
+      break; // Stop updating if any stage fails
+    }
+  }
 
   // Subscribe to command topics
   pose_cmd_sub_ = get_node()->create_subscription<geometry_msgs::msg::Pose>(

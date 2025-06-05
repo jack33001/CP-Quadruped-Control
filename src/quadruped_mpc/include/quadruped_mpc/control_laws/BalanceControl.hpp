@@ -14,12 +14,12 @@ namespace quadruped_mpc
 
     // Get number of stages in the prediction horizon
     int prediction_horizon = solver_->nlp_solver_plan->N;
-    std::vector<std::array<double, 25>> stage_states(prediction_horizon + 1);
+    std::vector<std::array<double, 13>> stage_states(prediction_horizon + 1);  // Updated to 13
 
     // Extract state vectors for each stage
     for (int stage = 0; stage <= prediction_horizon; stage++)
     {
-      std::array<double, 25> stage_state;
+      std::array<double, 13> stage_state;  // Updated to 13
       ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, stage, "x", stage_state.data());
       stage_states[stage] = stage_state;
     }
@@ -280,7 +280,7 @@ namespace quadruped_mpc
           return false;
         }
 
-        // Fill current state vector using more structured approach
+        // Fill current state vector using reduced 13-element state
         // Position and orientation
         current_state_[0] = latest_state_->pc.x;
         current_state_[1] = latest_state_->pc.y;
@@ -301,7 +301,7 @@ namespace quadruped_mpc
         current_state_[11] = latest_state_->angular_velocity.y;
         current_state_[12] = latest_state_->angular_velocity.z;
 
-        // Map foot positions into arrays more efficiently
+        // Update foot positions in the parameter array and foot_positions_ array
         geometry_msgs::msg::Point const *foot_msgs[] = {
             &latest_state_->p1,
             &latest_state_->p2,
@@ -311,14 +311,14 @@ namespace quadruped_mpc
         // Update foot positions in both arrays
         for (int foot = 0; foot < 4; foot++)
         {
-          int state_idx = 13 + (foot * 3);
+          int param_idx = foot * 3;
 
-          // Update current_state_ array
-          current_state_[state_idx] = foot_msgs[foot]->x;
-          current_state_[state_idx + 1] = foot_msgs[foot]->y;
-          current_state_[state_idx + 2] = foot_msgs[foot]->z;
+          // Update foot_position_params_ array for ACADOS
+          foot_position_params_[param_idx] = foot_msgs[foot]->x;
+          foot_position_params_[param_idx + 1] = foot_msgs[foot]->y;
+          foot_position_params_[param_idx + 2] = foot_msgs[foot]->z;
 
-          // Update foot_positions_ array
+          // Update foot_positions_ array for local use
           foot_positions_[foot][0] = foot_msgs[foot]->x;
           foot_positions_[foot][1] = foot_msgs[foot]->y;
           foot_positions_[foot][2] = foot_msgs[foot]->z;
@@ -328,6 +328,16 @@ namespace quadruped_mpc
         foot_positions_[4][0] = latest_state_->pc.x;
         foot_positions_[4][1] = latest_state_->pc.y;
         foot_positions_[4][2] = latest_state_->pc.z;
+
+        // Update foot position parameters in ACADOS solver for all stages
+        int horizon_length = solver_->nlp_solver_plan->N;
+        for (int stage = 0; stage <= horizon_length; stage++) {
+          int param_status = quadruped_ode_acados_update_params(solver_, stage, foot_position_params_.data(), 12);
+          if (param_status != 0) {
+            RCLCPP_WARN(get_node()->get_logger(), "Failed to update foot position parameters for stage %d with status %d", stage, param_status);
+            break; // Stop updating if any stage fails
+          }
+        }
       }
 
       // Update gait pattern and foot states
@@ -452,9 +462,9 @@ namespace quadruped_mpc
       // Apply constraints to ALL stages in the optimization horizon
       int horizon_length = solver_->nlp_solver_plan->N;
 
-      // Create and set state bounds vectors more efficiently
-      std::vector<double> lowest_state(12, 0.0);
-      std::vector<double> highest_state(12, 0.0);
+      // Create and set state bounds vectors for reduced 13-element state
+      std::vector<double> lowest_state(13, 0.0);  // Updated to 13
+      std::vector<double> highest_state(13, 0.0); // Updated to 13
 
       // Position bounds
       for (int i = 0; i < 2; i++)
@@ -492,8 +502,14 @@ namespace quadruped_mpc
         for (int foot = 0; foot < 4; foot++)
         {
           // Use the predicted foot state if available, otherwise fall back to current foot state
-          int foot_state = (stage < static_cast<int>(foot_states_prediction_.size())) ? 
-                            foot_states_prediction_[stage][foot] : foot_states_[foot];
+          int foot_state = foot_states_[foot]; // Default fallback
+          
+          // Safely access predicted states with bounds checking
+          if (stage < static_cast<int>(foot_states_prediction_.size()) && 
+              foot < static_cast<int>(foot_states_prediction_[stage].size()))
+          {
+            foot_state = foot_states_prediction_[stage][foot];
+          }
           
           // States -2, -1, and 0 are stance states
           if (foot_state <= 0)
@@ -512,8 +528,14 @@ namespace quadruped_mpc
         {
           int base_idx = foot * 3; // Each foot has 3 force components (x,y,z)
           
-          // Use the predicted foot state if available, otherwise fall back to current foot state
-          int foot_state = foot_states_prediction_[stage][foot];
+          // Use the predicted foot state if available with proper bounds checking
+          int foot_state = foot_states_[foot]; // Default fallback
+          
+          if (stage < static_cast<int>(foot_states_prediction_.size()) && 
+              foot < static_cast<int>(foot_states_prediction_[stage].size()))
+          {
+            foot_state = foot_states_prediction_[stage][foot];
+          }
 
           // States <= 0 are stance states, > 0 are swing
           if (foot_state > 0)  
