@@ -14,19 +14,19 @@ namespace quadruped_mpc
 
     // Get number of stages in the prediction horizon
     int prediction_horizon = solver_->nlp_solver_plan->N;
-    std::vector<std::array<double, 13>> stage_states(prediction_horizon + 1);  // Updated to 13
+    std::vector<std::array<double, 12>> stage_states(prediction_horizon + 1);  // Updated to 12
 
     // Extract state vectors for each stage
     for (int stage = 0; stage <= prediction_horizon; stage++)
     {
-      std::array<double, 13> stage_state;  // Updated to 13
+      std::array<double, 12> stage_state;  // Updated to 12
       ocp_nlp_out_get(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, stage, "x", stage_state.data());
       stage_states[stage] = stage_state;
     }
 
     // Print header line
     ss << "╔═════╦══════════════════════════╦══════════════════════════════════╦══════════════════════════╦══════════════════════════╗\n";
-    ss << "║STAGE║     POSITION (XYZ)       ║     ORIENTATION (WXYZ)           ║    LINEAR VEL (XYZ)      ║    ANGULAR VEL (XYZ)     ║\n";
+    ss << "║STAGE║     POSITION (XYZ)       ║     ORIENTATION (RPY)            ║    LINEAR VEL (XYZ)      ║    ANGULAR VEL (XYZ)     ║\n";
     ss << "╠═════╬══════════════════════════╬══════════════════════════════════╬══════════════════════════╬══════════════════════════╣\n";
 
     // Print rows for each stage
@@ -37,19 +37,18 @@ namespace quadruped_mpc
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][0] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][1] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][2] << "] ║ [";
-      // Orientation (quaternion)
+      // Orientation (Euler angles: roll, pitch, yaw)
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][3] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][4] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][5] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][6] << "] ║ [";
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][5] << "] ║ [";
       // Linear velocity
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][6] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][7] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][8] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][9] << "] ║ [";
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][8] << "] ║ [";
       // Angular velocity
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][9] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][10] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][11] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][12] << "] ║\n";
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[stage][11] << "] ║\n";
     }
 
     // If there are more stages, show an indication
@@ -64,19 +63,18 @@ namespace quadruped_mpc
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][0] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][1] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][2] << "] ║ [";
-      // Orientation (quaternion)
+      // Orientation (Euler angles)
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][3] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][4] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][5] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][6] << "] ║ [";
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][5] << "] ║ [";
       // Linear velocity
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][6] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][7] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][8] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][9] << "] ║ [";
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][8] << "] ║ [";
       // Angular velocity
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][9] << ", ";
       ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][10] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][11] << ", ";
-      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][12] << "] ║\n";
+      ss << std::setw(6) << std::fixed << std::setprecision(3) << stage_states[last][11] << "] ║\n";
     }
 
     // Add a separator line before desired state
@@ -95,18 +93,17 @@ namespace quadruped_mpc
     ss << "Orientation: [";
     ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[3] << ", ";
     ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[4] << ", ";
-    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[5] << ", ";
-    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[6] << "]                                       ║\n";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[5] << "]                                           ║\n";
 
     ss << "║ Lin Vel: [";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[6] << ", ";
     ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[7] << ", ";
-    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[8] << ", ";
-    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[9] << "]  ";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[8] << "]  ";
 
     ss << "Ang Vel: [";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[9] << ", ";
     ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[10] << ", ";
-    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[11] << ", ";
-    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[12] << "]                                                    ║\n";
+    ss << std::setw(6) << std::fixed << std::setprecision(3) << desired_state_[11] << "]                                                    ║\n";
 
     // Print footer line
     ss << "╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n";
@@ -280,26 +277,44 @@ namespace quadruped_mpc
           return false;
         }
 
-        // Fill current state vector using reduced 13-element state
-        // Position and orientation
+        // Fill current state vector using 12-element state with Euler angles
+        // Position
         current_state_[0] = latest_state_->pc.x;
         current_state_[1] = latest_state_->pc.y;
         current_state_[2] = latest_state_->pc.z;
 
-        // Orientation quaternion
-        current_state_[3] = latest_state_->orientation.w;
-        current_state_[4] = latest_state_->orientation.x;
-        current_state_[5] = latest_state_->orientation.y;
-        current_state_[6] = latest_state_->orientation.z;
+        // Convert quaternion to Euler angles (roll, pitch, yaw)
+        double qw = latest_state_->orientation.w;
+        double qx = latest_state_->orientation.x;
+        double qy = latest_state_->orientation.y;
+        double qz = latest_state_->orientation.z;
+        
+        // Convert quaternion to Euler angles using standard aerospace sequence (ZYX)
+        // Roll (x-axis rotation)
+        double sinr_cosp = 2 * (qw * qx + qy * qz);
+        double cosr_cosp = 1 - 2 * (qx * qx + qy * qy);
+        current_state_[3] = normalize_angle(std::atan2(sinr_cosp, cosr_cosp));
+        
+        // Pitch (y-axis rotation)
+        double sinp = 2 * (qw * qy - qz * qx);
+        if (std::abs(sinp) >= 1)
+          current_state_[4] = normalize_angle(std::copysign(M_PI / 2, sinp)); // use 90 degrees if out of range
+        else
+          current_state_[4] = normalize_angle(std::asin(sinp));
+        
+        // Yaw (z-axis rotation)
+        double siny_cosp = 2 * (qw * qz + qx * qy);
+        double cosy_cosp = 1 - 2 * (qy * qy + qz * qz);
+        current_state_[5] = normalize_angle(std::atan2(siny_cosp, cosy_cosp));
 
         // Linear and angular velocities
-        current_state_[7] = latest_state_->com_velocity.x;
-        current_state_[8] = latest_state_->com_velocity.y;
-        current_state_[9] = latest_state_->com_velocity.z;
+        current_state_[6] = latest_state_->com_velocity.x;
+        current_state_[7] = latest_state_->com_velocity.y;
+        current_state_[8] = latest_state_->com_velocity.z;
 
-        current_state_[10] = latest_state_->angular_velocity.x;
-        current_state_[11] = latest_state_->angular_velocity.y;
-        current_state_[12] = latest_state_->angular_velocity.z;
+        current_state_[9] = latest_state_->angular_velocity.x;
+        current_state_[10] = latest_state_->angular_velocity.y;
+        current_state_[11] = latest_state_->angular_velocity.z;
 
         // Update foot positions in the parameter array and foot_positions_ array
         geometry_msgs::msg::Point const *foot_msgs[] = {
@@ -407,14 +422,33 @@ namespace quadruped_mpc
           desired_state_[1] = com_offset_[1];  // Apply Y offset
           desired_state_[2] = latest_pose_cmd_->position.z + com_offset_[2];  // Apply Z offset to commanded height
 
-          // Apply quaternion from command
-          desired_state_[3] = latest_pose_cmd_->orientation.w;
-          desired_state_[4] = latest_pose_cmd_->orientation.x;
-          desired_state_[5] = latest_pose_cmd_->orientation.y;
-          desired_state_[6] = latest_pose_cmd_->orientation.z;
+          // Convert commanded quaternion to Euler angles and normalize
+          double qw = latest_pose_cmd_->orientation.w;
+          double qx = latest_pose_cmd_->orientation.x;
+          double qy = latest_pose_cmd_->orientation.y;
+          double qz = latest_pose_cmd_->orientation.z;
+          
+          // Convert quaternion to Euler angles
+          // Roll (x-axis rotation)
+          double sinr_cosp = 2 * (qw * qx + qy * qz);
+          double cosr_cosp = 1 - 2 * (qx * qx + qy * qy);
+          desired_state_[3] = normalize_angle(std::atan2(sinr_cosp, cosr_cosp));
+          
+          // Pitch (y-axis rotation)
+          double sinp = 2 * (qw * qy - qz * qx);
+          if (std::abs(sinp) >= 1)
+            desired_state_[4] = normalize_angle(std::copysign(M_PI / 2, sinp));
+          else
+            desired_state_[4] = normalize_angle(std::asin(sinp));
+          
+          // Yaw (z-axis rotation)
+          double siny_cosp = 2 * (qw * qz + qx * qy);
+          double cosy_cosp = 1 - 2 * (qy * qy + qz * qz);
+          desired_state_[5] = normalize_angle(std::atan2(siny_cosp, cosy_cosp));
 
-          RCLCPP_DEBUG(get_node()->get_logger(), "Updated desired pose with COM offset: [%.3f, %.3f, %.3f]",
-                       desired_state_[0], desired_state_[1], desired_state_[2]);
+          RCLCPP_DEBUG(get_node()->get_logger(), "Updated desired pose with COM offset: [%.3f, %.3f, %.3f] and Euler angles: [%.3f, %.3f, %.3f]",
+                       desired_state_[0], desired_state_[1], desired_state_[2],
+                       desired_state_[3], desired_state_[4], desired_state_[5]);
           new_pose_cmd_received_ = false;
         }
 
@@ -422,14 +456,14 @@ namespace quadruped_mpc
         if (new_twist_cmd_received_ && latest_twist_cmd_)
         {
           // Update linear velocity setpoints
-          desired_state_[7] = latest_twist_cmd_->linear.x;
-          desired_state_[8] = latest_twist_cmd_->linear.y;
-          desired_state_[9] = latest_twist_cmd_->linear.z;
+          desired_state_[6] = latest_twist_cmd_->linear.x;
+          desired_state_[7] = latest_twist_cmd_->linear.y;
+          desired_state_[8] = latest_twist_cmd_->linear.z;
 
           // Update angular velocity setpoints
-          desired_state_[10] = latest_twist_cmd_->angular.x;
-          desired_state_[11] = latest_twist_cmd_->angular.y;
-          desired_state_[12] = latest_twist_cmd_->angular.z;
+          desired_state_[9] = latest_twist_cmd_->angular.x;
+          desired_state_[10] = latest_twist_cmd_->angular.y;
+          desired_state_[11] = latest_twist_cmd_->angular.z;
           new_twist_cmd_received_ = false;
         }
       }
@@ -462,9 +496,9 @@ namespace quadruped_mpc
       // Apply constraints to ALL stages in the optimization horizon
       int horizon_length = solver_->nlp_solver_plan->N;
 
-      // Create and set state bounds vectors for reduced 13-element state
-      std::vector<double> lowest_state(13, 0.0);  // Updated to 13
-      std::vector<double> highest_state(13, 0.0); // Updated to 13
+      // Create and set state bounds vectors for 12-element Euler angle state
+      std::vector<double> lowest_state(12, 0.0);
+      std::vector<double> highest_state(12, 0.0);
 
       // Position bounds
       for (int i = 0; i < 2; i++)
@@ -475,15 +509,15 @@ namespace quadruped_mpc
       lowest_state[2] = 0.05;
       highest_state[2] = 0.25;
 
-      // Orientation bounds (quaternion)
-      for (int i = 3; i <= 6; i++)
+      // Euler angle bounds (clamped to ±π)
+      for (int i = 3; i <= 5; i++)
       {
-        lowest_state[i] = -1.0;
-        highest_state[i] = 1.0;
+        lowest_state[i] = -M_PI;
+        highest_state[i] = M_PI;
       }
 
       // Velocity bounds
-      for (int i = 7; i <= 12; i++)
+      for (int i = 6; i <= 11; i++)
       {
         lowest_state[i] = -10.0;
         highest_state[i] = 10.0;
@@ -579,10 +613,17 @@ namespace quadruped_mpc
                                       stage, "ubx", highest_state.data());
       }
 
-      // Set initial state constraints
-      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "lbx", current_state_.data());
-      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "ubx", current_state_.data());
-      ocp_nlp_out_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", current_state_.data());
+      // Set initial state constraints with angle normalization
+      std::array<double, 12> normalized_current_state = current_state_;
+      
+      // Normalize Euler angles in current state to ensure they're within [-π, π]
+      normalized_current_state[3] = normalize_angle(current_state_[3]); // roll
+      normalized_current_state[4] = normalize_angle(current_state_[4]); // pitch  
+      normalized_current_state[5] = normalize_angle(current_state_[5]); // yaw
+      
+      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "lbx", normalized_current_state.data());
+      ocp_nlp_constraints_model_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_in, 0, "ubx", normalized_current_state.data());
+      ocp_nlp_out_set(solver_->nlp_config, solver_->nlp_dims, solver_->nlp_out, 0, "x", normalized_current_state.data());
 
       // Solve the optimal control problem
       int solve_status = quadruped_ode_acados_solve(solver_);

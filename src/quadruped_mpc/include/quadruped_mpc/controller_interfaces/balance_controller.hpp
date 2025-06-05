@@ -43,8 +43,8 @@ public:
 protected:
   std::vector<std::string> joint_names_;
   quadruped_ode_solver_capsule* solver_{nullptr};
-  std::array<double,13> current_state_;  // Reduced from 25 to 13
-  std::array<double,13> desired_state_;  // Reduced from 25 to 13
+  std::array<double,12> current_state_;  // Reduced from 13 to 12 for Euler angles
+  std::array<double,12> desired_state_;  // Reduced from 13 to 12 for Euler angles
   std::array<double,12> optimal_control_;  // Keep at 12 for foot forces
   
   // COM offset parameters
@@ -103,6 +103,9 @@ private:
   // Debug/logging methods
   void print_controller_output_table();
   void print_state_vector_table();
+  
+  // Helper method for angle normalization
+  double normalize_angle(double angle);
 };
 
 }  // namespace quadruped_mpc

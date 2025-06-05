@@ -58,7 +58,7 @@ gait_pattern_generator:
     step_height: 0.1
     # Duplicate MPC parameters here to avoid dependency on balance_controller
     stages: 50    # Number of stages in the MPC
-    horizon: 5.0  # Time horizon in seconds
+    horizon: 4.0  # Time horizon in seconds
 
 balance_controller:
   ros__parameters:
@@ -75,11 +75,11 @@ balance_controller:
     mass: 15    # Robot mass in kg 
     inertia: .4    # Robot inertia in kg*m^2
     stages: 50    # Number of stages in the MPC
-    horizon: 5.0  # Time horizon in seconds
+    horizon: 4.0  # Time horizon in seconds
     com_offset: [0.0, 0.0, -0.0147]                   # Center of mass offset [x, y, z] in meters
     weights:
       position: [100, 100, 1000]          # Position tracking weights (x, y, z)
-      orientation: [10, 10, 10, 10]       # Orientation tracking weights (quaternion)
+      orientation: [100, 10, 0]       # Orientation tracking weights (quaternion)
       velocity: [0, 1, 1]                      # Linear velocity tracking weights
       angular_velocity: [3, 3, 0]                 # Angular velocity tracking weights
       force_cost: 1                               # Cost weight for control force inputs

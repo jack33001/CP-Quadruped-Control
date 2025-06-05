@@ -89,14 +89,14 @@ BalanceController::CallbackReturn BalanceController::on_configure(const rclcpp_l
     return CallbackReturn::ERROR;
   }
 
-  // Initialize arrays with zeros - updated for reduced state size
+  // Initialize arrays with zeros - updated for 12-state Euler angle system
   std::fill(current_state_.begin(), current_state_.end(), 0.0);
   std::fill(desired_state_.begin(), desired_state_.end(), 0.0);
   std::fill(optimal_control_.begin(), optimal_control_.end(), 0.0);
   std::fill(foot_position_params_.begin(), foot_position_params_.end(), 0.0);
   
   desired_state_[2] = 0.15;  // Set desired height
-  desired_state_[3] = 1.0;  // Forward facing quaternion has w=1
+  // Euler angles default to zero (no rotation needed)
 
   // Get stages parameter for prediction arrays
   int stages = 50;  // Default value
@@ -255,6 +255,13 @@ void BalanceController::gait_callback(const quadruped_msgs::msg::GaitPattern::Sh
   std::lock_guard<std::mutex> lock(gait_mutex_);
   latest_gait_ = msg;
   new_gait_received_ = true;
+}
+
+// Helper function to normalize angles to [-pi, pi]
+double BalanceController::normalize_angle(double angle)
+{
+  // Use atan2 to normalize angle to [-pi, pi]
+  return std::atan2(std::sin(angle), std::cos(angle));
 }
 
 }  // namespace quadruped_mpc
