@@ -383,13 +383,39 @@ namespace quadruped_mpc
 
         RCLCPP_DEBUG(controller.get_node()->get_logger(), "Entered %s pd control", feet[i].name);
 
-        // Generate trajectory at the beginning of swing phase
-        if (feet[i].phase <= 0.05)
+        // Check for state transition from stance (0) to swing (1)
+        bool state_transition = false;
+        if (controller.previous_foot_states_.initialized)
+        {
+          int* previous_states[4] = {
+            &controller.previous_foot_states_.foot1_state,
+            &controller.previous_foot_states_.foot2_state,
+            &controller.previous_foot_states_.foot3_state,
+            &controller.previous_foot_states_.foot4_state
+          };
+          
+          // Check if this foot transitioned from stance to swing
+          if (*previous_states[i] == 0 && feet[i].state == 1)
+          {
+            state_transition = true;
+            RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+                        "%s detected stance->swing transition", feet[i].name);
+          }
+        }
+        else
+        {
+          // On first run, generate trajectory for any swinging foot
+          state_transition = true;
+          RCLCPP_DEBUG(controller.get_node()->get_logger(), 
+                      "%s initial trajectory generation", feet[i].name);
+        }
+
+        // Generate trajectory when transitioning from stance to swing
+        if (state_transition)
         {
           RCLCPP_DEBUG(controller.get_node()->get_logger(), "%s generating new trajectory", feet[i].name);
           generate_trajectory(feet[i], i);
         }
-        
 
         // Use phase to determine trajectory index (phase goes from 0.0 to 1.0)
         int trajectory_idx = static_cast<int>(feet[i].phase * 49);  // Map 0.0-1.0 to 0-49
@@ -401,6 +427,13 @@ namespace quadruped_mpc
         // Mark that we have valid swing force data
         controller.swing_forces_.has_data = true;
       }
+
+      // Update previous foot states for next iteration
+      controller.previous_foot_states_.foot1_state = feet[0].state;
+      controller.previous_foot_states_.foot2_state = feet[1].state;
+      controller.previous_foot_states_.foot3_state = feet[2].state;
+      controller.previous_foot_states_.foot4_state = feet[3].state;
+      controller.previous_foot_states_.initialized = true;
 
       // Periodic overall debug
       static int swing_counter = 0;

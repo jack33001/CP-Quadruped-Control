@@ -21,6 +21,13 @@ namespace quadruped_mpc
   {
     // Initialize foot forces
     foot_forces_.has_data = false;
+    
+    // Initialize previous foot states
+    previous_foot_states_.foot1_state = 0;
+    previous_foot_states_.foot2_state = 0;
+    previous_foot_states_.foot3_state = 0;
+    previous_foot_states_.foot4_state = 0;
+    previous_foot_states_.initialized = false;
   }
 
   controller_interface::CallbackReturn FootController::on_init()
@@ -274,6 +281,13 @@ namespace quadruped_mpc
   {
     // Reset foot forces commands to all joints
     foot_forces_.has_data = false;
+    
+    // Reset previous foot states
+    previous_foot_states_.foot1_state = 0;
+    previous_foot_states_.foot2_state = 0;
+    previous_foot_states_.foot3_state = 0;
+    previous_foot_states_.foot4_state = 0;
+    previous_foot_states_.initialized = false;
     
     // Send zero commands to all joints
     for (auto &interface : joint_command_interfaces_)

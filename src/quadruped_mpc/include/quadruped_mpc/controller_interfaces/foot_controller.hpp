@@ -113,6 +113,17 @@ namespace quadruped_mpc
     void stateCallback(const quadruped_msgs::msg::QuadrupedState::SharedPtr msg);
     void gaitCallback(const quadruped_msgs::msg::GaitPattern::SharedPtr msg);
 
+    // Storage for previous foot states to detect transitions
+    struct PreviousFootStates
+    {
+      int foot1_state;
+      int foot2_state;
+      int foot3_state;
+      int foot4_state;
+      bool initialized;
+    };
+    PreviousFootStates previous_foot_states_;
+
     // Helper functions
     bool reset(); // Add this declaration for the reset function
   };
