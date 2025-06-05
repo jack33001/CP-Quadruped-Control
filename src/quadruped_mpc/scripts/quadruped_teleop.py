@@ -32,7 +32,7 @@ class QuadrupedTeleop(Node):
         
         # Initialize twist with zero velocities
         self.twist.linear.x = 0.0
-        self.twist.linear.y = 0.0
+        self.twist.linear.y = -0.5
         self.twist.linear.z = 0.0
         self.twist.angular.x = 0.0
         self.twist.angular.y = 0.0

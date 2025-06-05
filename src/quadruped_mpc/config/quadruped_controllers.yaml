@@ -64,7 +64,7 @@ balance_controller:
   ros__parameters:
     joints:
       - fl_hip
-      - fl_knee  
+      - fl_knee
       - fr_hip
       - fr_knee
       - rl_hip
