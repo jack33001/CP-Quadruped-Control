@@ -155,11 +155,11 @@ class QuadrupedOptimalController:
         logger.info(f"Model parameter shape: {model.p.shape}")
         
         # Get dimensions from model
-        nx = model.x.shape[0]  # 13 (reduced state dimension)
+        nx = model.x.shape[0]  # 12 (reduced state dimension with Euler angles)
         nu = model.u.shape[0]  # 12 (control dimension)
         np = model.p.shape[0]  # 12 (parameter dimension for foot positions)
-        ny = 13              # We track all 13 states in the cost
-        ny_e = 13           # Terminal cost tracks same states
+        ny = 12              # We track all 12 states in the cost
+        ny_e = 12           # Terminal cost tracks same states
 
         logger.info(f"Dimensions - nx: {nx}, nu: {nu}, np: {np}, ny: {ny}, ny_e: {ny_e}")
 
@@ -167,7 +167,7 @@ class QuadrupedOptimalController:
         ocp.dims.nx = nx
         ocp.dims.nu = nu
         ocp.dims.np = np
-        ocp.dims.ny = ny      # Track all 13 states
+        ocp.dims.ny = ny      # Track all 12 states
         ocp.dims.ny_e = ny_e  # Same for terminal cost
         ocp.dims.N = self.N
 
@@ -183,18 +183,18 @@ class QuadrupedOptimalController:
         ocp.parameter_values = default_foot_positions
         logger.info(f"Set default parameter values: {default_foot_positions}")
 
-        # Selection matrices - select all 13 states
+        # Selection matrices - select all 12 states
         Vx = numpy.eye(ny, nx)  # Identity matrix for all states
         Vu = numpy.ones((ny, nu))*self.force_weight # for now, don't worry about policing the controller effort
         
         ocp.cost.Vx = Vx
         ocp.cost.Vu = Vu
         ocp.cost.Vx_e = Vx  # Terminal cost same selection
-        logger.info("Set selection matrices to track all 13 states")
+        logger.info("Set selection matrices to track all 12 states")
 
         # Weights for tracked states - use values from YAML
         pos_weights = self.position_weights
-        rot_weights = self.orientation_weights
+        rot_weights = self.orientation_weights[:3]  # Only need 3 weights for Euler angles
         vel_weights = self.velocity_weights
         ang_weights = self.angular_velocity_weights
         
@@ -254,7 +254,7 @@ class QuadrupedOptimalController:
             
             # Set the reference trajectory
             for i in range(self.N):
-                self.solver.set(i, "yref", x_ref)  # All 13 states as reference
+                self.solver.set(i, "yref", x_ref)  # All 12 states as reference
             self.solver.set(self.N, "yref", x_ref)  # Terminal reference
             
             u0 = self.solver.solve_for_x0(x0)

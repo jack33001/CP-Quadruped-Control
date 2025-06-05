@@ -73,20 +73,25 @@ def calculate_metrics(x_hist, u_hist, x_ref, sim_time):
     
     return metrics
 
+def normalize_angles(angles):
+    """Normalize angles to [-pi, pi] range"""
+    return np.arctan2(np.sin(angles), np.cos(angles))
+
 def system_dynamics(x, u, foot_positions, m, I):
     """Calculate state derivatives given current state and control"""
-    dx = np.zeros(13)  # Reduced to 13 states
+    dx = np.zeros(12)  # Reduced to 12 states with Euler angles
     
     # Linear velocities are easy
-    dx[0:3] = x[7:10]
+    dx[0:3] = x[6:9]
     
-    # Angular velocities need to be converted to quaternion derivative
-    dx[3:7] = .5 * np.array([
-        -x[4]*x[10] - x[5]*x[11] - x[6]*x[12],
-        x[3]*x[10] + x[5]*x[12] - x[6]*x[11],
-        x[3]*x[11] - x[4]*x[12] + x[6]*x[10],
-        x[3]*x[12] + x[4]*x[11] - x[5]*x[10]
-        ])
+    # Euler angle derivatives from angular velocities
+    roll, pitch, yaw = x[3], x[4], x[5]
+    omega_x, omega_y, omega_z = x[9], x[10], x[11]
+    
+    # Transformation from body angular velocities to Euler angle rates
+    dx[3] = omega_x + omega_y*np.sin(roll)*np.sin(pitch)/np.cos(pitch) + omega_z*np.cos(roll)*np.sin(pitch)/np.cos(pitch)  # d_roll
+    dx[4] = omega_y*np.cos(roll) - omega_z*np.sin(roll)  # d_pitch
+    dx[5] = omega_y*np.sin(roll)/np.cos(pitch) + omega_z*np.cos(roll)/np.cos(pitch)  # d_yaw
     
     # Unpack foot positions from parameters
     p1 = foot_positions[0:3]
@@ -103,8 +108,8 @@ def system_dynamics(x, u, foot_positions, m, I):
     
     # Sum all foot forces for linear acceleration
     total_force = F1 + F2 + F3 + F4
-    dx[7:10] = total_force/m   # linear accelerations
-    dx[9] += -9.81            # add gravity to z acceleration
+    dx[6:9] = total_force/m   # linear accelerations
+    dx[8] += -9.81            # add gravity to z acceleration
     
     # Calculate torques from foot forces
     r1 = p1 - com  # vectors from COM to each foot
@@ -117,7 +122,7 @@ def system_dynamics(x, u, foot_positions, m, I):
                    np.cross(r2, F2) + 
                    np.cross(r3, F3) + 
                    np.cross(r4, F4))
-    dx[10:13] = total_torque/I  # angular accelerations
+    dx[9:12] = total_torque/I  # angular accelerations
     
     return dx
 
@@ -128,7 +133,12 @@ def rk4_step(x, u, foot_positions, dt, m, I):
     k3 = system_dynamics(x + dt/2 * k2, u, foot_positions, m, I)
     k4 = system_dynamics(x + dt * k3, u, foot_positions, m, I)
     
-    return x + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
+    x_new = x + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
+    
+    # Normalize Euler angles to [-pi, pi]
+    x_new[3:6] = normalize_angles(x_new[3:6])
+    
+    return x_new
 
 def log_metrics(metrics, logger):
     """Log all metrics in a structured format"""
@@ -229,23 +239,19 @@ def main():
     logger.info(f"BR (p3): {p3}")
     logger.info(f"BL (p4): {p4}")
     
-    # Create reduced 13-dimensional state vector
-    # Initial state with random perturbations within reasonable bounds
-    x0_full = np.zeros(13)  # Reduced state dimension
+    # Create reduced 12-dimensional state vector with Euler angles
+    x0_full = np.zeros(12)  # Reduced state dimension
     # Position bounds (in meters)
     x0_full[0:3] = np.random.uniform([-0.1, -0.1, 0.14], [0.1, 0.1, 0.16])
-    # Orientation bounds (in radians, roughly ±15 degrees)
-    x0_full[3:7] = normalize_quaternion(np.array([1.0, 
-                                            np.random.uniform(-0.1, 0.1),
-                                            np.random.uniform(-0.1, 0.1),
-                                            np.random.uniform(-0.1, 0.1)]))
+    # Euler angle bounds (in radians, roughly ±15 degrees)
+    x0_full[3:6] = np.random.uniform(-0.26, 0.26, 3)  # roll, pitch, yaw
     # Linear velocity bounds (in m/s)
-    x0_full[7:10] = np.random.uniform(-0.2, 0.2, 3)
+    x0_full[6:9] = np.random.uniform(-0.2, 0.2, 3)
     # Angular velocity bounds (in rad/s)
-    x0_full[10:13] = np.random.uniform(-0.5, 0.5, 3)
+    x0_full[9:12] = np.random.uniform(-0.5, 0.5, 3)
     
-    # Initialize history arrays for 13-dimensional state
-    x_hist = np.zeros((n_steps+1, 13))  # Pre-allocate reduced state history
+    # Initialize history arrays for 12-dimensional state
+    x_hist = np.zeros((n_steps+1, 12))  # Pre-allocate reduced state history
     u_hist = np.zeros((n_steps, 12))    # Pre-allocate control history
     t_hist = np.zeros(n_steps+1)        # Pre-allocate time history
     
@@ -254,11 +260,11 @@ def main():
     x_hist[0] = x0_full  # Store initial state
     t_hist[0] = 0.0
 
-    # Target state - reduced to 13 states
-    x_ref = np.zeros(13)  # Reference for reduced states
+    # Target state - reduced to 12 states
+    x_ref = np.zeros(12)  # Reference for reduced states
     x_ref[1] = .03  # Target y position
     x_ref[2] = 0.18  # Target height matches initial height
-    x_ref[3] = 1.0   # Quaternion w = 1 for [0 0 0] Euler angles
+    # Euler angles default to zero (no rotation)
     
     # Simple simulation loop
     success = False
@@ -315,11 +321,11 @@ def main():
             
             # Orientation plot
             plt.subplot(4, 1, 2)  # Changed to 4x1 layout
-            for i, label in enumerate(["w","x","y","z"]):
+            for i, label in enumerate(["roll","pitch","yaw"]):
                 plt.plot(t_hist, x_hist[:, i+3], label=label)
             plt.grid(True)
             plt.legend()
-            plt.title('Orientation vs Time')
+            plt.title('Euler Angles vs Time')
             
             # Foot forces plot
             plt.subplot(4, 1, 3)  # Changed to 4x1 layout

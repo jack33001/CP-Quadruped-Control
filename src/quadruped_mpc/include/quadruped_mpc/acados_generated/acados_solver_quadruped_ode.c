@@ -242,7 +242,7 @@ static ocp_nlp_dims* quadruped_ode_acados_create_setup_dimensions(quadruped_ode_
     nbx[0] = NBX0;
     nsbx[0] = 0;
     ns[0] = NS0;
-    nbxe[0] = 13;
+    nbxe[0] = 12;
     ny[0] = NY0;
     nh[0] = NH0;
     nsh[0] = NSH0;
@@ -509,11 +509,10 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     W_0[3+(NY0) * 3] = 10;
     W_0[4+(NY0) * 4] = 10;
     W_0[5+(NY0) * 5] = 10;
-    W_0[6+(NY0) * 6] = 10;
+    W_0[7+(NY0) * 7] = 1;
     W_0[8+(NY0) * 8] = 1;
-    W_0[9+(NY0) * 9] = 1;
+    W_0[9+(NY0) * 9] = 3;
     W_0[10+(NY0) * 10] = 3;
-    W_0[11+(NY0) * 11] = 3;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* Vx_0 = calloc(NY0*NX, sizeof(double));
@@ -530,7 +529,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     Vx_0[9+(NY0) * 9] = 1;
     Vx_0[10+(NY0) * 10] = 1;
     Vx_0[11+(NY0) * 11] = 1;
-    Vx_0[12+(NY0) * 12] = 1;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "Vx", Vx_0);
     free(Vx_0);
     double* Vu_0 = calloc(NY0*NU, sizeof(double));
@@ -553,11 +551,10 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     W[3+(NY) * 3] = 10;
     W[4+(NY) * 4] = 10;
     W[5+(NY) * 5] = 10;
-    W[6+(NY) * 6] = 10;
+    W[7+(NY) * 7] = 1;
     W[8+(NY) * 8] = 1;
-    W[9+(NY) * 9] = 1;
+    W[9+(NY) * 9] = 3;
     W[10+(NY) * 10] = 3;
-    W[11+(NY) * 11] = 3;
 
     for (int i = 1; i < N; i++)
     {
@@ -578,7 +575,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     Vx[9+(NY) * 9] = 1;
     Vx[10+(NY) * 10] = 1;
     Vx[11+(NY) * 11] = 1;
-    Vx[12+(NY) * 12] = 1;
     for (int i = 1; i < N; i++)
     {
         ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "Vx", Vx);
@@ -607,11 +603,10 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     W_e[3+(NYN) * 3] = 100;
     W_e[4+(NYN) * 4] = 100;
     W_e[5+(NYN) * 5] = 100;
-    W_e[6+(NYN) * 6] = 100;
+    W_e[7+(NYN) * 7] = 10;
     W_e[8+(NYN) * 8] = 10;
-    W_e[9+(NYN) * 9] = 10;
+    W_e[9+(NYN) * 9] = 30;
     W_e[10+(NYN) * 10] = 30;
-    W_e[11+(NYN) * 11] = 30;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
     free(W_e);
     double* Vx_e = calloc(NYN*NX, sizeof(double));
@@ -628,7 +623,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     Vx_e[9+(NYN) * 9] = 1;
     Vx_e[10+(NYN) * 10] = 1;
     Vx_e[11+(NYN) * 11] = 1;
-    Vx_e[12+(NYN) * 12] = 1;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "Vx", Vx_e);
     free(Vx_e);
 
@@ -654,7 +648,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     idxbx0[9] = 9;
     idxbx0[10] = 10;
     idxbx0[11] = 11;
-    idxbx0[12] = 12;
 
     double* lubx0 = calloc(2*NBX0, sizeof(double));
     double* lbx0 = lubx0;
@@ -667,7 +660,7 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     free(idxbx0);
     free(lubx0);
     // idxbxe_0
-    int* idxbxe_0 = malloc(13 * sizeof(int));
+    int* idxbxe_0 = malloc(12 * sizeof(int));
     idxbxe_0[0] = 0;
     idxbxe_0[1] = 1;
     idxbxe_0[2] = 2;
@@ -680,7 +673,6 @@ void quadruped_ode_acados_setup_nlp_in(quadruped_ode_solver_capsule* capsule, co
     idxbxe_0[9] = 9;
     idxbxe_0[10] = 10;
     idxbxe_0[11] = 11;
-    idxbxe_0[12] = 12;
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbxe", idxbxe_0);
     free(idxbxe_0);
 

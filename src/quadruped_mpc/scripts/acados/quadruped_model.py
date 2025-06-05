@@ -1,5 +1,5 @@
 from acados_template import AcadosModel
-from casadi import SX, vertcat, cross
+from casadi import SX, vertcat, cross, cos, sin
 import logging
 import yaml
 import os
@@ -60,9 +60,9 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     I = inertia   # inertia of the robot (kg*m^2)
     g = -9.81  # gravity (m/s^2)
 
-    # Create reduced state vector (13 states instead of 25)
+    # Create reduced state vector (12 states with Euler angles)
     states = [SX.sym(name) for name in [# positions/orientations
-                                        'x', 'y', 'z', 'q_w', 'q_x', 'q_y', 'q_z', 
+                                        'x', 'y', 'z', 'roll', 'pitch', 'yaw', 
                                         # velocities
                                         'vx', 'vy', 'vz', 'wx', 'wy', 'wz']]
     x = vertcat(*states)
@@ -107,10 +107,10 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
 
     # dynamics
     # State positions for easier access
-    q_pos = x[:3]           # position states [x1, y1, z1]
-    q_quat = x[3:7]        # quaternion states [qw, qx, qy, qz]
-    v_lin = x[7:10]        # linear velocities [vx, vy, vz]
-    v_ang = x[10:13]       # angular velocities [wx, wy, wz]
+    q_pos = x[:3]           # position states [x, y, z]
+    q_euler = x[3:6]        # Euler angle states [roll, pitch, yaw]
+    v_lin = x[6:9]          # linear velocities [vx, vy, vz]
+    v_ang = x[9:12]         # angular velocities [wx, wy, wz]
     
     # Extract foot positions from parameters
     p1 = p[0:3]            # position of foot 1 [x,y,z]
@@ -120,22 +120,27 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     pc = q_pos
 
     # System dynamics
-    # Position and angle derivatives are just the velocities
+    # Position derivatives are just the velocities
     dq_pos = v_lin
     logger.info(f"dq_pos: {dq_pos}")
-    dq_rot = v_ang
-    # Convert angular velocity to quaternion derivative
-    dq_rot = 0.5 * vertcat(
-        -q_quat[1]*v_ang[0] - q_quat[2]*v_ang[1] - q_quat[3]*v_ang[2],  # dq_w
-        q_quat[0]*v_ang[0] + q_quat[2]*v_ang[2] - q_quat[3]*v_ang[1],   # dq_x
-        q_quat[0]*v_ang[1] - q_quat[1]*v_ang[2] + q_quat[3]*v_ang[0],   # dq_y
-        q_quat[0]*v_ang[2] + q_quat[1]*v_ang[1] - q_quat[2]*v_ang[0]    # dq_z
+    
+    # Euler angle derivatives from angular velocities
+    # Convert body-frame angular velocities to Euler angle rates
+    roll = q_euler[0]
+    pitch = q_euler[1]
+    yaw = q_euler[2]
+    
+    # Transformation matrix from body angular velocities to Euler angle rates
+    dq_euler = vertcat(
+        v_ang[0] + v_ang[1]*sin(roll)*sin(pitch)/cos(pitch) + v_ang[2]*cos(roll)*sin(pitch)/cos(pitch),  # d_roll
+        v_ang[1]*cos(roll) - v_ang[2]*sin(roll),                                                         # d_pitch
+        v_ang[1]*sin(roll)/cos(pitch) + v_ang[2]*cos(roll)/cos(pitch)                                   # d_yaw
     )
-    logger.info(f"dq_pos: {dq_rot}")
+    logger.info(f"dq_euler: {dq_euler}")
     
     # Force dynamics (linear acceleration)
     dv_lin = vertcat(
-        (F1[0] + F2[0] + F3[0] + F4[0])/m,  # Revert back to original
+        (F1[0] + F2[0] + F3[0] + F4[0])/m,
         (F1[1] + F2[1] + F3[1] + F4[1])/m,
         (F1[2] + F2[2] + F3[2] + F4[2])/m + g  # g is already negative, so add it
     )
@@ -146,8 +151,8 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
               cross(p3 - pc, F3) + cross(p4 - pc, F4)) / I
     logger.info(f"dv_ang: {dv_ang}")
 
-    # Combine all dynamics into state derivative vector (13 states only)
-    f_expl = vertcat(dq_pos, dq_rot, dv_lin, dv_ang)
+    # Combine all dynamics into state derivative vector (12 states)
+    f_expl = vertcat(dq_pos, dq_euler, dv_lin, dv_ang)
     logger.info(f"Created dynamics vector with shape: {f_expl.shape}")
     
     # Set model dynamics
@@ -171,7 +176,7 @@ def export_quadruped_ode_model(mass=None, inertia=None, config_file=None) -> Aca
     logger.info(f"Set model dimensions - nx: {model.nx}, nu: {model.nu}, np: {model.np}")
 
     # Set labels
-    model.x_labels = ['$x$ [m]', '$y$ [m]', '$z$ [m]', '$\\theta$ [rad]', '$\\phi$ [rad]', '$\\psi$ [rad]']
+    model.x_labels = ['$x$ [m]', '$y$ [m]', '$z$ [m]', '$\\phi$ [rad]', '$\\theta$ [rad]', '$\\psi$ [rad]']
     model.u_labels = ['$F_1$ [N]', '$F_2$ [N]', '$F_3$ [N]', '$F_4$ [N]']
     model.t_label = '$t$ [s]'
     logger.info("Set model labels for states, controls, and time")
